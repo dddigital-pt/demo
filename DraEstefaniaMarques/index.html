@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dra. Estefânia Marques — Demonstração</title>
+<meta name="description" content="Demonstração de website para a Dra. Estefânia Marques, psicóloga clínica. Conteúdo ilustrativo criado pela DD Digital.">
+<meta name="theme-color" content="#F6F7F3">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 40'%3E%3Ccircle cx='22' cy='20' r='16' fill='%239DB5A2' fill-opacity='.85'/%3E%3Ccircle cx='42' cy='20' r='16' fill='%23E6BFA5' fill-opacity='.8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap" rel="stylesheet">
+<script>
+  /* estado inicial: marca o html como "js" e decide se há preloader (?nopre ou reduced-motion saltam-no) */
+  (function () {
+    var d = document.documentElement;
+    d.classList.add('js');
+    var skip = /[?&]nopre/.test(location.search) || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    if (!skip) d.classList.add('has-pre');
+    setTimeout(function () { d.classList.add('ready'); d.classList.remove('has-pre'); }, 5000); /* rede de segurança */
+  })();
+</script>
+<style>
+/*
+  CONCEITO — "Dois círculos, um espaço partilhado."
+  Layout: círculos sobrepostos (a conversa entre duas pessoas) como linguagem de forma em todo o site.
+  Hero: orbe de três círculos que respira (afasta-se ao inspirar, encontra-se ao expirar), com legenda
+  "Inspire / Expire" sincronizada. Toque/clique pausa. Alternativa sem rato: respira sozinho.
+  Tipografia: Newsreader (títulos, itálico expressivo) + Hanken Grotesk (corpo).
+*/
+
+/* ========== VARIÁVEIS ========== */
+:root {
+  --paper: #F6F7F3;
+  --mist: #E6ECE7;
+  --mist-2: #DCE5DE;
+  --sage: #B7CABB;
+  --sage-deep: #6F8B78;
+  --clay: #EFCFBC;
+  --clay-deep: #B8805F;
+  --sky: #CFDDE3;
+  --ink: #25332F;
+  --ink-soft: #55655F;
+  --line: rgba(37, 51, 47, .14);
+
+  --font-display: 'Newsreader', Georgia, serif;
+  --font-body: 'Hanken Grotesk', system-ui, sans-serif;
+
+  --demo-h: 34px;
+  --head-h: 72px;
+  --gutter: clamp(1.25rem, 5vw, 4.5rem);
+  --maxw: 1320px;
+  --ease: cubic-bezier(.65, 0, .35, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+}
+
+/* ========== BASE ========== */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--demo-h) + var(--head-h) + 12px); -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.7; font-weight: 400;
+  overflow-x: clip; -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+h1, h2, h3, p, dl, dd, ul { margin: 0; }
+ul { padding: 0; list-style: none; }
+:focus-visible { outline: 2px solid var(--sage-deep); outline-offset: 4px; border-radius: 4px; }
+.wrap { width: min(100%, var(--maxw)); margin-inline: auto; padding-inline: var(--gutter); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.eyebrow { font-size: .75rem; letter-spacing: .2em; text-transform: uppercase; font-weight: 500; color: var(--sage-deep); display: flex; align-items: center; gap: .8rem; }
+.eyebrow::before { content: ""; width: 1.6rem; height: 1px; background: currentColor; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 300; letter-spacing: -.02em; line-height: 1.08; font-optical-sizing: auto; }
+h2 { font-size: clamp(2.1rem, 4.4vw, 3.8rem); }
+h2 em, h1 em { font-style: italic; color: var(--sage-deep); font-weight: 300; }
+.lead { font-size: clamp(1.05rem, 1.5vw, 1.25rem); color: var(--ink-soft); max-width: 46ch; }
+
+/* marcador "a confirmar" (conteúdo por validar com a cliente) */
+.tbc { display: inline-block; padding: .05em .7em; border: 1px dashed var(--clay-deep); border-radius: 99px; background: rgba(239, 207, 188, .35); color: #8A5A40; font-size: .8rem; letter-spacing: .04em; line-height: 1.6; white-space: nowrap; }
+
+/* botões */
+.btn { display: inline-flex; align-items: center; gap: .9rem; padding: .95rem 1.5rem .95rem 1.7rem; border-radius: 99px; background: var(--ink); color: var(--paper); text-decoration: none; font-weight: 500; font-size: .95rem; letter-spacing: .02em; border: 0; cursor: pointer; transition: background .4s var(--ease), transform .4s var(--ease-out); }
+.btn .dot { width: .7rem; height: .7rem; border-radius: 50%; background: var(--clay); transition: transform .5s var(--ease-out); }
+.btn:hover { background: var(--sage-deep); }
+.btn:hover .dot { transform: scale(1.7); }
+.link { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; font-weight: 500; font-size: .95rem; padding: .4rem 0; background: linear-gradient(currentColor, currentColor) left bottom / 100% 1px no-repeat; transition: background-size .5s var(--ease-out); }
+.link:hover { background-size: 30% 1px; }
+
+/* revelações ao scroll (só com JS; sem JS o conteúdo fica visível) */
+.js .rv { opacity: 0; transform: translateY(22px); transition: opacity 1s var(--ease-out), transform 1s var(--ease-out); transition-delay: var(--d, 0s); }
+.js .rv.in { opacity: 1; transform: none; }
+
+/* ========== FAIXA DEMO + SELO ========== */
+.demo-bar { position: fixed; inset: 0 0 auto 0; height: var(--demo-h); z-index: 120; background: var(--ink); color: var(--paper); display: flex; align-items: center; justify-content: center; gap: .8rem; padding-inline: 1rem; font-size: .78rem; letter-spacing: .04em; white-space: nowrap; }
+.demo-bar b { background: var(--clay); color: var(--ink); font-weight: 600; letter-spacing: .16em; font-size: .68rem; padding: .15rem .55rem; border-radius: 99px; }
+.demo-bar .short { display: none; }
+.demo-chip { position: fixed; left: 1.2rem; bottom: 1.2rem; z-index: 110; display: flex; align-items: center; gap: .6rem; padding: .55rem 1rem .55rem .8rem; border-radius: 99px; background: var(--clay); color: var(--ink); font-size: .74rem; font-weight: 500; letter-spacing: .05em; box-shadow: 0 6px 24px -10px rgba(37, 51, 47, .35); }
+.demo-chip i { width: .55rem; height: .55rem; border-radius: 50%; background: var(--ink); }
+
+/* ========== PRELOADER ========== */
+.pre { position: fixed; inset: 0; z-index: 200; background: var(--paper); display: none; place-items: center; clip-path: circle(150% at 50% 50%); transition: clip-path 1.1s var(--ease); pointer-events: none; }
+.has-pre .pre { display: grid; }
+.has-pre .pre.done { clip-path: circle(0% at 50% 50%); }
+.pre-inner { display: grid; justify-items: center; gap: 1.2rem; transition: opacity .5s; }
+.pre.done .pre-inner { opacity: 0; }
+.pre svg { width: 132px; overflow: visible; }
+.pre .pa, .pre .pb { transform-box: fill-box; transform-origin: center; }
+.pre .pa { animation: pre-a 1.6s var(--ease) both; }
+.pre .pb { animation: pre-b 1.6s var(--ease) both; }
+@keyframes pre-a { from { transform: translateX(-34px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes pre-b { from { transform: translateX(34px); opacity: 0; } to { transform: none; opacity: 1; } }
+.pre-name { font-family: var(--font-display); font-style: italic; font-size: 1.15rem; color: var(--ink-soft); opacity: 0; animation: fade-in 1s .9s forwards; }
+@keyframes fade-in { to { opacity: 1; } }
+
+/* ========== CABEÇALHO ========== */
+.site-header { position: fixed; top: var(--demo-h); inset-inline: 0; height: var(--head-h); z-index: 100; display: flex; align-items: center; transition: background .5s, box-shadow .5s; }
+.site-header.scrolled { background: rgba(246, 247, 243, .92); box-shadow: 0 1px 0 var(--line); backdrop-filter: blur(10px); }
+.head-in { width: min(100%, var(--maxw)); margin-inline: auto; padding-inline: var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.brand { display: flex; align-items: center; gap: .85rem; text-decoration: none; }
+.brand svg { width: 46px; height: auto; flex: none; }
+.brand-t { display: grid; line-height: 1.15; }
+.brand-t b { font-family: var(--font-display); font-weight: 400; font-size: 1.2rem; letter-spacing: -.01em; }
+.brand-t small { font-size: .64rem; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-soft); }
+.nav { display: flex; align-items: center; gap: clamp(1rem, 2.2vw, 2.2rem); font-size: .9rem; }
+.nav a:not(.btn) { text-decoration: none; position: relative; padding: .3rem 0; color: var(--ink-soft); transition: color .3s; }
+.nav a:not(.btn)::after { content: ""; position: absolute; left: 50%; bottom: -4px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--sage-deep); transform: scale(0); transition: transform .4s var(--ease-out); }
+.nav a:not(.btn):hover { color: var(--ink); }
+.nav a:not(.btn):hover::after { transform: scale(1); }
+.nav .btn { padding: .65rem 1.2rem .65rem 1.4rem; font-size: .88rem; }
+.menu-btn { display: none; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper); cursor: pointer; position: relative; }
+.menu-btn span { position: absolute; left: 14px; right: 14px; height: 1.5px; background: var(--ink); transition: transform .4s var(--ease); }
+.menu-btn span:first-child { top: 18px; }
+.menu-btn span:last-child { top: 26px; }
+.menu-open .menu-btn span:first-child { transform: translateY(4px) rotate(45deg); }
+.menu-open .menu-btn span:last-child { transform: translateY(-4px) rotate(-45deg); }
+
+/* ========== HERO ========== */
+.hero { min-height: 100svh; padding: calc(var(--demo-h) + var(--head-h) + 2rem) 0 4rem; display: flex; align-items: center; position: relative; }
+.hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: clamp(1rem, 4vw, 4rem); }
+.hero h1 { font-size: clamp(2.7rem, 6.2vw, 6rem); margin: 1.6rem 0 1.8rem; }
+.hero h1 .ln { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+.hero h1 .ln > span { display: block; }
+.hero .lead { margin-bottom: 2.4rem; }
+.hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 1.2rem 2rem; }
+
+.orb-col { display: grid; justify-items: center; gap: 1.4rem; }
+.orb-wrap { width: 100%; display: grid; justify-items: center; will-change: transform; }
+.orb-stage { width: 100%; display: grid; justify-items: center; }
+.orb { position: relative; width: min(100%, 560px); aspect-ratio: 1; border: 0; padding: 0; background: none; cursor: pointer; border-radius: 50%; -webkit-tap-highlight-color: transparent; }
+.orb-drift { position: absolute; inset: 0; transform: translate3d(var(--mx, 0px), var(--my, 0px), 0); }
+.orb-turn { position: absolute; inset: 0; animation: turn 90s linear infinite; }
+@keyframes turn { to { transform: rotate(360deg); } }
+.orb-c { position: absolute; left: 19%; top: 19%; width: 62%; aspect-ratio: 1; border-radius: 50%; mix-blend-mode: multiply; animation-duration: 10s; animation-iteration-count: infinite; animation-timing-function: ease-in-out; }
+.orb-c.c1 { background: var(--sage); animation-name: b1; }
+.orb-c.c2 { background: var(--clay); animation-name: b2; }
+.orb-c.c3 { background: var(--sky); animation-name: b3; }
+/* respiração: 0–40 % inspira (afasta), 40–50 % pausa, 50–90 % expira (encontra), 90–100 % pausa */
+@keyframes b1 { 0%, 100% { transform: translate(0, -10%) scale(.9); } 40%, 50% { transform: translate(0, -30%) scale(1); } 90% { transform: translate(0, -10%) scale(.9); } }
+@keyframes b2 { 0%, 100% { transform: translate(8.66%, 5%) scale(.9); } 40%, 50% { transform: translate(26%, 15%) scale(1); } 90% { transform: translate(8.66%, 5%) scale(.9); } }
+@keyframes b3 { 0%, 100% { transform: translate(-8.66%, 5%) scale(.9); } 40%, 50% { transform: translate(-26%, 15%) scale(1); } 90% { transform: translate(-8.66%, 5%) scale(.9); } }
+.orb.paused .orb-c, .orb.paused .orb-turn, .orb.paused .lbl { animation-play-state: paused; }
+.orb-label { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; font-family: var(--font-display); font-style: italic; font-weight: 300; font-size: clamp(1.4rem, 2.6vw, 2.2rem); color: var(--ink); }
+.orb-label .lbl { grid-area: 1 / 1; opacity: 0; animation: 10s infinite ease-in-out; }
+.orb-label .li { animation-name: l-in; }
+.orb-label .lo { animation-name: l-out; }
+@keyframes l-in { 0% { opacity: 0; } 6%, 38% { opacity: 1; } 46%, 100% { opacity: 0; } }
+@keyframes l-out { 0%, 48% { opacity: 0; } 56%, 88% { opacity: 1; } 96%, 100% { opacity: 0; } }
+.orb-hint { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); display: flex; align-items: center; gap: .7rem; }
+.orb-hint i { width: .5rem; height: .5rem; border-radius: 50%; background: var(--sage-deep); animation: pulse 10s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { transform: scale(.7); } 40%, 50% { transform: scale(1.5); } }
+
+/* entrada do hero (após o preloader) */
+.js .hero h1 .ln > span { transform: translateY(112%); transition: transform 1.3s var(--ease-out); }
+.js .hero .eyebrow, .js .hero .lead, .js .hero-cta, .js .orb-hint { opacity: 0; transform: translateY(16px); transition: opacity 1.1s var(--ease-out), transform 1.1s var(--ease-out); }
+.js .orb-stage { opacity: 0; transform: scale(.88); transition: opacity 1.6s var(--ease-out), transform 1.8s var(--ease-out); }
+.ready .hero h1 .ln > span { transform: none; }
+.ready .hero .eyebrow, .ready .hero .lead, .ready .hero-cta, .ready .orb-hint { opacity: 1; transform: none; }
+.ready .orb-stage { opacity: 1; transform: none; }
+.ready .hero h1 .ln:nth-child(2) > span { transition-delay: .12s; }
+.ready .hero h1 .ln:nth-child(3) > span { transition-delay: .24s; }
+.ready .hero .eyebrow { transition-delay: .05s; }
+.ready .hero .lead { transition-delay: .45s; }
+.ready .hero-cta { transition-delay: .6s; }
+.ready .orb-hint { transition-delay: 1s; }
+
+/* ========== QUANDO PROCURAR AJUDA ========== */
+.quando { padding: clamp(5rem, 11vw, 10rem) 0 clamp(4rem, 8vw, 7rem); }
+.quando-head { margin-bottom: clamp(3rem, 8vw, 7rem); }
+.quando-head h2 { margin-top: 1.4rem; max-width: 15ch; }
+.phrases { display: grid; gap: clamp(2.2rem, 6vw, 5rem); }
+.phrase { font-family: var(--font-display); font-weight: 300; font-size: clamp(1.7rem, 3.8vw, 3.3rem); line-height: 1.18; letter-spacing: -.015em; max-width: 24ch; position: relative; padding-left: clamp(2.2rem, 3.5vw, 3.4rem); opacity: var(--o, 1); }
+.phrase:nth-child(even) { margin-left: clamp(0rem, 14vw, 14rem); }
+.phrase::before { content: ""; position: absolute; left: 0; top: .5em; width: .55em; height: .55em; border-radius: 50%; border: 1px solid var(--sage-deep); background: var(--sage); transform: scale(calc(.5 + var(--o, 1) * .6)); }
+.quando-end { margin-top: clamp(3rem, 7vw, 6rem); max-width: 40ch; color: var(--ink-soft); font-size: 1.15rem; }
+
+/* ========== SOBRE ========== */
+.sobre { padding: clamp(4rem, 9vw, 8rem) 0; background: linear-gradient(var(--paper), var(--mist) 60%, var(--mist)); }
+.sobre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 7vw, 8rem); align-items: center; }
+.duo-photo { position: relative; width: min(100%, 600px); aspect-ratio: 1 / 1.02; }
+.duo-photo .pa, .duo-photo .pb { position: absolute; border-radius: 50%; overflow: hidden; }
+.duo-photo .pa { left: 0; top: 0; width: 70%; aspect-ratio: 1; }
+.duo-photo .pa img { width: 100%; height: 100%; object-fit: cover; }
+.duo-photo .pb { right: 0; bottom: 0; width: 64%; aspect-ratio: 1; background: var(--clay); mix-blend-mode: multiply; display: grid; place-items: center; text-align: center; padding: 18%; font-family: var(--font-display); font-style: italic; font-size: clamp(.95rem, 1.6vw, 1.25rem); color: #6E4733; line-height: 1.3; }
+.sobre h2 { margin: 1.4rem 0 .6rem; }
+.sobre .role { font-family: var(--font-display); font-style: italic; font-size: 1.4rem; color: var(--sage-deep); margin-bottom: 1.8rem; }
+.sobre p + p { margin-top: 1rem; }
+.sobre .body { color: var(--ink-soft); max-width: 50ch; }
+.creds { margin-top: 2.2rem; border-top: 1px solid var(--line); }
+.creds div { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .4rem 1rem; padding: 1rem 0; border-bottom: 1px solid var(--line); font-size: .95rem; }
+.creds dt { color: var(--ink-soft); }
+.note { margin-top: 1.4rem; font-size: .82rem; color: var(--ink-soft); font-style: italic; }
+
+/* ========== ÁREAS DE ACOMPANHAMENTO ========== */
+.areas { padding: clamp(5rem, 10vw, 9rem) 0 clamp(4rem, 8vw, 7rem); background: var(--mist); }
+.areas-head { display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: end; margin-bottom: clamp(2.5rem, 6vw, 5rem); }
+.areas-head h2 { margin-top: 1.4rem; max-width: 16ch; }
+.areas-pic { width: clamp(150px, 20vw, 260px); aspect-ratio: 1; border-radius: 50%; overflow: hidden; }
+.areas-pic img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.area { display: grid; grid-template-columns: 4.5rem 1fr 1.1fr; gap: 1rem 2rem; align-items: baseline; padding: clamp(1.6rem, 3vw, 2.6rem) 0; border-top: 1px solid var(--line); position: relative; }
+.area:last-of-type { border-bottom: 1px solid var(--line); }
+.area .n { font-family: var(--font-display); font-style: italic; color: var(--sage-deep); font-size: 1.1rem; display: flex; align-items: center; gap: .6rem; }
+.area .n i { width: .7rem; height: .7rem; border-radius: 50%; border: 1px solid var(--sage-deep); transition: background .5s, transform .6s var(--ease-out); }
+.area h3 { font-size: clamp(1.6rem, 3.2vw, 2.7rem); transition: transform .6s var(--ease-out); }
+.area p { color: var(--ink-soft); max-width: 46ch; }
+.area:hover h3 { transform: translateX(14px); }
+.area:hover .n i { background: var(--sage-deep); transform: scale(1.5); }
+.areas-note { margin-top: 2rem; font-size: .85rem; color: var(--ink-soft); display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+
+/* ========== FAIXA DE IMAGEM + CITAÇÃO ========== */
+.band { position: relative; height: clamp(440px, 80vh, 760px); overflow: hidden; background: var(--sage); }
+.band-img { position: absolute; inset: -8% 0; will-change: transform; }
+.band-img img { width: 100%; height: 100%; object-fit: cover; }
+.band-quote { position: absolute; right: clamp(1rem, 9vw, 9rem); top: 50%; translate: 0 -50%; width: clamp(290px, 36vw, 500px); aspect-ratio: 1; border-radius: 50%; background: rgba(246, 247, 243, .9); display: grid; place-items: center; text-align: center; padding: clamp(2rem, 4.5vw, 4.2rem); }
+.band-quote p { font-family: var(--font-display); font-weight: 300; font-size: clamp(1.3rem, 2.5vw, 2.1rem); line-height: 1.2; letter-spacing: -.01em; }
+.band-quote em { color: var(--sage-deep); }
+
+/* ========== PRIMEIRA CONSULTA ========== */
+.consulta { padding: clamp(5rem, 10vw, 9rem) 0 clamp(3rem, 6vw, 5rem); background: var(--paper); }
+.consulta-head { margin-bottom: clamp(2rem, 5vw, 4rem); }
+.consulta-head h2 { margin-top: 1.4rem; max-width: 17ch; }
+.consulta-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(2rem, 6vw, 7rem); align-items: start; }
+.duo-sticky { position: sticky; top: calc(var(--demo-h) + var(--head-h) + 4vh); align-self: start; }
+.duo { position: relative; width: min(100%, 560px); aspect-ratio: 3 / 2; }
+.duo .c { position: absolute; top: 50%; width: 40%; aspect-ratio: 1; margin-top: -20%; border-radius: 50%; mix-blend-mode: multiply; transition: transform 1.5s var(--ease); }
+.duo .ca { left: 5%; background: var(--sage); }
+.duo .cb { right: 5%; background: var(--clay); }
+.duo[data-step="2"] .ca { transform: translateX(20%); }
+.duo[data-step="2"] .cb { transform: translateX(-20%); }
+.duo[data-step="3"] .ca { transform: translateX(50%); }
+.duo[data-step="3"] .cb { transform: translateX(-50%); }
+.duo .t { position: absolute; top: 50%; translate: 0 -50%; font-family: var(--font-display); font-style: italic; font-size: clamp(.9rem, 1.6vw, 1.2rem); color: var(--ink); }
+.duo .ta { left: 11%; }
+.duo .tb { right: 8%; text-align: right; }
+.duo .tm { left: 50%; translate: -50% -50%; text-align: center; font-size: clamp(.8rem, 1.3vw, 1rem); line-height: 1.2; opacity: 0; transition: opacity 1s .8s; width: 24%; }
+.duo[data-step="3"] .tm { opacity: 1; }
+.steps { display: grid; }
+.step { min-height: 56vh; display: flex; flex-direction: column; justify-content: center; opacity: .3; transition: opacity .8s; }
+.step.on { opacity: 1; }
+.step .sn { font-family: var(--font-display); font-style: italic; color: var(--sage-deep); font-size: 1.1rem; margin-bottom: .8rem; }
+.step h3 { font-size: clamp(1.8rem, 3.2vw, 2.8rem); margin-bottom: 1rem; }
+.step p { color: var(--ink-soft); max-width: 40ch; }
+
+/* ========== PERGUNTAS ========== */
+.faq { padding: clamp(4rem, 8vw, 7rem) 0 clamp(5rem, 10vw, 9rem); }
+.faq-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(2rem, 6vw, 7rem); align-items: start; }
+.faq h2 { margin-top: 1.4rem; max-width: 12ch; }
+details { border-top: 1px solid var(--line); }
+details:last-child { border-bottom: 1px solid var(--line); }
+summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.4rem 0; font-family: var(--font-display); font-size: clamp(1.2rem, 2vw, 1.55rem); letter-spacing: -.01em; }
+summary::-webkit-details-marker { display: none; }
+summary .pm { flex: none; width: 2.2rem; height: 2.2rem; border-radius: 50%; border: 1px solid var(--line); position: relative; transition: background .4s, transform .6s var(--ease-out); }
+summary .pm::before, summary .pm::after { content: ""; position: absolute; left: 50%; top: 50%; width: .8rem; height: 1.5px; background: var(--ink); translate: -50% -50%; }
+summary .pm::after { rotate: 90deg; transition: rotate .5s var(--ease); }
+details[open] .pm { background: var(--sage); transform: rotate(180deg); }
+details[open] .pm::after { rotate: 0deg; }
+details .ans { padding: 0 3.5rem 1.6rem 0; color: var(--ink-soft); max-width: 56ch; animation: ans-in .7s var(--ease-out); }
+@keyframes ans-in { from { opacity: 0; transform: translateY(-8px); } }
+
+/* ========== CONTACTO ========== */
+.contacto { padding: clamp(5rem, 10vw, 9rem) 0; background: var(--mist); position: relative; overflow: hidden; }
+.contacto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2.5rem, 7vw, 8rem); align-items: start; }
+.contacto h2 { margin: 1.4rem 0 1.4rem; max-width: 14ch; }
+.details { margin-top: 2.2rem; border-top: 1px solid var(--line); }
+.details div { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .3rem 1rem; padding: .95rem 0; border-bottom: 1px solid var(--line); font-size: .95rem; }
+.details dt { color: var(--ink-soft); }
+.duo-mini { position: relative; width: min(100%, 360px); aspect-ratio: 1.45; margin-top: 3rem; }
+.duo-mini .pa { position: absolute; left: 0; top: 0; width: 69%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; }
+.duo-mini .pa img { width: 100%; height: 100%; object-fit: cover; }
+.duo-mini .pb { position: absolute; right: 0; top: 0; width: 69%; aspect-ratio: 1; border-radius: 50%; background: var(--clay); mix-blend-mode: multiply; }
+.form { background: var(--paper); border-radius: 2rem; padding: clamp(1.6rem, 4vw, 3rem); display: grid; gap: 1.6rem; }
+.form h3 { font-size: 1.7rem; }
+.field { position: relative; }
+.field input, .field textarea { width: 100%; border: 0; border-bottom: 1px solid var(--line); background: none; padding: 1.5rem 0 .55rem; font: inherit; color: var(--ink); border-radius: 0; resize: none; transition: border-color .4s; }
+.field textarea { min-height: 6.5rem; }
+.field label { position: absolute; left: 0; top: 1.5rem; color: var(--ink-soft); pointer-events: none; transition: transform .4s var(--ease-out), font-size .4s, color .4s; transform-origin: left top; }
+.field input:focus, .field textarea:focus { outline: 0; border-color: var(--sage-deep); }
+.field input:focus + label, .field input:not(:placeholder-shown) + label, .field textarea:focus + label, .field textarea:not(:placeholder-shown) + label { transform: translateY(-1.35rem) scale(.76); color: var(--sage-deep); }
+.form .btn { justify-self: start; }
+.form-msg { font-size: .92rem; color: #8A5A40; min-height: 1.6em; }
+.form-note { font-size: .8rem; color: var(--ink-soft); }
+
+/* ========== RODAPÉ ========== */
+.site-footer { background: var(--ink); color: rgba(246, 247, 243, .78); padding: clamp(3rem, 6vw, 5rem) 0 5.5rem; font-size: .92rem; }
+.foot-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem; padding-bottom: 2.5rem; border-bottom: 1px solid rgba(246, 247, 243, .16); }
+.site-footer .brand-t b { color: var(--paper); }
+.site-footer .brand-t small { color: rgba(246, 247, 243, .6); }
+.foot-nav { display: flex; flex-wrap: wrap; gap: .6rem 1.8rem; align-items: center; }
+.foot-nav a { text-decoration: none; }
+.foot-nav a:hover { color: var(--clay); }
+.foot-bottom { padding-top: 2rem; display: grid; gap: 1rem; font-size: .82rem; color: rgba(246, 247, 243, .6); max-width: 90ch; }
+.foot-bottom strong { color: var(--clay); font-weight: 500; }
+
+/* ========== RESPONSIVO ========== */
+@media (max-width: 980px) {
+  .hero-grid, .sobre-grid, .consulta-grid, .faq-grid, .contacto-grid { grid-template-columns: 1fr; }
+  .hero { align-items: flex-start; min-height: auto; padding-bottom: 3rem; }
+  .orb-col { order: -1; }
+  .orb { width: min(66vw, 300px); }
+  .hero h1 { margin-top: 1.2rem; }
+  .duo-photo { margin-inline: auto; }
+  .area { grid-template-columns: 3.4rem 1fr; }
+  .area p { grid-column: 2; }
+  .areas-head { grid-template-columns: 1fr; }
+  .areas-pic { order: -1; width: 150px; }
+  .duo-sticky { top: calc(var(--demo-h) + var(--head-h)); z-index: 5; background: var(--paper); padding: .4rem 0 1rem; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); }
+  .duo { width: min(100%, 380px); margin-inline: auto; }
+  .step { min-height: 40vh; }
+  .menu-btn { display: block; }
+  .nav { position: fixed; inset: calc(var(--demo-h) + var(--head-h)) 0 auto 0; flex-direction: column; align-items: stretch; gap: 0; padding: .5rem var(--gutter) 1.6rem; background: var(--paper); box-shadow: 0 20px 40px -24px rgba(37, 51, 47, .4); transform: translateY(-14px); opacity: 0; visibility: hidden; transition: opacity .4s, transform .5s var(--ease-out), visibility .4s; font-size: 1.1rem; }
+  .nav a:not(.btn) { padding: 1rem 0; border-bottom: 1px solid var(--line); }
+  .nav a:not(.btn)::after { display: none; }
+  .nav .btn { margin-top: 1.2rem; justify-content: center; }
+  .menu-open .nav { transform: none; opacity: 1; visibility: visible; }
+  .site-header { background: rgba(246, 247, 243, .94); box-shadow: 0 1px 0 var(--line); }
+  .band-quote { right: 50%; translate: 50% -50%; width: min(78vw, 340px); }
+}
+@media (max-width: 640px) {
+  :root { --demo-h: 32px; --head-h: 64px; }
+  .demo-bar .full { display: none; }
+  .demo-bar .short { display: inline; }
+  .demo-chip { display: none; }
+  .brand-t small { display: none; }
+  .phrase:nth-child(even) { margin-left: 0; }
+  .details div, .creds div { align-items: flex-start; }
+  details .ans { padding-right: 0; }
+}
+
+/* ========== MOVIMENTO REDUZIDO ========== */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .orb-c, .orb-turn, .orb-label .lbl, .orb-hint i, .pre-name { animation: none !important; }
+  .orb-c.c1 { transform: translate(0, -20%) scale(.95); }
+  .orb-c.c2 { transform: translate(17%, 10%) scale(.95); }
+  .orb-c.c3 { transform: translate(-17%, 10%) scale(.95); }
+  .orb-label .li { opacity: 1; }
+  .orb-label .lo { display: none; }
+  .js .rv, .js .hero h1 .ln > span, .js .hero .eyebrow, .js .hero .lead, .js .hero-cta, .js .orb-hint, .js .orb-stage { opacity: 1; transform: none; transition: none; }
+  .duo .c { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Símbolo do logótipo provisório: dois círculos sobrepostos -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="mark" viewBox="0 0 64 40">
+    <circle cx="22" cy="20" r="16" fill="#9DB5A2" fill-opacity=".85"/>
+    <circle cx="42" cy="20" r="16" fill="#E6BFA5" fill-opacity=".8"/>
+  </symbol>
+</svg>
+
+<!-- ===== AVISO DE DEMONSTRAÇÃO ===== -->
+<div class="demo-bar" role="note">
+  <b>DEMO</b>
+  <span class="full">Website de demonstração criado pela DD Digital para a Dra. Estefânia Marques · conteúdo ilustrativo</span>
+  <span class="short">Demonstração · Dra. Estefânia Marques</span>
+</div>
+<div class="demo-chip" aria-hidden="true"><i></i>Versão de demonstração</div>
+
+<!-- ===== PRELOADER ===== -->
+<div class="pre" id="pre" aria-hidden="true">
+  <div class="pre-inner">
+    <svg viewBox="0 0 64 40">
+      <circle class="pa" cx="22" cy="20" r="16" fill="#9DB5A2" fill-opacity=".85"/>
+      <circle class="pb" cx="42" cy="20" r="16" fill="#E6BFA5" fill-opacity=".8"/>
+    </svg>
+    <span class="pre-name">Estefânia Marques</span>
+  </div>
+</div>
+
+<!-- ===== CABEÇALHO ===== -->
+<header class="site-header" id="header">
+  <div class="head-in">
+    <a class="brand" href="#inicio" aria-label="Dra. Estefânia Marques — início">
+      <svg viewBox="0 0 64 40" aria-hidden="true"><use href="#mark"/></svg>
+      <span class="brand-t"><b>Estefânia Marques</b><small>Psicologia clínica</small></span>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav" aria-label="Abrir menu"><span></span><span></span></button>
+    <nav class="nav" id="nav" aria-label="Principal">
+      <a href="#quando">Quando procurar</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#areas">Áreas</a>
+      <a href="#consulta">Primeira consulta</a>
+      <a href="#perguntas">Perguntas</a>
+      <a class="btn" href="#contacto">Marcar conversa <span class="dot"></span></a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="inicio">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Psicologia clínica · Dra. Estefânia Marques</p>
+      <h1>
+        <span class="ln"><span>Um lugar calmo</span></span>
+        <span class="ln"><span>para <em>falar</em></span></span>
+        <span class="ln"><span>do que pesa.</span></span>
+      </h1>
+      <p class="lead">Acompanhamento psicológico com escuta atenta, tempo para pensar e respeito pelo seu ritmo.</p>
+      <div class="hero-cta">
+        <a class="btn" href="#contacto">Marcar uma conversa <span class="dot"></span></a>
+        <a class="link" href="#consulta">Como funciona</a>
+      </div>
+    </div>
+
+    <div class="orb-col">
+      <div class="orb-wrap" id="orbWrap">
+        <div class="orb-stage">
+          <button class="orb" id="orb" type="button" aria-pressed="false" aria-label="Orbe de respiração. Pausar ou retomar o movimento">
+            <span class="orb-drift" id="orbDrift">
+              <span class="orb-turn">
+                <span class="orb-c c1"></span>
+                <span class="orb-c c2"></span>
+                <span class="orb-c c3"></span>
+              </span>
+            </span>
+            <span class="orb-label" aria-hidden="true">
+              <span class="lbl li">Inspire</span>
+              <span class="lbl lo">Expire</span>
+            </span>
+          </button>
+        </div>
+      </div>
+      <p class="orb-hint"><i></i><span id="orbHint">Um minuto para si · toque para pausar</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== QUANDO PROCURAR AJUDA ===== -->
+<section class="quando" id="quando">
+  <div class="wrap">
+    <div class="quando-head rv">
+      <p class="eyebrow">Quando procurar</p>
+      <h2>Nem sempre é fácil saber <em>por onde</em> começar.</h2>
+    </div>
+    <div class="phrases" id="phrases">
+      <p class="phrase">A cabeça não pára, mesmo quando o corpo já pede descanso.</p>
+      <p class="phrase">Tenho vontade de falar, mas não sei com quem.</p>
+      <p class="phrase">Algo mudou na minha vida e ainda estou a tentar perceber o quê.</p>
+      <p class="phrase">Já não me reconheço nos meus dias.</p>
+      <p class="phrase">As relações à minha volta pesam mais do que deviam.</p>
+      <p class="phrase">Não sei bem o que se passa. Só sei que não estou bem.</p>
+    </div>
+    <p class="quando-end rv">Se se reconhece em alguma destas frases, uma conversa pode ser um bom primeiro passo.</p>
+  </div>
+</section>
+
+<!-- ===== SOBRE ===== -->
+<section class="sobre" id="sobre">
+  <div class="wrap sobre-grid">
+    <div class="duo-photo rv">
+      <div class="pa"><img src="img/sage-sprig.jpg" alt="Ramo de salva sobre uma superfície clara" loading="lazy" width="1400" height="2100"></div>
+      <div class="pb"><span>Fotografia da Dra. Estefânia<br>a fornecer</span></div>
+    </div>
+    <div class="rv">
+      <p class="eyebrow">Sobre</p>
+      <h2>Dra. Estefânia <em>Marques</em></h2>
+      <p class="role">Psicóloga clínica</p>
+      <div class="body">
+        <p>Na consulta de psicologia clínica, o primeiro objetivo é criar um espaço onde possa pensar em voz alta, sem pressa e sem julgamentos.</p>
+        <p>O sigilo profissional é um princípio central deste trabalho, e cada acompanhamento é pensado a partir de quem chega, do seu ritmo e do que procura.</p>
+      </div>
+      <dl class="creds">
+        <div><dt>Cédula profissional</dt><dd><span class="tbc">a confirmar</span></dd></div>
+        <div><dt>Formação e percurso</dt><dd><span class="tbc">a confirmar</span></dd></div>
+        <div><dt>Abordagem terapêutica</dt><dd><span class="tbc">a confirmar</span></dd></div>
+      </dl>
+      <p class="note">Texto ilustrativo, a validar com a Dra. Estefânia Marques.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ÁREAS DE ACOMPANHAMENTO ===== -->
+<section class="areas" id="areas">
+  <div class="wrap">
+    <div class="areas-head rv">
+      <div>
+        <p class="eyebrow">Áreas de acompanhamento</p>
+        <h2>O que pode trazer <em>para a conversa.</em></h2>
+      </div>
+      <div class="areas-pic"><img src="img/room-bright.jpg" alt="Sala luminosa com cadeirão e jarra em tons neutros" loading="lazy" width="1400" height="2067"></div>
+    </div>
+
+    <article class="area rv">
+      <span class="n"><i></i>01</span>
+      <h3>Ansiedade e stress</h3>
+      <p>Espaço para compreender a tensão constante, a preocupação e o cansaço, e encontrar formas de lidar com eles.</p>
+    </article>
+    <article class="area rv">
+      <span class="n"><i></i>02</span>
+      <h3>Humor e motivação</h3>
+      <p>Para os dias em que tudo custa mais do que antes e a vontade parece ter ficado pelo caminho.</p>
+    </article>
+    <article class="area rv">
+      <span class="n"><i></i>03</span>
+      <h3>Relações e autoestima</h3>
+      <p>Família, casal, amizades e a relação que temos connosco próprios.</p>
+    </article>
+    <article class="area rv">
+      <span class="n"><i></i>04</span>
+      <h3>Transições e perdas</h3>
+      <p>Mudanças de vida, fins de ciclo, luto. Momentos em que é natural precisar de companhia para pensar.</p>
+    </article>
+    <p class="areas-note"><span class="tbc">a confirmar</span> Áreas ilustrativas. A adequação de cada acompanhamento depende sempre de avaliação pela psicóloga.</p>
+  </div>
+</section>
+
+<!-- ===== FAIXA DE IMAGEM ===== -->
+<section class="band" aria-label="Citação">
+  <div class="band-img" id="bandImg"><img src="img/sage-leaves.jpg" alt="Folhas de salva sobre uma superfície cinzenta clara" loading="lazy" width="1800" height="1200"></div>
+  <div class="band-quote rv"><p>Não é preciso ter tudo claro para começar. <em>Basta querer olhar com calma.</em></p></div>
+</section>
+
+<!-- ===== PRIMEIRA CONSULTA ===== -->
+<section class="consulta" id="consulta">
+  <div class="wrap">
+    <div class="consulta-head rv">
+      <p class="eyebrow">Primeira consulta</p>
+      <h2>Dois pontos de partida, <em>um espaço em comum.</em></h2>
+    </div>
+    <div class="consulta-grid">
+      <div class="duo-sticky">
+        <div class="duo" id="duo" data-step="1" role="img" aria-label="Dois círculos que se aproximam e se sobrepõem ao longo dos três passos">
+          <span class="c ca"></span>
+          <span class="c cb"></span>
+          <span class="t ta">Você</span>
+          <span class="t tb">A psicóloga</span>
+          <span class="t tm">espaço de trabalho</span>
+        </div>
+      </div>
+      <div class="steps" id="steps">
+        <div class="step on" data-step="1">
+          <p class="sn">01</p>
+          <h3>Marcar</h3>
+          <p>Entra em contacto pelo canal que preferir. Combinamos um dia e uma hora que façam sentido para si.</p>
+        </div>
+        <div class="step" data-step="2">
+          <p class="sn">02</p>
+          <h3>A primeira conversa</h3>
+          <p>Um primeiro encontro para conversar ao seu ritmo, explicar o que motivou o pedido de ajuda e perceber o que espera deste espaço.</p>
+        </div>
+        <div class="step" data-step="3">
+          <p class="sn">03</p>
+          <h3>Caminhar em conjunto</h3>
+          <p>Se fizer sentido para ambos, definimos juntos os objetivos e a forma de trabalhar. A frequência e a duração são combinadas caso a caso.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PERGUNTAS ===== -->
+<section class="faq" id="perguntas">
+  <div class="wrap faq-grid">
+    <div class="rv">
+      <p class="eyebrow">Perguntas frequentes</p>
+      <h2>O que costuma <em>perguntar-se.</em></h2>
+    </div>
+    <div class="rv">
+      <details open>
+        <summary>O que é a psicologia clínica?<span class="pm"></span></summary>
+        <p class="ans">É a área da psicologia dedicada a compreender e acompanhar o sofrimento psicológico e as dificuldades emocionais, através da conversa e de uma relação de confiança.</p>
+      </details>
+      <details>
+        <summary>Preciso de um diagnóstico para marcar?<span class="pm"></span></summary>
+        <p class="ans">Não. Pode procurar uma consulta simplesmente porque sente que precisa de falar com alguém. Na primeira conversa percebemos juntos o que faz sentido.</p>
+      </details>
+      <details>
+        <summary>O que dizemos fica confidencial?<span class="pm"></span></summary>
+        <p class="ans">O sigilo profissional é um princípio central da prática psicológica. Os limites e a forma como a informação é tratada são explicados na primeira consulta.</p>
+      </details>
+      <details>
+        <summary>Há consultas online?<span class="pm"></span></summary>
+        <p class="ans"><span class="tbc">a confirmar com a Dra. Estefânia</span></p>
+      </details>
+      <details>
+        <summary>Quanto custa e quanto dura uma consulta?<span class="pm"></span></summary>
+        <p class="ans"><span class="tbc">valores e duração a confirmar</span></p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACTO ===== -->
+<section class="contacto" id="contacto">
+  <div class="wrap contacto-grid">
+    <div class="rv">
+      <p class="eyebrow">Contacto</p>
+      <h2>Vamos começar por <em>uma conversa.</em></h2>
+      <p class="lead">Deixe os seus dados e a Dra. Estefânia entra em contacto para combinar um primeiro encontro.</p>
+      <dl class="details">
+        <div><dt>Telefone</dt><dd><span class="tbc">a confirmar</span></dd></div>
+        <div><dt>Email</dt><dd><span class="tbc">a confirmar</span></dd></div>
+        <div><dt>Morada</dt><dd><span class="tbc">a confirmar</span></dd></div>
+        <div><dt>Horário</dt><dd><span class="tbc">a confirmar</span></dd></div>
+      </dl>
+      <div class="duo-mini" aria-hidden="true">
+        <div class="pa"><img src="img/armchair-cream.jpg" alt="" loading="lazy" width="1400" height="1568"></div>
+        <div class="pb"></div>
+      </div>
+    </div>
+
+    <form class="form rv" id="demoForm" novalidate>
+      <h3>Pedir contacto</h3>
+      <div class="field"><input id="f-nome" name="nome" type="text" placeholder=" " autocomplete="name"><label for="f-nome">Nome</label></div>
+      <div class="field"><input id="f-cont" name="contacto" type="text" placeholder=" " autocomplete="off"><label for="f-cont">Telemóvel ou email</label></div>
+      <div class="field"><textarea id="f-msg" name="mensagem" placeholder=" "></textarea><label for="f-msg">Quer contar-nos algo? (opcional)</label></div>
+      <button class="btn" type="submit">Pedir contacto <span class="dot"></span></button>
+      <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
+      <p class="form-note">Demonstração: este formulário não envia nem guarda nenhum dado.</p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<!-- ===== RODAPÉ ===== -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <a class="brand" href="#inicio" aria-label="Início">
+        <svg viewBox="0 0 64 40" aria-hidden="true"><use href="#mark"/></svg>
+        <span class="brand-t"><b>Estefânia Marques</b><small>Psicologia clínica</small></span>
+      </a>
+      <nav class="foot-nav" aria-label="Rodapé">
+        <a href="#quando">Quando procurar</a><a href="#sobre">Sobre</a><a href="#areas">Áreas</a><a href="#consulta">Primeira consulta</a><a href="#perguntas">Perguntas</a><a href="#contacto">Contacto</a>
+      </nav>
+    </div>
+    <div class="foot-bottom">
+      <p><strong>Website de demonstração.</strong> Criado pela DD Digital para a Dra. Estefânia Marques. Textos, áreas de acompanhamento e restantes conteúdos são ilustrativos e não vinculativos; os campos "a confirmar" serão preenchidos com a informação real. O logótipo é provisório.</p>
+      <p>Fotografias: Unsplash (ilustrativas, não representam o espaço da Dra. Estefânia).</p>
+      <p>Em caso de urgência ou risco para a sua segurança, ligue 112 ou SNS 24 (808 24 24 24). Este website não substitui a avaliação por um profissional.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ===== arranque: sempre no topo ===== */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+
+(function () {
+  var root = document.documentElement;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
+
+  /* ----- preloader: duas esferas encontram-se, íris fecha, site abre ----- */
+  var pre = document.getElementById('pre');
+  function ready() { root.classList.add('ready'); }
+  if (root.classList.contains('has-pre')) {
+    setTimeout(function () { pre.classList.add('done'); setTimeout(ready, 450); }, 2100);
+    setTimeout(function () { root.classList.remove('has-pre'); }, 3500);
+  } else { ready(); }
+
+  /* ----- menu mobile ----- */
+  var menuBtn = document.getElementById('menuBtn');
+  var nav = document.getElementById('nav');
+  function setMenu(open) {
+    root.classList.toggle('menu-open', open);
+    menuBtn.setAttribute('aria-expanded', open);
+    menuBtn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+  }
+  menuBtn.addEventListener('click', function () { setMenu(!root.classList.contains('menu-open')); });
+  nav.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+
+  /* ----- revelações ao scroll ----- */
+  var rv = document.querySelectorAll('.rv');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+    rv.forEach(function (el) { io.observe(el); });
+  } else { rv.forEach(function (el) { el.classList.add('in'); }); }
+
+  /* ----- hero: orbe de respiração ----- */
+  var orb = document.getElementById('orb');
+  var orbHint = document.getElementById('orbHint');
+  orb.addEventListener('click', function () {
+    var p = orb.classList.toggle('paused');
+    orb.setAttribute('aria-pressed', p);
+    orbHint.textContent = p ? 'Em pausa · toque para retomar' : 'Um minuto para si · toque para pausar';
+  });
+  /* só rato: o orbe segue suavemente o cursor */
+  if (fine && !reduce) {
+    var drift = document.getElementById('orbDrift');
+    var hero = document.getElementById('inicio');
+    var tx = 0, ty = 0, cx = 0, cy = 0, run = false;
+    hero.addEventListener('pointermove', function (e) {
+      var r = hero.getBoundingClientRect();
+      tx = ((e.clientX - r.left) / r.width - .5) * 36;
+      ty = ((e.clientY - r.top) / r.height - .5) * 28;
+      if (!run) { run = true; requestAnimationFrame(loop); }
+    });
+    function loop() {
+      cx += (tx - cx) * .06; cy += (ty - cy) * .06;
+      drift.style.setProperty('--mx', cx.toFixed(2) + 'px');
+      drift.style.setProperty('--my', cy.toFixed(2) + 'px');
+      if (Math.abs(tx - cx) > .05 || Math.abs(ty - cy) > .05) requestAnimationFrame(loop); else run = false;
+    }
+  }
+
+  /* ----- frases "quando procurar": a mais próxima do centro ganha foco ----- */
+  var phrases = [].slice.call(document.querySelectorAll('.phrase'));
+  /* ----- faixa de imagem: parallax suave ----- */
+  var band = document.querySelector('.band');
+  var bandImg = document.getElementById('bandImg');
+  var header = document.getElementById('header');
+  var orbWrap = document.getElementById('orbWrap');
+
+  function onScroll() {
+    var vh = window.innerHeight;
+    header.classList.toggle('scrolled', window.scrollY > 30);
+    phrases.forEach(function (p) {
+      var r = p.getBoundingClientRect();
+      var d = Math.abs(r.top + r.height / 2 - vh * .5) / (vh * .5);
+      p.style.setProperty('--o', clamp(1.2 - d * 1.15, .2, 1).toFixed(3));
+    });
+    if (!reduce) {
+      var br = band.getBoundingClientRect();
+      if (br.bottom > 0 && br.top < vh) {
+        var pr = (vh - br.top) / (vh + br.height);
+        bandImg.style.transform = 'translate3d(0,' + ((pr - .5) * -9).toFixed(2) + '%,0)';
+      }
+      if (window.scrollY < vh) orbWrap.style.transform = 'translate3d(0,' + (window.scrollY * .12).toFixed(1) + 'px,0)';
+    }
+  }
+  var tick = false;
+  function req() { if (!tick) { tick = true; requestAnimationFrame(function () { tick = false; onScroll(); }); } }
+  window.addEventListener('scroll', req, { passive: true });
+  window.addEventListener('resize', req);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(req);
+  onScroll();
+
+  /* ----- primeira consulta: os círculos aproximam-se a cada passo ----- */
+  var duo = document.getElementById('duo');
+  var steps = [].slice.call(document.querySelectorAll('.step'));
+  if ('IntersectionObserver' in window) {
+    var so = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting) {
+          steps.forEach(function (s) { s.classList.toggle('on', s === e.target); });
+          duo.setAttribute('data-step', e.target.getAttribute('data-step'));
+        }
+      });
+    }, { rootMargin: '-42% 0px -42% 0px' });
+    steps.forEach(function (s) { so.observe(s); });
+  } else { steps.forEach(function (s) { s.classList.add('on'); }); }
+
+  /* ----- formulário de demonstração: não envia nada ----- */
+  var form = document.getElementById('demoForm');
+  var msg = document.getElementById('formMsg');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    msg.textContent = 'Obrigado! Isto é uma demonstração: nenhum dado foi enviado nem guardado.';
+    form.reset();
+  });
+})();
+</script>
+</body>
+</html>
