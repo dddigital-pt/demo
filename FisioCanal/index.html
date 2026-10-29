@@ -1,0 +1,988 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FisioCanal — Demonstração</title>
+<meta name="description" content="Demonstração de website para a FisioCanal: fisioterapia, psicologia, osteopatia, nutrição, enfermagem, terapia da fala e psicomotricidade. Saúde, sorriso, superação.">
+<meta name="theme-color" content="#34676A">
+<link rel="icon" type="image/png" href="img/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  /* marca o documento como "com JS" antes da primeira pintura (preloader e reveals só existem com JS) */
+  document.documentElement.classList.add('js');
+  if (/[?&]nopre/.test(location.search)) document.documentElement.classList.add('nopre');
+</script>
+<style>
+/* =====================================================================
+   FISIOCANAL — DEMONSTRAÇÃO · DD Digital
+   Conceito: a coluna vertebral do logótipo (nove círculos que atravessam o círculo da marca)
+   é o fio condutor. As 7 vértebras do meio = as 7 especialidades.
+   Hero: a coluna nasce torta, em "S" (Saúde, Sorriso, Superação), e alinha-se; o título estica
+   (eixo wdth da Archivo) à medida que a coluna endireita; legendas ligadas às vértebras por linhas finas.
+   Layout: hero com legendas → "S" em coluna → palco sticky em círculo (cada vértebra abre uma foto)
+   → alinhamento por passos (fio de prumo) → círculos-vértebra na horizontal → contacto.
+   ===================================================================== */
+
+/* ---------- 0. Tokens ---------- */
+:root{
+  --teal:#34676A;      /* cor do logótipo */
+  --ink:#14363A;       /* verde-petróleo profundo */
+  --ink-2:#0E2A2D;
+  --paper:#EEF4F2;
+  --mist:#DCE8E5;
+  --sea:#A9C9C6;
+  --sun:#F2C14E;       /* "sorriso": acento raro */
+  --muted:#4A6567;
+  --line:rgba(20,54,58,.16);
+
+  --f-display:'Archivo',system-ui,sans-serif;
+  --f-body:'Figtree',system-ui,sans-serif;
+
+  --bar-h:34px;
+  --head-h:68px;
+  --gut:clamp(20px,4.2vw,68px);
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+@media (max-width:700px){ :root{ --bar-h:30px; --head-h:60px; } }
+
+/* ---------- 1. Base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.6 var(--f-body);-webkit-font-smoothing:antialiased;overflow-x:clip}
+img,svg{display:block;max-width:100%}
+a{color:inherit}
+p{margin:0}
+h1,h2,h3{margin:0;font-family:var(--f-display);font-weight:700;line-height:.98;letter-spacing:-.02em}
+ul{margin:0;padding:0;list-style:none}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--sun);outline-offset:3px;border-radius:2px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+section[id],footer[id]{scroll-margin-top:calc(var(--bar-h) + var(--head-h))}
+
+.eyebrow{font:600 12px/1 var(--f-display);font-variation-settings:'wdth' 100;letter-spacing:.16em;text-transform:uppercase;color:var(--teal)}
+.on-dark .eyebrow{color:var(--sea)}
+
+/* botão: rectangular, com uma "vértebra" que desliza ao pousar */
+.btn{display:inline-flex;align-items:center;gap:.9em;padding:1em 1.5em;background:var(--ink);color:var(--paper);border:0;border-radius:2px;text-decoration:none;
+  font:600 13.5px/1 var(--f-display);font-variation-settings:'wdth' 105;letter-spacing:.09em;text-transform:uppercase;transition:background .3s,color .3s}
+.btn i{width:.75em;height:.75em;border-radius:50%;background:var(--sun);transition:transform .45s var(--ease)}
+.btn:hover{background:var(--teal)}
+.btn:hover i{transform:translateX(.5em) scale(1.25)}
+.btn--sun{background:var(--sun);color:var(--ink)}
+.btn--sun i{background:var(--ink)}
+.btn--sun:hover{background:#fff}
+.link{display:inline-flex;align-items:center;gap:.6em;font:600 13px/1 var(--f-display);font-variation-settings:'wdth' 100;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:.5em}
+.link:hover{color:var(--teal)}
+
+/* reveals ao scroll (só com JS) */
+.js [data-r]{opacity:0;transform:translateY(26px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--d,0s)}
+.js [data-r].in{opacity:1;transform:none}
+
+/* ---------- 2. Aviso de demonstração (faixa + selo) ---------- */
+.demo-bar{position:fixed;inset:0 0 auto 0;height:var(--bar-h);z-index:120;display:flex;align-items:center;gap:12px;padding:0 var(--gut);
+  background:var(--ink-2);color:var(--paper);font:500 12.5px/1 var(--f-body)}
+.demo-bar b{background:var(--sun);color:var(--ink);padding:5px 8px;border-radius:2px;font:700 10.5px/1 var(--f-display);letter-spacing:.16em}
+.demo-bar .short{display:none}
+@media (max-width:700px){ .demo-bar .long{display:none} .demo-bar .short{display:inline} }
+.demo-seal{position:fixed;left:18px;bottom:18px;z-index:110;display:flex;align-items:center;gap:9px;padding:9px 13px 9px 11px;background:var(--ink);color:var(--paper);border:1px solid rgba(255,255,255,.22);
+  font:600 11px/1 var(--f-display);font-variation-settings:'wdth' 100;letter-spacing:.14em;text-transform:uppercase;border-radius:2px;pointer-events:none}
+.demo-seal i{width:8px;height:8px;border-radius:50%;background:var(--sun)}
+@media (max-width:900px){ .demo-seal{display:none} }
+
+/* ---------- 3. Preloader: nove vértebras alinham-se e a cortina sobe ---------- */
+.pre{display:none;position:fixed;inset:0;z-index:300;place-items:center;background:var(--ink);clip-path:inset(0 0 0% 0);transition:clip-path .9s var(--ease)}
+.js .pre{display:grid}
+.nopre .pre{display:none}
+.pre.out{clip-path:inset(0 0 100% 0)}
+.pre-col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.pre-col i{display:block;width:var(--s);height:var(--s);border-radius:50%;background:var(--paper);transform:scale(0) translateX(var(--x));animation:preDot .7s var(--ease) forwards;animation-delay:calc(var(--n)*85ms)}
+.pre-col i:nth-child(5){background:var(--sun)}
+@keyframes preDot{to{transform:scale(1) translateX(0)}}
+
+/* ---------- 4. Cabeçalho ---------- */
+.head{position:fixed;top:var(--bar-h);inset-inline:0;height:var(--head-h);z-index:100;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 var(--gut);transition:background .35s,box-shadow .35s}
+.head.is-solid{background:rgba(238,244,242,.94);box-shadow:0 1px 0 var(--line);backdrop-filter:blur(8px)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand img{height:42px;width:auto}
+.brand span{font:700 17px/1 var(--f-display);font-variation-settings:'wdth' 108;letter-spacing:.08em;text-transform:uppercase}
+.nav{display:flex;align-items:center;gap:clamp(18px,2.4vw,38px)}
+.nav a:not(.btn){font:600 12.5px/1 var(--f-display);font-variation-settings:'wdth' 100;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;position:relative;padding:8px 0}
+.nav a:not(.btn)::after{content:'';position:absolute;left:50%;bottom:-2px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--sun);transform:scale(0);transition:transform .35s var(--ease)}
+.nav a:not(.btn):hover::after{transform:scale(1)}
+.nav .btn{padding:.85em 1.2em}
+.burger{display:none;width:44px;height:44px;border:0;background:none;position:relative}
+.burger i{position:absolute;left:11px;right:11px;height:2px;background:var(--ink);transition:transform .35s var(--ease),opacity .2s}
+.burger i:nth-child(1){top:16px}.burger i:nth-child(2){top:21px}.burger i:nth-child(3){top:26px}
+.menu-open .burger i:nth-child(1){transform:translateY(5px) rotate(45deg)}
+.menu-open .burger i:nth-child(2){opacity:0}
+.menu-open .burger i:nth-child(3){transform:translateY(-5px) rotate(-45deg)}
+@media (max-width:900px){
+  .burger{display:block}
+  .nav{position:fixed;inset:calc(var(--bar-h) + var(--head-h)) 0 0 0;flex-direction:column;align-items:flex-start;justify-content:center;gap:22px;padding:0 var(--gut) 8vh;background:var(--ink);color:var(--paper);
+    clip-path:inset(0 0 100% 0);transition:clip-path .6s var(--ease);visibility:hidden}
+  .menu-open .nav{clip-path:inset(0 0 0% 0);visibility:visible}
+  .nav a:not(.btn){font-size:clamp(28px,8vw,40px);letter-spacing:.02em;text-transform:none;font-weight:700;font-variation-settings:'wdth' 110}
+  .nav .btn{background:var(--sun);color:var(--ink);margin-top:10px}
+  .nav .btn i{background:var(--ink)}
+}
+
+/* ---------- 5. Barra lateral: coluna de progresso (só ecrãs largos) ---------- */
+.rail{position:fixed;right:clamp(12px,1.6vw,26px);top:50%;transform:translateY(-50%);z-index:80;display:none;flex-direction:column;gap:16px}
+@media (min-width:1100px){ .rail{display:flex} }
+.rail a{position:relative;display:block;width:9px;height:9px;border-radius:50%;background:var(--teal);opacity:.35;transition:transform .4s var(--ease),opacity .3s,background .3s}
+.rail a:hover{opacity:.8}
+.rail a.on{opacity:1;transform:scale(1.7);background:var(--sun);box-shadow:0 0 0 1.5px var(--ink)}
+.rail a span{position:absolute;right:20px;top:50%;transform:translateY(-50%) scale(.6);transform-origin:right;white-space:nowrap;opacity:0;pointer-events:none;background:var(--ink);color:var(--paper);padding:6px 9px;border-radius:2px;font:600 11px/1 var(--f-display);letter-spacing:.1em;text-transform:uppercase;transition:opacity .25s,transform .25s}
+.rail a:hover span{opacity:1;transform:translateY(-50%) scale(1)}
+
+/* ---------- 6. Hero ---------- */
+.hero{position:relative;min-height:100svh;display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);align-items:center;gap:clamp(12px,3vw,56px);
+  padding:calc(var(--bar-h) + var(--head-h) + 14px) var(--gut) 36px;overflow:clip}
+.hero-copy{position:relative;z-index:2}
+.hero-copy .eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:clamp(18px,3vh,34px)}
+.hero-copy .eyebrow i{width:9px;height:9px;border-radius:50%;background:var(--sun);box-shadow:0 0 0 1.5px var(--ink)}
+.hero h1{font-size:clamp(2.7rem,5.6vw,6rem);font-weight:700;font-variation-settings:'wdth' var(--wd,125);letter-spacing:-.025em;line-height:.98}
+.js .hero h1{--wd:62}
+.hero h1 span{display:block;white-space:nowrap}
+.hero h1 em{font-style:normal;color:var(--teal)}
+.hero h1 b{color:var(--sun);font-weight:inherit;-webkit-text-stroke:0}
+.hero-lede{max-width:34ch;margin-top:clamp(20px,3.4vh,34px);font-size:clamp(16px,1.25vw,19px);color:var(--muted)}
+.hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:16px 26px;margin-top:clamp(24px,4vh,42px)}
+.hero-ers{margin-top:clamp(22px,4vh,44px);display:flex;align-items:center;gap:10px;font:500 13px/1.3 var(--f-body);color:var(--muted)}
+.hero-ers b{font:700 12px/1 var(--f-display);letter-spacing:.12em;color:var(--ink);border:1px solid var(--ink);padding:5px 8px;border-radius:2px}
+
+/* palco: o símbolo + as legendas das 7 especialidades */
+.stage{position:relative;container-type:inline-size;justify-self:end;width:min(100%,calc((100svh - var(--bar-h) - var(--head-h) - 70px) * 1140 / 1060));touch-action:manipulation}
+.mark{width:100%;height:auto;overflow:visible;cursor:pointer}
+.mark .disc{fill:var(--teal)}
+.mark .fc{fill:none;stroke:#fff;stroke-width:13}
+.mark .v circle{fill:var(--teal);transition:fill .35s,transform .45s var(--ease);transform-box:fill-box;transform-origin:center}
+.mark .v.w circle{fill:#fff}
+.mark .v.on circle{fill:var(--sun);transform:scale(1.16)}
+.mark .lead{stroke:currentColor;stroke-width:1.6;stroke-opacity:.5;transition:stroke-opacity .3s,stroke-width .3s}
+.mark .lead.on{stroke-opacity:1;stroke-width:3}
+.mark .lead-in{color:#fff}
+.mark .lead-out{color:var(--teal)}
+.labels{position:absolute;inset:0;pointer-events:none}
+.lab{position:absolute;left:calc((950 - 150) / 1140 * 100%);top:calc(var(--y) / 1060 * 100%);transform:translateY(-50%);pointer-events:auto;display:flex;align-items:baseline;gap:.7em;text-decoration:none;white-space:nowrap;
+  font:600 clamp(11px,2.35cqw,19px)/1 var(--f-display);font-variation-settings:'wdth' 82;letter-spacing:.07em;text-transform:uppercase;color:var(--ink);transition:color .3s,font-variation-settings .45s var(--ease),transform .45s var(--ease)}
+.lab:nth-child(even){color:#74898A}
+.lab small{font:600 .56em/1 var(--f-display);letter-spacing:.14em;color:var(--teal)}
+.lab.on,.lab:hover{color:var(--ink);font-variation-settings:'wdth' 118;transform:translate(8px,-50%)}
+.lab.on small,.lab:hover small{color:var(--ink);background:var(--sun);padding:.35em .5em;border-radius:2px}
+.stage-hint{margin-top:10px;font:500 12px/1 var(--f-body);color:var(--muted);text-align:center;letter-spacing:.02em}
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;gap:6px;padding-bottom:28px}
+  .hero-copy{display:contents}
+  .hero .eyebrow{order:1;margin-bottom:12px}
+  .hero h1{order:2}
+  .stage{order:3}
+  .hero-lede{order:4}
+  .hero-cta{order:5}
+  .hero-ers{order:6}
+  .hero h1{font-size:clamp(2.5rem,12.4vw,4.4rem)}
+  .hero-lede{max-width:36ch}
+  .stage{justify-self:center;width:min(100%,520px);margin-top:10px}
+  .labels{position:static;display:grid;grid-template-columns:1fr 1fr;gap:2px 14px;margin-top:6px;pointer-events:auto}
+  .lab{position:static;transform:none;font-size:13px;padding:11px 0;border-top:1px solid var(--line);gap:.8em}
+  .lab:nth-child(even){color:var(--ink)}
+  .lab.on,.lab:hover{transform:none;font-variation-settings:'wdth' 82}
+  .mark .lead-in,.mark .lead-out{display:none}
+  .stage-hint{display:none}
+}
+
+/* ---------- 7. "Saúde · Sorriso · Superação": a coluna em S ---------- */
+.tres{position:relative;background:var(--ink);color:var(--paper);padding:clamp(90px,16vh,170px) var(--gut) clamp(90px,14vh,150px);overflow:clip}
+.tres-head{position:relative;z-index:2;max-width:46ch}
+.tres-head h2{font-size:clamp(1.8rem,3.2vw,3rem);font-variation-settings:'wdth' 100;margin-top:18px;font-weight:600;line-height:1.08}
+.s-spine{position:absolute;inset:0;pointer-events:none;z-index:0}
+.s-spine i{position:absolute;left:var(--sx,50%);top:0;width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);border-radius:50%;background:var(--sea);opacity:.16;transition:opacity .6s,background .6s;will-change:transform}
+.s-spine i.lit{background:var(--sun);opacity:.92}
+@media (max-width:900px){ .s-spine i.lit{opacity:.7} }
+.s-row{position:relative;z-index:1;padding-block:clamp(26px,6vh,64px)}
+.s-n{display:block;font:600 12px/1 var(--f-display);letter-spacing:.18em;color:var(--sea);margin-bottom:12px}
+.s-word{font-size:clamp(3.1rem,13.2vw,13rem);line-height:.9;font-weight:800;letter-spacing:-.035em;font-variation-settings:'wdth' var(--wd,100),'wght' var(--wg,640);color:var(--paper)}
+.s-word i{font-style:normal;color:var(--sun)}
+.s-p{margin:clamp(14px,2.4vh,24px) 0 0 auto;max-width:31ch;color:#C7DAD7;font-size:clamp(16px,1.2vw,18px)}
+.s-row:nth-of-type(odd) .s-p{margin-left:0}
+.tres-end{position:relative;z-index:1;margin-top:clamp(40px,10vh,110px);display:flex;justify-content:flex-end}
+.tres-end p{text-wrap:balance;max-width:36ch;font:500 clamp(1.1rem,1.6vw,1.45rem)/1.35 var(--f-display);font-variation-settings:'wdth' 100;color:var(--sea)}
+
+/* ---------- 8. Especialidades: palco sticky com círculo-janela ---------- */
+.esp-sec{position:relative;padding:clamp(80px,14vh,150px) var(--gut) clamp(60px,10vh,110px);background:var(--paper)}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:var(--gut);align-items:end;margin-bottom:clamp(36px,7vh,80px)}
+.sec-head h2{font-size:clamp(2.2rem,5vw,5rem);font-variation-settings:'wdth' 112;font-weight:700;margin-top:16px}
+.sec-head p{color:var(--muted);max-width:40ch;justify-self:end}
+.esp-wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:var(--gut);align-items:start}
+.esp-stage{position:sticky;top:calc(var(--bar-h) + var(--head-h) + 8px);height:calc(100svh - var(--bar-h) - var(--head-h) - 28px);display:grid;grid-template-rows:minmax(0,1fr);place-items:center}
+.esp-fig{position:relative;height:100%;aspect-ratio:790 / 1060;max-width:100%}
+.esp-disc{position:absolute;left:2.66%;top:14.62%;width:92.41%;height:68.87%;border-radius:50%;overflow:hidden;background:var(--teal);isolation:isolate}
+.esp-disc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:circle(0% at var(--ox,50%) var(--oy,50%));transition:clip-path 1.1s var(--ease)}
+.esp-disc img.on{clip-path:circle(150% at var(--ox,50%) var(--oy,50%))}
+.esp-disc::after,.pq-c::after{content:'';position:absolute;inset:0;background:var(--teal);mix-blend-mode:soft-light;opacity:.5;pointer-events:none;z-index:50}
+.esp-dots{position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:3}
+.esp-dots .v circle{fill:var(--teal);transition:fill .4s,transform .5s var(--ease);transform-box:fill-box;transform-origin:center}
+.esp-dots .v.w circle{fill:#fff}
+.esp-dots .v{transition:transform 1s var(--ease)}
+.esp-dots .v.on circle{fill:var(--sun);transform:scale(1.22)}
+.esp-dots text{font:700 30px var(--f-display);fill:var(--ink);text-anchor:middle;dominant-baseline:central;opacity:0;transition:opacity .4s}
+.esp-dots .v.on text{opacity:1}
+.esp-list{display:flex;flex-direction:column}
+.esp{position:relative;min-height:62svh;display:flex;flex-direction:column;justify-content:center;padding-block:clamp(26px,6svh,60px);border-top:1px solid var(--line);scroll-margin-top:calc(var(--bar-h) + var(--head-h) + 8svh)}
+.esp:last-child{border-bottom:1px solid var(--line)}
+.esp-n{font:600 12px/1 var(--f-display);letter-spacing:.18em;color:var(--teal);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.esp-n::before{content:'';width:10px;height:10px;border-radius:50%;background:var(--teal);transition:background .4s,transform .5s var(--ease)}
+.esp.on .esp-n::before{background:var(--sun);box-shadow:0 0 0 1.5px var(--ink);transform:scale(1.3)}
+.esp-name{font-size:clamp(2rem,3.6vw,3.5rem);font-weight:700;font-variation-settings:'wdth' 72;color:#6C8587;transition:font-variation-settings .8s var(--ease),color .6s}
+.esp.on .esp-name{font-variation-settings:'wdth' 125;color:var(--ink)}
+.esp-txt{margin-top:20px;max-width:44ch;color:var(--muted)}
+.esp ul{margin-top:22px;max-width:44ch}
+.esp li{display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:15.5px}
+.esp li::before{content:'';flex:none;width:6px;height:6px;border-radius:50%;background:var(--teal)}
+.esp-ex{margin-top:18px;font:600 11px/1 var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--teal)}
+.esp .link{margin-top:26px;align-self:flex-start}
+.esp-m{display:none}
+.esp-note{margin-top:28px;font-size:13.5px;color:var(--muted);max-width:72ch}
+@media (max-width:900px){
+  .sec-head{grid-template-columns:1fr;gap:16px}
+  .sec-head p{justify-self:start}
+  .esp-wrap{grid-template-columns:1fr}
+  .esp-stage{display:none}
+  .esp{min-height:0;padding-block:34px 40px}
+  .esp-name{font-variation-settings:'wdth' 105;color:var(--ink)}
+  .esp.on .esp-name{font-variation-settings:'wdth' 105}
+  .esp-m{display:block;position:relative;width:min(64vw,300px);aspect-ratio:1;border-radius:50%;object-fit:cover;margin:0 0 24px;overflow:hidden}
+}
+
+/* ---------- 9. Abordagem: alinhar passo a passo (fio de prumo) ---------- */
+.abo{position:relative;background:var(--mist);padding:clamp(80px,14vh,150px) var(--gut)}
+.abo-wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:var(--gut);align-items:start}
+.al-stage{position:sticky;top:calc(var(--bar-h) + var(--head-h) + 8px);height:calc(100svh - var(--bar-h) - var(--head-h) - 28px);display:grid;grid-template-rows:minmax(0,1fr);place-items:center;--k:1}
+.al-stage[data-step="1"]{--k:.58}
+.al-stage[data-step="2"]{--k:.24}
+.al-stage[data-step="3"]{--k:0}
+.al-svg{height:100%;width:auto;max-width:100%;min-height:0;overflow:visible}
+.al-svg .plumb{stroke:var(--teal);stroke-width:1.5;stroke-dasharray:6 10;opacity:.7}
+.al-svg .plumb-s{stroke:var(--ink);stroke-width:3;opacity:0;transition:opacity .8s}
+.al-stage[data-step="3"] .plumb-s{opacity:1}
+.al-svg .d{transform:translateX(calc(var(--o) * var(--k) * 1px));transition:transform 1.1s var(--ease);transition-delay:calc(var(--i) * 55ms)}
+.al-svg .d circle{fill:var(--teal)}
+.al-svg .d.core circle{fill:var(--sun);stroke:var(--ink);stroke-width:3}
+.steps{display:flex;flex-direction:column}
+.step{min-height:56svh;display:flex;flex-direction:column;justify-content:center;padding-block:clamp(24px,5svh,50px);opacity:.34;transition:opacity .6s;border-top:1px solid var(--line)}
+.step:last-child{border-bottom:1px solid var(--line)}
+.step.on{opacity:1}
+.step-n{font:800 clamp(3rem,6vw,5.6rem)/.9 var(--f-display);font-variation-settings:'wdth' 125;color:var(--teal);letter-spacing:-.03em}
+.step h3{font-size:clamp(1.5rem,2.4vw,2.2rem);font-variation-settings:'wdth' 100;margin-top:14px;font-weight:700}
+.step p{margin-top:12px;max-width:42ch;color:var(--muted)}
+@media (max-width:900px){
+  .abo-wrap{grid-template-columns:1fr}
+  .al-stage{top:calc(var(--bar-h) + var(--head-h));height:27svh;background:var(--mist);z-index:5;border-bottom:1px solid var(--line)}
+  .step{min-height:46svh}
+}
+
+/* ---------- 10. Para quem: coluna deitada ---------- */
+.pq{position:relative;background:var(--paper);padding:clamp(80px,13vh,140px) var(--gut) clamp(70px,11vh,120px)}
+.pq-row{display:grid;grid-template-columns:repeat(5,1fr);margin-top:clamp(34px,7vh,74px)}
+.pq-item{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center}
+.pq-cw{position:relative;width:100%;aspect-ratio:1;display:grid;place-items:center}
+.pq-cw::before{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:var(--ink);opacity:.35}
+.pq-item:first-child .pq-cw::before{left:50%}
+.pq-item:last-child .pq-cw::before{right:50%}
+.pq-c{position:relative;width:calc(var(--k) * 86%);aspect-ratio:1;border-radius:50%;overflow:hidden;background:var(--teal);transition:transform .6s var(--ease)}
+.pq-c img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1s var(--ease)}
+.pq-c::after{transition:opacity .6s}
+.pq-item:hover .pq-c{transform:scale(1.07)}
+.pq-item:hover .pq-c img{transform:scale(1.06)}
+.pq-item:hover .pq-c::after{opacity:0}
+.pq-item h3{margin-top:18px;font-size:clamp(1.05rem,1.5vw,1.4rem);font-variation-settings:'wdth' 100;font-weight:700}
+.pq-item p{margin-top:8px;font-size:15px;color:var(--muted);max-width:24ch}
+.pq-note{margin-top:clamp(30px,6vh,60px);font-size:13.5px;color:var(--muted);max-width:70ch}
+@media (max-width:900px){
+  .pq-row{grid-template-columns:repeat(2,1fr);gap:34px 14px}
+  .pq-cw::before{display:none}
+  .pq-c{width:92%}
+  .pq-item:last-child{grid-column:1 / -1}
+  .pq-item:last-child .pq-c{width:46%}
+  .pq-item:last-child .pq-cw{aspect-ratio:2 / 1.02}
+}
+
+/* ---------- 11. Marcar / contacto ---------- */
+.cta{position:relative;background:var(--ink);color:var(--paper);padding:clamp(80px,14vh,150px) var(--gut) clamp(70px,11vh,120px);overflow:clip}
+.cta-mark{position:absolute;right:-9vw;bottom:-14vw;width:min(62vw,820px);opacity:.07;pointer-events:none}
+.cta-grid{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:clamp(30px,6vw,110px);align-items:start}
+.cta h2{font-size:clamp(2.4rem,5.6vw,5.8rem);font-variation-settings:'wdth' 112;margin-top:18px;line-height:.96}
+.cta h2 em{font-style:normal;color:var(--sun)}
+.cta-p{margin-top:24px;max-width:38ch;color:#C7DAD7}
+.info{margin-top:clamp(28px,5vh,52px);display:grid;grid-template-columns:1fr 1fr;gap:0 24px;max-width:560px}
+.info div{padding:14px 0;border-top:1px solid rgba(255,255,255,.18)}
+.info dt{font:600 11px/1 var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--sea);margin-bottom:8px}
+.info dd{margin:0;font-size:15px}
+.tbc{display:inline-block;padding:3px 9px;border:1px dashed rgba(242,193,78,.8);color:var(--sun);font-size:12.5px;border-radius:2px;letter-spacing:.01em}
+.info .ers{color:var(--paper);font:700 15px var(--f-display);letter-spacing:.1em}
+.form{display:grid;gap:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16);padding:clamp(22px,3vw,40px);border-radius:2px}
+.fld{position:relative}
+.fld input,.fld select,.fld textarea{width:100%;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.35);color:var(--paper);font:400 16px/1.4 var(--f-body);padding:22px 0 9px;border-radius:0;outline:0;transition:border-color .3s}
+.fld select{appearance:none;background:transparent}
+.fld select option{color:var(--ink)}
+.fld textarea{resize:vertical;min-height:84px}
+.fld label{position:absolute;left:0;top:22px;font-size:15px;color:var(--sea);pointer-events:none;transition:transform .3s var(--ease),font-size .3s,color .3s;transform-origin:left}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--sun)}
+.fld input:focus + label,.fld input:not(:placeholder-shown) + label,.fld textarea:focus + label,.fld textarea:not(:placeholder-shown) + label,.fld select + label{transform:translateY(-20px) scale(.78);color:var(--sun)}
+.form .btn{justify-self:start;margin-top:6px}
+.form-note{min-height:1.4em;font-size:14px;color:var(--sun)}
+@media (max-width:900px){ .cta-grid{grid-template-columns:1fr} .info{grid-template-columns:1fr 1fr} }
+
+/* ---------- 12. Rodapé ---------- */
+.foot{background:var(--ink-2);color:#B8CCC9;padding:clamp(46px,8vh,80px) var(--gut) 96px}
+.foot-top{display:flex;flex-wrap:wrap;gap:26px 60px;align-items:center;justify-content:space-between;padding-bottom:30px;border-bottom:1px solid rgba(255,255,255,.14)}
+.foot-brand{display:flex;align-items:center;gap:14px;color:var(--paper)}
+.foot-brand img{height:52px;width:auto}
+.foot-brand span{font:700 20px/1 var(--f-display);font-variation-settings:'wdth' 108;letter-spacing:.08em;text-transform:uppercase}
+.foot-tag{font:600 13px/1 var(--f-display);letter-spacing:.2em;text-transform:uppercase;color:var(--sun)}
+.foot-demo{margin-top:26px;max-width:92ch;font-size:13.5px;line-height:1.65}
+.foot-demo b{color:var(--paper)}
+.foot-ers{margin-top:14px;font-size:13px}
+
+/* ---------- 13. Cursor: rasto de vértebras (só rato) ---------- */
+.trail{display:none}
+@media (hover:hover) and (pointer:fine){
+  .trail{display:block;position:fixed;left:0;top:0;z-index:250;pointer-events:none}
+  .trail i{position:absolute;left:0;top:0;width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);border-radius:50%;background:var(--sun);box-shadow:0 0 0 1px var(--ink);opacity:0;transition:opacity .3s;will-change:transform}
+  .trail.on i{opacity:.95}
+}
+
+/* ---------- 14. Movimento reduzido ---------- */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .pre{display:none !important}
+  .js [data-r]{opacity:1;transform:none;transition:none}
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  .trail{display:none !important}
+}
+</style>
+</head>
+<body>
+
+<!-- Aviso de demonstração (faixa fixa + selo + nota no rodapé) -->
+<div class="demo-bar" role="note">
+  <b>DEMO</b>
+  <span class="long">Website de demonstração criado pela DD Digital para a FisioCanal · conteúdo ilustrativo</span>
+  <span class="short">Demonstração · FisioCanal</span>
+</div>
+<div class="demo-seal" aria-hidden="true"><i></i>Versão de demonstração</div>
+
+<!-- Preloader -->
+<div class="pre" aria-hidden="true">
+  <div class="pre-col">
+    <i style="--s:22px;--n:0;--x:-40px"></i><i style="--s:26px;--n:1;--x:30px"></i><i style="--s:30px;--n:2;--x:-34px"></i><i style="--s:36px;--n:3;--x:28px"></i><i style="--s:42px;--n:4;--x:-24px"></i><i style="--s:36px;--n:5;--x:26px"></i><i style="--s:30px;--n:6;--x:-30px"></i><i style="--s:26px;--n:7;--x:34px"></i><i style="--s:22px;--n:8;--x:-36px"></i>
+  </div>
+</div>
+
+<!-- Cursor: rasto de vértebras -->
+<div class="trail" aria-hidden="true"></div>
+
+<!-- Cabeçalho -->
+<header class="head" id="cabecalho">
+  <a class="brand" href="#topo" aria-label="FisioCanal — início">
+    <img src="img/logo.png" alt="" width="32" height="42">
+    <span>FisioCanal</span>
+  </a>
+  <nav class="nav" id="menu" aria-label="Principal">
+    <a href="#especialidades">Especialidades</a>
+    <a href="#abordagem">Abordagem</a>
+    <a href="#para-quem">Para quem</a>
+    <a href="#marcar">Contacto</a>
+    <a class="btn" href="#marcar">Marcar avaliação <i></i></a>
+  </nav>
+  <button class="burger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
+</header>
+
+<!-- Coluna de progresso -->
+<nav class="rail" aria-label="Secções da página">
+  <a href="#topo" data-s="topo" aria-label="Início"><span>Início</span></a>
+  <a href="#saude-sorriso-superacao" data-s="saude-sorriso-superacao" aria-label="Saúde, sorriso, superação"><span>Os três S</span></a>
+  <a href="#especialidades" data-s="especialidades" aria-label="Especialidades"><span>Especialidades</span></a>
+  <a href="#abordagem" data-s="abordagem" aria-label="Abordagem"><span>Abordagem</span></a>
+  <a href="#para-quem" data-s="para-quem" aria-label="Para quem"><span>Para quem</span></a>
+  <a href="#marcar" data-s="marcar" aria-label="Contacto"><span>Contacto</span></a>
+</nav>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="topo">
+  <div class="hero-copy">
+    <p class="eyebrow"><i></i>Clínica multidisciplinar</p>
+    <h1><span>Saúde<b>.</b></span><span>Sorriso<b>.</b></span><span><em>Superação</em><b>.</b></span></h1>
+    <p class="hero-lede">Sete especialidades numa só equipa, para o acompanhar com atenção em cada etapa do seu bem-estar.</p>
+    <div class="hero-cta">
+      <a class="btn" href="#marcar">Marcar avaliação <i></i></a>
+      <a class="link" href="#especialidades">Conhecer as especialidades</a>
+    </div>
+    <p class="hero-ers"><b>ERS E180943</b>Registo na Entidade Reguladora da Saúde</p>
+  </div>
+
+  <div class="stage" id="stage">
+    <!-- Símbolo do cliente, recriado em SVG para a coluna se poder mover (o logótipo real está em img/logo.png) -->
+    <svg class="mark" id="mark" viewBox="150 0 1140 1060" role="img" aria-label="Símbolo da FisioCanal: um círculo com as letras FC e uma coluna de vértebras">
+      <defs>
+        <clipPath id="inC"><circle cx="536" cy="520" r="365"/></clipPath>
+        <clipPath id="outC"><path clip-rule="evenodd" d="M0 0H1400V1100H0Z M171 520a365 365 0 1 0 730 0a365 365 0 1 0 -730 0Z"/></clipPath>
+
+      </defs>
+      <circle class="disc" cx="536" cy="520" r="365"/>
+      <path class="fc" d="M232 450H390M238.5 602V523H347M569 450H491a73 73 0 0 0 0 146H569"/>
+      <g class="lead-in" clip-path="url(#inC)">
+          <line class="lead" data-i="1" x1="646" y1="148" x2="936" y2="148"/>
+          <line class="lead" data-i="2" x1="662" y1="262" x2="936" y2="262"/>
+          <line class="lead" data-i="3" x1="687" y1="388.5" x2="936" y2="388.5"/>
+          <line class="lead" data-i="4" x1="719" y1="517.5" x2="936" y2="517.5"/>
+          <line class="lead" data-i="5" x1="695" y1="653.5" x2="936" y2="653.5"/>
+          <line class="lead" data-i="6" x1="675" y1="776.5" x2="936" y2="776.5"/>
+          <line class="lead" data-i="7" x1="662" y1="898" x2="936" y2="898"/>
+      </g>
+      <g class="lead-out" clip-path="url(#outC)">
+          <line class="lead" data-i="1" x1="646" y1="148" x2="936" y2="148"/>
+          <line class="lead" data-i="2" x1="662" y1="262" x2="936" y2="262"/>
+          <line class="lead" data-i="3" x1="687" y1="388.5" x2="936" y2="388.5"/>
+          <line class="lead" data-i="4" x1="719" y1="517.5" x2="936" y2="517.5"/>
+          <line class="lead" data-i="5" x1="695" y1="653.5" x2="936" y2="653.5"/>
+          <line class="lead" data-i="6" x1="675" y1="776.5" x2="936" y2="776.5"/>
+          <line class="lead" data-i="7" x1="662" y1="898" x2="936" y2="898"/>
+      </g>
+      <g class="spine">
+        <g class="v" data-i="0"><circle cx="608" cy="36" r="26"/></g>
+        <g class="v" data-i="1"><circle cx="606" cy="148" r="32"/></g>
+        <g class="v w" data-i="2"><circle cx="616.5" cy="262" r="37.5"/></g>
+        <g class="v w" data-i="3"><circle cx="634.5" cy="388.5" r="44.5"/></g>
+        <g class="v w" data-i="4"><circle cx="660" cy="517.5" r="51"/></g>
+        <g class="v w" data-i="5"><circle cx="642.5" cy="653.5" r="44.5"/></g>
+        <g class="v w" data-i="6"><circle cx="630" cy="776.5" r="37"/></g>
+        <g class="v" data-i="7"><circle cx="622" cy="898" r="32"/></g>
+        <g class="v" data-i="8"><circle cx="639" cy="1003" r="26"/></g>
+      </g>
+    </svg>
+    <div class="labels">
+      <a class="lab" href="#esp-fisioterapia" data-i="1" style="--y:148"><small>01</small>Fisioterapia</a>
+      <a class="lab" href="#esp-psicologia" data-i="2" style="--y:262"><small>02</small>Psicologia</a>
+      <a class="lab" href="#esp-osteopatia" data-i="3" style="--y:388.5"><small>03</small>Osteopatia</a>
+      <a class="lab" href="#esp-nutricao" data-i="4" style="--y:517.5"><small>04</small>Nutrição</a>
+      <a class="lab" href="#esp-enfermagem" data-i="5" style="--y:653.5"><small>05</small>Enfermagem</a>
+      <a class="lab" href="#esp-terapia-da-fala" data-i="6" style="--y:776.5"><small>06</small>Terapia da Fala</a>
+      <a class="lab" href="#esp-psicomotricidade" data-i="7" style="--y:898"><small>07</small>Psicomotricidade</a>
+    </div>
+    <p class="stage-hint" id="hint">Mova o rato sobre a coluna, ou clique nela.</p>
+  </div>
+</section>
+
+<!-- ============ OS TRÊS S ============ -->
+<section class="tres on-dark" id="saude-sorriso-superacao" aria-labelledby="t-tres">
+  <div class="s-spine" id="sSpine" aria-hidden="true"></div>
+  <div class="tres-head" data-r>
+    <p class="eyebrow">O que nos move</p>
+    <h2 id="t-tres">Três palavras que orientam cada acompanhamento.</h2>
+  </div>
+
+  <div class="s-row">
+    <span class="s-n" data-r>01</span>
+    <h3 class="s-word" data-w>Saúde</h3>
+    <p class="s-p" data-r>Começamos por ouvir e avaliar. Cada plano parte da pessoa e do que é importante para ela, não de um protocolo igual para todos.</p>
+  </div>
+  <div class="s-row">
+    <span class="s-n" data-r>02</span>
+    <h3 class="s-word" data-w>Sorriso</h3>
+    <p class="s-p" data-r>Cuidar passa também por acolher. Um espaço onde se pergunta, se explica com calma e onde apetece voltar.</p>
+  </div>
+  <div class="s-row">
+    <span class="s-n" data-r>03</span>
+    <h3 class="s-word" data-w>Superação</h3>
+    <p class="s-p" data-r>Objetivos definidos com a pessoa e revistos ao longo do caminho, para ganhar confiança e autonomia a cada etapa.</p>
+  </div>
+  <div class="tres-end" data-r><p>Quando as três se juntam, a coluna alinha-se.</p></div>
+</section>
+
+<!-- ============ ESPECIALIDADES ============ -->
+<section class="esp-sec" id="especialidades" aria-labelledby="t-esp">
+  <div class="sec-head">
+    <div data-r>
+      <p class="eyebrow">Sete especialidades</p>
+      <h2 id="t-esp">Uma coluna, sete vértebras.</h2>
+    </div>
+    <p data-r>Cada vértebra é uma área de cuidado. Juntas, sustentam o mesmo objetivo: o seu bem-estar.</p>
+  </div>
+
+  <div class="esp-wrap">
+    <div class="esp-stage" aria-hidden="true">
+      <div class="esp-fig" id="espFig">
+        <div class="esp-disc">
+          <img src="img/fisioterapia-braco.jpg" alt="" data-n="1">
+          <img src="img/psicologia-sessao.jpg" alt="" data-n="2" loading="lazy">
+          <img src="img/osteopatia-ombro.jpg" alt="" data-n="3" loading="lazy">
+          <img src="img/nutricao-taca.jpg" alt="" data-n="4" loading="lazy">
+          <img src="img/enfermagem-crianca.jpg" alt="" data-n="5" loading="lazy">
+          <img src="img/terapia-fala-crianca.jpg" alt="" data-n="6" loading="lazy">
+          <img src="img/psicomotricidade-sombra.jpg" alt="" data-n="7" loading="lazy">
+        </div>
+        <svg class="esp-dots" viewBox="150 0 790 1060" id="espDots">
+          <g class="v" data-i="0"><circle cx="608" cy="36" r="26"/></g>
+          <g class="v" data-i="1"><circle cx="606" cy="148" r="32"/><text x="606" y="148">1</text></g>
+          <g class="v w" data-i="2"><circle cx="616.5" cy="262" r="37.5"/><text x="616.5" y="262">2</text></g>
+          <g class="v w" data-i="3"><circle cx="634.5" cy="388.5" r="44.5"/><text x="634.5" y="388.5">3</text></g>
+          <g class="v w" data-i="4"><circle cx="660" cy="517.5" r="51"/><text x="660" y="517.5">4</text></g>
+          <g class="v w" data-i="5"><circle cx="642.5" cy="653.5" r="44.5"/><text x="642.5" y="653.5">5</text></g>
+          <g class="v w" data-i="6"><circle cx="630" cy="776.5" r="37"/><text x="630" y="776.5">6</text></g>
+          <g class="v" data-i="7"><circle cx="622" cy="898" r="32"/><text x="622" y="898">7</text></g>
+          <g class="v" data-i="8"><circle cx="639" cy="1003" r="26"/></g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="esp-list">
+      <article class="esp" id="esp-fisioterapia" data-n="1">
+        <p class="esp-n">01 / 07</p>
+        <img class="esp-m" src="img/fisioterapia-braco.jpg" alt="Fisioterapeuta a avaliar o movimento do braço de uma pessoa deitada" loading="lazy">
+        <h3 class="esp-name">Fisioterapia</h3>
+        <p class="esp-txt">Avaliamos o movimento e a função do corpo e definimos, consigo, um plano de exercício e técnicas manuais com objetivos claros.</p>
+        <p class="esp-ex">Exemplos do que pode incluir</p>
+        <ul><li>Avaliação funcional</li><li>Exercício terapêutico</li><li>Acompanhamento da evolução</li></ul>
+        <a class="link" href="#marcar" data-esp="Fisioterapia">Pedir informações</a>
+      </article>
+      <article class="esp" id="esp-psicologia" data-n="2">
+        <p class="esp-n">02 / 07</p>
+        <img class="esp-m" src="img/psicologia-sessao.jpg" alt="Psicóloga a ouvir uma jovem durante uma consulta" loading="lazy">
+        <h3 class="esp-name">Psicologia</h3>
+        <p class="esp-txt">Um espaço de escuta, sem pressa, para compreender o que sente e encontrar ferramentas para o dia a dia.</p>
+        <p class="esp-ex">Exemplos do que pode incluir</p>
+        <ul><li>Consulta de avaliação</li><li>Acompanhamento individual</li><li>Orientação a pais e cuidadores</li></ul>
+        <a class="link" href="#marcar" data-esp="Psicologia">Pedir informações</a>
+      </article>
+      <article class="esp" id="esp-osteopatia" data-n="3">
+        <p class="esp-n">03 / 07</p>
+        <img class="esp-m" src="img/osteopatia-ombro.jpg" alt="Mãos a trabalhar o ombro de uma pessoa numa sessão de osteopatia" loading="lazy">
+        <h3 class="esp-name">Osteopatia</h3>
+        <p class="esp-txt">Uma abordagem manual que olha o corpo como um todo, a partir de uma avaliação individual.</p>
+        <p class="esp-ex">Exemplos do que pode incluir</p>
+        <ul><li>História clínica e avaliação</li><li>Técnicas manuais</li><li>Recomendações para o dia a dia</li></ul>
+        <a class="link" href="#marcar" data-esp="Osteopatia">Pedir informações</a>
+      </article>
+      <article class="esp" id="esp-nutricao" data-n="4">
+        <p class="esp-n">04 / 07</p>
+        <img class="esp-m" src="img/nutricao-taca.jpg" alt="Taça colorida com legumes, grão e abacate sobre madeira" loading="lazy">
+        <h3 class="esp-name">Nutrição</h3>
+        <p class="esp-txt">Orientação alimentar ajustada à sua rotina, aos seus gostos e aos seus objetivos, com foco em hábitos que se mantêm.</p>
+        <p class="esp-ex">Exemplos do que pode incluir</p>
+        <ul><li>Avaliação alimentar</li><li>Plano ajustado à rotina</li><li>Consultas de acompanhamento</li></ul>
+        <a class="link" href="#marcar" data-esp="Nutrição">Pedir informações</a>
+      </article>
+      <article class="esp" id="esp-enfermagem" data-n="5">
+        <p class="esp-n">05 / 07</p>
+        <img class="esp-m" src="img/enfermagem-crianca.jpg" alt="Enfermeira a confortar uma criança sentada num sofá" loading="lazy">
+        <h3 class="esp-name">Enfermagem</h3>
+        <p class="esp-txt">Cuidados de enfermagem e apoio no acompanhamento de tratamentos, de acordo com a indicação clínica.</p>
+        <p class="esp-ex">Exemplos do que pode incluir</p>
+        <ul><li>Tratamentos e pensos</li><li>Ensino e vigilância</li><li>Articulação com a equipa</li></ul>
+        <a class="link" href="#marcar" data-esp="Enfermagem">Pedir informações</a>
+      </article>
+      <article class="esp" id="esp-terapia-da-fala" data-n="6">
+        <p class="esp-n">06 / 07</p>
+        <img class="esp-m" src="img/terapia-fala-crianca.jpg" alt="Terapeuta a mostrar números com os dedos a uma criança" loading="lazy">
+        <h3 class="esp-name">Terapia da Fala</h3>
+        <p class="esp-txt">Avaliação e acompanhamento da comunicação, da linguagem, da voz e da deglutição, em várias idades.</p>
+        <p class="esp-ex">Exemplos do que pode incluir</p>
+        <ul><li>Avaliação da fala e da linguagem</li><li>Exercícios orientados</li><li>Orientação a famílias e escolas</li></ul>
+        <a class="link" href="#marcar" data-esp="Terapia da Fala">Pedir informações</a>
+      </article>
+      <article class="esp" id="esp-psicomotricidade" data-n="7">
+        <p class="esp-n">07 / 07</p>
+        <img class="esp-m" src="img/psicomotricidade-sombra.jpg" alt="Criança a dançar junto a uma parede, com a sombra projetada" loading="lazy">
+        <h3 class="esp-name">Psicomotricidade</h3>
+        <p class="esp-txt">Trabalhar o corpo, o gesto e a relação através do movimento e do jogo, ao ritmo de cada pessoa.</p>
+        <p class="esp-ex">Exemplos do que pode incluir</p>
+        <ul><li>Observação psicomotora</li><li>Sessões individuais ou em grupo</li><li>Atividades lúdicas</li></ul>
+        <a class="link" href="#marcar" data-esp="Psicomotricidade">Pedir informações</a>
+      </article>
+    </div>
+  </div>
+  <p class="esp-note">Descrições ilustrativas. A adequação de cada acompanhamento depende sempre de avaliação por um profissional de saúde.</p>
+</section>
+
+<!-- ============ ABORDAGEM ============ -->
+<section class="abo" id="abordagem" aria-labelledby="t-abo">
+  <div class="sec-head">
+    <div data-r>
+      <p class="eyebrow">Como funciona</p>
+      <h2 id="t-abo">Alinhar, passo a passo.</h2>
+    </div>
+    <p data-r>Um percurso simples, do primeiro contacto à autonomia. As vértebras vão encontrando o seu eixo, uma a uma.</p>
+  </div>
+  <div class="abo-wrap">
+    <div class="al-stage" id="alStage" data-step="0" aria-hidden="true">
+      <svg class="al-svg" viewBox="0 0 420 1060">
+        <line class="plumb" x1="210" y1="0" x2="210" y2="1060"/>
+        <line class="plumb-s" x1="210" y1="0" x2="210" y2="1060"/>
+        <g class="d" style="--o:-150;--i:0"><circle cx="210" cy="36" r="22"/></g>
+        <g class="d" style="--o:110;--i:1"><circle cx="210" cy="148" r="27"/></g>
+        <g class="d" style="--o:-170;--i:2"><circle cx="210" cy="262" r="32"/></g>
+        <g class="d" style="--o:120;--i:3"><circle cx="210" cy="388.5" r="38"/></g>
+        <g class="d core" style="--o:-110;--i:4"><circle cx="210" cy="517.5" r="44"/></g>
+        <g class="d" style="--o:160;--i:5"><circle cx="210" cy="653.5" r="38"/></g>
+        <g class="d" style="--o:-130;--i:6"><circle cx="210" cy="776.5" r="32"/></g>
+        <g class="d" style="--o:100;--i:7"><circle cx="210" cy="898" r="27"/></g>
+        <g class="d" style="--o:-70;--i:8"><circle cx="210" cy="1003" r="22"/></g>
+      </svg>
+    </div>
+    <div class="steps">
+      <article class="step on" data-step="0">
+        <span class="step-n">01</span>
+        <h3>Escuta e avaliação</h3>
+        <p>Conversamos, avaliamos e percebemos o que se passa e o que é importante para si.</p>
+      </article>
+      <article class="step" data-step="1">
+        <span class="step-n">02</span>
+        <h3>Plano à medida</h3>
+        <p>Definimos objetivos realistas e escolhemos, em conjunto, as especialidades que fazem sentido no seu caso.</p>
+      </article>
+      <article class="step" data-step="2">
+        <span class="step-n">03</span>
+        <h3>Acompanhamento em equipa</h3>
+        <p>As sessões decorrem com atenção ao conjunto. Os profissionais articulam-se para que o caminho seja coerente.</p>
+      </article>
+      <article class="step" data-step="3">
+        <span class="step-n">04</span>
+        <h3>Autonomia</h3>
+        <p>Revemos os objetivos, ajustamos o plano e preparamos a continuidade no seu dia a dia, fora da clínica.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PARA QUEM ============ -->
+<section class="pq" id="para-quem" aria-labelledby="t-pq">
+  <div class="sec-head">
+    <div data-r>
+      <p class="eyebrow">Para quem</p>
+      <h2 id="t-pq">Cada fase da vida tem o seu movimento.</h2>
+    </div>
+    <p data-r>Uma coluna deitada: cinco vértebras, cinco formas de começar.</p>
+  </div>
+  <div class="pq-row">
+    <div class="pq-item" style="--k:.72" data-r>
+      <div class="pq-cw"><div class="pq-c"><img src="img/publico-criancas.jpg" alt="Criança a dançar num caminho de erva seca" loading="lazy"></div></div>
+      <h3>Crianças e jovens</h3><p>Acompanhamento ao ritmo de cada idade.</p>
+    </div>
+    <div class="pq-item" style="--k:.88" data-r data-d>
+      <div class="pq-cw"><div class="pq-c"><img src="img/publico-adultos-ativos.jpg" alt="Pessoa a alongar num jardim" loading="lazy"></div></div>
+      <h3>Adultos ativos</h3><p>Para manter o corpo e a mente em equilíbrio.</p>
+    </div>
+    <div class="pq-item" style="--k:1" data-r>
+      <div class="pq-cw"><div class="pq-c"><img src="img/publico-recuperacao.jpg" alt="Profissional a ajudar uma pessoa num exercício de alongamento" loading="lazy"></div></div>
+      <h3>Em recuperação</h3><p>Apoio para voltar às rotinas, com plano e objetivos.</p>
+    </div>
+    <div class="pq-item" style="--k:.88" data-r>
+      <div class="pq-cw"><div class="pq-c"><img src="img/publico-seniores.jpg" alt="Pessoa idosa a caminhar num parque de outono" loading="lazy"></div></div>
+      <h3>Seniores</h3><p>Cuidados atentos para manter a autonomia.</p>
+    </div>
+    <div class="pq-item" style="--k:.72" data-r>
+      <div class="pq-cw"><div class="pq-c"><img src="img/publico-familias.jpg" alt="Adulto e criança a desenhar juntos numa mesa" loading="lazy"></div></div>
+      <h3>Famílias</h3><p>Acompanhar também quem cuida, em conjunto.</p>
+    </div>
+  </div>
+  <p class="pq-note">Texto ilustrativo, sem carácter de aconselhamento clínico.</p>
+</section>
+
+<!-- ============ CONTACTO ============ -->
+<section class="cta on-dark" id="marcar" aria-labelledby="t-cta">
+  <img class="cta-mark" src="img/logo-light.png" alt="" aria-hidden="true">
+  <div class="cta-grid">
+    <div>
+      <p class="eyebrow" data-r>Marcar avaliação</p>
+      <h2 id="t-cta" data-r>Vamos alinhar o <em>próximo passo?</em></h2>
+      <p class="cta-p" data-r>Deixe o seu pedido e a equipa entra em contacto consigo. Se preferir, indique já a especialidade que procura.</p>
+      <dl class="info" data-r>
+        <div><dt>Morada</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+        <div><dt>Telefone</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+        <div><dt>Email</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+        <div><dt>Horário</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+        <div><dt>Registo ERS</dt><dd class="ers">E180943</dd></div>
+        <div><dt>Convenções e seguros</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+      </dl>
+    </div>
+    <form class="form" id="form" data-r novalidate>
+      <div class="fld"><input id="f-nome" name="nome" type="text" placeholder=" " autocomplete="name"><label for="f-nome">Nome</label></div>
+      <div class="fld"><input id="f-contacto" name="contacto" type="text" placeholder=" " autocomplete="tel"><label for="f-contacto">Telemóvel ou email</label></div>
+      <div class="fld">
+        <select id="f-esp" name="especialidade">
+          <option value="">Ainda não sei</option>
+          <option>Fisioterapia</option><option>Psicologia</option><option>Osteopatia</option><option>Nutrição</option><option>Enfermagem</option><option>Terapia da Fala</option><option>Psicomotricidade</option>
+        </select>
+        <label for="f-esp">Especialidade</label>
+      </div>
+      <div class="fld"><textarea id="f-msg" name="mensagem" placeholder=" "></textarea><label for="f-msg">Mensagem (opcional)</label></div>
+      <button class="btn btn--sun" type="submit">Enviar pedido <i></i></button>
+      <p class="form-note" id="formNote" role="status"></p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-top">
+    <div class="foot-brand"><img src="img/logo-light.png" alt=""><span>FisioCanal</span></div>
+    <p class="foot-tag">Saúde · Sorriso · Superação</p>
+  </div>
+  <p class="foot-demo"><b>Website de demonstração criado pela DD Digital para a FisioCanal.</b> Textos, serviços e conteúdos são ilustrativos e não vinculativos; os dados de contacto estão por confirmar com o cliente e o formulário não envia nada. As informações sobre cuidados de saúde são gerais: a adequação de cada acompanhamento depende de avaliação por um profissional de saúde. Símbolo fornecido pelo cliente. Fotografias: Unsplash.</p>
+  <p class="foot-ers">Registo ERS E180943</p>
+</footer>
+
+<script>
+/* =====================================================================
+   FISIOCANAL — JS (um só bloco; secções comentadas pela mesma ordem da página)
+   ===================================================================== */
+(() => {
+  const $  = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  const html = document.documentElement;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const narrow = matchMedia('(max-width: 900px)');
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+  /* geometria do símbolo (coordenadas do logótipo): x, y, raio de cada vértebra */
+  const D = [[608,36,26],[606,148,32],[616.5,262,37.5],[634.5,388.5,44.5],[660,517.5,51],[642.5,653.5,44.5],[630,776.5,37],[622,898,32],[639,1003,26]];
+  const CX = 536, CY = 520, CR = 365;
+
+  /* ---------- preloader ---------- */
+  let introStart = null;
+  const pre = $('.pre');
+  function startIntro(){ if (introStart === null) introStart = performance.now(); }
+  if (!pre || reduce || html.classList.contains('nopre')) { pre && pre.remove(); startIntro(); }
+  else {
+    let done = false;
+    const finish = () => {
+      if (done) return; done = true;
+      pre.classList.add('out');
+      setTimeout(startIntro, 280);
+      setTimeout(() => pre.remove(), 1000);
+    };
+    window.addEventListener('load', () => setTimeout(finish, 1500));
+    setTimeout(finish, 3200);
+  }
+
+  /* ---------- menu mobile + cabeçalho ---------- */
+  const burger = $('.burger'), head = $('#cabecalho');
+  burger.addEventListener('click', () => {
+    const open = document.body.classList.toggle('menu-open');
+    burger.setAttribute('aria-expanded', open);
+    burger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+  });
+  $$('#menu a').forEach(a => a.addEventListener('click', () => {
+    document.body.classList.remove('menu-open'); burger.setAttribute('aria-expanded', false);
+  }));
+
+  /* ---------- reveals ao scroll ---------- */
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px', threshold: .08 });
+  $$('[data-r]').forEach(el => io.observe(el));
+  $$('.pq-item').forEach((el, i) => el.style.setProperty('--d', (i * .09) + 's'));
+
+  /* ---------- hero: a coluna nasce em S e alinha-se ---------- */
+  const hero = $('#topo'), stage = $('#stage'), mark = $('#mark');
+  const h1 = $('.hero h1');
+  const gs = $$('.v', mark);
+  const leads = $$('.lead', mark);
+  const leadsBy = {}; leads.forEach(l => (leadsBy[l.dataset.i] = leadsBy[l.dataset.i] || []).push(l));
+  const labs = $$('.lab', stage);
+  const X = D.map(() => 0);
+  let heroVisible = true, phase = 0, lastA = -1;
+  const ptr = { on: false, tx: 0, s: 0 };
+  let kick = 0, hl = 0, hover = 0, lastHl = 0;
+
+  new IntersectionObserver(es => { heroVisible = es[0].isIntersecting; }, { threshold: 0 }).observe(hero);
+
+  const setViewBox = () => mark.setAttribute('viewBox', narrow.matches ? '150 0 790 1060' : '150 0 1140 1060');
+  setViewBox(); narrow.addEventListener('change', setViewBox);
+
+  function setHl(i){
+    hl = i;
+    gs.forEach(g => g.classList.toggle('on', +g.dataset.i === i));
+    leads.forEach(l => l.classList.toggle('on', +l.dataset.i === i));
+    labs.forEach(l => l.classList.toggle('on', +l.dataset.i === i));
+  }
+  labs.forEach(l => {
+    const i = +l.dataset.i;
+    l.addEventListener('pointerenter', () => { hover = i; setHl(i); });
+    l.addEventListener('pointerleave', () => { hover = 0; lastHl = performance.now(); });
+    l.addEventListener('focus', () => { hover = i; setHl(i); });
+    l.addEventListener('blur', () => { hover = 0; lastHl = performance.now(); });
+  });
+  stage.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    const r = mark.getBoundingClientRect();
+    ptr.on = true; ptr.tx = clamp(((e.clientX - r.left) / r.width - .5) * 2.4, -1, 1);
+  });
+  stage.addEventListener('pointerleave', () => { ptr.on = false; });
+  mark.addEventListener('pointerdown', () => { kick = performance.now(); });
+  if (!fine) $('#hint').textContent = 'Toque na coluna.';
+
+  function heroUpdate(now, dt){
+    if (!heroVisible) return;
+    /* amplitude do "S": 1 antes da intro, desce até 0 */
+    let a = 1;
+    if (reduce) a = 0;
+    else if (introStart !== null) a = 1 - ease(clamp((now - introStart - 250) / 3000, 0, 1));
+    phase += dt * (.7 + 2.3 * a);
+    ptr.s += ((ptr.on ? ptr.tx : 0) - ptr.s) * (1 - Math.exp(-dt * 6));
+    if (Math.abs(a - lastA) > .0005) { h1.style.setProperty('--wd', (125 - 63 * a).toFixed(1)); lastA = a; }
+    const time = now / 1000;
+    const kt = kick ? (now - kick) / 1000 : 9;
+    for (let i = 0; i < 9; i++){
+      const t = i / 8, sh = Math.sin(Math.PI * t);
+      let T = -150 * a * Math.sin(Math.PI * 2 * t + phase);       /* S inicial */
+      T += ptr.s * 72 * sh;                                       /* dobra com o rato */
+      if (!reduce) T += 5 * Math.sin(time * .9 + t * 3.2);        /* respiração */
+      if (kt < 2.4) T += 58 * Math.exp(-Math.pow((t - (kt * .5 - .1)) / .09, 2)) * Math.sin(kt * 15) * (1 - kt / 2.4); /* onda do clique */
+      const rate = clamp(11 - i * .75, 3.5, 12);
+      X[i] += (T - X[i]) * (1 - Math.exp(-dt * rate));
+      gs[i].setAttribute('transform', `translate(${X[i].toFixed(1)} 0)`);
+      if (i > 1 && i < 7){
+        const inside = Math.hypot(D[i][0] + X[i] - CX, D[i][1] - CY) < CR - D[i][2] * .35;
+        gs[i].classList.toggle('w', inside);
+      }
+      if (i >= 1 && i <= 7) {
+        const x1 = (D[i][0] + X[i] + D[i][2] + 8).toFixed(1);
+        leadsBy[i].forEach(l => l.setAttribute('x1', x1));
+      }
+    }
+    /* vértebra em destaque: percorre as 7 especialidades */
+    if (!reduce && introStart !== null && now - introStart > 2600 && !hover && now - lastHl > 2300) {
+      setHl(hl % 7 + 1); lastHl = now;
+    }
+  }
+
+  /* ---------- "três S": coluna em S que endireita + largura das palavras ---------- */
+  const tres = $('#saude-sorriso-superacao'), sSpine = $('#sSpine');
+  const SIZES = D.map(d => Math.round(d[2] * 1.1));
+  const sDots = SIZES.map((s, i) => {
+    const el = document.createElement('i');
+    el.style.setProperty('--s', s + 'px'); el.style.top = (i / 8 * 100) + '%';
+    sSpine.appendChild(el); return el;
+  });
+  const words = $$('[data-w]');
+  let dirty = true;
+  addEventListener('scroll', () => { dirty = true; }, { passive: true });
+  addEventListener('resize', () => { dirty = true; });
+
+  function scrollUpdate(){
+    const vh = innerHeight;
+    head.classList.toggle('is-solid', scrollY > 40);
+
+    /* coluna em S */
+    const r = tres.getBoundingClientRect();
+    if (r.bottom > -200 && r.top < vh + 200){
+      const A = narrow.matches ? 26 : Math.min(innerWidth * .34, 520);
+      sSpine.style.setProperty('--sx', narrow.matches ? '90%' : '50%');
+      const p = clamp((vh - r.top) / (r.height + vh), 0, 1);
+      sDots.forEach((el, i) => {
+        const t = i / 8;
+        const off = reduce ? 0 : A * Math.pow(1 - t, 1.1) * Math.sin(Math.PI * 2 * t * 1.25 + p * 5.5);
+        el.style.transform = `translateX(${off.toFixed(1)}px)`;
+        el.classList.toggle('lit', r.top + t * r.height < vh * .72);
+      });
+    }
+    /* palavras: esticam ao centro do ecrã */
+    words.forEach(w => {
+      const b = w.getBoundingClientRect();
+      if (b.bottom < -50 || b.top > vh + 50) return;
+      const d = Math.abs((b.top + b.height / 2) - vh / 2) / (vh / 2);
+      const p = reduce ? 1 : ease(clamp(1.1 - d * 1.15, 0, 1));
+      const maxW = narrow.matches ? 112 : 125;
+      w.style.setProperty('--wd', (62 + (maxW - 62) * p).toFixed(1));
+      w.style.setProperty('--wg', Math.round(280 + 560 * p));
+    });
+  }
+
+  /* ---------- especialidades: cada vértebra abre a sua janela ---------- */
+  const espItems = $$('.esp'), espImgs = $$('.esp-disc img'), espDots = $$('.v', $('#espDots'));
+  let espCur = 0, z = 1;
+  function showEsp(n){
+    if (n === espCur) return; espCur = n;
+    espItems.forEach(it => it.classList.toggle('on', +it.dataset.n === n));
+    /* vértebras: a ativa fica em destaque e a coluna "dobra" em torno dela */
+    espDots.forEach((g, i) => {
+      g.classList.toggle('on', i === n);
+      g.style.transform = `translateX(${(34 * Math.exp(-Math.pow((i - n) / 1.5, 2))).toFixed(1)}px)`;
+    });
+    /* foto abre-se a partir da posição da vértebra */
+    const img = espImgs[n - 1]; if (!img) return;
+    const ox = (D[n][0] - 171) / 730 * 100, oy = (D[n][1] - 155) / 730 * 100;
+    img.style.setProperty('--ox', ox.toFixed(1) + '%'); img.style.setProperty('--oy', oy.toFixed(1) + '%');
+    img.style.transition = 'none'; img.classList.remove('on'); void img.offsetWidth;
+    img.style.zIndex = ++z; img.style.transition = ''; img.classList.add('on');
+  }
+  const espIO = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) showEsp(+e.target.dataset.n); }), { rootMargin: '-42% 0px -42% 0px' });
+  espItems.forEach(it => espIO.observe(it));
+  showEsp(1);
+  /* "Pedir informações" pré-seleciona a especialidade no formulário */
+  $$('[data-esp]').forEach(a => a.addEventListener('click', () => { $('#f-esp').value = a.dataset.esp; }));
+
+  /* ---------- abordagem: passos que alinham a coluna ---------- */
+  const alStage = $('#alStage'), steps = $$('.step');
+  const stepIO = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    steps.forEach(s => s.classList.toggle('on', s === e.target));
+    alStage.dataset.step = e.target.dataset.step;
+  }), { rootMargin: '-45% 0px -45% 0px' });
+  steps.forEach(s => stepIO.observe(s));
+
+  /* ---------- coluna lateral de progresso ---------- */
+  const railLinks = $$('.rail a');
+  const secIO = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) railLinks.forEach(a => a.classList.toggle('on', a.dataset.s === e.target.id));
+  }), { rootMargin: '-50% 0px -50% 0px' });
+  railLinks.forEach(a => { const s = document.getElementById(a.dataset.s); s && secIO.observe(s); });
+
+  /* ---------- cursor: rasto de vértebras ---------- */
+  const trail = $('.trail');
+  const T = [];
+  if (fine && !reduce) {
+    [13,12,10,9,7,6].forEach(s => { const i = document.createElement('i'); i.style.setProperty('--s', s + 'px'); trail.appendChild(i); T.push({ el: i, x: -50, y: -50 }); });
+    addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; T[0].tx = e.clientX; T[0].ty = e.clientY; trail.classList.add('on'); });
+    document.addEventListener('pointerleave', () => trail.classList.remove('on'));
+  }
+  function trailUpdate(dt){
+    if (!T.length || T[0].tx === undefined) return;
+    T.forEach((p, i) => {
+      const tx = i ? T[i - 1].x : p.tx, ty = i ? T[i - 1].y : p.ty;
+      const k = 1 - Math.exp(-dt * (i ? 16 : 30));
+      p.x += (tx - p.x) * k; p.y += (ty - p.y) * k;
+      p.el.style.transform = `translate(${p.x.toFixed(1)}px,${p.y.toFixed(1)}px)`;
+    });
+  }
+
+  /* ---------- formulário de demonstração: não envia nada ---------- */
+  $('#form').addEventListener('submit', e => {
+    e.preventDefault();
+    $('#formNote').textContent = 'Isto é uma demonstração: nenhum dado foi enviado nem guardado.';
+  });
+
+  /* ---------- ciclo de animação único ---------- */
+  let last = performance.now();
+  function frame(now){
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    heroUpdate(now, dt);
+    trailUpdate(dt);
+    if (dirty) { scrollUpdate(); dirty = false; }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  document.fonts && document.fonts.ready.then(() => { dirty = true; });
+})();
+</script>
+</body>
+</html>
