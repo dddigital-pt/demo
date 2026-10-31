@@ -1,0 +1,923 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Externato Viveirinho — Demonstração</title>
+<meta name="description" content="Demonstração de website para o Externato Viveirinho, na Amadora: educação pré-escolar, das 7h30 às 19h00. Inscrições abertas para 2026/27.">
+<meta name="theme-color" content="#0049B8">
+<link rel="icon" type="image/png" href="img/logo-circulo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&display=swap" rel="stylesheet">
+<script>
+  /* marca o documento como "com JS" antes da primeira pintura (as letras só brotam e os reveals só existem com JS) */
+  document.documentElement.classList.add('js');
+  if (/[?&]nopre/.test(location.search)) document.documentElement.classList.add('nopre','go');
+  if (matchMedia('(prefers-reduced-motion:reduce)').matches) document.documentElement.classList.add('nopre','go','rm');
+</script>
+<style>
+/* =====================================================================
+   EXTERNATO VIVEIRINHO — DEMONSTRAÇÃO · DD Digital
+   Conceito: "viveiro" = sítio pequeno onde se cuida do que começa a crescer. O nome escreve-se com letras que brotam da relva
+   (e se dobram ao vento/rato); o passarinho do logótipo acompanha a página inteira, poisa no "H" do título e, no fim, num ramo
+   do rodapé. Uma árvore cresce de 1955 a 2026/27; o dia (7h30–19h00) corre com o sol; a ilustração do Externato tem pontos tocáveis.
+   Forma: cantos em "folha" (raios assimétricos), relva, colinas, círculos. Paleta: cobalto do logótipo + céu + relva + sol.
+   Layout: hero (céu, colinas, letras, comboio) → viveiro + árvore + estacas → um dia (palco sticky com sol)
+   → canteiro (5 plantas, fundo cobalto) → o sítio (ilustração com pontos) → inscrições + percurso + formulário → rodapé com ramo.
+   ===================================================================== */
+
+/* ---------- 0. Tokens ---------- */
+:root{
+  /* cores amostradas do logótipo e da publicação do Externato */
+  --cobalt:#0049B8; --cobalt-d:#00306F; --cobalt-dd:#001F4D; --blue:#2E96E0; --purple:#8E2A86;
+  --ink:#17324A; --ink-soft:#43607A;
+  --sky:#D5EDF1; --sky-2:#BFE4F2; --sky-l:#E7F5F7; --paper:#FFFBF0; --paper-2:#F7EFD9;
+  --sun:#FFC93C; --sun-l:#FFE9A8; --grass:#4E9F3A; --grass-d:#2F6B2A; --leaf:#7CBF55;
+  --coral:#E8574A; --orange:#EE8A1E; --brick:#7A2E22; --soil:#5A3A22; --pink:#F59BB5;
+
+  --f-display:'Bricolage Grotesque',system-ui,sans-serif;
+  --f-body:'Albert Sans',system-ui,sans-serif;
+
+  --bar-h:36px; --hdr-h:68px; --gut:clamp(16px,4vw,48px); --maxw:1320px;
+  --leaf-r:34px 8px 34px 8px;            /* canto em "folha" */
+  --spring:cubic-bezier(.34,1.56,.64,1);
+}
+
+/* ---------- 1. Base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:calc(var(--bar-h) + var(--hdr-h))}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.65 var(--f-body);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img,svg{display:block;max-width:100%}
+img{height:auto}
+a{color:inherit}
+h1,h2,h3{font-family:var(--f-display);font-weight:800;line-height:1;margin:0;letter-spacing:-.02em}
+p{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px;border-radius:8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 var(--gut)}
+section{position:relative}
+.sec{padding:clamp(72px,10vw,140px) 0}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font:700 13px/1 var(--f-body);letter-spacing:.18em;text-transform:uppercase;color:var(--cobalt)}
+.eyebrow::before{content:"";width:22px;height:16px;background:var(--leaf);border-radius:16px 2px 16px 2px;transform:rotate(-12deg)}
+.h2{font-size:clamp(36px,5.4vw,76px);margin-top:16px;text-wrap:balance}
+.h2 em{font-style:normal;background:linear-gradient(transparent 60%,var(--sun) 60% 90%,transparent 90%);padding:0 .06em}
+.lead{font-size:clamp(18px,1.6vw,21px);color:var(--ink-soft);max-width:54ch}
+
+/* botões: folha (cantos assimétricos), afundam ao carregar */
+.btn{display:inline-flex;align-items:center;gap:10px;padding:16px 28px;border:0;border-radius:26px 6px 26px 6px;background:var(--cobalt);color:#fff;text-decoration:none;
+  font:700 17px/1 var(--f-body);box-shadow:0 6px 0 var(--cobalt-dd);transition:transform .18s var(--spring),box-shadow .18s,border-radius .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 0 var(--cobalt-dd);border-radius:6px 26px 6px 26px}
+.btn:active{transform:translateY(5px);box-shadow:0 1px 0 var(--cobalt-dd)}
+.btn.sun{background:var(--sun);color:var(--ink);box-shadow:0 6px 0 #C99410}
+.btn.sun:hover{box-shadow:0 8px 0 #C99410} .btn.sun:active{box-shadow:0 1px 0 #C99410}
+.btn.sm{padding:11px 18px;font-size:15px;box-shadow:0 4px 0 var(--cobalt-dd)}
+
+/* marcador de conteúdo por confirmar */
+.tbc{display:inline-block;padding:2px 10px;border:2px dashed var(--orange);border-radius:10px;background:var(--sun-l);color:#8A4A06;font:600 .88em/1.5 var(--f-body)}
+
+/* revelações ao scroll (só com JS) */
+.js .rv{opacity:0;transform:translateY(26px);transition:opacity .8s ease var(--d,0s),transform .9s var(--spring) var(--d,0s)}
+.js .rv.in{opacity:1;transform:none}
+
+/* ---------- 2. Aviso de demonstração (faixa + selo) ---------- */
+.demo-bar{position:fixed;inset:0 0 auto 0;height:var(--bar-h);z-index:120;display:flex;align-items:center;gap:12px;padding:0 var(--gut);background:var(--cobalt);color:#fff;font:600 13px/1.2 var(--f-body)}
+.demo-bar b{background:var(--sun);color:var(--ink);padding:5px 9px;border-radius:7px 2px 7px 2px;font:800 11px/1 var(--f-body);letter-spacing:.16em}
+.demo-bar .short{display:none}
+@media (max-width:700px){.demo-bar .long{display:none}.demo-bar .short{display:inline}}
+.demo-seal{position:fixed;left:18px;bottom:18px;z-index:110;display:flex;align-items:center;gap:9px;padding:10px 16px 10px 12px;background:var(--sun);color:var(--ink);border-radius:18px 4px 18px 4px;
+  font:700 13px/1 var(--f-body);box-shadow:0 4px 0 #C99410;pointer-events:none}
+.demo-seal i{width:11px;height:11px;border-radius:11px 1px 11px 1px;background:var(--purple);transform:rotate(-12deg)}
+@media (max-width:900px){.demo-seal{display:none}}
+
+/* ---------- 3. Pré-carregador: cortina cobalto com semente a germinar ---------- */
+.pre{display:none}
+.js .pre{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:var(--cobalt);color:#fff;border-radius:0 0 50% 50%/0 0 9vh 9vh;
+  transition:transform .95s cubic-bezier(.7,0,.2,1);animation:preSafe .01s 4.5s forwards}
+.pre.out{transform:translateY(-102%)}
+.nopre .pre{display:none}
+.pre-in{display:grid;justify-items:center;gap:18px}
+.pre-in img{width:118px;height:118px;border-radius:50%;animation:prePop .8s var(--spring) both}
+.pre-sprouts{display:flex;gap:14px;align-items:flex-end;height:34px}
+.pre-sprouts i{display:block;width:12px;height:34px;background:var(--leaf);border-radius:12px 2px 12px 2px;transform-origin:50% 100%;transform:scaleY(.1) rotate(-14deg);animation:preGrow .7s var(--spring) forwards}
+.pre-sprouts i:nth-child(2){animation-delay:.25s;background:var(--sun)}
+.pre-sprouts i:nth-child(3){animation-delay:.5s;background:var(--sky-2)}
+.pre-in p{font:600 14px/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;opacity:.8}
+@keyframes prePop{from{transform:scale(.4);opacity:0}}
+@keyframes preGrow{to{transform:scaleY(1) rotate(0)}}
+@keyframes preSafe{to{visibility:hidden}}
+
+/* ---------- 4. Cabeçalho ---------- */
+.hdr{position:fixed;top:var(--bar-h);left:0;right:0;z-index:100;height:var(--hdr-h);display:flex;align-items:center;gap:18px;padding:0 var(--gut);transition:background .3s,box-shadow .3s}
+.hdr.solid{background:rgba(255,251,240,.95);box-shadow:0 4px 0 var(--sky);backdrop-filter:blur(6px)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;margin-right:auto}
+.brand img{width:46px;height:46px;border-radius:50%;box-shadow:0 0 0 3px #fff,0 3px 0 3px rgba(0,48,111,.25)}
+.brand-txt{display:flex;flex-direction:column;line-height:1}
+.brand-txt small{font:700 11px/1 var(--f-body);letter-spacing:.22em;text-transform:uppercase;color:var(--cobalt)}
+.brand-txt b{font:800 23px/1.05 var(--f-display);color:var(--ink)}
+.nav ul{display:flex;gap:2px}
+.nav a{display:block;padding:10px 15px;border-radius:16px 4px 16px 4px;text-decoration:none;font:600 15.5px/1 var(--f-body);color:var(--ink);transition:background .2s,transform .2s var(--spring)}
+.nav a:hover{background:var(--sky);transform:translateY(-2px)}
+.nav a[aria-current="true"]{background:var(--cobalt);color:#fff}
+.burger{display:none;width:46px;height:46px;border:0;border-radius:16px 4px 16px 4px;background:var(--cobalt);box-shadow:0 4px 0 var(--cobalt-dd);place-items:center}
+.burger span{display:block;width:20px;height:3px;border-radius:2px;background:#fff;position:relative}
+.burger span::before,.burger span::after{content:"";position:absolute;left:0;width:20px;height:3px;border-radius:2px;background:#fff;transition:transform .25s}
+.burger span::before{top:-7px}.burger span::after{top:7px}
+.hdr.open .burger span{background:transparent}
+.hdr.open .burger span::before{transform:translateY(7px) rotate(45deg)}
+.hdr.open .burger span::after{transform:translateY(-7px) rotate(-45deg)}
+@media (max-width:980px){
+  .burger{display:grid}
+  .nav{position:fixed;top:calc(var(--bar-h) + var(--hdr-h));left:0;right:0;background:var(--paper);padding:14px var(--gut) 22px;box-shadow:0 8px 0 var(--sky);
+    transform:translateY(-12px);opacity:0;pointer-events:none;transition:transform .3s,opacity .3s}
+  .hdr.open .nav{transform:none;opacity:1;pointer-events:auto}
+  .nav ul{flex-direction:column;gap:4px}
+  .nav a{padding:15px 16px;font-size:18px}
+}
+
+/* ---------- 5. Hero: letras que brotam da relva ---------- */
+.hero{--fs:min(17vw,262px);--fh:300px;min-height:max(100svh,720px);display:grid;grid-template-rows:1fr auto;overflow:hidden;
+  background:linear-gradient(180deg,var(--sky-2) 0%,var(--sky) 55%,#EAF6EC 100%)}
+.hero-sky{position:absolute;inset:0;pointer-events:none}
+.hsun{position:absolute;right:9%;top:calc(var(--bar-h) + var(--hdr-h) + 26px);width:clamp(74px,9vw,128px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 38% 36%,#FFE680,var(--sun));box-shadow:0 0 70px 16px rgba(255,214,90,.5)}
+.hsun::before{content:"";position:absolute;inset:-34%;border-radius:50%;background:repeating-conic-gradient(rgba(255,201,60,.6) 0 5deg,transparent 5deg 15deg);
+  -webkit-mask:radial-gradient(circle,transparent 47%,#000 48%,#000 66%,transparent 67%);mask:radial-gradient(circle,transparent 47%,#000 48%,#000 66%,transparent 67%);animation:spin 70s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cloud{position:absolute;left:0;width:var(--w,170px);opacity:.92;animation:drift var(--t,90s) linear var(--dl,0s) infinite}
+.cloud svg{width:100%;height:auto}
+@keyframes drift{from{transform:translateX(-30vw)}to{transform:translateX(112vw)}}
+.hills{position:absolute;left:0;right:0;bottom:var(--fh);height:clamp(150px,22vw,300px);pointer-events:none}
+.hills svg{width:100%;height:100%}
+.train{animation:train 36s linear 5s infinite}
+@keyframes train{0%{transform:translateX(-260px)}34%,100%{transform:translateX(1720px)}}
+
+.hero-in{position:relative;z-index:2;align-self:end;padding-top:calc(var(--bar-h) + var(--hdr-h) + 76px)}
+.tag{display:inline-flex;align-items:center;gap:10px;margin-bottom:18px;padding:10px 18px 10px 12px;background:var(--sun);color:var(--ink);border-radius:20px 4px 20px 4px;transform:rotate(-2deg);
+  font:700 14px/1 var(--f-body);letter-spacing:.05em;box-shadow:0 4px 0 #C99410}
+.tag i{width:12px;height:12px;border-radius:12px 1px 12px 1px;background:var(--coral);animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{50%{transform:scale(.55)}}
+h1.hero-h{font-weight:800}
+.pre-w{display:block;font:700 clamp(15px,1.6vw,22px)/1 var(--f-body);letter-spacing:.42em;text-transform:uppercase;color:var(--cobalt);margin-bottom:calc(var(--fs)*.2)}
+.word{display:flex;flex-wrap:wrap;gap:0 .015em;font:800 var(--fs)/.84 var(--f-display);font-variation-settings:'wdth' 90;letter-spacing:-.01em;text-transform:uppercase;margin-bottom:-.035em;user-select:none}
+.brk{display:none}
+.lt{display:inline-block;transform-origin:50% 100%;color:var(--c)}
+.lt-in{display:inline-block;position:relative;transform-origin:50% 100%;will-change:transform}
+/* letras: de semente a planta (animação no exterior, vento por JS no interior, para não colidirem) */
+.js:not(.go) .lt{transform:scaleY(0)}
+.js.go .lt{animation:sprout .95s calc(.15s + var(--i)*.085s) both}
+@keyframes sprout{0%{transform:translateY(34%) scaleY(0)}55%{transform:scaleY(1.14)}78%{transform:scaleY(.95)}100%{transform:none}}
+.sprout{position:absolute;left:50%;bottom:92%;width:.27em;max-width:none;transform:translateX(-50%) scale(0);transform-origin:50% 100%}
+.js.go .sprout{animation:pop .7s calc(.95s + var(--i)*.085s) var(--spring) forwards}
+@keyframes pop{to{transform:translateX(-50%) scale(1)}}
+
+/* campo de relva à frente (onde as letras estão plantadas) */
+.field{position:relative;z-index:3;background:linear-gradient(var(--grass),var(--grass-d));color:#fff;padding:clamp(22px,3vw,40px) 0 clamp(30px,4vw,52px)}
+.field::before{content:"";position:absolute;left:0;right:0;top:-37px;height:40px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='40' viewBox='0 0 120 40'%3E%3Cpath d='M0 40V24Q10 26 14 8Q20 26 30 24Q38 28 44 12Q50 28 62 26Q72 24 78 6Q84 26 96 24Q106 26 110 14Q114 26 120 24V40Z' fill='%234E9F3A'/%3E%3C/svg%3E") repeat-x bottom/150px 50px}
+.field-in{display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center}
+.field .lead{color:#fff;font-size:clamp(18px,1.7vw,22px);max-width:46ch;font-weight:500}
+.field .lead b{color:var(--sun);font-weight:700}
+.field-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:22px}
+.field .btn.ghost{background:transparent;box-shadow:inset 0 0 0 2.5px #fff;color:#fff}
+.field .btn.ghost:hover{background:rgba(255,255,255,.14)}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.pills li{padding:7px 14px;border-radius:14px 3px 14px 3px;background:rgba(0,31,77,.28);font:600 14px/1.2 var(--f-body)}
+.badge{width:clamp(112px,12vw,168px);border-radius:50%;box-shadow:0 0 0 5px #fff,0 8px 0 5px rgba(0,31,77,.3);animation:bob 5s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px) rotate(2deg)}}
+
+/* ---------- 6. Passarinho companheiro (símbolo do logótipo em SVG) ---------- */
+.bird{position:fixed;left:0;top:0;z-index:105;width:72px;padding:0;border:0;background:none;opacity:0;pointer-events:none;will-change:transform}
+.bird-on .bird{opacity:1;pointer-events:auto}
+.bs{display:block;width:100%;overflow:visible}
+#bs{transform-box:view-box;transform-origin:60px 47px}   /* virar e inclinar: transform por JS, sem animações neste elemento */
+.bs-in{transform-box:view-box;transform-origin:60px 50px}   /* balanço em repouso: só animação */
+.bird .wing{transform-box:view-box;transform-origin:66px 48px;transition:transform .25s}
+.bird.fly .wing{animation:flap .2s ease-in-out infinite alternate}
+@keyframes flap{from{transform:rotate(18deg)}to{transform:rotate(-52deg)}}
+.bird:not(.fly) .bs-in{animation:idle 3s ease-in-out infinite}
+@keyframes idle{50%{transform:translateY(-2px) rotate(-2deg)}}
+.bird.hop .bs{animation:hop .5s var(--spring)}
+@keyframes hop{40%{transform:translateY(-22px)}}
+.bird .lid{transform-box:fill-box;transform-origin:50% 50%;animation:eyeblink 5s infinite}
+@keyframes eyeblink{0%,94%,100%{transform:scaleY(0)}96%{transform:scaleY(1)}}
+.bubble{position:absolute;bottom:100%;right:0;margin-bottom:6px;padding:9px 14px;background:#fff;color:var(--ink);border-radius:16px 16px 4px 16px;white-space:nowrap;font:700 14px/1.2 var(--f-body);
+  box-shadow:0 4px 0 var(--sky-2),0 8px 22px rgba(0,31,77,.18);opacity:0;transform:translateY(8px) scale(.9);transform-origin:100% 100%;transition:opacity .2s,transform .3s var(--spring);pointer-events:none}
+.bubble.on{opacity:1;transform:none}
+@media (max-width:700px){.bird{width:56px}}
+
+/* ---------- 7. O viveiro + árvore ---------- */
+.viv{background:var(--paper)}
+.viv-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,5vw,80px);align-items:start}
+.defn{margin-top:28px;max-width:520px;padding:22px 26px 22px 30px;background:#fff;border-radius:var(--leaf-r);border-left:8px solid var(--leaf);box-shadow:0 6px 0 var(--sky)}
+.defn small{display:block;font:600 13px/1 var(--f-body);color:var(--ink-soft);letter-spacing:.06em;margin-bottom:8px}
+.defn b{display:block;font:800 30px/1 var(--f-display);color:var(--cobalt);margin-bottom:8px}
+.defn p{font-size:17px;line-height:1.5}
+.viv .lead{margin-top:24px}
+.stakes{display:flex;flex-wrap:wrap;gap:14px;margin-top:40px}
+.stake{position:relative;flex:1 1 150px;max-width:210px;padding:18px 16px 40px;background:linear-gradient(#F6E2B0,#EBCD8A);color:var(--ink);clip-path:polygon(0 0,100% 0,100% 82%,50% 100%,0 82%);transform:rotate(var(--r,0deg));transform-origin:50% 100%;text-align:center}
+.stake b{display:block;font:800 clamp(26px,2.6vw,36px)/1 var(--f-display);color:var(--cobalt-d)}
+.stake span{display:block;margin-top:6px;font:600 13.5px/1.3 var(--f-body)}
+.stars{display:flex;justify-content:center;margin:4px 0 2px}
+.stars svg{width:96px;height:18px}
+.viv-note{margin-top:20px;font-size:14px;color:var(--ink-soft);max-width:60ch}
+.tree-wrap{position:sticky;top:calc(var(--bar-h) + var(--hdr-h) + 20px)}
+#tree{width:100%;max-height:min(78vh,680px);overflow:visible}
+#tree .tr{fill:none;stroke:#7A4B2A;stroke-linecap:round;stroke-dasharray:1 1.05;stroke-dashoffset:1}
+#tree .blob,#tree .app,#tree .flag{transform-box:fill-box;transform-origin:center;transform:scale(0)}
+
+/* ---------- 8. Um dia no Viveirinho (palco sticky com o sol) ---------- */
+.day{background:linear-gradient(var(--paper),var(--sky-l))}
+.day-head{padding-top:clamp(64px,9vw,120px);padding-bottom:clamp(26px,4vw,48px)}
+.day-head .lead{margin-top:18px}
+.day-track{height:calc(100svh*4.4);position:relative}
+.day-stage{position:sticky;top:calc(var(--bar-h) + var(--hdr-h));height:calc(100svh - var(--bar-h) - var(--hdr-h));overflow:hidden;
+  background:linear-gradient(var(--sk1,#8FB8E8),var(--sk2,#FFD6B0))}
+.day-stage > *{position:absolute}
+.stars-bg{inset:0 0 40% 0;opacity:var(--stars,0);pointer-events:none}
+.stars-bg i{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;left:var(--x);top:var(--y);animation:twinkle 3s ease-in-out var(--d) infinite}
+@keyframes twinkle{50%{opacity:.3}}
+.dsun{left:0;top:0;width:var(--ss,96px);aspect-ratio:1;border-radius:50%;background:var(--sc,#FFE680);box-shadow:0 0 0 14px rgba(255,230,128,.28),0 0 90px 26px rgba(255,214,90,.5);will-change:transform}
+.day-hills{left:0;right:0;top:var(--hz,66%);bottom:0}
+.day-hills svg{width:100%;height:100%}
+.day-school{width:clamp(150px,17vw,250px);left:var(--sx,72%);bottom:calc(100% - var(--hz,66%) - 14px);transform:translateX(-50%)}
+.day-school .lit{opacity:var(--lit,0)}
+.clock{top:16px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;padding:9px 18px;background:rgba(255,251,240,.94);border-radius:20px 4px 20px 4px;box-shadow:0 4px 0 rgba(0,31,77,.25);font:700 15px/1 var(--f-body);white-space:nowrap}
+.clock-bar{width:clamp(90px,16vw,200px);height:8px;border-radius:8px;background:var(--sky);overflow:hidden}
+.clock-bar i{display:block;height:100%;background:var(--cobalt);border-radius:8px;transform-origin:0 50%;transform:scaleX(var(--p,0))}
+.steps{left:var(--gut);bottom:7%;width:min(400px,calc(100% - 2*var(--gut)));display:grid}
+.step{grid-area:1/1;align-self:end;padding:24px 26px 22px;background:var(--paper);border-radius:var(--leaf-r);box-shadow:0 7px 0 rgba(0,31,77,.28);opacity:0;transform:translateY(16px) rotate(1.5deg);transition:opacity .45s,transform .6s var(--spring);pointer-events:none}
+.step.on{opacity:1;transform:none;pointer-events:auto}
+.step .n{display:flex;gap:6px;margin-bottom:14px}
+.step .n i{width:10px;height:10px;border-radius:10px 1px 10px 1px;background:var(--sky-2)}
+.step .n i.a{background:var(--cobalt)}
+.step h3{font-size:clamp(26px,2.6vw,34px);color:var(--cobalt-d)}
+.step p{margin-top:10px;font-size:17px;line-height:1.5}
+.step .ex{display:inline-block;margin-top:12px;font:700 12px/1 var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.day-note{margin:22px auto 0;max-width:var(--maxw);padding:0 var(--gut) clamp(54px,7vw,90px)}
+/* sem JS ou com movimento reduzido: palco simples + lista de cartões */
+html:not(.js) .day-track,.rm .day-track{height:auto}
+html:not(.js) .day-stage,.rm .day-stage{position:relative;top:0;height:auto;display:grid;gap:16px;padding:70px var(--gut) 40px}
+html:not(.js) .day-stage > *,.rm .day-stage > *{position:relative}
+html:not(.js) .steps,.rm .steps{left:auto;bottom:auto;width:100%;max-width:var(--maxw);margin:0 auto;gap:16px}
+html:not(.js) .step,.rm .step{opacity:1;transform:none;grid-area:auto;pointer-events:auto}
+html:not(.js) .dsun,.rm .dsun,html:not(.js) .day-hills,.rm .day-hills,html:not(.js) .day-school,.rm .day-school,html:not(.js) .clock,.rm .clock{display:none}
+
+/* ---------- 9. Canteiro (fundo cobalto, 5 plantas) ---------- */
+.bed{background:var(--cobalt);color:#fff;padding-bottom:clamp(60px,8vw,110px)}
+.bed::before{content:"";position:absolute;left:0;right:0;top:-39px;height:40px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='40' viewBox='0 0 160 40'%3E%3Cpath d='M0 40V22Q20 0 40 22T80 22T120 22T160 22V40Z' fill='%230049B8'/%3E%3C/svg%3E") repeat-x bottom/160px 40px}
+.bed .eyebrow{color:var(--sun)} .bed .eyebrow::before{background:var(--sun)}
+.bed .h2 em{background:linear-gradient(transparent 60%,var(--purple) 60% 90%,transparent 90%)}
+.bed-head{padding-top:clamp(72px,9vw,128px);margin-bottom:clamp(28px,5vw,60px)}
+.plants{display:grid;grid-template-columns:repeat(5,1fr);align-items:end}
+.plant{display:flex;flex-direction:column;justify-content:flex-end;align-self:stretch}
+.plant .pl{width:100%;height:auto;--by:0}
+.plant .sw{transform-box:view-box;transform-origin:100px var(--by);animation:sway 5s ease-in-out calc(var(--k)*-.9s) infinite alternate}
+.plant:hover .sw,.plant:focus-within .sw{animation-duration:1.3s}
+@keyframes sway{from{transform:rotate(-1.8deg)}to{transform:rotate(1.8deg)}}
+.plant .grow{transform-box:fill-box;transform-origin:50% 100%}
+.js .plant .grow{transform:scale(.3,0)}
+.js .plant.in .grow{transform:none;transition:transform 1.1s var(--spring) calc(var(--k)*.14s)}
+.plant .txt{background:var(--cobalt-d);padding:18px 18px 24px;min-height:176px}
+.plant h3{font-size:clamp(20px,1.7vw,24px);line-height:1.08;color:var(--sun)}
+.plant p{margin-top:8px;font-size:15.5px;line-height:1.5;color:#E2EEFF}
+.plant:nth-child(even) .txt{background:#003C96}
+
+/* ---------- 10. O sítio (ilustração com pontos tocáveis) ---------- */
+.site{background:var(--sky-l)}
+.site-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:clamp(22px,4vw,56px);margin-top:clamp(28px,4vw,52px);align-items:start}
+.scene{position:relative;border-radius:var(--leaf-r);overflow:hidden;box-shadow:0 8px 0 var(--sky-2),0 0 0 6px #fff;background:#fff}
+.scene img{width:100%}
+.pin{position:absolute;left:var(--x);top:var(--y);width:44px;height:44px;margin:-22px 0 0 -22px;border:0;border-radius:50%;background:#fff;box-shadow:0 0 0 4px var(--cobalt),0 4px 10px rgba(0,31,77,.35);display:grid;place-items:center;transition:transform .25s var(--spring),background .2s}
+.pin::before{content:"";position:absolute;inset:-4px;border-radius:50%;border:3px solid #fff;opacity:0;animation:ping 2.4s ease-out infinite}
+.pin i{width:16px;height:16px;border-radius:16px 2px 16px 2px;background:var(--cobalt);transform:rotate(-12deg)}
+.pin[aria-pressed="true"]{background:var(--sun);transform:scale(1.2)}
+.pin[aria-pressed="true"]::before{display:none}
+.pin:hover{transform:scale(1.14)}
+@keyframes ping{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
+.panel{position:sticky;top:calc(var(--bar-h) + var(--hdr-h) + 24px);display:grid;gap:22px}
+.pn-card{padding:26px 28px 28px;background:#fff;border-radius:var(--leaf-r);box-shadow:0 7px 0 var(--sky-2)}
+.pn-card .k{font:700 12.5px/1 var(--f-body);letter-spacing:.18em;text-transform:uppercase;color:var(--cobalt)}
+.pn-card h3{font-size:clamp(28px,3vw,40px);margin-top:12px;color:var(--cobalt-d);text-wrap:balance}
+.pn-card p{margin-top:12px;font-size:17px}
+.pn-dots{display:flex;gap:8px;margin-top:20px}
+.pn-dots i{width:34px;height:8px;border-radius:8px;background:var(--sky);transition:background .3s,width .3s}
+.pn-dots i.a{background:var(--cobalt);width:54px}
+.polaroid{justify-self:start;width:min(250px,70%);padding:10px 10px 14px;background:#fff;box-shadow:0 8px 20px rgba(0,31,77,.18);transform:rotate(-3deg);position:relative}
+.polaroid::before{content:"";position:absolute;left:50%;top:-14px;width:84px;height:26px;background:rgba(255,201,60,.75);transform:translateX(-50%) rotate(3deg)}
+.polaroid img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:50% 40%}
+.polaroid figcaption{margin-top:10px;font:600 13.5px/1.3 var(--f-body);color:var(--ink-soft);text-align:center}
+.site-note{margin-top:22px;font-size:14px;color:var(--ink-soft)}
+
+/* ---------- 11. Inscrições ---------- */
+.reg{background:var(--paper)}
+.reg-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,72px);margin-top:clamp(28px,4vw,48px);align-items:start}
+.reg .lead{margin-top:20px}
+.contacts{display:grid;gap:14px;margin-top:30px}
+.contacts li{display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:baseline;padding-bottom:14px;border-bottom:2px dashed var(--sky-2)}
+.contacts span{font:700 12.5px/1 var(--f-body);letter-spacing:.16em;text-transform:uppercase;color:var(--cobalt)}
+.contacts a,.contacts b{font:700 clamp(20px,2vw,26px)/1.2 var(--f-display);text-decoration:none;color:var(--ink)}
+.contacts a:hover{color:var(--cobalt);text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:4px}
+.minimap{margin-top:34px;border-radius:var(--leaf-r);overflow:hidden;box-shadow:0 7px 0 var(--sky-2),0 0 0 5px #fff;background:#DDEFD0}
+.minimap svg{width:100%;height:auto}
+.minimap figcaption{padding:10px 18px 12px;background:#fff;font:600 13.5px/1.35 var(--f-body);color:var(--ink-soft)}
+.mm-train{transform:translateX(-340px)}
+.minimap.in .mm-train{transform:none;transition:transform 2.6s cubic-bezier(.2,.7,.2,1) .4s}
+.mm-path{stroke-dasharray:6 10;animation:dash 1.6s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-32}}
+.form{padding:clamp(24px,3vw,38px);background:var(--cobalt);color:#fff;border-radius:var(--leaf-r);box-shadow:0 8px 0 var(--cobalt-dd)}
+.form h3{font-size:clamp(26px,2.6vw,34px);color:var(--sun)}
+.form .sub{margin-top:8px;font-size:15px;color:#D6E6FF}
+.fld{display:grid;gap:7px;margin-top:18px}
+.fld label{font:700 13px/1 var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:#CFE2FF}
+.fld input,.fld textarea{width:100%;padding:14px 16px;border:0;border-radius:14px 4px 14px 4px;background:#fff;color:var(--ink);font:500 17px/1.3 var(--f-body)}
+.fld textarea{min-height:104px;resize:vertical}
+.fld input:focus-visible,.fld textarea:focus-visible{outline:3px solid var(--sun)}
+.form .btn{margin-top:24px}
+.form-msg{margin-top:20px;padding:14px 18px;background:var(--sun);color:var(--ink);border-radius:14px 4px 14px 4px;font-weight:600}
+
+/* ---------- 12. Rodapé (com o ramo onde o passarinho poisa) ---------- */
+.foot{position:relative;background:var(--cobalt-dd);color:#D6E6FF;padding:clamp(70px,9vw,110px) 0 92px;margin-top:-1px}
+.branch{position:absolute;right:max(var(--gut),6%);top:28px;width:min(250px,50vw)}
+.foot-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:34px;align-items:start}
+.foot-brand{display:flex;gap:16px;align-items:center}
+.foot-brand img{width:78px;height:78px;border-radius:50%;box-shadow:0 0 0 4px #fff}
+.foot-brand b{display:block;font:800 26px/1.05 var(--f-display);color:#fff}
+.foot-brand small{font:700 11px/1 var(--f-body);letter-spacing:.22em;text-transform:uppercase;color:var(--sun)}
+.foot h4{margin:0 0 12px;font:700 12.5px/1 var(--f-body);letter-spacing:.18em;text-transform:uppercase;color:var(--sun)}
+.foot a{text-decoration:none}.foot a:hover{color:#fff;text-decoration:underline}
+.foot li+li{margin-top:6px}
+.demo-note{margin-top:42px;padding-top:24px;border-top:2px dashed rgba(255,255,255,.22);font-size:14px;line-height:1.6;color:#B9D1F5;max-width:110ch}
+.demo-note b{color:#fff}
+.foot .tbc{background:rgba(255,201,60,.14);color:var(--sun);border-color:var(--sun)}
+
+/* ---------- 13. Responsivo ---------- */
+@media (max-width:980px){
+  .viv-grid,.site-grid,.reg-grid{grid-template-columns:1fr}
+  .tree-wrap{position:relative;top:0;max-width:440px;margin:0 auto}
+  .panel{position:relative;top:0}
+  .plants{grid-template-columns:1fr;gap:0}
+  .plant{display:grid;grid-template-columns:118px 1fr;align-items:end}
+  .plant .txt{min-height:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center;padding:16px 18px}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .foot-brand{grid-column:1/-1}
+}
+@media (max-width:700px){
+  :root{--hdr-h:62px}
+  body{font-size:16.5px}
+  .brand-txt b{font-size:20px}
+  .brk{display:block;flex-basis:100%;height:0}
+  .hero{--fs:min(30vw,150px)}
+  .word{line-height:.88;row-gap:.2em}
+  .field-in{grid-template-columns:1fr}
+  .badge{display:none}
+  .hsun{right:6%}
+  .hero-in{padding-top:calc(var(--bar-h) + var(--hdr-h) + 40px)}
+  .contacts li{grid-template-columns:1fr;gap:4px}
+  .foot-grid{grid-template-columns:1fr}
+  .step{padding:18px 20px 16px}
+  .step p{font-size:16px}
+  .clock{font-size:13px;padding:8px 14px}
+  .steps{bottom:12px}
+}
+
+/* ---------- 14. Movimento reduzido ---------- */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .rv{opacity:1;transform:none}
+  .lt,.js:not(.go) .lt{transform:none!important}
+  .sprout{transform:translateX(-50%) scale(1)!important}
+  .js .plant .grow{transform:none}
+  #tree .tr{stroke-dashoffset:0}
+  #tree .blob,#tree .app,#tree .flag{transform:none}
+  .mm-train{transform:none}
+  .bird{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- símbolos reutilizados -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="soil" viewBox="0 0 200 34"><rect width="200" height="34" fill="#5A3A22"/><rect width="200" height="9" fill="#7A5230"/><path d="M0 9H200" stroke="#3E2713" stroke-width="2"/><g fill="#3E2713" opacity=".5"><circle cx="30" cy="22" r="3"/><circle cx="92" cy="27" r="2.5"/><circle cx="150" cy="20" r="3"/><circle cx="182" cy="28" r="2"/></g></symbol>
+    <symbol id="heart" viewBox="-12 -12 24 22"><path d="M0 8C-14-2-10-12 0-5 10-12 14-2 0 8Z"/></symbol>
+  </defs>
+</svg>
+
+<!-- Pré-carregador -->
+<div class="pre" aria-hidden="true"><div class="pre-in"><img src="img/logo-circulo.png" alt="" width="118" height="118"><div class="pre-sprouts"><i></i><i></i><i></i></div><p>a germinar…</p></div></div>
+
+<!-- Aviso de demonstração: faixa fixa + selo + (rodapé) -->
+<div class="demo-bar" role="note"><b>DEMO</b><span class="long">Website de demonstração criado pela DD Digital para o Externato Viveirinho · conteúdo ilustrativo</span><span class="short">Demonstração · Externato Viveirinho</span></div>
+<div class="demo-seal" aria-hidden="true"><i></i>Versão de demonstração</div>
+
+<!-- Passarinho companheiro (símbolo do logótipo) -->
+<button class="bird" id="bird" type="button" aria-label="Passarinho do Viveirinho: carregue para ouvir uma frase">
+  <span class="bubble" id="bubble" role="status"></span>
+  <svg class="bs" viewBox="0 0 120 94" aria-hidden="true"><g id="bs"><g class="bs-in">
+    <path d="M30 48 L5 30 Q18 24 36 40Z" fill="#F7E40A"/>
+    <path d="M22 52C22 28 44 17 70 19C98 21 113 36 109 53C105 72 83 84 56 82C34 80 22 68 22 52Z" fill="#2E96E0"/>
+    <path d="M74 21 L82 3 L96 24Z" fill="#8E2A86"/>
+    <path d="M42 72C46 59 74 57 86 69C80 82 52 84 42 72Z" fill="#F7E40A"/>
+    <g class="wing"><path d="M68 47C48 28 30 31 20 38C30 56 52 60 70 55Z" fill="#8E2A86"/></g>
+    <circle cx="90" cy="40" r="10" fill="#fff"/><circle id="pupil" cx="92" cy="40" r="5" fill="#111"/><circle class="lid" cx="90" cy="40" r="10" fill="#2E96E0"/>
+    <path d="M108 42L120 47L108 53Z" fill="#8E2A86"/>
+    <path d="M52 82v9M66 82v9" stroke="#E58A2E" stroke-width="3" stroke-linecap="round"/>
+  </g></g></svg>
+</button>
+
+<!-- ============ Cabeçalho ============ -->
+<header class="hdr" id="hdr">
+  <a class="brand" href="#topo" aria-label="Externato Viveirinho — início">
+    <img src="img/logo-circulo.png" alt="" width="46" height="46">
+    <span class="brand-txt"><small>Externato</small><b>Viveirinho</b></span>
+  </a>
+  <nav class="nav" id="nav" aria-label="Principal">
+    <ul>
+      <li><a href="#viveiro">O viveiro</a></li>
+      <li><a href="#dia">Um dia</a></li>
+      <li><a href="#canteiro">Canteiro</a></li>
+      <li><a href="#sitio">O sítio</a></li>
+      <li><a href="#inscricoes">Inscrições</a></li>
+    </ul>
+  </nav>
+  <a class="btn sm" href="#inscricoes">Inscrever</a>
+  <button class="burger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav"><span></span></button>
+</header>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="topo" aria-label="Externato Viveirinho">
+  <div class="hero-sky" aria-hidden="true">
+    <div class="hsun"></div>
+    <div class="cloud" style="top:20%;--w:190px;--t:95s;--dl:-30s"><svg viewBox="0 0 200 70"><path d="M20 62C4 62 2 40 22 38 20 18 48 8 62 24 70 6 104 4 114 24 128 12 156 20 154 40 176 38 190 62 166 62Z" fill="#fff"/></svg></div>
+    <div class="cloud" style="top:34%;--w:130px;--t:120s;--dl:-80s"><svg viewBox="0 0 200 70"><path d="M20 62C4 62 2 40 22 38 20 18 48 8 62 24 70 6 104 4 114 24 128 12 156 20 154 40 176 38 190 62 166 62Z" fill="#fff"/></svg></div>
+    <div class="cloud" style="top:12%;--w:150px;--t:105s;--dl:-8s"><svg viewBox="0 0 200 70"><path d="M20 62C4 62 2 40 22 38 20 18 48 8 62 24 70 6 104 4 114 24 128 12 156 20 154 40 176 38 190 62 166 62Z" fill="#fff"/></svg></div>
+  </div>
+  <div class="hills" aria-hidden="true">
+    <svg viewBox="0 0 1440 260" preserveAspectRatio="xMidYMax slice">
+      <path d="M0 120C200 70 380 104 560 86C760 66 960 118 1180 88C1300 72 1380 96 1440 104V260H0Z" fill="#C6E5B2"/>
+      <rect x="0" y="150" width="1440" height="110" fill="#A9D68C"/>
+      <path d="M0 150H1440" stroke="#4A5560" stroke-width="3"/><path d="M0 155H1440" stroke="#6B5A48" stroke-width="6" stroke-dasharray="3 8" opacity=".7"/>
+      <g class="train">
+        <g transform="translate(0,124)">
+          <g id="car"><rect x="0" y="0" width="38" height="24" rx="4" fill="#FFC93C"/><rect x="0" y="15" width="38" height="4" fill="#1F5FBF"/><rect x="4" y="4" width="8" height="8" rx="1.5" fill="#17324A"/><rect x="15" y="4" width="8" height="8" rx="1.5" fill="#17324A"/><rect x="26" y="4" width="8" height="8" rx="1.5" fill="#17324A"/></g>
+          <use href="#car" x="40"/><use href="#car" x="80"/>
+          <path d="M120 0H134Q146 4 146 14V24H120Z" fill="#FFC93C"/><rect x="128" y="4" width="12" height="9" rx="2" fill="#17324A"/><rect x="120" y="15" width="26" height="4" fill="#1F5FBF"/>
+          <circle cx="12" cy="26" r="3.5" fill="#17324A"/><circle cx="30" cy="26" r="3.5" fill="#17324A"/><circle cx="52" cy="26" r="3.5" fill="#17324A"/><circle cx="70" cy="26" r="3.5" fill="#17324A"/><circle cx="92" cy="26" r="3.5" fill="#17324A"/><circle cx="110" cy="26" r="3.5" fill="#17324A"/><circle cx="130" cy="26" r="3.5" fill="#17324A"/>
+        </g>
+      </g>
+      <path d="M0 196C240 160 420 204 700 178C980 152 1180 202 1440 174V260H0Z" fill="#7CBF55"/>
+    </svg>
+  </div>
+
+  <div class="wrap hero-in">
+    <p class="tag"><i></i>Inscrições abertas · ano letivo 2026/27</p>
+    <h1 class="hero-h" aria-label="Externato Viveirinho">
+      <span class="pre-w">Externato</span>
+      <span class="word" id="word" aria-hidden="true">
+        <span class="lt" style="--i:0;--c:#0049B8"><span class="lt-in">V</span></span>
+        <span class="lt" style="--i:1;--c:#8E2A86"><span class="lt-in">I<svg class="sprout" style="--i:1" viewBox="0 0 60 50"><path d="M30 50V28" stroke="#3C9A2E" stroke-width="4" stroke-linecap="round"/><path d="M30 30C30 14 16 6 4 8C4 22 14 32 30 30Z" fill="#6CBF4A"/><path d="M30 26C30 10 44 2 56 4C56 18 46 28 30 26Z" fill="#4E9F3A"/></svg></span></span>
+        <span class="lt" style="--i:2;--c:#3C9A2E"><span class="lt-in">V</span></span>
+        <span class="lt" style="--i:3;--c:#E8574A"><span class="lt-in">E</span></span>
+        <span class="lt" style="--i:4;--c:#0049B8"><span class="lt-in">I<svg class="sprout" style="--i:4" viewBox="0 0 60 50"><path d="M30 50V28" stroke="#3C9A2E" stroke-width="4" stroke-linecap="round"/><path d="M30 30C30 14 16 6 4 8C4 22 14 32 30 30Z" fill="#6CBF4A"/><path d="M30 26C30 10 44 2 56 4C56 18 46 28 30 26Z" fill="#4E9F3A"/></svg></span></span>
+        <span class="brk"></span>
+        <span class="lt" style="--i:5;--c:#8E2A86"><span class="lt-in">R</span></span>
+        <span class="lt" style="--i:6;--c:#EE8A1E"><span class="lt-in">I<svg class="sprout" style="--i:6" viewBox="0 0 60 50"><path d="M30 50V28" stroke="#3C9A2E" stroke-width="4" stroke-linecap="round"/><path d="M30 30C30 14 16 6 4 8C4 22 14 32 30 30Z" fill="#6CBF4A"/><path d="M30 26C30 10 44 2 56 4C56 18 46 28 30 26Z" fill="#4E9F3A"/></svg></span></span>
+        <span class="lt" style="--i:7;--c:#3C9A2E"><span class="lt-in">N</span></span>
+        <span class="lt" style="--i:8;--c:#0049B8" id="perch"><span class="lt-in">H</span></span>
+        <span class="lt" style="--i:9;--c:#E8574A"><span class="lt-in">O</span></span>
+      </span>
+    </h1>
+  </div>
+
+  <div class="field">
+    <div class="wrap field-in">
+      <div>
+        <p class="lead">Educação pré-escolar na Amadora, a 250 metros da estação. <b>Cuidamos hoje, preparamos amanhã.</b></p>
+        <div class="field-cta">
+          <a class="btn sun" href="#inscricoes">Pedir informações</a>
+          <a class="btn ghost" href="#dia">Ver um dia no Viveirinho</a>
+        </div>
+        <ul class="pills" aria-label="Em resumo">
+          <li>Ano letivo 2026/27</li><li>Das 7h30 às 19h00</li><li>Estação de Amadora a 250 m</li>
+        </ul>
+      </div>
+      <img class="badge" src="img/logo-circulo.png" alt="Logótipo do Externato: um passarinho azul, roxo e amarelo dentro de um círculo" width="168" height="168">
+    </div>
+  </div>
+</section>
+
+<!-- ============ O VIVEIRO + ÁRVORE ============ -->
+<section class="sec viv" id="viveiro" aria-labelledby="viv-t">
+  <div class="wrap viv-grid">
+    <div>
+      <span class="eyebrow rv">O nome explica tudo</span>
+      <h2 class="h2 rv" id="viv-t" style="--d:.05s">Um viveiro de <em>gente pequena</em>.</h2>
+      <div class="defn rv" style="--d:.1s">
+        <small>viveirinho · nome masculino</small>
+        <b>viveirinho</b>
+        <p>Sítio pequeno onde o que está a começar é cuidado, com luz, tempo e carinho, até estar pronto para crescer.</p>
+      </div>
+      <p class="lead rv" style="--d:.15s">Num viveiro, ninguém pede à semente que cresça depressa. Pede-se que cresça bem, com raízes. É assim o Externato Viveirinho: um sítio cuidado, onde as crianças começam, e onde as famílias sabem que ficam bem entregues.</p>
+
+      <ul class="stakes" aria-label="O Externato em três etiquetas">
+        <li class="stake rv" style="--r:-3deg;--d:.05s"><b>Desde 1955</b><span>a formar crianças felizes</span></li>
+        <li class="stake rv" style="--r:2deg;--d:.15s"><b>4,7 / 5</b>
+          <div class="stars" role="img" aria-label="4,7 em 5 estrelas"><svg viewBox="0 0 100 18"><defs><linearGradient id="sg"><stop offset="94%" stop-color="#F2A60C"/><stop offset="94%" stop-color="#D9C9A0"/></linearGradient></defs><g fill="url(#sg)"><path id="st" d="M10 1l2.6 5.6 6 .7-4.5 4.1 1.2 6-5.3-3-5.3 3 1.2-6L1.4 7.3l6-.7z"/><use href="#st" x="20"/><use href="#st" x="40"/><use href="#st" x="60"/><use href="#st" x="80"/></g></svg></div>
+          <span>no Google, segundo o Externato</span></li>
+        <li class="stake rv" style="--r:-2deg;--d:.25s"><b>Rede pública</b><span>educação pré-escolar</span></li>
+      </ul>
+      <p class="viv-note rv">Estabelecimento de educação pré-escolar integrante da rede pública, financiado pelo Ministério da Educação, Ciência e Inovação ao abrigo dos contratos de associação ao pré-escolar. <span class="tbc">a validar com o cliente</span></p>
+    </div>
+
+    <div class="tree-wrap">
+      <svg id="tree" viewBox="0 0 420 610" role="img" aria-label="Uma árvore a crescer entre 1955 e o ano letivo 2026/27">
+        <!-- raízes e solo -->
+        <path d="M210 528Q170 552 120 560M210 528Q250 556 306 562M210 528Q206 560 196 592" stroke="#3E2713" stroke-width="4" fill="none" stroke-linecap="round" opacity=".55"/>
+        <rect y="520" width="420" height="90" fill="#5A3A22"/><rect y="520" width="420" height="12" fill="#7A5230"/>
+        <path d="M0 520Q30 500 60 520T120 520T180 520T240 520T300 520T360 520T420 520" fill="#4E9F3A" stroke="none"/>
+        <!-- tronco e ramos (desenham-se com o scroll) -->
+        <path class="tr" id="t-trunk" d="M210 522C206 470 214 420 208 370C203 330 211 300 206 250" pathLength="1" stroke-width="24"/>
+        <path class="tr" id="t-top" d="M206 262C204 230 210 196 208 150" pathLength="1" stroke-width="14"/>
+        <path class="tr" id="t-bl" d="M208 404C180 388 150 372 118 330" pathLength="1" stroke-width="13"/>
+        <path class="tr" id="t-br" d="M207 346C240 330 275 308 306 262" pathLength="1" stroke-width="13"/>
+        <path class="tr" id="t-ml" d="M206 296C186 276 170 252 148 216" pathLength="1" stroke-width="10"/>
+        <!-- copa -->
+        <g id="crown">
+          <circle class="blob" cx="208" cy="132" r="62" fill="#4E9F3A"/>
+          <circle class="blob" cx="146" cy="178" r="50" fill="#5DB246"/>
+          <circle class="blob" cx="270" cy="188" r="54" fill="#3C8A2F"/>
+          <circle class="blob" cx="112" cy="300" r="40" fill="#7CBF55"/>
+          <circle class="blob" cx="308" cy="238" r="46" fill="#5DB246"/>
+          <circle class="blob" cx="178" cy="92" r="42" fill="#7CBF55"/>
+          <circle class="blob" cx="252" cy="106" r="46" fill="#4E9F3A"/>
+          <circle class="blob" cx="160" cy="246" r="38" fill="#3C8A2F"/>
+          <circle class="blob" cx="210" cy="190" r="44" fill="#6CBF4A"/>
+        </g>
+        <g id="apples" fill="#D93B2B">
+          <g class="app"><circle cx="170" cy="150" r="10"/><path d="M170 140q4-6 8-5" stroke="#3C9A2E" stroke-width="3" fill="none"/></g>
+          <g class="app"><circle cx="248" cy="160" r="10"/><path d="M248 150q4-6 8-5" stroke="#3C9A2E" stroke-width="3" fill="none"/></g>
+          <g class="app"><circle cx="214" cy="96" r="10"/><path d="M214 86q4-6 8-5" stroke="#3C9A2E" stroke-width="3" fill="none"/></g>
+          <g class="app"><circle cx="294" cy="232" r="10"/><path d="M294 222q4-6 8-5" stroke="#3C9A2E" stroke-width="3" fill="none"/></g>
+          <g class="app"><circle cx="124" cy="296" r="10"/><path d="M124 286q4-6 8-5" stroke="#3C9A2E" stroke-width="3" fill="none"/></g>
+          <g class="app"><circle cx="196" cy="226" r="10"/><path d="M196 216q4-6 8-5" stroke="#3C9A2E" stroke-width="3" fill="none"/></g>
+        </g>
+        <!-- bandeirola 2026/27 -->
+        <g class="flag"><path d="M316 270V312" stroke="#5A3A22" stroke-width="3"/><path d="M316 296H400V336L358 322L316 336Z" fill="#FFC93C"/><text x="358" y="318" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-size="19" fill="#17324A">2026/27</text></g>
+        <!-- estaca 1955 -->
+        <g transform="rotate(-5 90 520)"><path d="M48 450H132V508L90 524L48 508Z" fill="#F0D58E"/><path d="M48 450H132V508L90 524L48 508Z" fill="none" stroke="#C9A55A" stroke-width="3"/><text x="90" y="488" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-size="28" fill="#00306F">1955</text></g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ UM DIA NO VIVEIRINHO ============ -->
+<section class="day" id="dia" aria-labelledby="dia-t">
+  <div class="wrap day-head">
+    <span class="eyebrow rv">Das 7h30 às 19h00</span>
+    <h2 class="h2 rv" id="dia-t" style="--d:.05s">Um dia no Viveirinho, <em>sem pressa</em>.</h2>
+    <p class="lead rv" style="--d:.1s">Acompanhe o sol, da chegada ao “até amanhã”. Faça scroll devagar: o dia corre com ele.</p>
+  </div>
+  <div class="day-track" id="track">
+    <div class="day-stage" id="stage">
+      <div class="stars-bg" aria-hidden="true"><i style="--x:8%;--y:14%;--d:0s"></i><i style="--x:18%;--y:42%;--d:.6s"></i><i style="--x:30%;--y:20%;--d:1.2s"></i><i style="--x:44%;--y:8%;--d:.3s"></i><i style="--x:57%;--y:36%;--d:1.8s"></i><i style="--x:70%;--y:12%;--d:.9s"></i><i style="--x:82%;--y:30%;--d:2.1s"></i><i style="--x:92%;--y:10%;--d:1.5s"></i><i style="--x:36%;--y:50%;--d:2.4s"></i><i style="--x:64%;--y:52%;--d:.2s"></i></div>
+      <div class="dsun" id="sun" aria-hidden="true"></div>
+      <div class="day-hills" aria-hidden="true">
+        <svg viewBox="0 0 1440 300" preserveAspectRatio="none"><path d="M0 40C220 4 420 50 720 24C1000 0 1200 50 1440 20V300H0Z" fill="#4E9F3A"/><path d="M0 110C260 76 520 124 820 96C1080 72 1260 116 1440 92V300H0Z" fill="#2F6B2A"/></svg>
+      </div>
+      <svg class="day-school" viewBox="0 0 250 160" aria-hidden="true">
+        <rect x="10" y="40" width="230" height="116" fill="#F2C14E"/><rect x="10" y="40" width="78" height="116" fill="#2E96E0"/><rect x="88" y="40" width="74" height="116" fill="#7CBF55"/>
+        <path d="M0 44L125 4L250 44Z" fill="#C5502D"/>
+        <g fill="#BFE4F2"><rect x="22" y="58" width="22" height="26" rx="2"/><rect x="52" y="58" width="22" height="26" rx="2"/><rect x="22" y="98" width="22" height="26" rx="2"/><rect x="52" y="98" width="22" height="26" rx="2"/><rect x="176" y="58" width="22" height="26" rx="2"/><rect x="206" y="58" width="22" height="26" rx="2"/><rect x="176" y="98" width="22" height="26" rx="2"/><rect x="206" y="98" width="22" height="26" rx="2"/></g>
+        <g class="lit" fill="#FFD866"><rect x="22" y="58" width="22" height="26" rx="2"/><rect x="52" y="58" width="22" height="26" rx="2"/><rect x="22" y="98" width="22" height="26" rx="2"/><rect x="52" y="98" width="22" height="26" rx="2"/><rect x="176" y="58" width="22" height="26" rx="2"/><rect x="206" y="58" width="22" height="26" rx="2"/><rect x="176" y="98" width="22" height="26" rx="2"/><rect x="206" y="98" width="22" height="26" rx="2"/><rect x="104" y="98" width="42" height="58" rx="3"/></g>
+        <rect x="104" y="98" width="42" height="58" rx="3" fill="#1F5FBF"/><rect x="104" y="98" width="42" height="58" rx="3" fill="#FFD866" opacity="0" class="door"/>
+        <rect x="98" y="78" width="54" height="14" rx="2" fill="#fff"/><text x="125" y="89" text-anchor="middle" font-family="Albert Sans,sans-serif" font-weight="800" font-size="9" fill="#17324A">VIVEIRINHO</text>
+      </svg>
+      <div class="clock" aria-hidden="true"><span>7h30</span><span class="clock-bar"><i id="clockfill"></i></span><span>19h00</span></div>
+      <ol class="steps" id="steps">
+        <li class="step on"><div class="n"><i class="a"></i><i></i><i></i><i></i><i></i></div><h3>Chegada sem pressa</h3><p>Um bom dia, um abraço, e o dia começa com calma. Quem chega cedo é recebido, não despachado.</p><span class="ex">exemplo ilustrativo</span></li>
+        <li class="step"><div class="n"><i></i><i class="a"></i><i></i><i></i><i></i></div><h3>Manhã de descobertas</h3><p>Pintar, construir, ouvir histórias, cantar. As aprendizagens chegam a brincar, com carinho e diversão.</p><span class="ex">exemplo ilustrativo</span></li>
+        <li class="step"><div class="n"><i></i><i></i><i class="a"></i><i></i><i></i></div><h3>À mesa e a descansar</h3><p>Uma pausa para comer e recuperar energias, ao ritmo de cada criança.</p><span class="ex">exemplo ilustrativo</span></li>
+        <li class="step"><div class="n"><i></i><i></i><i></i><i class="a"></i><i></i></div><h3>Lá fora</h3><p>Relva, parque e horta. Espaço amplo para correr, trepar e regar o que se plantou.</p><span class="ex">exemplo ilustrativo</span></li>
+        <li class="step"><div class="n"><i></i><i></i><i></i><i></i><i class="a"></i></div><h3>Até amanhã</h3><p>O dia fecha às 19h00. Para as famílias de dias compridos, saber que ficou tudo bem entregue.</p><span class="ex">exemplo ilustrativo</span></li>
+      </ol>
+    </div>
+  </div>
+  <p class="day-note"><span class="tbc">Rotina de exemplo, ilustrativa: atividades, refeições e horas concretas a confirmar com o Externato.</span></p>
+</section>
+
+<!-- ============ CANTEIRO ============ -->
+<section class="bed" id="canteiro" aria-labelledby="bed-t">
+  <div class="wrap bed-head">
+    <span class="eyebrow rv">No canteiro</span>
+    <h2 class="h2 rv" id="bed-t" style="--d:.05s">O que cultivamos <em>todos os dias</em>.</h2>
+  </div>
+  <div class="wrap">
+    <ul class="plants">
+      <li class="plant" style="--k:0">
+        <svg class="pl" viewBox="0 0 200 330" style="--by:296px" aria-hidden="true"><g class="sw"><g class="grow">
+          <path d="M100 296C96 240 106 180 100 108" fill="none" stroke="#3C9A2E" stroke-width="7" stroke-linecap="round"/>
+          <path d="M100 240C70 236 50 216 44 196C72 192 94 212 100 240Z" fill="#4E9F3A"/><path d="M101 200C130 198 152 180 158 160C130 156 108 174 101 200Z" fill="#5DB246"/>
+          <g transform="translate(100 96)"><g fill="#FFC93C"><ellipse cy="-34" rx="9" ry="19"/><ellipse cy="-34" rx="9" ry="19" transform="rotate(30)"/><ellipse cy="-34" rx="9" ry="19" transform="rotate(60)"/><ellipse cy="-34" rx="9" ry="19" transform="rotate(90)"/><ellipse cy="-34" rx="9" ry="19" transform="rotate(120)"/><ellipse cy="-34" rx="9" ry="19" transform="rotate(150)"/><ellipse cy="-34" rx="9" ry="19" transform="rotate(180)"/><ellipse cy="-34" rx="9" ry="19" transform="rotate(210)"/><ellipse cy="-34" rx="9" ry="19" transform="rotate(240)"/><ellipse cy="-34" rx="9" ry="19" transform="rotate(270)"/><ellipse cy="-34" rx="9" ry="19" transform="rotate(300)"/><ellipse cy="-34" rx="9" ry="19" transform="rotate(330)"/></g><circle r="23" fill="#6B3F1E"/><g fill="#3E2713"><circle cx="-8" cy="-6" r="2.5"/><circle cx="7" cy="-9" r="2.5"/><circle cx="0" cy="3" r="2.5"/><circle cx="-11" cy="7" r="2.5"/><circle cx="10" cy="8" r="2.5"/></g></g>
+        </g></g><use href="#soil" x="0" y="296" width="200" height="34"/></svg>
+        <div class="txt"><h3>Equipa dedicada e qualificada</h3><p>Quem cuida sabe o que faz, e gosta de o fazer. É assim que uma criança se sente em casa.</p></div>
+      </li>
+      <li class="plant" style="--k:1">
+        <svg class="pl" viewBox="0 0 200 250" style="--by:216px" aria-hidden="true"><g class="sw"><g class="grow">
+          <path d="M100 216C102 180 98 150 100 112" fill="none" stroke="#3C9A2E" stroke-width="6" stroke-linecap="round"/>
+          <path d="M100 206C70 200 52 170 50 140C78 150 98 178 100 206Z" fill="#4E9F3A"/><path d="M101 196C130 190 148 164 150 136C124 146 104 170 101 196Z" fill="#5DB246"/>
+          <path d="M76 112C72 80 88 64 100 58C112 64 128 80 124 112C116 126 84 126 76 112Z" fill="#E8574A"/><path d="M100 58C95 84 97 106 100 122C103 106 105 84 100 58Z" fill="#F27B6E"/>
+        </g></g><use href="#soil" x="0" y="216" width="200" height="34"/></svg>
+        <div class="txt"><h3>Aprendizagens com carinho e diversão</h3><p>Aprende-se melhor a rir. Brincar é a maneira mais séria de descobrir o mundo.</p></div>
+      </li>
+      <li class="plant" style="--k:2">
+        <svg class="pl" viewBox="0 0 200 300" style="--by:266px" aria-hidden="true"><g class="sw"><g class="grow">
+          <path d="M100 266C96 220 108 190 98 150C92 124 104 100 100 74" fill="none" stroke="#3C9A2E" stroke-width="6" stroke-linecap="round"/>
+          <path d="M98 230C70 224 54 206 52 190C76 190 94 206 98 230Z" fill="#4E9F3A"/><path d="M102 186C128 180 146 162 150 146C126 146 106 162 102 186Z" fill="#5DB246"/><path d="M99 140C76 136 62 122 60 108C80 110 96 122 99 140Z" fill="#4E9F3A"/><path d="M100 110C122 104 134 92 138 80C118 82 104 92 100 110Z" fill="#5DB246"/>
+          <circle cx="68" cy="212" r="17" fill="#D93B2B"/><ellipse cx="62" cy="206" rx="4" ry="2.5" fill="#fff" opacity=".6"/><circle cx="134" cy="172" r="14" fill="#D93B2B"/><ellipse cx="129" cy="167" rx="3.5" ry="2" fill="#fff" opacity=".6"/><circle cx="76" cy="150" r="12" fill="#E8574A"/>
+          <circle cx="100" cy="68" r="9" fill="#FFC93C"/><circle cx="100" cy="68" r="3.5" fill="#6B3F1E"/>
+        </g></g><use href="#soil" x="0" y="266" width="200" height="34"/></svg>
+        <div class="txt"><h3>Espaço exterior amplo e atividades enriquecedoras</h3><p>Relva, parque, horta. Espaço para correr, trepar e ver crescer o que se plantou.</p></div>
+      </li>
+      <li class="plant" style="--k:3">
+        <svg class="pl" viewBox="0 0 200 230" style="--by:196px" aria-hidden="true"><g class="sw"><g class="grow">
+          <path d="M100 196C100 160 96 130 90 100M100 196C102 160 110 130 118 96M100 196C100 170 100 150 100 120" fill="none" stroke="#3C9A2E" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="82" cy="170" rx="15" ry="7" fill="#4E9F3A" transform="rotate(-30 82 170)"/><ellipse cx="120" cy="168" rx="15" ry="7" fill="#5DB246" transform="rotate(30 120 168)"/><ellipse cx="90" cy="140" rx="13" ry="6" fill="#5DB246" transform="rotate(-28 90 140)"/><ellipse cx="110" cy="138" rx="13" ry="6" fill="#4E9F3A" transform="rotate(28 110 138)"/>
+          <use href="#heart" x="68" y="72" width="44" height="40" fill="#F59BB5"/><use href="#heart" x="98" y="68" width="44" height="40" fill="#E8574A"/><use href="#heart" x="78" y="92" width="44" height="40" fill="#F7B6CB"/>
+        </g></g><use href="#soil" x="0" y="196" width="200" height="34"/></svg>
+        <div class="txt"><h3>Ambiente seguro e acolhedor</h3><p>Um sítio onde se pode errar, chorar e recomeçar, com colo sempre à distância de um passo.</p></div>
+      </li>
+      <li class="plant" style="--k:4">
+        <svg class="pl" viewBox="0 0 200 290" style="--by:256px" aria-hidden="true"><g class="sw"><g class="grow">
+          <path d="M100 256C104 210 96 170 100 126" fill="none" stroke="#3C9A2E" stroke-width="6" stroke-linecap="round"/>
+          <path d="M101 230C128 226 148 206 152 186C124 188 104 206 101 230Z" fill="#5DB246"/><path d="M99 196C72 192 54 174 52 156C78 158 96 174 99 196Z" fill="#4E9F3A"/>
+          <g transform="translate(100 98)"><g fill="#8E2A86"><ellipse cy="-36" rx="12" ry="20"/><ellipse cy="-36" rx="12" ry="20" transform="rotate(45)"/><ellipse cy="-36" rx="12" ry="20" transform="rotate(90)"/><ellipse cy="-36" rx="12" ry="20" transform="rotate(135)"/><ellipse cy="-36" rx="12" ry="20" transform="rotate(180)"/><ellipse cy="-36" rx="12" ry="20" transform="rotate(225)"/><ellipse cy="-36" rx="12" ry="20" transform="rotate(270)"/><ellipse cy="-36" rx="12" ry="20" transform="rotate(315)"/></g><circle r="27" fill="#fff" stroke="#17324A" stroke-width="3"/><g stroke="#17324A" stroke-width="2" stroke-linecap="round"><path d="M0-22v4M0 18v4M-22 0h4M18 0h4"/></g><path d="M0 0V16" stroke="#17324A" stroke-width="3.5" stroke-linecap="round"/><path d="M0 0L-9 9" stroke="#E8574A" stroke-width="4" stroke-linecap="round"/><circle r="3" fill="#17324A"/></g>
+        </g></g><use href="#soil" x="0" y="256" width="200" height="34"/></svg>
+        <div class="txt"><h3>Um horário a pensar nas famílias</h3><p>Aberto das 7h30 às 19h00, para os dias longos de quem trabalha.</p></div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ O SÍTIO ============ -->
+<section class="sec site" id="sitio" aria-labelledby="sitio-t">
+  <div class="wrap">
+    <span class="eyebrow rv">O sítio</span>
+    <h2 class="h2 rv" id="sitio-t" style="--d:.05s">Passeie pelo <em>Viveirinho</em>.</h2>
+    <p class="lead rv" style="--d:.1s">Toque nos pontos da ilustração do Externato para ver o que há em cada canto.</p>
+    <div class="site-grid">
+      <div class="scene rv" id="scene">
+        <img src="img/ilustracao-externato.jpg" width="1026" height="840" loading="lazy" alt="Ilustração do Externato Viveirinho: edifício colorido com horta à frente, parque com baloiço e escorrega, comboio ao fundo e crianças a pintar com uma educadora">
+        <button class="pin" type="button" style="--x:25%;--y:26%" data-i="0" aria-label="A casa" aria-pressed="true"><i></i></button>
+        <button class="pin" type="button" style="--x:15%;--y:47%" data-i="1" aria-label="A horta" aria-pressed="false"><i></i></button>
+        <button class="pin" type="button" style="--x:50%;--y:80%" data-i="2" aria-label="O ateliê ao ar livre" aria-pressed="false"><i></i></button>
+        <button class="pin" type="button" style="--x:72%;--y:46%" data-i="3" aria-label="O espaço exterior" aria-pressed="false"><i></i></button>
+        <button class="pin" type="button" style="--x:80%;--y:22%" data-i="4" aria-label="A estação" aria-pressed="false"><i></i></button>
+      </div>
+      <div class="panel">
+        <div class="pn-card" aria-live="polite">
+          <p class="k" id="pn-k">1 de 5</p>
+          <h3 id="pn-t">A casa</h3>
+          <p id="pn-p">Um edifício a cores, feito à medida de quem chega pequenino.</p>
+          <div class="pn-dots" id="pn-dots"><i class="a"></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <figure class="polaroid rv" style="--d:.1s">
+          <img src="img/parque-real.jpg" width="616" height="1020" loading="lazy" alt="Fotografia do parque infantil do Externato: estrutura de madeira com escorrega e painéis coloridos, sobre piso verde">
+          <figcaption>O parque, tal como é.</figcaption>
+        </figure>
+      </div>
+    </div>
+    <p class="site-note">Ilustração e fotografia retiradas de publicações do próprio Externato. As legendas são ilustrativas.</p>
+  </div>
+</section>
+
+<!-- ============ INSCRIÇÕES ============ -->
+<section class="sec reg" id="inscricoes" aria-labelledby="reg-t">
+  <div class="wrap">
+    <span class="eyebrow rv">Inscrições abertas · 2026/27</span>
+    <h2 class="h2 rv" id="reg-t" style="--d:.05s">Venha ver o viveiro <em>por dentro</em>.</h2>
+    <div class="reg-grid">
+      <div>
+        <p class="lead rv">Ligue, escreva ou passe por cá. Marque uma visita e conheça o espaço, a equipa e o dia a dia.</p>
+        <ul class="contacts rv" style="--d:.08s">
+          <li><span>Telemóvel</span><a href="tel:+351963534652">963 534 652</a></li>
+          <li><span>Email</span><a href="mailto:viveirinho@sapo.pt">viveirinho@sapo.pt</a></li>
+          <li><span>Horário</span><b>7h30 – 19h00</b></li>
+          <li><span>Morada</span><b><span class="tbc">a confirmar com o cliente</span></b></li>
+        </ul>
+        <figure class="minimap rv" id="minimap" style="--d:.12s">
+          <svg viewBox="0 0 520 250" role="img" aria-label="Esquema: a estação de Amadora fica a 250 metros do Externato">
+            <rect width="520" height="250" fill="#DDEFD0"/>
+            <path d="M0 210C120 190 220 230 340 206C420 190 480 200 520 190V250H0Z" fill="#C6E5B2"/>
+            <rect y="58" width="520" height="10" fill="#C9B79A"/><path d="M0 63H520" stroke="#4A5560" stroke-width="3"/><path d="M0 63H520" stroke="#6B5A48" stroke-width="9" stroke-dasharray="3 9" opacity=".5"/>
+            <g class="mm-train"><g transform="translate(74,36)"><rect width="46" height="26" rx="4" fill="#FFC93C"/><rect y="16" width="46" height="4" fill="#1F5FBF"/><rect x="5" y="4" width="9" height="9" rx="1.5" fill="#17324A"/><rect x="18" y="4" width="9" height="9" rx="1.5" fill="#17324A"/><rect x="31" y="4" width="9" height="9" rx="1.5" fill="#17324A"/><rect x="48" width="46" height="26" rx="4" fill="#FFC93C"/><rect x="48" y="16" width="46" height="4" fill="#1F5FBF"/><rect x="53" y="4" width="9" height="9" rx="1.5" fill="#17324A"/><rect x="66" y="4" width="9" height="9" rx="1.5" fill="#17324A"/><rect x="79" y="4" width="9" height="9" rx="1.5" fill="#17324A"/></g></g>
+            <g transform="translate(120,84)"><rect x="-44" y="0" width="88" height="24" rx="5" fill="#0049B8"/><text x="0" y="16.5" text-anchor="middle" font-family="Albert Sans,sans-serif" font-weight="800" font-size="12" fill="#fff" letter-spacing="1">AMADORA</text><path d="M-4 24v8h8v-8" fill="#0049B8"/></g>
+            <path class="mm-path" d="M120 126C130 170 260 130 330 164C370 184 400 172 426 156" fill="none" stroke="#E8574A" stroke-width="4" stroke-linecap="round"/>
+            <g transform="translate(250,132)"><rect x="-30" y="-14" width="60" height="26" rx="13" fill="#fff"/><text x="0" y="4" text-anchor="middle" font-family="Albert Sans,sans-serif" font-weight="800" font-size="14" fill="#17324A">250 m</text></g>
+            <g transform="translate(434,150)"><path d="M0 0C-22-26-18-54 0-54S22-26 0 0Z" fill="#E8574A"/><circle cy="-34" r="11" fill="#fff"/><circle cy="-34" r="6" fill="#2E96E0"/></g>
+            <text x="434" y="174" text-anchor="middle" font-family="Albert Sans,sans-serif" font-weight="800" font-size="13" fill="#17324A">Externato</text>
+          </svg>
+          <figcaption>Estação de Amadora a 250 m, segundo a publicação do Externato. Esquema ilustrativo, sem escala.</figcaption>
+        </figure>
+      </div>
+
+      <form class="form rv" id="form" style="--d:.15s" novalidate>
+        <h3>Peça informações</h3>
+        <p class="sub">Formulário de demonstração: não envia nada.</p>
+        <div class="fld"><label for="f-nome">O seu nome</label><input id="f-nome" name="nome" type="text" autocomplete="name" placeholder="Nome do encarregado de educação"></div>
+        <div class="fld"><label for="f-cont">Telemóvel ou email</label><input id="f-cont" name="contacto" type="text" autocomplete="off" placeholder="Como lhe podemos responder"></div>
+        <div class="fld"><label for="f-idade">Idade da criança</label><input id="f-idade" name="idade" type="text" autocomplete="off" placeholder="Por exemplo: 3 anos"></div>
+        <div class="fld"><label for="f-msg">Mensagem</label><textarea id="f-msg" name="mensagem" placeholder="Quer marcar uma visita? Tem alguma dúvida?"></textarea></div>
+        <button class="btn sun" type="submit">Enviar pedido</button>
+        <p class="form-msg" id="form-msg" role="status" hidden>Isto é uma demonstração: nada foi enviado. No website final, o pedido chega diretamente ao Externato.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ RODAPÉ ============ -->
+<footer class="foot">
+  <svg class="branch" id="branch" viewBox="0 0 250 40" aria-hidden="true"><path d="M0 18C60 14 140 22 250 12" stroke="#7A4B2A" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M60 18C56 30 44 36 34 34C36 24 46 18 60 18Z" fill="#4E9F3A"/><path d="M150 20C148 34 136 38 128 38C128 28 136 20 150 20Z" fill="#7CBF55"/><path d="M214 15C216 5 226 1 234 2C233 10 226 15 214 15Z" fill="#4E9F3A"/></svg>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand"><img src="img/logo-circulo.png" alt="" width="78" height="78"><div><small>Externato</small><b>Viveirinho</b></div></div>
+      <div><h4>Contactos</h4><ul><li><a href="tel:+351963534652">963 534 652</a></li><li><a href="mailto:viveirinho@sapo.pt">viveirinho@sapo.pt</a></li><li>7h30 – 19h00</li><li>Morada: <span class="tbc">a confirmar</span></li></ul></div>
+      <div><h4>Neste site</h4><ul><li><a href="#viveiro">O viveiro</a></li><li><a href="#dia">Um dia no Viveirinho</a></li><li><a href="#canteiro">Canteiro</a></li><li><a href="#sitio">O sítio</a></li><li><a href="#inscricoes">Inscrições</a></li></ul></div>
+    </div>
+    <p class="demo-note"><b>Website de demonstração criado pela DD Digital para o Externato Viveirinho.</b> Os textos, a rotina diária, as legendas e as descrições são ilustrativos e não vinculativos. O logótipo, a ilustração e a fotografia do parque foram retirados de publicações do próprio Externato; o contacto, o horário, “desde 1955”, a classificação no Google, a distância à estação e o enquadramento na rede pública são os indicados nessas publicações e ficam por validar com o cliente. A morada fica por confirmar. O formulário não envia nem guarda dados.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+'use strict';
+/* ---------- utilitários ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v)), lerp=(a,b,t)=>a+(b-a)*t, smooth=t=>t*t*(3-2*t);
+const root=document.documentElement;
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+const mixHex=(a,b,t)=>{const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));const x=p(a),y=p(b);return '#'+x.map((v,i)=>Math.round(lerp(v,y[i],t)).toString(16).padStart(2,'0')).join('')};
+
+/* ---------- pré-carregador e arranque ---------- */
+const pre=$('.pre');
+function go(){ root.classList.add('go'); if(pre){pre.classList.add('out'); setTimeout(()=>pre.remove(),1100);} birdArrive(); }
+if(!root.classList.contains('go')) setTimeout(go,1700); else { if(pre) pre.remove(); setTimeout(birdArrive,50); }
+
+/* ---------- cabeçalho e menu ---------- */
+const hdr=$('#hdr'), burger=$('.burger');
+burger.addEventListener('click',()=>{const o=hdr.classList.toggle('open');burger.setAttribute('aria-expanded',o);burger.setAttribute('aria-label',o?'Fechar menu':'Abrir menu')});
+$$('#nav a').forEach(a=>a.addEventListener('click',()=>{hdr.classList.remove('open');burger.setAttribute('aria-expanded','false')}));
+const navLinks=$$('#nav a'), navSecs=navLinks.map(a=>$(a.getAttribute('href')));
+function updateNav(){
+  hdr.classList.toggle('solid',scrollY>40);
+  let cur=-1; navSecs.forEach((s,i)=>{ if(s.getBoundingClientRect().top<innerHeight*.4) cur=i; });
+  navLinks.forEach((a,i)=>a.setAttribute('aria-current',i===cur?'true':'false'));
+}
+
+/* ---------- reveals ---------- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.2,rootMargin:'0px 0px -6% 0px'});
+$$('.rv,.plant,#minimap').forEach(el=>io.observe(el));
+
+/* ---------- hero: vento nas letras (rato inclina, toque/clique lança uma rajada) ---------- */
+const letters=$$('.lt-in'), ang=letters.map(()=>0);
+let lc=[], mx=-9999, my=-9999, gust0=-99, lastAuto=0;
+const heroEl=$('.hero'), fieldEl=$('.field'), tagEl=$('.tag');
+function measureLetters(){ heroEl.style.setProperty('--fh',fieldEl.offsetHeight+'px'); lc=letters.map(l=>{const r=l.getBoundingClientRect();return{x:r.left+r.width/2+scrollX,y:r.top+r.height/2+scrollY}}) }
+addEventListener('pointermove',e=>{ if(e.pointerType==='mouse'){mx=e.clientX;my=e.clientY} },{passive:true});
+$('.hero').addEventListener('pointerdown',()=>{gust0=performance.now()/1000});
+function wind(tt){
+  if(scrollY>innerHeight*1.1) return;
+  if(tt-lastAuto>11){lastAuto=tt;gust0=tt}
+  letters.forEach((el,i)=>{
+    let a=Math.sin(tt*1.15+i*.62)*1.2+Math.sin(tt*.43+i*1.7)*.6;
+    const g=tt-gust0-i*.075;
+    if(g>0&&g<2.4) a+=Math.sin(g*7)*8*Math.exp(-g*2.2);
+    if(fine&&lc[i]){const dx=lc[i].x-(mx+scrollX),dy=lc[i].y-(my+scrollY),d=Math.hypot(dx,dy);if(d<300)a+=Math.sign(dx||1)*(1-d/300)*9}
+    ang[i]=lerp(ang[i],a,.12);
+    el.style.transform='rotate('+ang[i].toFixed(2)+'deg)';
+  });
+}
+
+/* ---------- passarinho companheiro ---------- */
+const bird=$('#bird'), bubble=$('#bubble'), pupil=$('#pupil'), perch=$('#perch'), branch=$('#branch'), bs=$('#bs');
+const PHRASES=['Piu!','Inscrições abertas!','Cuidamos hoje, preparamos amanhã.','Já viu um dia no Viveirinho?','Aqui cresce-se com raízes.','Piu piu!'];
+let bx=0,by=0,px=null,py=null,face=-1,rot=0,flyUntil=0,arr=1,arrT0=0,phraseI=0,bubT=0,hopT=0;
+function birdArrive(){ if(reduce) return; root.classList.add('bird-on'); if(scrollY<10){arr=0;arrT0=performance.now()+1300} }
+function birdTarget(){
+  const vw=innerWidth,vh=innerHeight,sy=scrollY,W=bird.offsetWidth||72,H=W*.783;
+  const maxS=document.documentElement.scrollHeight-vh;
+  const mobB=vw<700, cx=vw-W-(mobB?4:12)-(mobB?0:(.5+.5*Math.sin(sy/650))*Math.min(vw*.1,110)), cy=vh*(mobB?.9:.74)-(mobB?W:0)+Math.sin(sy/140)*9;
+  const mob=vw<700, pr=(mob?tagEl:perch).getBoundingClientRect(), hx=mob?pr.right-W-10:pr.left+pr.width/2-W/2, hy=pr.top-H*.97+4;
+  const t1=smooth(clamp(sy/(vh*.35)));
+  let x=lerp(hx,cx,t1), y=lerp(hy,cy,t1), f=-1;
+  if(t1>.02&&t1<.98) f=cx>=hx?1:-1;
+  const br=branch.getBoundingClientRect(), kx=br.left+br.width*.5-W/2, ky=br.top+br.height*.3-H*.97+4;
+  const t2=smooth(clamp((sy-(maxS-vh*.5))/(vh*.4)))*smooth(clamp((br.top-120)/70));
+  const x0=x; x=lerp(x,kx,t2); y=lerp(y,ky,t2);
+  if(t2>.02&&t2<.98) f=kx>=x0?1:-1; else if(t2>=.98) f=-1;
+  return {x,y,f,W,perched:t1<.02||t2>.98};
+}
+function birdFrame(now){
+  const T=birdTarget(); let x=T.x,y=T.y;
+  if(arr<1){ const a=clamp((now-arrT0)/1700); arr=a; const e=1-Math.pow(1-a,3);
+    x=lerp(-120,x,e); y=lerp(innerHeight*.18,y,e)-Math.sin(Math.PI*a)*90; if(a>0&&a<1) T.f=1; }
+  if(px===null){px=x;py=y}
+  const vx=x-px,vy=y-py,sp=Math.hypot(vx,vy); px=x;py=y;
+  if(sp>.7||(arr<1&&now>arrT0)) flyUntil=now+240;
+  bird.classList.toggle('fly',now<flyUntil);
+  rot=lerp(rot,T.perched&&now>=flyUntil?0:clamp(vy*1.6,-26,26),.15);
+  face=T.f;
+  bird.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0)';
+  bs.style.transform='scaleX('+face+') rotate('+rot.toFixed(1)+'deg)';
+  if(fine&&pupil){const r=bird.getBoundingClientRect(),ex=clamp((mx-(r.left+r.width*.7))/90,-1,1)*2.6*face,ey=clamp((my-(r.top+r.height*.4))/90,-1,1)*2.4;pupil.setAttribute('cx',92+ex);pupil.setAttribute('cy',40+ey)}
+  bubble.style.right=(face<0?'auto':'0'); bubble.style.left=(face<0?'0':'auto');
+}
+bird.addEventListener('click',()=>{
+  bubble.textContent=PHRASES[phraseI++%PHRASES.length]; bubble.classList.add('on');
+  bird.classList.add('hop'); clearTimeout(hopT); hopT=setTimeout(()=>bird.classList.remove('hop'),520);
+  clearTimeout(bubT); bubT=setTimeout(()=>bubble.classList.remove('on'),2600);
+});
+
+/* ---------- viveiro: árvore que cresce com o scroll ---------- */
+const treeEl=$('#tree'), tr={trunk:$('#t-trunk'),top:$('#t-top'),bl:$('#t-bl'),br:$('#t-br'),ml:$('#t-ml')};
+const blobs=$$('#tree .blob'), apples=$$('#tree .app'), flag=$('#tree .flag');
+const ease=t=>1-Math.pow(1-clamp(t),3), back=t=>{t=clamp(t);const c=1.7;return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2)};
+function setDash(el,v){ el.style.strokeDashoffset=(1-clamp(v)).toFixed(3); el.style.opacity=v<=.001?0:1 }
+function growTree(){
+  const r=treeEl.getBoundingClientRect(), vh=innerHeight;
+  const p=reduce?1:clamp((vh*.92-r.top)/(r.height*.95));
+  setDash(tr.trunk,p/.42); setDash(tr.bl,(p-.26)/.2); setDash(tr.br,(p-.32)/.2); setDash(tr.ml,(p-.38)/.16); setDash(tr.top,(p-.4)/.16);
+  blobs.forEach((b,i)=>b.style.transform='scale('+back((p-.5-i*.03)/.16).toFixed(3)+')');
+  apples.forEach((a,i)=>a.style.transform='scale('+back((p-.86-i*.02)/.1).toFixed(3)+')');
+  flag.style.transform='scale('+back((p-.92)/.08).toFixed(3)+')';
+}
+
+/* ---------- um dia: sol, céu e cartões ---------- */
+const track=$('#track'), stage=$('#stage'), sunEl=$('#sun'), fill=$('#clockfill'), steps=$$('#steps .step');
+const SKY=[[0,'#7FA8E0','#FFD0A6'],[.25,'#78BDEB','#DDF1F6'],[.5,'#4FAEEA','#C8EAF6'],[.75,'#7FBDE8','#F9E8BE'],[1,'#3E3F8E','#F6A67E']];
+let SW=0,SH=0,mobile=false,activeStep=0;
+function measureStage(){
+  SW=stage.clientWidth; SH=stage.clientHeight; mobile=innerWidth<760;
+  const hz=mobile?.5:.66; stage.style.setProperty('--hz',(hz*100)+'%');
+  stage.style.setProperty('--sx',(mobile?'74%':'74%'));
+  stage.style.setProperty('--ss',(mobile?66:Math.min(104,SH*.13))+'px');
+}
+function dayUpdate(){
+  if(root.classList.contains('rm')||!SW) return;
+  const r=track.getBoundingClientRect(), top=(parseFloat(getComputedStyle(root).getPropertyValue('--bar-h'))||36)+(innerWidth<=700?62:68);
+  const p=clamp((top-r.top)/(r.height-SH));
+  const hz=(mobile?.5:.66)*SH, cx=SW*(mobile?.5:.66), rx=SW*(mobile?.4:.3), ry=hz-SH*(mobile?.1:.12), sz=parseFloat(getComputedStyle(stage).getPropertyValue('--ss'))||96;
+  const x=cx-rx*Math.cos(Math.PI*p)-sz/2, y=hz-ry*Math.sin(Math.PI*p)-sz/2;
+  sunEl.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0)';
+  sunEl.style.setProperty('--sc',mixHex('#FF8A3A','#FFD23F',Math.sin(Math.PI*p)));
+  let k=0; while(k<SKY.length-2&&p>SKY[k+1][0]) k++;
+  const a=SKY[k],b=SKY[k+1],t=(p-a[0])/(b[0]-a[0]);
+  stage.style.setProperty('--sk1',mixHex(a[1],b[1],t)); stage.style.setProperty('--sk2',mixHex(a[2],b[2],t));
+  stage.style.setProperty('--stars',clamp((p-.8)/.2).toFixed(2)); stage.style.setProperty('--lit',clamp((p-.72)/.2).toFixed(2)); stage.style.setProperty('--p',p.toFixed(3));
+  const idx=Math.min(4,Math.floor(p*5)); if(idx!==activeStep){steps[activeStep].classList.remove('on');steps[idx].classList.add('on');activeStep=idx}
+}
+
+/* ---------- o sítio: pontos da ilustração ---------- */
+const SPOTS=[
+ {t:'A casa',p:'Um edifício a cores, feito à medida de quem chega pequenino.'},
+ {t:'A horta',p:'Sementes, regadores e mãos na terra. Ver crescer é uma boa lição.'},
+ {t:'O ateliê ao ar livre',p:'Tintas, pincéis e uma mesa grande. Pode sujar-se: lava-se.'},
+ {t:'O espaço exterior',p:'Relva, baloiço e escorrega. Espaço amplo para gastar energia.'},
+ {t:'A estação a 250 m',p:'O Externato fica perto da estação de Amadora, o que ajuda a quem chega de comboio.'}
+];
+const pins=$$('.pin'), pk=$('#pn-k'), pt=$('#pn-t'), pp=$('#pn-p'), pdots=$$('#pn-dots i');
+let spot=0, userSpot=false, sceneVisible=false;
+function setSpot(i){ spot=i; pins.forEach((b,j)=>b.setAttribute('aria-pressed',j===i)); pdots.forEach((d,j)=>d.classList.toggle('a',j===i));
+  pk.textContent=(i+1)+' de 5'; pt.textContent=SPOTS[i].t; pp.textContent=SPOTS[i].p; }
+pins.forEach((b,i)=>b.addEventListener('click',()=>{userSpot=true;setSpot(i)}));
+new IntersectionObserver(es=>{sceneVisible=es[0].isIntersecting},{threshold:.3}).observe($('#scene'));
+if(!reduce) setInterval(()=>{ if(!userSpot&&sceneVisible) setSpot((spot+1)%5) },4200);
+
+/* ---------- inscrições: formulário de demonstração ---------- */
+$('#form').addEventListener('submit',e=>{e.preventDefault();const m=$('#form-msg');m.hidden=false;m.scrollIntoView({block:'nearest',behavior:reduce?'auto':'smooth'})});
+
+/* ---------- ciclo único ---------- */
+let lastSy=-1;
+function onScrollWork(){ updateNav(); growTree(); dayUpdate(); }
+function resize(){ measureLetters(); measureStage(); onScrollWork(); }
+addEventListener('resize',resize);
+function loop(now){
+  const sy=scrollY; if(sy!==lastSy){lastSy=sy;onScrollWork()}
+  if(!reduce){ wind(now/1000); birdFrame(now); }
+  requestAnimationFrame(loop);
+}
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>{ resize(); setTimeout(measureLetters,2000); });
+resize();
+if(!reduce) requestAnimationFrame(loop); else { onScrollWork(); addEventListener('scroll',onScrollWork,{passive:true}); }
+})();
+</script>
+</body>
+</html>
