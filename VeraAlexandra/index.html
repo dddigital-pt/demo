@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vera Alexandra | Beauty Studio — Demonstração</title>
+<meta name="description" content="Demonstração de website para Vera Alexandra | Beauty Studio, Lisboa: depilação a laser, lifting de pestanas e formações para iniciantes.">
+<meta name="theme-color" content="#150F0E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23150F0E'/%3E%3Cg fill='none' stroke='%23D9A892' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M16 26C15 19 12 14 6 11'/%3E%3Cpath d='M16 26C16 18 16 13 16 6'/%3E%3Cpath d='M16 26C17 19 20 14 26 11'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Italiana&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+/*
+  CONCEITO — Vera Alexandra | Beauty Studio
+  Layout: hero escuro em duas colunas; o retrato "abre" como uma pálpebra (clip-path a partir de uma fenda) com uma
+  franja de pestanas que passa de lassa a curvada (lifting). A franja repete-se no topo de cada secção como assinatura.
+  Secções: manifesto da luva → laser (pele interativa) → lifting (olho interativo) → formações → perguntas → marcação.
+  Paleta: carvão da luva, marfim do blazer, taupe do bokeh, rosa-dourado dos brincos.
+*/
+
+/* ============ 1. VARIÁVEIS ============ */
+:root{
+  --ink:#150F0E; --ink2:#201715; --glove:#0A0707;
+  --ivory:#F7F2EB; --bone:#EADFD2; --taupe:#A99883; --taupe-d:#6B5B4C;
+  --rose:#C9917A; --rose-l:#E2B6A2; --rose-d:#9A5F4A;
+  --serif:'Italiana',Georgia,serif; --sans:'Instrument Sans',system-ui,sans-serif;
+  --banner:34px; --hdr:72px; --pad:clamp(20px,4vw,56px);
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+
+/* ============ 2. BASE ============ */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ink);color:var(--ivory);font:400 16px/1.65 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+img{display:block;max-width:100%;height:auto}
+h1,h2,h3,p,ul,ol,figure{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--rose);outline-offset:3px}
+section[id]{scroll-margin-top:calc(var(--banner) + var(--hdr))}
+.wrap{width:100%;max-width:1280px;margin-inline:auto;padding-inline:var(--pad)}
+.eyebrow{font:500 11.5px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--rose)}
+.h2{font:400 clamp(2.4rem,5vw,4.6rem)/1.02 var(--serif);letter-spacing:-.005em}
+.h2 em{font-style:normal;color:var(--rose)}
+.lede{font-size:clamp(1rem,1.25vw,1.12rem);max-width:46ch;opacity:.88}
+.tbc{display:inline-block;padding:0 8px;border:1px dashed currentColor;font-size:12px;letter-spacing:.04em;line-height:1.7;opacity:.85}
+.fan{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;flex:none}
+.btn{display:inline-flex;align-items:center;gap:12px;padding:16px 28px;background:var(--rose);color:var(--ink);font:600 12px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border:1px solid var(--rose);position:relative;overflow:hidden;cursor:pointer;transition:color .4s var(--ease)}
+.btn::before{content:"";position:absolute;inset:0;background:var(--ivory);transform:translateY(101%);transition:transform .5s var(--ease)}
+.btn span,.btn svg{position:relative}
+.btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6}
+.btn:hover::before{transform:none}
+.btn--ghost{background:transparent;color:inherit;border-color:currentColor}
+.btn--ghost::before{background:var(--rose)}
+.btn--ghost:hover{color:var(--ink);border-color:var(--rose)}
+
+/* reveals */
+.js .rv{opacity:0;transform:translateY(22px);transition:opacity .9s var(--ease) calc(var(--d,0)*1ms),transform .9s var(--ease) calc(var(--d,0)*1ms)}
+.js .rv.in{opacity:1;transform:none}
+
+/* franja de pestanas: assinatura no topo de cada secção (cor = fundo da secção) */
+.lashdiv{position:absolute;left:0;right:0;bottom:100%;height:clamp(34px,5vw,64px);width:100%;color:var(--bg);overflow:hidden;pointer-events:none;fill:none;stroke:currentColor;stroke-linecap:round;stroke-width:1.25}
+.js .lashdiv{opacity:0;transition:opacity .6s}
+.js .lashdiv.in{opacity:1}
+
+/* ============ 3. FAIXA DEMO + SELO ============ */
+.banner{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--banner);display:flex;align-items:center;justify-content:center;gap:12px;padding-inline:12px;background:var(--rose);color:var(--ink);font:500 11.5px/1 var(--sans);letter-spacing:.05em;text-align:center}
+.banner b{background:var(--ink);color:var(--rose-l);padding:4px 9px;letter-spacing:.24em;font-weight:600;font-size:10px}
+.banner .s{display:none}
+.seal{position:fixed;left:16px;bottom:16px;z-index:60;padding:9px 14px;background:var(--ink);color:var(--rose-l);font:500 10px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--rose);display:flex;gap:8px;align-items:center}
+.seal i{width:6px;height:6px;border-radius:50%;background:var(--rose)}
+
+/* ============ 4. CABEÇALHO ============ */
+.hdr{position:sticky;top:var(--banner);z-index:90;height:var(--hdr);margin-top:var(--banner);background:var(--ink);border-bottom:1px solid rgba(247,242,235,.1)}
+.hdr .wrap{height:100%;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{text-decoration:none;display:flex;align-items:center;gap:14px;line-height:1}
+.brand svg{width:34px;height:34px;color:var(--rose);fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
+.brand__n{display:block;font:400 25px/1 var(--serif);letter-spacing:.01em}
+.brand__s{display:block;margin-top:6px;font:500 8.5px/1 var(--sans);letter-spacing:.34em;text-transform:uppercase;color:var(--rose-l)}
+.nav{display:flex;align-items:center;gap:clamp(18px,2.6vw,40px)}
+.nav a{font:500 11.5px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;text-decoration:none;padding:8px 0;background:linear-gradient(var(--rose),var(--rose)) 0 100%/0 1px no-repeat;transition:background-size .45s var(--ease)}
+.nav a:hover{background-size:100% 1px}
+.nav .btn{padding:13px 20px;background:var(--rose);color:var(--ink)}
+.burger{display:none;width:44px;height:44px;border:1px solid rgba(247,242,235,.25);background:transparent;position:relative;cursor:pointer}
+.burger i{position:absolute;left:12px;right:12px;height:1px;background:var(--ivory);transition:transform .4s var(--ease),top .4s var(--ease)}
+.burger i:nth-child(1){top:18px}.burger i:nth-child(2){top:25px}
+.menu-open .burger i:nth-child(1){top:21px;transform:rotate(45deg)}
+.menu-open .burger i:nth-child(2){top:21px;transform:rotate(-45deg)}
+@media (max-width:960px){
+  .burger{display:block}
+  /* cabeçalho sem backdrop-filter (cria bloco contentor para o menu fixed) e fundo sólido */
+  .nav{position:fixed;left:0;right:0;top:calc(var(--banner) + var(--hdr));bottom:0;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:0;padding:28px var(--pad);background:var(--ink);transform:translateY(-8px);opacity:0;visibility:hidden;transition:opacity .4s,transform .4s var(--ease),visibility .4s;overflow-y:auto;overscroll-behavior:contain;z-index:1}
+  .menu-open .nav{opacity:1;visibility:visible;transform:none}
+  .nav a{font:400 clamp(2.2rem,10vw,3rem)/1.2 var(--serif);letter-spacing:0;text-transform:none;padding:12px 0;border-bottom:1px solid rgba(247,242,235,.12);width:100%;background:none}
+  .nav .btn{margin-top:26px;font:600 12px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;width:auto;border-bottom:1px solid var(--rose);padding:16px 26px}
+  body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+}
+
+/* ============ 5. HERO — o olhar que se abre ============ */
+.hero{position:relative;overflow-x:clip;padding:clamp(100px,15vw,150px) 0 clamp(56px,7vw,96px);min-height:calc(100svh - var(--banner) - var(--hdr));display:flex;align-items:center;background:var(--ink)}
+.hero__wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,4vw,72px);align-items:center}
+.hero__copy{position:relative;z-index:2;container-type:inline-size}
+.hero__copy .eyebrow{display:block;margin-bottom:clamp(18px,2.4vw,30px)}
+.hl{font:400 min(20cqw,9.4rem)/.86 var(--serif);letter-spacing:-.012em}
+.hl .ln{display:block;overflow:hidden;padding-bottom:.08em}
+.hl .ln span{display:block}
+.hl .ln:nth-child(2){padding-left:.5em}
+.js .hl .ln span{transform:translateY(110%);transition:transform 1.2s var(--ease)}
+.js .go .hl .ln span{transform:none}
+.js .go .hl .ln:nth-child(2) span{transition-delay:.12s}
+.hero__list{margin-top:clamp(26px,3.4vw,44px);display:grid;gap:12px;font-size:clamp(1rem,1.3vw,1.14rem)}
+.hero__list li{display:flex;gap:14px;align-items:center;color:var(--ivory)}
+.hero__list .fan{color:var(--rose)}
+.hero__cta{margin-top:clamp(28px,3.4vw,44px);display:flex;gap:18px 26px;align-items:center;flex-wrap:wrap}
+.hero__loc{font:500 11.5px/1.4 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--rose-l)}
+.js .hero .rv2{opacity:0;transform:translateY(16px);transition:opacity 1s var(--ease) calc(var(--d,0)*1ms),transform 1s var(--ease) calc(var(--d,0)*1ms)}
+.js .go .rv2{opacity:1;transform:none}
+
+.eye{--o:1;position:relative;justify-self:end;height:min(64svh,610px);aspect-ratio:4/5;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.js .eye{--o:0}
+.eye__win{position:absolute;inset:0;overflow:hidden;clip-path:inset(calc((1 - var(--o)) * 50%) 0 calc((1 - var(--o)) * 50%) 0)}
+.eye__win img{width:100%;height:100%;object-fit:cover;object-position:44% 30%}
+.eye__top{position:absolute;left:0;right:0;top:0;height:100%;pointer-events:none;transform:translateY(calc((1 - var(--o)) * 50%))}
+.eye__edge{position:absolute;left:0;right:0;top:-1px;height:1px;background:var(--rose)}
+.eye__lashes{position:absolute;left:0;right:0;bottom:100%;width:100%;height:auto;overflow:visible;fill:none;stroke:var(--rose-l);stroke-width:1.5;stroke-linecap:round}
+.eye__hint{position:absolute;right:0;top:calc(100% + 14px);font:500 10px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--rose-l);opacity:.7}
+.eye__cap{position:absolute;left:-1px;bottom:-1px;padding:10px 16px 10px 0;background:var(--ink);font:500 10px/1.3 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--rose-l);transform:translate(0,0)}
+.eye__cap{display:none}
+@media (max-width:860px){
+  .hero{min-height:0;display:block;padding:78px 0 56px}
+  .hero__wrap{grid-template-columns:1fr;gap:34px}
+  .hl{font-size:min(20cqw,6rem)}
+  .eye{justify-self:center;width:100%;height:auto;max-width:480px;margin-top:clamp(70px,22vw,100px)}
+  .hero__copy .eyebrow{margin-bottom:18px}
+}
+
+/* ============ 6. MANIFESTO — a luva ============ */
+.man{--bg:var(--ivory);position:relative;background:var(--ivory);color:var(--ink);padding:clamp(84px,11vw,160px) 0 clamp(80px,10vw,150px)}
+.man__wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(36px,6vw,100px);align-items:center}
+.man .eyebrow{color:var(--rose-d)}
+.man__t{margin-top:22px;font:400 clamp(2.3rem,4.8vw,4.6rem)/1.06 var(--serif);letter-spacing:-.005em}
+.man__t .w{opacity:.2;transition:opacity .5s}
+.man__t .w.on{opacity:1}
+.man__t em{font-style:normal;color:var(--rose-d)}
+.man__p{margin-top:30px;max-width:44ch;color:#3E322C}
+.man__fig{position:relative;padding-bottom:clamp(40px,5vw,70px)}
+.man__fig>img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:30% 50%}
+.man__cap{margin-top:14px;padding-left:calc(clamp(120px,15vw,190px) - 14px);font:500 11px/1.5 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--taupe-d)}
+.man__tile{position:absolute;left:clamp(-34px,-3vw,-18px);bottom:0;width:clamp(120px,15vw,190px);border:6px solid var(--ivory);background:var(--ivory);box-shadow:0 18px 40px -22px rgba(21,15,14,.5)}
+.man__tile img{width:100%;aspect-ratio:1/1;object-fit:cover}
+.man__tile span{display:block;padding:8px 2px 0;font:500 9.5px/1.3 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--taupe-d)}
+@media (max-width:860px){
+  .man__wrap{grid-template-columns:1fr}
+  .man__tile{left:14px}
+  .man__cap{padding-left:140px}
+}
+
+/* ============ 7. LASER — pele interativa ============ */
+.laser{--bg:var(--ink);position:relative;background:var(--ink);padding:clamp(84px,11vw,150px) 0}
+.laser__wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(32px,5vw,84px);align-items:start}
+.laser__copy{position:sticky;top:calc(var(--banner) + var(--hdr) + 28px)}
+.laser__copy .h2{margin-top:22px}
+.laser__copy .lede{margin-top:26px}
+.checks{margin-top:30px;display:grid;gap:12px}
+.checks li{display:flex;gap:14px;align-items:flex-start;font-size:.98rem}
+.checks .fan{color:var(--rose);margin-top:3px}
+.laser__ph{margin-top:clamp(40px,5vw,72px);position:relative}
+.laser__ph img{width:100%;aspect-ratio:16/9;object-fit:cover;object-position:50% 62%}
+.laser__ph::after{content:"";position:absolute;left:-10px;top:-10px;width:44px;height:44px;border-left:1px solid var(--rose);border-top:1px solid var(--rose)}
+.skin{position:relative;background:linear-gradient(158deg,#E7C0A8,#CC9377 62%,#C08568);aspect-ratio:16/10;overflow:hidden;cursor:none;touch-action:pan-y;-webkit-user-select:none;user-select:none;box-shadow:0 40px 80px -40px rgba(0,0,0,.8)}
+.skin canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.skin__hint{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;color:var(--glove);font:500 12px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;text-align:center;transition:opacity .6s}
+.skin__hint span{padding:12px 18px;background:rgba(247,242,235,.82)}
+.skin.used .skin__hint{opacity:0}
+.pulse{position:absolute;left:0;top:0;width:96px;height:96px;margin:-48px 0 0 -48px;border-radius:50%;pointer-events:none;opacity:0;border:1.5px solid rgba(255,255,255,.95);background:radial-gradient(circle,rgba(255,240,226,.95) 0 14%,rgba(255,226,200,.55) 15% 55%,rgba(255,210,180,.0) 70%);box-shadow:0 0 34px 6px rgba(255,236,210,.7);transition:opacity .25s,scale .2s;will-change:transform}
+.pulse.on{opacity:1}
+.pulse.flash{scale:1.14}
+.skin__bar{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;justify-content:space-between;margin-top:20px}
+.skin__stat{display:flex;gap:14px;align-items:center;font:500 11px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--rose-l)}
+.meter{width:clamp(120px,18vw,220px);height:2px;background:rgba(247,242,235,.18);position:relative}
+.meter i{position:absolute;inset:0;background:var(--rose);transform-origin:0 50%;transform:scaleX(var(--p,0))}
+.skin__btns{display:flex;gap:12px;flex-wrap:wrap}
+.skin__btns .btn{padding:13px 20px}
+.note{margin-top:16px;font-size:12.5px;line-height:1.6;opacity:.62;max-width:62ch}
+@media (max-width:960px){
+  .laser__wrap{grid-template-columns:1fr}
+  .laser__copy{position:static}
+  .skin{aspect-ratio:4/5;cursor:default}
+  .pulse{width:80px;height:80px;margin:-40px 0 0 -40px}
+}
+
+/* ============ 8. LIFTING — olho interativo ============ */
+.lift{--bg:var(--bone);position:relative;background:var(--bone);color:var(--ink);padding:clamp(84px,11vw,150px) 0}
+.lift .eyebrow{color:var(--rose-d)}
+.lift__wrap{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:clamp(32px,5vw,90px);align-items:center}
+.lift__ph{position:relative}
+.lift__ph img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:50% 40%}
+.lift__ph::after{content:"";position:absolute;right:-12px;bottom:-12px;width:46px;height:46px;border-right:1px solid var(--rose-d);border-bottom:1px solid var(--rose-d)}
+.lift__copy .h2{margin-top:22px}
+.lift__copy .h2 em{color:var(--rose-d)}
+.lift__copy .lede{margin-top:24px;color:#3E322C;opacity:1}
+.eyecard{margin-top:34px;background:var(--ivory);padding:clamp(14px,2.4vw,28px);border:1px solid rgba(21,15,14,.1)}
+.eyecard svg{display:block;width:100%;height:auto;overflow:visible}
+.eyecard .lid{fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linecap:round}
+.eyecard .crease{fill:none;stroke:var(--taupe);stroke-width:1.4;stroke-linecap:round}
+.eyecard .lashes{fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round}
+.eyecard .iris{fill:#8C6A4E}
+.eyecard .pupil{fill:var(--glove)}
+.eyecard .spark{fill:var(--ivory)}
+.slider{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;margin-top:10px;font:500 10.5px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--taupe-d)}
+.slider input{-webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent;cursor:pointer;--v:0%}
+.slider input::-webkit-slider-runnable-track{height:2px;background:linear-gradient(90deg,var(--rose-d) var(--v),rgba(21,15,14,.2) var(--v))}
+.slider input::-moz-range-track{height:2px;background:linear-gradient(90deg,var(--rose-d) var(--v),rgba(21,15,14,.2) var(--v))}
+.slider input::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--rose);border:2px solid var(--ink);margin-top:-11px}
+.slider input::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--rose);border:2px solid var(--ink)}
+.lift .checks{color:#2B211C}
+.lift .checks .fan{color:var(--rose-d)}
+.lift .note{opacity:.7}
+@media (max-width:860px){
+  .lift__wrap{grid-template-columns:1fr}
+  .lift__ph{order:2;max-width:420px}
+  .slider{grid-template-columns:1fr 1fr;gap:6px 16px}
+  .slider input{grid-column:1/-1;grid-row:2}
+  .slider span:last-child{text-align:right}
+}
+
+/* ============ 9. FORMAÇÕES — do zero ao primeiro cliente ============ */
+.form{--bg:var(--taupe);position:relative;background:var(--taupe);color:var(--ink);padding:clamp(84px,11vw,150px) 0}
+.form .eyebrow{color:var(--ink);opacity:.72}
+.form__wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(34px,6vw,100px);align-items:start}
+.form__ph{position:sticky;top:calc(var(--banner) + var(--hdr) + 28px)}
+.form__ph img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:60% 50%}
+.form__ph::before{content:"";position:absolute;inset:14px -14px -14px 14px;border:1px solid var(--ink);z-index:-1}
+.form .h2{margin-top:22px}
+.form .h2 em{color:var(--ink);font-style:italic;font-family:var(--serif)}
+.form .lede{margin-top:22px;opacity:.9}
+.mods{position:relative;margin-top:44px;counter-reset:m;--p:0}
+.mods::before,.mods::after{content:"";position:absolute;left:21px;top:20px;bottom:20px;width:1px;background:rgba(21,15,14,.3)}
+.mods::after{background:var(--ink);transform-origin:0 0;transform:scaleY(var(--p))}
+.mods li{position:relative;padding:0 0 38px 78px}
+.mods li:last-child{padding-bottom:0}
+.mods li::before{counter-increment:m;content:counter(m,decimal-leading-zero);position:absolute;left:0;top:0;width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:var(--taupe);border:1px solid rgba(21,15,14,.4);font:500 12px/1 var(--sans);letter-spacing:.06em;transition:background .5s,color .5s,border-color .5s}
+.mods li.on::before{background:var(--ink);color:var(--rose-l);border-color:var(--ink)}
+.mods h3{font:400 clamp(1.5rem,2.4vw,2.1rem)/1.15 var(--serif);padding-top:7px}
+.mods p{margin-top:8px;max-width:44ch;opacity:.85}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:44px}
+.chips .tbc{color:var(--ink);opacity:.8;background:rgba(247,242,235,.28)}
+.form .note{opacity:.75}
+.form__cta{margin-top:30px}
+.form .btn{background:var(--ink);color:var(--ivory);border-color:var(--ink)}
+.form .btn::before{background:var(--rose)}
+.form .btn:hover{color:var(--ink)}
+@media (max-width:860px){
+  .form__wrap{grid-template-columns:1fr}
+  .form__ph{position:relative;top:auto;z-index:0;max-width:420px;margin-right:14px}
+}
+
+/* ============ 10. PERGUNTAS ============ */
+.faq{--bg:var(--ivory);position:relative;background:var(--ivory);color:var(--ink);padding:clamp(84px,11vw,150px) 0}
+.faq .eyebrow{color:var(--rose-d)}
+.faq__wrap{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:clamp(32px,6vw,100px)}
+.faq .h2{margin-top:22px}
+.faq .h2 em{color:var(--rose-d)}
+.qs{border-top:1px solid rgba(21,15,14,.22)}
+.qs details{border-bottom:1px solid rgba(21,15,14,.22)}
+.qs summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:24px;align-items:center;padding:24px 0;font:400 clamp(1.35rem,2.1vw,1.85rem)/1.2 var(--serif)}
+.qs summary::-webkit-details-marker{display:none}
+.qs summary i{position:relative;width:20px;height:20px;flex:none}
+.qs summary i::before,.qs summary i::after{content:"";position:absolute;left:0;right:0;top:9.5px;height:1px;background:var(--ink);transition:transform .4s var(--ease)}
+.qs summary i::after{transform:rotate(90deg)}
+.qs details[open] summary i::after{transform:none}
+.qs details>div{padding:0 0 26px;max-width:58ch;color:#3E322C}
+@media (max-width:860px){.faq__wrap{grid-template-columns:1fr}}
+
+/* ============ 11. MARCAÇÃO ============ */
+.book{--bg:var(--ink);position:relative;background:var(--ink);padding:clamp(84px,11vw,150px) 0}
+.book__wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(34px,6vw,100px);align-items:start}
+.book .h2{margin-top:22px;font-size:clamp(2.6rem,6vw,5.6rem)}
+.book .lede{margin-top:26px}
+.info{margin-top:36px;display:grid;gap:0;border-top:1px solid rgba(247,242,235,.14)}
+.info div{display:grid;grid-template-columns:120px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid rgba(247,242,235,.14);align-items:center}
+.info dt{font:500 10.5px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--rose-l)}
+.info dd{margin:0}
+.formbox{background:var(--ivory);color:var(--ink);padding:clamp(24px,3.4vw,46px)}
+.formbox h3{font:400 clamp(1.8rem,2.6vw,2.4rem)/1.1 var(--serif)}
+.formbox>p{margin-top:8px;font-size:.95rem;color:#3E322C}
+.fld{display:block;margin-top:22px}
+.fld span{display:block;font:500 10.5px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--taupe-d);margin-bottom:8px}
+.fld input,.fld select,.fld textarea{width:100%;padding:12px 0;background:transparent;border:0;border-bottom:1px solid rgba(21,15,14,.35);border-radius:0;font-size:1rem;outline:none;transition:border-color .3s}
+.fld textarea{resize:vertical;min-height:88px}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--rose-d)}
+fieldset.f{border:0;margin:0;padding:0;min-width:0}
+.formbox .btn{margin-top:30px;background:var(--ink);color:var(--ivory);border-color:var(--ink)}
+.formbox .btn::before{background:var(--rose)}
+.formbox .btn:hover{color:var(--ink)}
+.msg{margin-top:18px;padding:14px 16px;border-left:3px solid var(--rose-d);background:rgba(201,145,122,.16);font-size:.95rem;display:none}
+.msg.show{display:block}
+@media (max-width:860px){.book__wrap{grid-template-columns:1fr}.info div{grid-template-columns:96px 1fr}}
+
+/* ============ 12. RODAPÉ ============ */
+.foot{background:var(--glove);padding:clamp(48px,6vw,80px) 0 90px;border-top:1px solid rgba(247,242,235,.1)}
+.foot__row{display:flex;gap:24px 60px;justify-content:space-between;flex-wrap:wrap}
+.foot .brand__n{font-size:30px}
+.foot__nav{display:flex;gap:10px 28px;flex-wrap:wrap;align-content:flex-start}
+.foot__nav a{font:500 11px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;text-decoration:none;opacity:.8}
+.foot__nav a:hover{opacity:1;color:var(--rose-l)}
+.foot__demo{margin-top:40px;padding-top:26px;border-top:1px solid rgba(247,242,235,.12);font-size:12.5px;line-height:1.7;opacity:.62;max-width:92ch}
+.foot__demo b{color:var(--rose-l);font-weight:600;letter-spacing:.14em}
+
+@media (max-width:700px){
+  :root{--banner:30px;--hdr:64px}
+  .banner .l{display:none}.banner .s{display:inline}
+  .seal{display:none}
+  .brand__n{font-size:22px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;transition-delay:0s!important}
+}
+</style>
+</head>
+
+<body>
+<!-- ============ FAIXA DEMO (fixa, sem botão de fechar) ============ -->
+<div class="banner" role="note"><b>DEMO</b><span class="l">Website de demonstração criado pela DD Digital para Vera Alexandra | Beauty Studio · conteúdo ilustrativo</span><span class="s">Demonstração · Vera Alexandra</span></div>
+<div class="seal" aria-hidden="true"><i></i>Versão de demonstração</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="fan" viewBox="0 0 24 24"><path d="M12 22C11 15 8 10 3 7"/><path d="M12 22C12 14 12 9 12 2"/><path d="M12 22C13 15 16 10 21 7"/></symbol>
+</svg>
+
+<!-- ============ CABEÇALHO ============ -->
+<header class="hdr" id="topo">
+  <div class="wrap">
+    <a class="brand" href="#inicio" aria-label="Vera Alexandra | Beauty Studio — início">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#fan"/></svg>
+      <span><span class="brand__n">Vera Alexandra</span><span class="brand__s">Beauty Studio</span></span>
+    </a>
+    <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav"><i></i><i></i></button>
+    <nav class="nav" id="nav" aria-label="Principal">
+      <a href="#laser">Laser</a>
+      <a href="#pestanas">Pestanas</a>
+      <a href="#formacoes">Formações</a>
+      <a href="#perguntas">Perguntas</a>
+      <a class="btn" href="#marcar"><span>Marcar por DM</span></a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<!-- ============ HERO ============ -->
+<section class="hero" id="inicio">
+  <div class="wrap hero__wrap">
+    <div class="hero__copy">
+      <span class="eyebrow rv2" style="--d:200">Beauty Studio · Lisboa</span>
+      <h1 class="hl" aria-label="Vera Alexandra"><span class="ln" aria-hidden="true"><span>Vera</span></span><span class="ln" aria-hidden="true"><span>Alexandra</span></span></h1>
+      <ul class="hero__list rv2" style="--d:700">
+        <li><svg class="fan" aria-hidden="true"><use href="#fan"/></svg>Especialista em depilação a laser</li>
+        <li><svg class="fan" aria-hidden="true"><use href="#fan"/></svg>Lifting de pestanas</li>
+        <li><svg class="fan" aria-hidden="true"><use href="#fan"/></svg>Formações para iniciantes</li>
+      </ul>
+      <div class="hero__cta rv2" style="--d:900">
+        <a class="btn" href="#marcar"><span>Marcações por DM</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a>
+        <span class="hero__loc">Lisboa</span>
+      </div>
+    </div>
+    <figure class="eye" id="eye" title="Toca para pestanejar">
+      <div class="eye__win"><img src="img/vera-retrato.jpg" width="1500" height="1500" alt="Vera Alexandra, de blazer branco e luvas pretas, a sorrir enquanto calça uma luva"></div>
+      <div class="eye__top" aria-hidden="true">
+        <svg class="eye__lashes" id="heroLashes" viewBox="0 0 600 160" preserveAspectRatio="xMidYMax meet"></svg>
+        <i class="eye__edge"></i>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ MANIFESTO — A LUVA ============ -->
+<section class="man" id="luva">
+  <svg class="lashdiv" data-lash="54" data-seed="3" viewBox="0 0 1200 64" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+  <div class="wrap man__wrap">
+    <div>
+      <span class="eyebrow rv">O primeiro gesto</span>
+      <p class="man__t" id="manT">Antes de qualquer técnica, calça-se a luva. Depois vem o <em>resto: ouvir, avaliar, ir com calma.</em></p>
+      <p class="man__p rv">É assim que cada sessão começa: com atenção à tua pele, ao teu olhar e ao que realmente queres mudar. Só depois vem a técnica — e o tempo que for preciso.</p>
+    </div>
+    <figure class="man__fig rv">
+      <img src="img/luvas-laser-queixo.jpg" width="1600" height="1600" loading="lazy" alt="Profissional de luvas pretas a usar um aparelho de laser junto ao queixo de uma cliente com óculos de proteção">
+      <figcaption class="man__cap">Calçar a luva é o primeiro gesto de cuidado.</figcaption>
+      <div class="man__tile"><img src="img/vera-luva-detalhe.jpg" width="810" height="810" loading="lazy" alt="Detalhe das mãos da Vera a calçar uma luva preta"><span>Vera Alexandra</span></div>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ LASER ============ -->
+<section class="laser" id="laser">
+  <svg class="lashdiv" data-lash="54" data-seed="8" viewBox="0 0 1200 64" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+  <div class="wrap laser__wrap">
+    <div class="laser__copy">
+      <span class="eyebrow">01 — Depilação a laser</span>
+      <h2 class="h2 rv">Pele calma, <em>pulso certo.</em></h2>
+      <p class="lede rv">A especialidade da Vera. Cada plano começa por perceber a tua pele e o teu pelo; só depois se escolhem a zona, o ritmo e o número de sessões.</p>
+      <ul class="checks rv">
+        <li><svg class="fan" aria-hidden="true"><use href="#fan"/></svg>Avaliação prévia de pele e historial</li>
+        <li><svg class="fan" aria-hidden="true"><use href="#fan"/></svg>Teste numa pequena área, quando indicado</li>
+        <li><svg class="fan" aria-hidden="true"><use href="#fan"/></svg>Plano de sessões à tua medida</li>
+      </ul>
+    </div>
+    <div class="rv">
+      <div class="skin" id="skin">
+        <canvas id="skinCv" aria-hidden="true"></canvas>
+        <div class="skin__hint"><span>Passa o pulso pela pele</span></div>
+        <div class="pulse" id="pulse"></div>
+      </div>
+      <div class="skin__bar">
+        <div class="skin__stat">Zona tratada <span class="meter"><i id="meter"></i></span> <b id="pct">0%</b></div>
+        <div class="skin__btns">
+          <button class="btn" id="autoBtn" type="button"><span>Ver uma passagem</span></button>
+          <button class="btn btn--ghost" id="resetBtn" type="button"><span>Repor</span></button>
+        </div>
+      </div>
+      <p class="note">Ilustração interativa. Na realidade, o resultado, o ritmo e o número de sessões variam de pessoa para pessoa e dependem de avaliação por profissional.</p>
+
+      <figure class="laser__ph rv"><img src="img/laser-perna-maca.jpg" width="1600" height="1200" loading="lazy" alt="Tratamento a laser numa perna, sobre uma maca com toalha branca"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LIFTING DE PESTANAS ============ -->
+<section class="lift" id="pestanas">
+  <svg class="lashdiv" data-lash="54" data-seed="5" viewBox="0 0 1200 64" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+  <div class="wrap lift__wrap">
+    <figure class="lift__ph rv"><img src="img/olho-pestanas-castanho.jpg" width="1600" height="2000" loading="lazy" alt="Olho castanho em grande plano, com pestanas longas e curvadas"></figure>
+    <div class="lift__copy">
+      <span class="eyebrow">02 — Lifting de pestanas</span>
+      <h2 class="h2 rv">Um olhar mais aberto, <em>com as tuas pestanas.</em></h2>
+      <p class="lede rv">O lifting levanta e curva as pestanas naturais, sem lhes acrescentar nada. Arrasta o cursor e vê o gesto.</p>
+      <div class="eyecard rv">
+        <svg viewBox="0 0 600 300" role="img" aria-label="Ilustração de um olho cujas pestanas passam de lassas a curvadas conforme o cursor">
+          <defs><clipPath id="eyeClip"><path d="M70 200C170 80 430 80 530 200C410 292 190 292 70 200Z"/></clipPath></defs>
+          <path class="crease" d="M120 150C210 50 390 50 480 150"/>
+          <g clip-path="url(#eyeClip)"><rect x="60" y="80" width="480" height="220" fill="#F3EBDF"/><circle class="iris" cx="300" cy="196" r="66"/><circle class="pupil" cx="300" cy="196" r="28"/><circle class="spark" cx="322" cy="174" r="9"/></g>
+          <path class="lid" d="M70 200C170 80 430 80 530 200"/>
+          <path class="lid" style="stroke-width:1.4" d="M70 200C190 292 410 292 530 200"/>
+          <g class="lashes" id="eyeLashes"></g>
+        </svg>
+        <div class="slider"><span>Natural</span><input id="liftRange" type="range" min="0" max="100" value="0" aria-label="Quantidade de lifting"><span>Com lifting</span></div>
+      </div>
+      <ul class="checks rv">
+        <li><svg class="fan" aria-hidden="true"><use href="#fan"/></svg>Avaliação das pestanas naturais</li>
+        <li><svg class="fan" aria-hidden="true"><use href="#fan"/></svg>Curvatura escolhida contigo</li>
+        <li><svg class="fan" aria-hidden="true"><use href="#fan"/></svg>Indicações de cuidados para os dias seguintes</li>
+      </ul>
+      <p class="note rv">Ilustração do efeito pretendido. O resultado depende das pestanas de cada pessoa e da avaliação da profissional.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FORMAÇÕES ============ -->
+<section class="form" id="formacoes">
+  <svg class="lashdiv" data-lash="54" data-seed="13" viewBox="0 0 1200 64" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+  <div class="wrap form__wrap">
+    <figure class="form__ph rv"><img src="img/maos-bancada-ferramentas.jpg" width="1600" height="2000" loading="lazy" alt="Mãos de luvas pretas a segurar a mão de outra pessoa, numa bancada de trabalho com ferramentas ao fundo"></figure>
+    <div>
+      <span class="eyebrow">03 — Formações para iniciantes</span>
+      <h2 class="h2 rv">Do zero ao <em>primeiro cliente.</em></h2>
+      <p class="lede rv">Para quem quer começar na área com bases sólidas, sem pressupor experiência.</p>
+      <ol class="mods" id="mods">
+        <li><h3>Pele, higiene e segurança</h3><p>Os alicerces: antes de tocar na pele, perceber a pele.</p></li>
+        <li><h3>Equipamento e protocolos</h3><p>Conhecer as ferramentas e usá-las com segurança.</p></li>
+        <li><h3>Prática acompanhada</h3><p>Mãos na massa, com correção ao longo do gesto.</p></li>
+        <li><h3>Atendimento e marcação</h3><p>Receber, avaliar, explicar e acompanhar cada cliente.</p></li>
+      </ol>
+      <div class="chips rv"><span class="tbc">Datas · a confirmar com o cliente</span><span class="tbc">Duração · a confirmar</span><span class="tbc">Preço · a confirmar</span><span class="tbc">Certificação · a confirmar</span></div>
+      <p class="note rv">Programa ilustrativo: o conteúdo real das formações será definido com a Vera.</p>
+      <div class="form__cta rv"><a class="btn" href="#marcar"><span>Pedir informações por DM</span></a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PERGUNTAS ============ -->
+<section class="faq" id="perguntas">
+  <svg class="lashdiv" data-lash="54" data-seed="21" viewBox="0 0 1200 64" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+  <div class="wrap faq__wrap">
+    <div>
+      <span class="eyebrow">Perguntas</span>
+      <h2 class="h2 rv">O que costumam <em>perguntar.</em></h2>
+    </div>
+    <div class="qs rv">
+      <details><summary>O laser serve para todas as peles?<i></i></summary><div>Depende do tipo de pele e de pelo, por isso tudo começa com uma avaliação feita pela profissional. <span class="tbc">resposta ilustrativa</span></div></details>
+      <details><summary>Quantas sessões vou precisar?<i></i></summary><div>Varia de pessoa para pessoa e de zona para zona. O plano é explicado na avaliação, sem promessas à pressa. <span class="tbc">resposta ilustrativa</span></div></details>
+      <details><summary>O que devo dizer antes de uma sessão?<i></i></summary><div>Se tens a pele sensível, alergias, usas lentes de contacto ou tomas medicação, diz logo na marcação para a sessão ser preparada em conformidade.</div></details>
+      <details><summary>Preciso de experiência para a formação?<i></i></summary><div>Não. As formações são pensadas para quem está a começar. Programa, datas e preços: <span class="tbc">a confirmar com o cliente</span></div></details>
+      <details><summary>Como marco?<i></i></summary><div>As marcações fazem-se por mensagem direta (DM) no Instagram. Diz o que procuras e a Vera responde.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARCAÇÃO ============ -->
+<section class="book" id="marcar">
+  <svg class="lashdiv" data-lash="54" data-seed="34" viewBox="0 0 1200 64" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+  <div class="wrap book__wrap">
+    <div>
+      <span class="eyebrow">Marcações por DM</span>
+      <h2 class="h2 rv">Fala com a <em>Vera.</em></h2>
+      <p class="lede rv">Laser, pestanas ou formação: manda mensagem a dizer o que procuras e combinam o resto por lá.</p>
+      <dl class="info rv">
+        <div><dt>Local</dt><dd>Lisboa</dd></div>
+        <div><dt>Instagram</dt><dd><span class="tbc">@ a confirmar com o cliente</span></dd></div>
+        <div><dt>Morada</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+        <div><dt>Horário</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+      </dl>
+    </div>
+    <div class="formbox rv">
+      <h3>Pedido de marcação</h3>
+      <p>Isto é uma demonstração: o formulário não envia nada.</p>
+      <form id="demoForm" novalidate>
+        <label class="fld"><span>Nome</span><input type="text" name="nome" autocomplete="off"></label>
+        <label class="fld"><span>Contacto</span><input type="text" name="contacto" autocomplete="off"></label>
+        <label class="fld"><span>Interesse</span><select name="servico"><option>Depilação a laser</option><option>Lifting de pestanas</option><option>Formação para iniciantes</option></select></label>
+        <label class="fld"><span>Mensagem</span><textarea name="msg"></textarea></label>
+        <button class="btn" type="submit"><span>Enviar (demonstração)</span></button>
+        <p class="msg" id="demoMsg" role="status">Demonstração: nenhum dado foi enviado nem guardado. No site final, este pedido chegaria à Vera.</p>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ RODAPÉ ============ -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__row">
+      <a class="brand" href="#inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#fan"/></svg><span><span class="brand__n">Vera Alexandra</span><span class="brand__s">Beauty Studio · Lisboa</span></span></a>
+      <nav class="foot__nav" aria-label="Rodapé"><a href="#laser">Laser</a><a href="#pestanas">Pestanas</a><a href="#formacoes">Formações</a><a href="#perguntas">Perguntas</a><a href="#marcar">Marcar por DM</a></nav>
+    </div>
+    <p class="foot__demo"><b>DEMO</b> · Website de demonstração criado pela DD Digital para Vera Alexandra | Beauty Studio. Textos, serviços, perguntas e programa de formação são ilustrativos e não vinculativos; moradas, horários, preços e contactos ficam por confirmar com o cliente. A fotografia da Vera foi fornecida pelo cliente; as restantes são do Unsplash. As referências a tratamentos de estética são ilustrativas: a adequação de cada tratamento depende sempre de avaliação por profissional. O logótipo apresentado é provisório.</p>
+  </div>
+</footer>
+
+<script>
+/* ============ JS — organizado por funcionalidade ============ */
+var $=function(s,c){return(c||document).querySelector(s)}, $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+var RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches, qs=location.search, NOPRE=/nopre/.test(qs);
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function lerp(a,b,t){return a+(b-a)*t}
+function ease(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
+function easeOut(t){return 1-Math.pow(1-t,3)}
+function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+/* ---------- pestanas (gerador partilhado) ----------
+   Cada pestana é uma polilinha. t=0: lassa, quase deitada e a cair; t=1: levantada e curvada para cima. */
+function makeLashes(roots,seed){
+  var r=mulberry(seed);
+  return roots.map(function(o,i){
+    var sg=o.th<-0.02?-1:o.th>0.02?1:(i%2?1:-1);
+    return {x:o.x,y:o.y,th:o.th,sg:sg,len:o.len*(.86+r()*.28)*(i%2?.76:1),cv:.8+r()*.4,ph:r()}
+  });
+}
+function lashD(it,t,lift){
+  var a0=it.sg*1.42+(it.th-it.sg*1.42)*t;
+  var bend=lerp(it.sg*.5,-it.sg*(Math.abs(it.th)*.8+.24)*it.cv,t)-it.sg*(lift||0)*.5;
+  var len=it.len*lerp(.62,1,t), N=9, sl=len/N, x=it.x, y=it.y, d='M'+x.toFixed(1)+' '+y.toFixed(1);
+  for(var k=1;k<=N;k++){
+    var a=a0+bend*Math.pow((k-.5)/N,1.5);
+    x+=Math.sin(a)*sl; y-=Math.cos(a)*sl;
+    d+='L'+x.toFixed(1)+' '+y.toFixed(1);
+  }
+  return d;
+}
+function buildLashSet(svg,items){
+  var ns='http://www.w3.org/2000/svg';
+  return items.map(function(it){var p=document.createElementNS(ns,'path');svg.appendChild(p);return {it:it,p:p}});
+}
+function drawLashSet(set,tf,lf){
+  for(var i=0;i<set.length;i++){set[i].p.setAttribute('d',lashD(set[i].it,tf(i,set[i].it),lf?lf(i):0))}
+}
+function fringeRoots(n,w,y,fan,l0,l1){
+  var a=[];for(var i=0;i<n;i++){var u=i/(n-1);a.push({x:w*.03+u*w*.94,y:y,th:(u-.5)*2*fan,len:l0+(l1-l0)*Math.pow(Math.sin(Math.PI*clamp(u*.9+.05,0,1)),.7)})}
+  return a;
+}
+
+/* ---------- cabeçalho / menu mobile ---------- */
+var burger=$('#burger'), nav=$('#nav'), menuY=0;
+function setMenu(o){
+  var was=document.body.classList.contains('menu-open'); if(o===was) return;
+  if(o){menuY=window.scrollY;document.body.style.top=-menuY+'px';document.documentElement.style.scrollBehavior='auto'}
+  document.body.classList.toggle('menu-open',o);
+  if(!o){document.body.style.top='';window.scrollTo(0,menuY);document.documentElement.style.scrollBehavior=''}
+  burger.setAttribute('aria-expanded',o);burger.setAttribute('aria-label',o?'Fechar menu':'Abrir menu')
+}
+window.addEventListener('resize',function(){if(window.innerWidth>960)setMenu(false)});
+burger.addEventListener('click',function(){setMenu(!document.body.classList.contains('menu-open'))});
+$$('a',nav).forEach(function(a){a.addEventListener('click',function(e){
+  if(!document.body.classList.contains('menu-open')) return;
+  var id=a.getAttribute('href'), t=id&&id.charAt(0)==='#'&&document.querySelector(id);
+  setMenu(false);
+  if(t){e.preventDefault();t.scrollIntoView()}
+})});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')setMenu(false)});
+
+/* ---------- reveals ---------- */
+var io='IntersectionObserver' in window ? new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px',threshold:.08}) : null;
+$$('.rv').forEach(function(el){io?io.observe(el):el.classList.add('in')});
+
+/* ---------- hero: o olhar que se abre ---------- */
+(function(){
+  var eye=$('#eye'), svg=$('#heroLashes'), hero=$('.hero');
+  var N=27, set=buildLashSet(svg,makeLashes(fringeRoots(N,600,160,.7,66,120),7));
+  var t0=0, openD=1700, lashD0=350, blinkT=-1, mx=-1, lift=[], tgt=[], running=false, started=false;
+  for(var i=0;i<N;i++){lift.push(0);tgt.push(0)}
+  function frame(ts){
+    var need=false, el=ts-t0, op, tf;
+    if(!started){op=0;tf=function(){return 0}}
+    else if(RM||NOPRE){op=1;tf=function(){return 1}}
+    else{
+      var p=clamp((el-300)/openD,0,1); op=ease(p); if(p<1)need=true;
+      tf=function(i){var q=clamp((el-lashD0-i*42)/1100,0,1); if(q<1)need=true; return easeOut(q)};
+    }
+    if(blinkT>=0){var b=(ts-blinkT)/520; if(b>=1){blinkT=-1}else{op*=1-.3*Math.sin(Math.PI*b);need=true}}
+    eye.style.setProperty('--o',op.toFixed(4));
+    for(var i=0;i<N;i++){
+      var d=tgt[i]-lift[i]; if(Math.abs(d)>.002){lift[i]+=d*.14;need=true}else lift[i]=tgt[i];
+    }
+    drawLashSet(set,tf,function(i){return lift[i]});
+    if(need) requestAnimationFrame(frame); else running=false;
+  }
+  function kick(){if(!running){running=true;requestAnimationFrame(frame)}}
+  function start(){
+    if(started) return; started=true; t0=performance.now(); hero.classList.add('go'); kick();
+  }
+  /* pestanas levantam-se junto ao cursor */
+  function aim(clientX){
+    var r=svg.getBoundingClientRect(); if(!r.width) return;
+    var u=(clientX-r.left)/r.width;
+    for(var i=0;i<N;i++){var d=(i/(N-1)-u)/.11; tgt[i]=u<-.1||u>1.1?0:Math.exp(-d*d)*.55}
+    kick();
+  }
+  eye.addEventListener('pointermove',function(e){if(e.pointerType==='mouse')aim(e.clientX)});
+  eye.addEventListener('pointerleave',function(){for(var i=0;i<N;i++)tgt[i]=0;kick()});
+  /* clique/toque: pestaneja */
+  eye.addEventListener('click',function(){if(RM||!started)return;blinkT=performance.now();kick()});
+  /* estado inicial sem JS é o retrato aberto; com JS a fenda abre depois das fontes */
+  frame(performance.now());
+  if(RM||NOPRE){start()}
+  else{Promise.race([document.fonts?document.fonts.ready:Promise.resolve(),wait(1400)]).then(function(){return wait(250)}).then(start)}
+})();
+
+/* ---------- franjas de pestanas no topo das secções ---------- */
+(function(){
+  var divs=$$('.lashdiv'), sets=[];
+  divs.forEach(function(svg){
+    var n=+svg.getAttribute('data-lash'), seed=+svg.getAttribute('data-seed');
+    var s=buildLashSet(svg,makeLashes(fringeRoots(n,1200,64,.42,28,56),seed));
+    sets.push({svg:svg,set:s,done:false});
+    drawLashSet(s,function(){return RM?1:0});
+  });
+  function play(o){
+    if(o.done) return; o.done=true; o.svg.classList.add('in');
+    if(RM){drawLashSet(o.set,function(){return 1});return}
+    var t0=performance.now();
+    (function f(ts){
+      var el=ts-t0, more=false;
+      drawLashSet(o.set,function(i){var q=clamp((el-i*14)/900,0,1); if(q<1)more=true; return easeOut(q)});
+      if(more)requestAnimationFrame(f);
+    })(t0);
+  }
+  if(!io2()){sets.forEach(play);return}
+  var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var o=sets.filter(function(s){return s.svg===e.target})[0];play(o);obs.unobserve(e.target)}})},{rootMargin:'0px 0px -4% 0px'});
+  sets.forEach(function(o){obs.observe(o.svg)});
+  function io2(){return 'IntersectionObserver' in window}
+})();
+
+/* ---------- manifesto: palavras que acendem ---------- */
+var words=[];
+(function(){
+  var t=$('#manT'); if(!t) return;
+  (function walk(node){
+    Array.prototype.slice.call(node.childNodes).forEach(function(n){
+      if(n.nodeType===3){
+        var frag=document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(function(s){
+          if(!s) return;
+          if(/^\s+$/.test(s)){frag.appendChild(document.createTextNode(' '));return}
+          var sp=document.createElement('span');sp.className='w';sp.textContent=s;frag.appendChild(sp);words.push(sp);
+        });
+        node.replaceChild(frag,n);
+      }else if(n.nodeType===1) walk(n);
+    });
+  })(t);
+})();
+
+/* ---------- laser: pele interativa ---------- */
+(function(){
+  var skin=$('#skin'), cv=$('#skinCv'), pulse=$('#pulse'), meter=$('#meter'), pct=$('#pct');
+  if(!cv||!cv.getContext) return;
+  var ctx=cv.getContext('2d'), W=0,H=0,dpr=1, hairs=[], cleared=0, R=46, raf=0, auto=false, touched=false, lastFlash=0;
+  function seed(){
+    var r=mulberry(11); hairs=[]; cleared=0;
+    var n=Math.round(W*H/220);
+    for(var i=0;i<n;i++){hairs.push({x:r()*W,y:r()*H,a:1.9+r()*.7,len:9+r()*11,cu:(r()-.5)*9,die:0})}
+    setStat();
+  }
+  function setStat(){var p=hairs.length?cleared/hairs.length:0;meter.style.setProperty('--p',p.toFixed(3));pct.textContent=Math.round(p*100)+'%'}
+  function size(){
+    var r=skin.getBoundingClientRect(); dpr=Math.min(2,window.devicePixelRatio||1);
+    W=Math.round(r.width);H=Math.round(r.height); cv.width=W*dpr;cv.height=H*dpr; R=W<600?36:46;
+    seed(); paint(performance.now());
+  }
+  function paint(now){
+    ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H); ctx.lineCap='round'; ctx.lineWidth=1.15; ctx.strokeStyle='#2A1812';
+    var more=false;
+    for(var i=0;i<hairs.length;i++){
+      var h=hairs[i], f=0;
+      if(h.die){f=(now-h.die)/650; if(f<0){f=0;more=true}else if(f>=1)continue;else more=true}
+      var L=h.len*(1-f*.7), dx=Math.cos(h.a)*L, dy=Math.sin(h.a)*L;
+      ctx.globalAlpha=(1-f)*.7; ctx.beginPath(); ctx.moveTo(h.x,h.y); ctx.quadraticCurveTo(h.x+dx*.5+h.cu*.4,h.y+dy*.5-h.cu*.4,h.x+dx,h.y+dy); ctx.stroke();
+    }
+    ctx.globalAlpha=1; raf=0;
+    if(more) raf=requestAnimationFrame(paint);
+  }
+  function hit(x,y){
+    var now=performance.now(), any=false, R2=R*R;
+    for(var i=0;i<hairs.length;i++){var h=hairs[i]; if(h.die)continue; var dx=h.x-x,dy=h.y-y; if(dx*dx+dy*dy<R2){h.die=now+Math.random()*320;cleared++;any=true}}
+    if(any){setStat(); if(!raf) raf=requestAnimationFrame(paint)}
+    if(now-lastFlash>140){pulse.classList.add('flash');lastFlash=now;setTimeout(function(){pulse.classList.remove('flash')},90)}
+  }
+  function at(e){var r=skin.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]}
+  function move(x,y){pulse.style.transform='translate('+x+'px,'+y+'px)';pulse.classList.add('on');hit(x,y)}
+  function use(){if(!touched){touched=true;skin.classList.add('used')}}
+  skin.addEventListener('pointermove',function(e){if(auto)return; if(e.pointerType==='mouse'||e.buttons||e.pointerType==='touch'){use();var p=at(e);move(p[0],p[1])}});
+  skin.addEventListener('pointerdown',function(e){if(auto)return;use();var p=at(e);move(p[0],p[1])});
+  skin.addEventListener('pointerleave',function(){if(!auto)pulse.classList.remove('on')});
+  skin.addEventListener('pointerup',function(e){if(e.pointerType!=='mouse')pulse.classList.remove('on')});
+  /* passagem automática em ziguezague */
+  function runAuto(){
+    if(auto) return; auto=true; use(); var t0=performance.now(), dur=RM?1200:5200;
+    (function f(ts){
+      var p=clamp((ts-t0)/dur,0,1), k=p*6, tri=Math.abs((k%2)-1);
+      move(lerp(-R*.4,W+R*.4,tri), lerp(R*.3,H-R*.3,p));
+      if(p<1) requestAnimationFrame(f); else {auto=false;setTimeout(function(){if(!auto)pulse.classList.remove('on')},500)}
+    })(t0);
+  }
+  $('#autoBtn').addEventListener('click',runAuto);
+  $('#resetBtn').addEventListener('click',function(){skin.classList.remove('used');touched=false;pulse.classList.remove('on');seed();paint(performance.now())});
+  var rt; window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){if(Math.abs(skin.getBoundingClientRect().width-W)>2)size()},200)});
+  size();
+  /* mostra o gesto uma vez, se a pessoa não tocar */
+  if('IntersectionObserver' in window&&!RM&&!NOPRE){
+    var o=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){o.disconnect();setTimeout(function(){if(!touched)runAuto()},900)}})},{threshold:.6});
+    o.observe(skin);
+  }
+})();
+
+/* ---------- lifting: olho interativo ---------- */
+(function(){
+  var g=$('#eyeLashes'), rng=$('#liftRange'); if(!g||!rng) return;
+  /* raízes ao longo da pálpebra superior (Bézier cúbica) */
+  var P=[[70,200],[170,80],[430,80],[530,200]], n=24, roots=[];
+  function B(u){var m=1-u;return [m*m*m*P[0][0]+3*m*m*u*P[1][0]+3*m*u*u*P[2][0]+u*u*u*P[3][0], m*m*m*P[0][1]+3*m*m*u*P[1][1]+3*m*u*u*P[2][1]+u*u*u*P[3][1]]}
+  for(var i=0;i<n;i++){
+    var u=.07+.86*i/(n-1), a=B(u), b=B(Math.min(1,u+.01)), dx=b[0]-a[0], dy=b[1]-a[1], l=Math.hypot(dx,dy);
+    var nx=dy/l, ny=-dx/l, th=Math.atan2(nx,-ny);
+    roots.push({x:a[0],y:a[1]-1,th:th*.9,len:34+34*Math.pow(Math.sin(Math.PI*clamp(u*1.05,0,1)),.8)});
+  }
+  var set=buildLashSet(g,makeLashes(roots,4)), cur=0;
+  function draw(t){cur=t;drawLashSet(set,function(i,it){return clamp(t*1.18-it.ph*.18,0,1)});rng.style.setProperty('--v',(t*100)+'%')}
+  rng.addEventListener('input',function(){userT=true;draw(rng.value/100)});
+  var userT=false;
+  draw(0);
+  function demo(){
+    var t0=performance.now(), d=2600;
+    (function f(ts){if(userT)return;var p=clamp((ts-t0)/d,0,1),v=ease(p)*.85;rng.value=Math.round(v*100);draw(v);if(p<1)requestAnimationFrame(f)})(t0);
+  }
+  if(RM||!('IntersectionObserver' in window)){rng.value=85;draw(.85)}
+  else{var o=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){o.disconnect();setTimeout(demo,500)}})},{threshold:.5});o.observe($('.eyecard'))}
+})();
+
+/* ---------- formações: fio dos módulos + marcadores ---------- */
+var mods=$('#mods'), modLis=mods?$$('li',mods):[];
+
+/* ---------- scroll (um só handler) ---------- */
+var ticking=false;
+function onScroll(){
+  ticking=false; var vh=window.innerHeight;
+  var t=$('#manT');
+  if(t&&words.length){
+    var r=t.getBoundingClientRect(), p=clamp((vh*.82-r.top)/(r.height+vh*.28),0,1), n=Math.round(p*words.length);
+    for(var i=0;i<words.length;i++){var on=i<n; if(words[i]._on!==on){words[i]._on=on;words[i].classList.toggle('on',on)}}
+  }
+  if(mods){
+    var m=mods.getBoundingClientRect(), pp=clamp((vh*.62-m.top)/m.height,0,1);
+    mods.style.setProperty('--p',pp.toFixed(3));
+    modLis.forEach(function(li){var lr=li.getBoundingClientRect(); li.classList.toggle('on',lr.top<vh*.62)});
+  }
+}
+window.addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(onScroll)}},{passive:true});
+window.addEventListener('resize',onScroll);
+if(RM||!('IntersectionObserver' in window)||true){onScroll()}
+
+/* ---------- formulário de demonstração ---------- */
+$('#demoForm').addEventListener('submit',function(e){e.preventDefault();$('#demoMsg').classList.add('show')});
+</script>
+</body>
+</html>
