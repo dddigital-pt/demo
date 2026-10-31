@@ -106,15 +106,19 @@ h2 em,h3 em{font-style:italic;font-weight:500;color:var(--tan-d)}
 .burger{display:none;width:44px;height:44px;border:1px solid var(--line);background:transparent;position:relative}
 .burger i{position:absolute;left:12px;right:12px;height:1px;background:var(--ink);transition:transform .4s var(--ease),top .4s var(--ease)}
 .burger i:nth-child(1){top:18px}.burger i:nth-child(2){top:25px}
-.menu-open .burger i:nth-child(1){top:21px;transform:rotate(30deg)}
-.menu-open .burger i:nth-child(2){top:21px;transform:rotate(-30deg)}
+.menu-open .burger i:nth-child(1){top:21px;transform:rotate(45deg)}
+.menu-open .burger i:nth-child(2){top:21px;transform:rotate(-45deg)}
 @media (max-width:960px){
+  /* backdrop-filter cria um bloco contentor para filhos fixed: o menu ficava preso aos 76px do cabeçalho */
+  .hdr{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--paper)}
   .burger{display:block}
   .nav{position:fixed;left:0;right:0;top:calc(var(--banner) + var(--hdr));bottom:0;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:0;padding:28px var(--pad);background:var(--paper);transform:translateY(-8px);opacity:0;visibility:hidden;transition:opacity .4s,transform .4s var(--ease),visibility .4s}
+  .nav{overflow-y:auto;overscroll-behavior:contain;z-index:1}
   .menu-open .nav{opacity:1;visibility:visible;transform:none}
   .nav a{font:500 clamp(2rem,9vw,2.8rem)/1.2 var(--serif);letter-spacing:0;text-transform:none;padding:12px 0;border-bottom:1px solid var(--line);width:100%;background:none}
   .nav .btn{margin-top:26px;font:500 12px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;width:auto;border-bottom:1px solid var(--espresso);padding:16px 26px}
-  .menu-open{overflow:hidden}
+  /* o fundo não anda com o menu aberto (JS fixa o body e guarda o scroll) */
+  body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 }
 
 /* ============ 6. HERO — a caneta que revê ============ */
@@ -939,9 +943,22 @@ function measureStrip(){stripW=stripT.firstElementChild.getBoundingClientRect().
 
 /* ---------- cabeçalho / menu ---------- */
 var burger=$('#burger'), nav=$('#nav');
-function setMenu(o){document.body.classList.toggle('menu-open',o);burger.setAttribute('aria-expanded',o);burger.setAttribute('aria-label',o?'Fechar menu':'Abrir menu')}
+var menuY=0;
+function setMenu(o){
+  var was=document.body.classList.contains('menu-open'); if(o===was) return;
+  if(o){menuY=window.scrollY;document.body.style.top=-menuY+'px';document.documentElement.style.scrollBehavior='auto'}
+  document.body.classList.toggle('menu-open',o);
+  if(!o){document.body.style.top='';window.scrollTo(0,menuY);document.documentElement.style.scrollBehavior=''}
+  burger.setAttribute('aria-expanded',o);burger.setAttribute('aria-label',o?'Fechar menu':'Abrir menu')
+}
+window.addEventListener('resize',function(){if(window.innerWidth>960)setMenu(false)});
 burger.addEventListener('click',function(){setMenu(!document.body.classList.contains('menu-open'))});
-$$('a',nav).forEach(function(a){a.addEventListener('click',function(){setMenu(false)})});
+$$('a',nav).forEach(function(a){a.addEventListener('click',function(e){
+  if(!document.body.classList.contains('menu-open')) return;
+  var id=a.getAttribute('href'), t=id&&id.charAt(0)==='#'&&document.querySelector(id);
+  setMenu(false);
+  if(t){e.preventDefault();t.scrollIntoView()}
+})});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')setMenu(false)});
 
 /* ---------- reveals ---------- */
