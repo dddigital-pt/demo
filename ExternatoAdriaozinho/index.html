@@ -1,0 +1,925 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Externato Adriãozinho — Demonstração</title>
+<meta name="description" content="Demonstração de website para o Externato Adriãozinho, em Olival Basto: creche, pré-escolar, inglês, ginástica e música.">
+<meta name="theme-color" content="#3F7364">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23B5D3BB'/%3E%3Ctext x='32' y='48' font-family='Arial Rounded MT Bold,Arial,sans-serif' font-weight='900' font-size='42' text-anchor='middle' fill='%23E08A50'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script>
+  /* marca o documento como "com JS" antes da primeira pintura (a queda dos cubos e os reveals só existem com JS) */
+  document.documentElement.classList.add('js');
+  if (/[?&]nopre/.test(location.search)) document.documentElement.classList.add('nopre');
+</script>
+<style>
+/* =====================================================================
+   EXTERNATO ADRIÃOZINHO — DEMONSTRAÇÃO · DD Digital
+   Conceito: o nome escreve-se com cubos de letras (como os do logótipo) que caem e se empilham numa prateleira;
+   "ADRIÃO" em cubos grandes e "ZINHO" em cubos pequenos (o diminutivo é literal). O resto do site são brinquedos
+   tocáveis: torre de argolas que se monta ao scroll, cartões de inglês que viram, escadote em "A" que o explorador
+   sobe, xilofone de 5 teclas (uma por cor). Linguagem de forma: cubos com espessura (sombra dura de cor), cantos 24–30px.
+   Layout: hero com cubos → manifesto + torre → dois degraus (creche / pré-escolar) → atividades em mosaico (fundo escuro)
+   → perguntas → contacto → rodapé com carrinho a passar.
+   ===================================================================== */
+
+/* ---------- 0. Tokens ---------- */
+:root{
+  /* cores amostradas do logótipo do cliente */
+  --paper:#FFF8EC; --paper-2:#FCEFD9;
+  --ink:#2C4A42; --ink-soft:#4C6A62;
+  --teal:#5F8F7F; --teal-m:#3F7364; --teal-d:#1F4137;
+  --orange:#E08A50; --orange-d:#A5521A;
+  --white:#fff;
+
+  --sage:#B5D3BB;  --sage-d:#8FB89A;  --sage-t:#2F5E50;  --sage-l:#E1EEE3;
+  --peach:#F0B080; --peach-d:#D98E57; --peach-t:#8E4313;  --peach-l:#FBE3CC;
+  --sky:#9ECAD6;   --sky-d:#77AEBD;   --sky-t:#1F5566;    --sky-l:#DCEEF2;
+  --sun:#F0D068;   --sun-d:#D6B23F;   --sun-t:#6E5506;    --sun-l:#FBF0C4;
+  --rose:#F2A9A0;  --rose-d:#DB867B;  --rose-t:#8B2F25;   --rose-l:#FBDCD7;
+
+  --f-display:'Fredoka',system-ui,sans-serif;
+  --f-body:'Nunito',system-ui,sans-serif;
+
+  --bar-h:36px; --hdr-h:68px; --gut:clamp(16px,4vw,48px); --maxw:1360px;
+  --r:26px; --pop:cubic-bezier(.34,1.56,.64,1);
+}
+/* famílias de cor (cada uma é uma "cor de cubo": face, espessura, letra, claro) */
+.k-sage{--c:var(--sage);--cd:var(--sage-d);--cl:var(--sage-t);--cb:var(--sage-l)}
+.k-peach{--c:var(--peach);--cd:var(--peach-d);--cl:var(--peach-t);--cb:var(--peach-l)}
+.k-sky{--c:var(--sky);--cd:var(--sky-d);--cl:var(--sky-t);--cb:var(--sky-l)}
+.k-sun{--c:var(--sun);--cd:var(--sun-d);--cl:var(--sun-t);--cb:var(--sun-l)}
+.k-rose{--c:var(--rose);--cd:var(--rose-d);--cl:var(--rose-t);--cb:var(--rose-l)}
+
+/* ---------- 1. Base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:calc(var(--bar-h) + var(--hdr-h) + 8px)}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.65 var(--f-body);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img,svg{display:block;max-width:100%}
+img{height:auto}
+a{color:inherit}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.05;margin:0;letter-spacing:-.01em}
+p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px;border-radius:8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 var(--gut)}
+section{position:relative}
+.sec{padding:clamp(64px,9vw,128px) 0}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font:600 14px/1 var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--teal-m)}
+.eyebrow svg{width:16px;height:16px;fill:var(--sun);stroke:var(--sun-d);stroke-width:2;stroke-linejoin:round}
+.h2{font-size:clamp(36px,5.6vw,76px)}
+.h2 em{font-style:normal;color:var(--orange-d)}
+.lead{font-size:clamp(18px,1.6vw,21px);color:var(--ink-soft);max-width:52ch}
+
+/* botões "cubo": espessura em baixo, afundam ao carregar */
+.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 26px;border-radius:18px;border:0;background:var(--orange);color:#fff;text-decoration:none;
+  font:600 18px/1 var(--f-display);box-shadow:0 6px 0 var(--orange-d);transition:transform .18s var(--pop),box-shadow .18s;position:relative;top:0}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 0 var(--orange-d)}
+.btn:active{transform:translateY(5px);box-shadow:0 1px 0 var(--orange-d)}
+.btn.alt{background:var(--white);color:var(--ink);box-shadow:0 6px 0 var(--sage-d)}
+.btn.alt:hover{box-shadow:0 8px 0 var(--sage-d)} .btn.alt:active{box-shadow:0 1px 0 var(--sage-d)}
+.btn.sm{padding:11px 18px;font-size:16px;border-radius:14px;box-shadow:0 4px 0 var(--orange-d)}
+
+/* marcador de conteúdo por confirmar */
+.tbc{display:inline-block;padding:2px 10px;border:2px dashed var(--orange);border-radius:10px;background:var(--sun-l);color:var(--orange-d);font:600 .88em/1.5 var(--f-body)}
+
+/* ---------- 2. Aviso de demonstração (faixa + selo) ---------- */
+.demo-bar{position:fixed;inset:0 0 auto 0;height:var(--bar-h);z-index:120;display:flex;align-items:center;gap:12px;padding:0 var(--gut);background:var(--teal-m);color:#fff;font:600 13px/1.2 var(--f-body)}
+.demo-bar b{background:var(--sun);color:var(--ink);padding:5px 9px;border-radius:7px;font:700 11px/1 var(--f-display);letter-spacing:.14em}
+.demo-bar .short{display:none}
+@media (max-width:700px){.demo-bar .long{display:none}.demo-bar .short{display:inline}}
+.demo-seal{position:fixed;left:18px;bottom:18px;z-index:110;display:flex;align-items:center;gap:9px;padding:10px 15px 10px 12px;background:var(--sun);color:var(--ink);border-radius:14px;
+  font:600 13px/1 var(--f-display);box-shadow:0 4px 0 var(--sun-d);pointer-events:none}
+.demo-seal i{width:10px;height:10px;border-radius:3px;background:var(--orange);transform:rotate(12deg)}
+@media (max-width:900px){.demo-seal{display:none}}
+
+/* ---------- 3. Cabeçalho ---------- */
+.hdr{position:fixed;top:var(--bar-h);left:0;right:0;z-index:100;height:var(--hdr-h);display:flex;align-items:center;gap:20px;padding:0 var(--gut);transition:background .3s,box-shadow .3s}
+.hdr.solid{background:rgba(255,248,236,.94);box-shadow:0 5px 0 var(--sage-l);backdrop-filter:blur(6px)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;margin-right:auto}
+.brand-mark{display:flex;gap:4px}
+.brand-mark i{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;font:700 20px/1 var(--f-display);font-style:normal;box-shadow:0 3px 0 var(--cd)}
+.brand-mark i:first-child{background:var(--sage);--cd:var(--sage-d);color:var(--sage-t);transform:rotate(-5deg)}
+.brand-mark i:last-child{background:var(--peach);--cd:var(--peach-d);color:var(--peach-t);transform:rotate(4deg)}
+.brand-txt{display:flex;flex-direction:column;line-height:1}
+.brand-txt small{font:600 11px/1 var(--f-display);letter-spacing:.2em;text-transform:uppercase;color:var(--teal-m)}
+.brand-txt b{font:700 22px/1.05 var(--f-display);color:var(--orange)}
+.nav ul{display:flex;gap:4px}
+.nav a{display:block;padding:9px 15px;border-radius:14px;text-decoration:none;font:600 16px/1 var(--f-display);color:var(--ink);transition:background .2s,transform .2s var(--pop)}
+.nav a:hover{background:var(--sage-l);transform:translateY(-2px)}
+.nav a[aria-current="true"]{background:var(--sage);color:var(--sage-t)}
+.hdr-cta{margin-left:6px}
+.burger{display:none;width:46px;height:46px;border:0;border-radius:14px;background:var(--sage);box-shadow:0 4px 0 var(--sage-d);place-items:center}
+.burger span{display:block;width:20px;height:3px;border-radius:2px;background:var(--sage-t);position:relative;transition:background .2s}
+.burger span::before,.burger span::after{content:"";position:absolute;left:0;width:20px;height:3px;border-radius:2px;background:var(--sage-t);transition:transform .25s}
+.burger span::before{top:-7px}.burger span::after{top:7px}
+.burger[aria-expanded="true"] span{background:transparent}
+.burger[aria-expanded="true"] span::before{transform:translateY(7px) rotate(45deg)}
+.burger[aria-expanded="true"] span::after{transform:translateY(-7px) rotate(-45deg)}
+.nav .nav-cta{display:none}
+@media (max-width:900px){
+  .burger{display:grid}.hdr-cta{display:none}
+  .nav{position:fixed;inset:calc(var(--bar-h) + var(--hdr-h)) 0 auto 0;background:var(--paper);padding:14px var(--gut) 26px;border-radius:0 0 30px 30px;box-shadow:0 10px 0 var(--sage-l);
+    transform:translateY(-12px);opacity:0;visibility:hidden;transition:transform .35s var(--pop),opacity .25s,visibility .25s}
+  .nav.open{transform:none;opacity:1;visibility:visible}
+  .nav ul{flex-direction:column;gap:8px}
+  .nav a{font-size:22px;padding:15px 18px;background:var(--cb);border-radius:18px}
+  .nav li:nth-child(1) a{--cb:var(--sun-l)}.nav li:nth-child(2) a{--cb:var(--sky-l)}.nav li:nth-child(3) a{--cb:var(--rose-l)}.nav li:nth-child(4) a{--cb:var(--sage-l)}
+  .nav .nav-cta{display:block;margin-top:8px}.nav .nav-cta .btn{width:100%;justify-content:center;background:var(--orange);color:#fff;font-size:20px}
+}
+
+/* ---------- 4. Hero: cubos de letras ---------- */
+.hero{padding-top:calc(var(--bar-h) + var(--hdr-h) + clamp(18px,3.5vw,44px));padding-bottom:clamp(40px,6vw,80px);overflow:hidden;
+  background:radial-gradient(120% 70% at 85% 0%,var(--sun-l) 0,transparent 60%),var(--paper)}
+.hero-in{display:grid;grid-template-columns:minmax(0,1.22fr) minmax(0,1fr);column-gap:clamp(20px,3vw,48px);align-items:center;
+  grid-template-areas:"eyebrow art" "name art" "lede art" "cta art" "chips art"}
+.hero .eyebrow{grid-area:eyebrow}
+.name{grid-area:name;margin:clamp(14px,2vw,22px) 0 clamp(18px,2.4vw,30px);font-weight:700}
+.name-ext{display:block;font:600 clamp(15px,1.5vw,20px)/1 var(--f-display);letter-spacing:.34em;text-transform:uppercase;color:var(--teal-m);margin:0 0 14px 4px}
+.hero-art{grid-area:art;position:relative;align-self:center}
+.hero .lead{grid-area:lede}
+.hero .lead,.hero .cta,.chips{position:relative;z-index:1}
+.hero .cta{grid-area:cta;display:flex;flex-wrap:wrap;gap:14px;margin-top:26px}
+.chips{grid-area:chips;display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.chips a{display:inline-flex;align-items:center;padding:9px 15px;border-radius:12px;background:var(--c);color:var(--cl);text-decoration:none;font:600 15px/1 var(--f-display);box-shadow:0 4px 0 var(--cd);transition:transform .2s var(--pop)}
+.chips a:hover{transform:translateY(-3px) rotate(-2deg)}
+.chips a:nth-child(even):hover{transform:translateY(-3px) rotate(2deg)}
+
+/* prateleira + cubos */
+.row{display:flex;gap:calc(var(--b)*.07);position:relative;padding-bottom:calc(var(--b)*.2);width:max-content;max-width:100%}
+.row::after{content:"";position:absolute;left:-12px;right:-12px;bottom:0;height:calc(var(--b)*.2);border-radius:8px 8px 14px 14px;background:linear-gradient(var(--peach-d),#C97C46);opacity:.9}
+.row-big{--b:clamp(46px,7.6vw,112px)}
+.row-small{--b:calc(clamp(46px,7.6vw,112px)*.56);margin:clamp(8px,1.4vw,18px) 0 0 auto;margin-right:clamp(0px,3vw,48px)}
+.blk{display:block;width:var(--b);height:var(--b);position:relative;z-index:1;flex:none}
+.blk-f{display:grid;place-items:center;width:100%;height:100%;border-radius:calc(var(--b)*.2);background:var(--c);color:var(--cl);cursor:pointer;
+  font:700 calc(var(--b)*.62)/1 var(--f-display);box-shadow:0 calc(var(--b)*.08) 0 var(--cd),inset 0 calc(var(--b)*.045) 0 rgba(255,255,255,.55);
+  transform:translateY(calc(var(--lift,0)*-1px)) rotate(calc(var(--tilt,0)*1deg));user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.blk-f::before{content:"";position:absolute;inset:calc(var(--b)*.1);border:calc(var(--b)*.025) solid rgba(255,255,255,.4);border-radius:calc(var(--b)*.12);pointer-events:none}
+.js:not(.nopre) .blk{animation:drop 1.15s calc(.2s + var(--i)*.09s) both}
+@keyframes drop{
+  0%{transform:translateY(-75vh) rotate(var(--r0,-14deg));opacity:0;animation-timing-function:cubic-bezier(.55,0,1,.45)}
+  2%{opacity:1}
+  50%{transform:translateY(0) rotate(0);animation-timing-function:cubic-bezier(0,.5,.5,1)}
+  64%{transform:translateY(-28px);animation-timing-function:cubic-bezier(.5,0,1,.5)}
+  76%{transform:translateY(0);animation-timing-function:cubic-bezier(0,.5,.5,1)}
+  86%{transform:translateY(-9px);animation-timing-function:cubic-bezier(.5,0,1,.5)}
+  100%{transform:none}
+}
+.blk:nth-child(even){--r0:11deg}
+
+/* cena do logótipo */
+.hero-art{isolation:isolate}
+.sun-disc{position:absolute;z-index:-1;left:50%;top:50%;width:88%;aspect-ratio:1;transform:translate(-50%,-52%);border-radius:50%;background:#FBE9CE;box-shadow:0 0 0 clamp(10px,1.6vw,22px) rgba(240,208,104,.22)}
+.scene{position:relative;width:100%;max-width:600px;margin:0 auto;height:auto;filter:drop-shadow(0 18px 0 rgba(224,138,80,.12))}
+.js:not(.nopre) .scene{animation:scene-in 1s 1.4s both var(--pop)}
+@keyframes scene-in{from{opacity:0;transform:translateY(40px) scale(.94)}to{opacity:1;transform:none}}
+.spark{position:absolute;width:clamp(22px,3vw,40px);fill:var(--sun);stroke:var(--sun-d);stroke-width:2.5;stroke-linejoin:round;animation:twinkle 3.2s ease-in-out infinite}
+.spark.s1{left:2%;top:6%}.spark.s2{right:3%;top:2%;animation-delay:-1s;width:clamp(16px,2vw,26px)}.spark.s3{left:-1%;bottom:30%;animation-delay:-2s;width:clamp(14px,1.8vw,22px)}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0);opacity:1}50%{transform:scale(.72) rotate(14deg);opacity:.7}}
+.bubble{position:absolute;left:4%;top:20%;z-index:2;padding:11px 17px;background:#fff;border-radius:20px;color:var(--ink);font:600 clamp(14px,1.4vw,18px)/1.2 var(--f-display);box-shadow:0 5px 0 var(--sky-d);transform-origin:20% 100%}
+.bubble::after{content:"";position:absolute;left:26px;bottom:-9px;width:18px;height:18px;background:#fff;transform:rotate(45deg);border-radius:0 0 5px 0;box-shadow:4px 4px 0 var(--sky-d)}
+.js:not(.nopre) .bubble{animation:pop-in .7s 2.6s both var(--pop)}
+@keyframes pop-in{from{opacity:0;transform:scale(.3) rotate(-8deg)}to{opacity:1;transform:none}}
+
+@media (max-width:900px){
+  .hero-in{grid-template-columns:1fr;grid-template-areas:"eyebrow" "name" "art" "lede" "cta" "chips"}
+  .row-big{--b:min(13.4vw,92px)}.row-small{--b:calc(min(13.4vw,92px)*.56)}
+  .hero-art{margin:-8px auto 20px;width:min(100%,440px)}
+  .name{margin-bottom:6px}
+  .hero .cta{margin-top:22px}.chips{margin-top:24px}
+}
+
+/* ---------- 5. Faixa de cubos (separador) ---------- */
+.tiles{height:26px;background:
+  repeating-linear-gradient(90deg,transparent 0 52px,var(--tile-bg,var(--paper)) 52px 58px),
+  linear-gradient(90deg,var(--sage) 0 20%,var(--peach) 20% 40%,var(--sky) 40% 60%,var(--sun) 60% 80%,var(--rose) 80% 100%);
+  background-size:auto,290px 100%;border-radius:12px 12px 0 0}
+
+/* ---------- 6. Manifesto + torre de argolas ---------- */
+.manifesto{background:var(--paper-2);--tile-bg:var(--paper-2)}
+.mani-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,300px);gap:clamp(24px,6vw,100px);align-items:center}
+.big{font:600 clamp(32px,5.4vw,78px)/1.1 var(--f-display);letter-spacing:-.015em}
+.big .w{opacity:.2;transition:opacity .35s,color .35s}
+.big .w.lit{opacity:1}
+.big mark{background:none;color:inherit;border-radius:14px;padding:0 .12em;margin:0 -.04em;box-decoration-break:clone;-webkit-box-decoration-break:clone;transition:background .5s}
+.big mark.k-sage:has(.lit){background:var(--sage)} .big mark.k-peach:has(.lit){background:var(--peach)} .big mark.k-sun:has(.lit){background:var(--sun)}
+.tower{width:100%;max-width:300px;margin:0 auto;overflow:visible}
+.tower .ring{transform-box:fill-box;transform-origin:50% 100%}
+.js .tower .ring{opacity:0;transform:translateY(-120px) scale(.9);transition:opacity .3s,transform .7s var(--pop)}
+.js .tower .ring.on{opacity:1;transform:none}
+@media (max-width:760px){.mani-in{grid-template-columns:1fr}.tower{max-width:190px;margin-left:0}}
+
+/* ---------- 7. Dois degraus: creche / pré-escolar ---------- */
+.degraus .head{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px 60px;align-items:end;margin-bottom:clamp(36px,5vw,72px)}
+.steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,3vw,44px);align-items:start}
+.step{position:relative;background:var(--cb);border-radius:30px;padding:clamp(22px,3vw,40px);box-shadow:0 12px 0 var(--cd)}
+.step.s2{margin-top:clamp(0px,7vw,110px)}
+.step .badge{display:inline-flex;align-items:center;gap:8px;padding:7px 12px 7px 9px;border-radius:12px;background:var(--c);color:var(--cl);font:600 14px/1 var(--f-display);box-shadow:0 3px 0 var(--cd)}
+.step .badge svg{width:22px;height:18px}
+.step h3{font-size:clamp(40px,5vw,68px);margin:18px 0 10px;color:var(--cl)}
+.step .tx{color:var(--ink);max-width:46ch}
+.step ul{margin:22px 0 22px;display:grid;gap:10px}
+.step li{display:flex;gap:12px;align-items:flex-start;font-weight:600}
+.step li::before{content:"";flex:none;width:18px;height:18px;margin-top:5px;border-radius:5px;background:var(--c);box-shadow:0 3px 0 var(--cd);transform:rotate(-8deg)}
+.step li:nth-child(even)::before{transform:rotate(7deg)}
+.step .ph{display:grid;grid-template-columns:1.25fr 1fr;gap:12px;margin-top:26px}
+.step .ph img{width:100%;height:100%;object-fit:cover;border-radius:20px;aspect-ratio:4/3.3}
+.step .ph img:nth-child(2){margin-top:26px;aspect-ratio:3/4}
+.step.s2 .ph{grid-template-columns:1fr 1.25fr}.step.s2 .ph img:nth-child(1){aspect-ratio:3/4;margin-top:26px}.step.s2 .ph img:nth-child(2){margin-top:0;aspect-ratio:4/3.3}
+@media (max-width:900px){.degraus .head,.steps{grid-template-columns:1fr}.step.s2{margin-top:0}}
+
+/* ---------- 8. Atividades (fundo escuro, mosaico de brinquedos) ---------- */
+.activ{background:var(--teal-d);color:#F4EFE3;--tile-bg:var(--teal-d)}
+.activ .eyebrow{color:var(--sage)}
+.activ .h2 em{color:var(--sun)}
+.activ .lead{color:#C9DCD2}
+.activ .head{margin-bottom:clamp(30px,4vw,56px);display:grid;gap:16px}
+.mosaic{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:clamp(18px,2.4vw,32px)}
+.tile{border-radius:30px;background:var(--cb);color:var(--ink);padding:clamp(20px,2.6vw,36px);box-shadow:0 12px 0 var(--cd);position:relative;overflow:hidden}
+.tile .tag{display:inline-block;padding:6px 12px;border-radius:11px;background:var(--c);color:var(--cl);font:600 13px/1 var(--f-display);letter-spacing:.12em;text-transform:uppercase;box-shadow:0 3px 0 var(--cd)}
+.tile h3{font-size:clamp(34px,4.2vw,58px);color:var(--cl);margin:14px 0 8px}
+.tile p{max-width:44ch}
+.t-ing{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.5fr);gap:clamp(20px,3vw,44px);align-items:center}
+.t-gin{grid-column:span 5}
+.t-mus{grid-column:span 7}
+@media (max-width:900px){.t-ing{grid-template-columns:1fr}.t-gin,.t-mus{grid-column:1/-1}}
+.t-ing .ph{margin-top:20px;border-radius:20px;aspect-ratio:16/10;object-fit:cover;width:100%}
+
+/* cartões de inglês */
+.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(8px,1.4vw,16px)}
+.fc{perspective:700px;border:0;background:none;padding:0;aspect-ratio:3/4;position:relative}
+.fc-in{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .7s var(--pop)}
+.fc.flip .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(6px,1.2vw,14px);
+  background:var(--c);color:var(--cl);box-shadow:0 7px 0 var(--cd),inset 0 3px 0 rgba(255,255,255,.5);font:600 clamp(15px,2.1vw,26px)/1 var(--f-display)}
+.fc-face svg{width:46%;height:auto;overflow:visible}
+.fc-back{transform:rotateY(180deg);background:var(--teal-m);color:#fff;box-shadow:0 7px 0 var(--teal-d),inset 0 3px 0 rgba(255,255,255,.2)}
+.fc-back small{font:600 10px/1 var(--f-display);letter-spacing:.18em;text-transform:uppercase;opacity:.75}
+.hint{margin-top:16px;font-size:14px;color:var(--ink-soft)}
+
+/* escadote em A */
+.gym{margin:6px auto 0;max-width:380px}
+.gym svg{width:100%;height:auto;overflow:visible}
+.kid .arms-up{display:none}.kid.up .arms-up{display:inline}.kid.up .arms-down{display:none}
+.cheer{opacity:0;transition:opacity .25s,transform .45s var(--pop);transform:translateY(8px) scale(.6);transform-origin:50% 100%}
+.cheer.on{opacity:1;transform:none}
+.again{margin-top:14px}
+
+/* xilofone */
+.t-mus .ph{margin:-6px -6px 20px;width:calc(100% + 12px);height:clamp(120px,14vw,180px);object-fit:cover;border-radius:22px}
+.xylo{display:flex;gap:clamp(6px,1.4vw,14px);align-items:flex-end;justify-content:center;position:relative;padding:12px 0 0;margin-top:8px}
+.xylo::before,.xylo::after{content:"";position:absolute;left:3%;right:3%;height:10px;border-radius:6px;background:var(--peach-t);opacity:.5;z-index:0}
+.xylo::before{top:34%}.xylo::after{bottom:16%}
+.bar{position:relative;z-index:1;flex:1;max-width:96px;border:0;border-radius:16px;background:var(--c);box-shadow:0 7px 0 var(--cd),inset 0 3px 0 rgba(255,255,255,.55);display:flex;align-items:flex-end;justify-content:center;padding-bottom:12px;
+  font:600 clamp(13px,1.6vw,18px)/1 var(--f-display);color:var(--cl);transition:transform .15s var(--pop),box-shadow .15s}
+.bar::before,.bar::after{content:"";position:absolute;left:50%;width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:rgba(0,0,0,.18)}
+.bar::before{top:34%}.bar::after{bottom:16%}
+.bar:hover{transform:translateY(-3px)}
+.bar.hit{transform:translateY(5px);box-shadow:0 2px 0 var(--cd),inset 0 3px 0 rgba(255,255,255,.55),0 0 0 5px rgba(255,255,255,.55)}
+.note{position:absolute;left:50%;top:-4px;width:22px;height:30px;pointer-events:none;animation:note-up 1.1s ease-out forwards;fill:var(--cl)}
+@keyframes note-up{from{opacity:1;transform:translate(-50%,0) rotate(-8deg)}to{opacity:0;transform:translate(-30%,-70px) rotate(12deg)}}
+.mus-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:26px}
+.mus-row .hint{margin:0}
+
+/* ---------- 9. Perguntas ---------- */
+.faq-in{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:clamp(30px,6vw,96px);align-items:start}
+.faq-side{position:sticky;top:calc(var(--bar-h) + var(--hdr-h) + 24px)}
+.faq-side .h2{margin:16px 0 18px}
+.faq-side img{margin-top:28px;border-radius:26px;aspect-ratio:4/3;object-fit:cover;width:100%;box-shadow:0 10px 0 var(--sky-d)}
+details{background:var(--cb);border-radius:22px;box-shadow:0 6px 0 var(--cd);margin-bottom:16px;overflow:hidden}
+summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 22px;cursor:pointer;font:600 clamp(19px,2vw,24px)/1.2 var(--f-display);color:var(--cl)}
+summary::-webkit-details-marker{display:none}
+summary i{flex:none;width:36px;height:36px;border-radius:11px;background:var(--c);box-shadow:0 3px 0 var(--cd);position:relative;transition:transform .35s var(--pop)}
+summary i::before,summary i::after{content:"";position:absolute;left:50%;top:50%;width:14px;height:3px;margin:-1.5px 0 0 -7px;border-radius:2px;background:var(--cl)}
+summary i::after{transform:rotate(90deg);transition:transform .3s}
+details[open] summary i{transform:rotate(180deg)}
+details[open] summary i::after{transform:rotate(0)}
+details .ans{padding:0 22px 22px;max-width:60ch}
+@media (max-width:900px){.faq-in{grid-template-columns:1fr}.faq-side{position:static}}
+
+/* ---------- 10. Contacto ---------- */
+.contact{background:var(--paper-2);--tile-bg:var(--paper-2)}
+.ct-in{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(28px,5vw,80px);align-items:start}
+.ct-in .h2{margin:16px 0 18px}
+.ct-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:30px}
+.ct{display:block;text-decoration:none;padding:16px 18px;border-radius:20px;background:var(--cb);color:var(--ink);box-shadow:0 6px 0 var(--cd);transition:transform .2s var(--pop)}
+a.ct:hover{transform:translateY(-3px) rotate(-.6deg)}
+.ct small{display:block;font:600 12px/1 var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--cl);margin-bottom:8px}
+.ct b{font:600 clamp(19px,1.9vw,24px)/1.2 var(--f-display);word-break:break-word}
+.ct.wide{grid-column:1/-1}
+.ct-photo{margin-top:26px;position:relative}
+.ct-photo img{border-radius:26px;aspect-ratio:16/8;object-fit:cover;width:100%;box-shadow:0 10px 0 var(--rose-d)}
+.ct-photo span{position:absolute;left:16px;bottom:16px;padding:8px 14px;border-radius:12px;background:#fff;font:600 15px/1 var(--f-display);box-shadow:0 4px 0 var(--rose-d)}
+.form{background:#fff;border-radius:30px;padding:clamp(22px,3vw,38px);box-shadow:0 12px 0 var(--sun-d)}
+.form h3{font-size:clamp(26px,3vw,36px);margin-bottom:6px}
+.form > p{color:var(--ink-soft);margin-bottom:22px}
+.fld{position:relative;margin-bottom:16px}
+.fld input,.fld select,.fld textarea{width:100%;padding:24px 16px 10px;border:3px solid var(--sage-l);border-radius:16px;background:var(--paper);font:600 17px/1.3 var(--f-body);color:var(--ink);appearance:none;-webkit-appearance:none;transition:border-color .2s}
+.fld textarea{min-height:110px;resize:vertical}
+.fld label{position:absolute;left:19px;top:15px;font:600 17px/1.2 var(--f-body);color:var(--ink-soft);pointer-events:none;transition:transform .2s,font-size .2s,color .2s;transform-origin:left top}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--orange)}
+.fld input:focus+label,.fld input:not(:placeholder-shown)+label,.fld textarea:focus+label,.fld textarea:not(:placeholder-shown)+label,.fld select+label{transform:translateY(-8px) scale(.74);color:var(--orange-d)}
+.fld.sel::after{content:"";position:absolute;right:18px;top:50%;width:10px;height:10px;border-right:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.form .btn{width:100%;justify-content:center;margin-top:6px}
+#formNote{margin-top:16px;min-height:1.4em;font-weight:700;color:var(--teal-m)}
+@media (max-width:900px){.ct-in{grid-template-columns:1fr}}
+@media (max-width:520px){.ct-list{grid-template-columns:1fr}}
+
+/* ---------- 11. Rodapé ---------- */
+.foot{background:var(--teal-d);color:#D8E6DE;padding:clamp(48px,6vw,80px) 0 clamp(40px,7vw,96px);position:relative;overflow:hidden}
+.foot-top{display:grid;grid-template-columns:auto 1fr auto;gap:30px 48px;align-items:center}
+.foot-logo{background:#fff;border-radius:24px;padding:10px;box-shadow:0 8px 0 var(--sage-d);width:132px;transform:rotate(-3deg)}
+.foot-logo img{border-radius:16px;width:100%;height:auto}
+.foot-say{font:600 clamp(24px,3vw,40px)/1.15 var(--f-display);color:#fff;max-width:20ch}
+.foot-say em{font-style:normal;color:var(--sun)}
+.foot nav ul{display:flex;flex-wrap:wrap;gap:8px 18px}
+.foot nav a{text-decoration:none;font:600 16px/1 var(--f-display);color:var(--sage)}
+.foot nav a:hover{color:#fff}
+.foot-demo{margin-top:40px;padding-top:26px;border-top:2px dashed rgba(255,255,255,.2);max-width:98ch;font-size:14px;line-height:1.7;color:#B9CFC4}
+.foot-demo b{color:#fff}
+.road{position:absolute;left:0;right:0;top:0;height:6px;background:repeating-linear-gradient(90deg,var(--sun) 0 26px,transparent 26px 52px);opacity:.55}
+.car{position:absolute;top:-4px;left:0;width:84px;transform:translateX(-120px)}
+.car.go{animation:drive 7s linear forwards}
+@keyframes drive{to{transform:translateX(calc(100vw + 120px))}}
+@media (max-width:900px){.foot-top{grid-template-columns:1fr;justify-items:start}}
+
+/* ---------- 12. Reveals ---------- */
+.js .rv{opacity:0;transform:translateY(30px) scale(.97);transition:opacity .6s,transform .85s var(--pop);transition-delay:calc(var(--d,0)*80ms)}
+.js .rv.in{opacity:1;transform:none}
+
+/* ---------- 13. Movimento reduzido ---------- */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important;transition-delay:0s!important}
+  .js .rv,.js .tower .ring{opacity:1;transform:none}
+  .big .w{opacity:1}
+}
+</style>
+</head>
+<body>
+
+<!-- Aviso de demonstração (faixa fixa + selo + nota no rodapé) -->
+<div class="demo-bar" role="note">
+  <b>DEMO</b>
+  <span class="long">Website de demonstração criado pela DD Digital para o Externato Adriãozinho · conteúdo ilustrativo</span>
+  <span class="short">Demonstração · Externato Adriãozinho</span>
+</div>
+<div class="demo-seal" aria-hidden="true"><i></i>Versão de demonstração</div>
+
+<!-- Símbolos SVG reutilizados -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-star" viewBox="0 0 60 60"><polygon points="30,5 37,22 55,24 41,36 45,54 30,45 15,54 19,36 5,24 23,22"/></symbol>
+  <symbol id="i-step" viewBox="0 0 22 18"><path d="M1 17V12h6V7h6V2h8v15z" fill="currentColor"/></symbol>
+</svg>
+
+<header class="hdr" id="top">
+  <a class="brand" href="#inicio" aria-label="Externato Adriãozinho — início">
+    <span class="brand-mark" aria-hidden="true"><i>E</i><i>A</i></span>
+    <span class="brand-txt"><small>Externato</small><b>Adriãozinho</b></span>
+  </a>
+  <nav class="nav" id="nav" aria-label="Principal">
+    <ul>
+      <li><a href="#degraus">Creche e Pré-escolar</a></li>
+      <li><a href="#atividades">Atividades</a></li>
+      <li><a href="#perguntas">Perguntas</a></li>
+      <li><a href="#contacto">Contactos</a></li>
+    </ul>
+    <div class="nav-cta"><a class="btn" href="#contacto">Marcar visita</a></div>
+  </nav>
+  <a class="btn sm hdr-cta" href="#contacto">Marcar visita</a>
+  <button class="burger" id="burger" aria-expanded="false" aria-controls="nav" aria-label="Abrir menu"><span></span></button>
+</header>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="inicio">
+  <div class="wrap hero-in">
+    <p class="eyebrow"><svg viewBox="0 0 60 60" aria-hidden="true"><use href="#i-star"/></svg>Creche · Pré-escolar · Olival Basto</p>
+
+    <h1 class="name">
+      <span class="sr">Externato Adriãozinho</span>
+      <span class="name-ext" aria-hidden="true">Externato</span>
+      <span class="row row-big" id="rowBig" aria-hidden="true">
+        <span class="blk k-peach" style="--i:0"><span class="blk-f">A</span></span><span class="blk k-sage" style="--i:1"><span class="blk-f">D</span></span><span class="blk k-sky" style="--i:2"><span class="blk-f">R</span></span><span class="blk k-sun" style="--i:3"><span class="blk-f">I</span></span><span class="blk k-rose" style="--i:4"><span class="blk-f">Ã</span></span><span class="blk k-peach" style="--i:5"><span class="blk-f">O</span></span>
+      </span>
+      <span class="row row-small" id="rowSmall" aria-hidden="true">
+        <span class="blk k-sage" style="--i:6"><span class="blk-f">Z</span></span><span class="blk k-sky" style="--i:7"><span class="blk-f">I</span></span><span class="blk k-sun" style="--i:8"><span class="blk-f">N</span></span><span class="blk k-rose" style="--i:9"><span class="blk-f">H</span></span><span class="blk k-peach" style="--i:10"><span class="blk-f">O</span></span>
+      </span>
+    </h1>
+
+    <div class="hero-art">
+      <div class="sun-disc" aria-hidden="true"></div>
+      <svg class="spark s1" viewBox="0 0 60 60" aria-hidden="true"><use href="#i-star"/></svg>
+      <svg class="spark s2" viewBox="0 0 60 60" aria-hidden="true"><use href="#i-star"/></svg>
+      <svg class="spark s3" viewBox="0 0 60 60" aria-hidden="true"><use href="#i-star"/></svg>
+      <img class="scene" src="img/logo-scene.png" width="776" height="490" alt="Ilustração do logótipo do externato: duas crianças de mãos dadas junto às letras E e A, com torre de argolas, blocos, urso e carrinho">
+      <p class="bubble" aria-hidden="true">Olá! Vamos brincar?</p>
+    </div>
+
+    <p class="lead">Um sítio para brincar, aprender e crescer, com Inglês, Ginástica e Música pelo meio.</p>
+    <div class="cta">
+      <a class="btn" href="#contacto">Venha conhecer</a>
+      <a class="btn alt" href="#atividades">Ver as atividades</a>
+    </div>
+    <ul class="chips" aria-label="O que oferecemos">
+      <li><a class="k-sun" href="#degraus">Creche</a></li>
+      <li><a class="k-rose" href="#degraus">Pré-escolar</a></li>
+      <li><a class="k-sky" href="#atividades">Inglês</a></li>
+      <li><a class="k-peach" href="#atividades">Ginástica</a></li>
+      <li><a class="k-sage" href="#atividades">Música</a></li>
+    </ul>
+  </div>
+</section>
+
+<div class="tiles" aria-hidden="true" style="--tile-bg:var(--paper-2);margin-top:-1px"></div>
+
+<!-- ============ MANIFESTO + TORRE ============ -->
+<section class="manifesto sec" id="manifesto" style="padding-top:clamp(48px,7vw,96px)">
+  <div class="wrap mani-in">
+    <p class="big" id="bigText">Aqui, as <mark class="k-sage">letras</mark> são brinquedos, os <mark class="k-sun">blocos</mark> contam histórias e <mark class="k-peach">brincar</mark> é coisa muito séria.</p>
+    <svg class="tower" id="tower" viewBox="0 0 220 310" role="img" aria-label="Torre de argolas colorida a montar-se à medida que se lê o texto">
+      <rect x="102" y="40" width="16" height="236" rx="8" fill="#D9A36B"/>
+      <rect x="22" y="268" width="176" height="26" rx="13" fill="#D98E57"/>
+      <g class="ring" style="--i:0"><rect x="22" y="226" width="176" height="42" rx="21" fill="#9ECAD6"/><rect x="22" y="262" width="176" height="6" rx="3" fill="#77AEBD"/><rect x="40" y="232" width="60" height="7" rx="3.5" fill="#fff" opacity=".5"/></g>
+      <g class="ring" style="--i:1"><rect x="40" y="186" width="140" height="42" rx="21" fill="#F0B080"/><rect x="40" y="222" width="140" height="6" rx="3" fill="#D98E57"/><rect x="56" y="192" width="50" height="7" rx="3.5" fill="#fff" opacity=".5"/></g>
+      <g class="ring" style="--i:2"><rect x="54" y="146" width="112" height="42" rx="21" fill="#B5D3BB"/><rect x="54" y="182" width="112" height="6" rx="3" fill="#8FB89A"/><rect x="68" y="152" width="40" height="7" rx="3.5" fill="#fff" opacity=".5"/></g>
+      <g class="ring" style="--i:3"><rect x="66" y="106" width="88" height="42" rx="21" fill="#F0D068"/><rect x="66" y="142" width="88" height="6" rx="3" fill="#D6B23F"/><rect x="78" y="112" width="32" height="7" rx="3.5" fill="#fff" opacity=".5"/></g>
+      <g class="ring" style="--i:4"><rect x="78" y="66" width="64" height="42" rx="21" fill="#F2A9A0"/><rect x="78" y="102" width="64" height="6" rx="3" fill="#DB867B"/><rect x="88" y="72" width="24" height="7" rx="3.5" fill="#fff" opacity=".5"/></g>
+      <g class="ring" style="--i:5"><circle cx="110" cy="40" r="22" fill="#E08A50"/><circle cx="102" cy="32" r="6" fill="#fff" opacity=".45"/></g>
+    </svg>
+  </div>
+</section>
+
+<div class="tiles" aria-hidden="true" style="--tile-bg:var(--paper);background-color:var(--paper-2)"></div>
+
+<!-- ============ DOIS DEGRAUS ============ -->
+<section class="degraus sec" id="degraus">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="eyebrow rv"><svg viewBox="0 0 60 60" aria-hidden="true"><use href="#i-star"/></svg>Creche e Pré-escolar</p>
+        <h2 class="h2 rv" style="--d:1;margin-top:16px">Um degrau <em>de cada vez</em>.</h2>
+      </div>
+      <p class="lead rv" style="--d:2">Da creche ao pré-escolar, cada fase tem o seu tempo, o seu espaço e as suas brincadeiras. As crianças sobem ao seu ritmo e nós ficamos por perto.</p>
+    </div>
+
+    <div class="steps">
+      <article class="step s1 k-sun rv">
+        <span class="badge"><svg aria-hidden="true"><use href="#i-step"/></svg>Degrau 1</span>
+        <h3>Creche</h3>
+        <p class="tx">Os primeiros passos longe de casa pedem colo, calma e rotinas simples. Na creche, brincar é a maneira de descobrir tudo: cores, formas, sons e caras novas.</p>
+        <ul>
+          <li>Brincadeira livre e orientada</li>
+          <li>Rotinas tranquilas ao longo do dia</li>
+          <li>Música, histórias e canções</li>
+        </ul>
+        <p><span class="tbc">Idades e horário: a confirmar com o cliente</span></p>
+        <div class="ph">
+          <img src="img/creche-blocos-mao.jpg" width="1400" height="933" loading="lazy" alt="Mão de criança a pegar num bloco de madeira colorido entre outros blocos">
+          <img src="img/creche-maos-lapis.jpg" width="1400" height="933" loading="lazy" alt="Mãos de uma criança pequena a segurar um punhado de lápis de cera">
+        </div>
+      </article>
+
+      <article class="step s2 k-rose rv" style="--d:2">
+        <span class="badge"><svg aria-hidden="true"><use href="#i-step"/></svg>Degrau 2</span>
+        <h3>Pré-escolar</h3>
+        <p class="tx">Letras, números e muitas perguntas. No pré-escolar as crianças aprendem a partilhar, a esperar pela vez e a confiar em si, a brincar, claro.</p>
+        <ul>
+          <li>Letras e números em jogos e histórias</li>
+          <li>Pintura, desenho e trabalhos manuais</li>
+          <li>Autonomia, partilha e vida em grupo</li>
+        </ul>
+        <p><span class="tbc">Idades e horário: a confirmar com o cliente</span></p>
+        <div class="ph">
+          <img src="img/preescolar-flor.jpg" width="1400" height="1867" loading="lazy" alt="Desenho de uma flor sorridente em papel, rodeado de lápis de cor">
+          <img src="img/preescolar-maos-tinta.jpg" width="1400" height="933" loading="lazy" alt="Pinturas de mãos em azul e vermelho numa parede branca">
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="tiles" aria-hidden="true" style="--tile-bg:var(--teal-d);background-color:var(--teal-d)"></div>
+
+<!-- ============ ATIVIDADES ============ -->
+<section class="activ sec" id="atividades" style="padding-top:clamp(48px,7vw,96px)">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow rv"><svg viewBox="0 0 60 60" aria-hidden="true"><use href="#i-star"/></svg>Inglês · Ginástica · Música</p>
+      <h2 class="h2 rv" style="--d:1">E depois há <em>as atividades</em>.</h2>
+      <p class="lead rv" style="--d:2">Três maneiras de brincar com um objetivo. Experimenta: aqui tudo se toca, se vira e se ouve.</p>
+    </div>
+
+    <div class="mosaic">
+
+      <!-- Inglês -->
+      <article class="tile t-ing k-sky rv" id="ingles">
+        <div>
+          <span class="tag">Inglês</span>
+          <h3>Hello!</h3>
+          <p>Palavras novas, sem medo de errar. Toca nos cartões e descobre como se diz em inglês.</p>
+          <img class="ph" src="img/ingles-cubos-letras.jpg" width="1400" height="933" loading="lazy" alt="Cubos de madeira com letras do alfabeto empilhados">
+        </div>
+        <div>
+          <div class="cards" id="cards">
+            <button class="fc k-sun" type="button" aria-pressed="false" aria-label="estrela — em inglês, star"><span class="fc-in">
+              <span class="fc-face"><svg viewBox="0 0 60 60" aria-hidden="true"><polygon points="30,5 37,22 55,24 41,36 45,54 30,45 15,54 19,36 5,24 23,22" fill="#F0D068" stroke="#6E5506" stroke-width="3" stroke-linejoin="round"/></svg>estrela</span>
+              <span class="fc-face fc-back"><small>em inglês</small>star</span></span></button>
+            <button class="fc k-rose" type="button" aria-pressed="false" aria-label="bola — em inglês, ball"><span class="fc-in">
+              <span class="fc-face"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="23" fill="#fff" stroke="#8B2F25" stroke-width="3"/><path d="M9 26q21-12 42 0M9 38q21-10 42 0" stroke="#E08A50" stroke-width="6" fill="none" stroke-linecap="round"/></svg>bola</span>
+              <span class="fc-face fc-back"><small>em inglês</small>ball</span></span></button>
+            <button class="fc k-peach" type="button" aria-pressed="false" aria-label="sol — em inglês, sun"><span class="fc-in">
+              <span class="fc-face"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="12" fill="#F0D068" stroke="#8E4313" stroke-width="3"/><g stroke="#8E4313" stroke-width="3.5" stroke-linecap="round"><path d="M30 5v8M30 47v8M5 30h8M47 30h8M12 12l6 6M42 42l6 6M48 12l-6 6M18 42l-6 6"/></g></svg>sol</span>
+              <span class="fc-face fc-back"><small>em inglês</small>sun</span></span></button>
+            <button class="fc k-sage" type="button" aria-pressed="false" aria-label="casa — em inglês, house"><span class="fc-in">
+              <span class="fc-face"><svg viewBox="0 0 60 60" aria-hidden="true"><path d="M6 30L30 9l24 21z" fill="#F2A9A0" stroke="#2F5E50" stroke-width="3" stroke-linejoin="round"/><rect x="13" y="30" width="34" height="22" rx="3" fill="#FBE3CC" stroke="#2F5E50" stroke-width="3"/><rect x="26" y="38" width="9" height="14" rx="2" fill="#9ECAD6"/></svg>casa</span>
+              <span class="fc-face fc-back"><small>em inglês</small>house</span></span></button>
+            <button class="fc k-sky" type="button" aria-pressed="false" aria-label="lua — em inglês, moon"><span class="fc-in">
+              <span class="fc-face"><svg viewBox="0 0 60 60" aria-hidden="true"><path d="M40 7A24 24 0 1 0 53 40A19 19 0 1 1 40 7z" fill="#F0D068" stroke="#1F5566" stroke-width="3" stroke-linejoin="round"/></svg>lua</span>
+              <span class="fc-face fc-back"><small>em inglês</small>moon</span></span></button>
+          </div>
+          <p class="hint">Toca num cartão para o virar. <span class="tbc">Níveis e horários: a confirmar com o cliente</span></p>
+        </div>
+      </article>
+
+      <!-- Ginástica -->
+      <article class="tile t-gin k-peach rv" id="ginastica" style="--d:1">
+        <span class="tag">Ginástica</span>
+        <h3>Sobe, equilibra, rebola</h3>
+        <p>A ginástica ensina o corpo a confiar em si. Vê o nosso explorador a subir o escadote em A.</p>
+        <div class="gym">
+          <svg viewBox="0 0 320 290" role="img" aria-label="Escadote em forma de A com uma criança a subir de um lado e a escorregar pelo outro">
+            <rect x="14" y="262" width="292" height="20" rx="10" fill="#9ECAD6"/><rect x="14" y="276" width="292" height="6" rx="3" fill="#77AEBD"/>
+            <!-- lado sólido (escorrega) -->
+            <path d="M160 36L52 262h30L160 98z" fill="#F0B080" stroke="#D98E57" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M160 36L108 150" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".5"/>
+            <!-- lado do escadote: dois varões e degraus -->
+            <g stroke="#D98E57" stroke-linecap="round">
+              <path d="M160 36L270 262" stroke-width="12"/><path d="M160 100L232 262" stroke-width="12"/>
+              <g stroke="#E8A56E" stroke-width="7"><path d="M205 130L174 130M222 165L190 165M239 200L205 200M256 235L221 235"/></g>
+            </g>
+            <path d="M146 40h28" stroke="#D98E57" stroke-width="12" stroke-linecap="round"/>
+            <path id="gymPath" d="M251 262L160 52L72 262" fill="none" stroke="none"/>
+            <g id="gymKid" transform="translate(251 262)">
+              <g class="kid" id="kidBody">
+                <ellipse cx="0" cy="0" rx="12" ry="3.5" fill="#000" opacity=".12"/>
+                <rect x="-7" y="-17" width="5" height="17" rx="2.5" fill="#A26246"/><rect x="2" y="-17" width="5" height="17" rx="2.5" fill="#A26246"/>
+                <rect x="-9" y="-25" width="18" height="12" rx="4" fill="#5F8F7F"/>
+                <rect x="-9" y="-42" width="18" height="19" rx="6" fill="#F0D068"/>
+                <g class="arms-down" stroke="#A26246" stroke-width="4.5" stroke-linecap="round"><path d="M-9 -37l-8 12M9 -37l8 12"/></g>
+                <g class="arms-up" stroke="#A26246" stroke-width="4.5" stroke-linecap="round"><path d="M-9 -38l-8 -16M9 -38l8 -16"/></g>
+                <circle cx="0" cy="-52" r="10.5" fill="#A26246"/>
+                <path d="M-10.5 -54a10.5 10.5 0 0 1 21 0q-10.5 -6 -21 0z" fill="#3A2418"/>
+                <circle cx="-3.6" cy="-51" r="1.3" fill="#2a1a10"/><circle cx="3.6" cy="-51" r="1.3" fill="#2a1a10"/><path d="M-3.5 -47q3.5 3.5 7 0" stroke="#2a1a10" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </g>
+            </g>
+            <g class="cheer" id="cheer"><rect x="178" y="2" width="92" height="34" rx="14" fill="#fff"/><text x="224" y="25" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="600" font-size="19" fill="#8E4313">Hurra!</text></g>
+          </svg>
+        </div>
+        <button class="btn sm again" type="button" id="gymAgain">Outra vez!</button>
+        <p class="hint" style="margin-top:14px"><span class="tbc">Horários e turmas: a confirmar com o cliente</span></p>
+      </article>
+
+      <!-- Música -->
+      <article class="tile t-mus k-sage rv" id="musica" style="--d:2">
+        <img class="ph" src="img/musica-maracas.jpg" width="1400" height="933" loading="lazy" alt="Maracas e brinquedos de madeira coloridos vistos de cima">
+        <span class="tag">Música</span>
+        <h3>Toca nas teclas</h3>
+        <p>Cantar, bater, escutar. Cada tecla tem a sua cor e a sua nota, e quase todas as canções cabem em cinco.</p>
+        <div class="xylo" id="xylo" role="group" aria-label="Xilofone de cinco teclas">
+          <button class="bar k-rose" type="button" style="height:clamp(130px,16vw,190px)" data-n="0" aria-label="Dó">Dó</button>
+          <button class="bar k-peach" type="button" style="height:clamp(118px,14.4vw,172px)" data-n="1" aria-label="Ré">Ré</button>
+          <button class="bar k-sun" type="button" style="height:clamp(106px,12.8vw,154px)" data-n="2" aria-label="Mi">Mi</button>
+          <button class="bar k-sky" type="button" style="height:clamp(94px,11.2vw,136px)" data-n="3" aria-label="Fá">Fá</button>
+          <button class="bar k-sage" type="button" style="height:clamp(82px,9.6vw,118px)" data-n="4" aria-label="Sol">Sol</button>
+        </div>
+        <div class="mus-row">
+          <button class="btn sm" type="button" id="odeBtn" aria-pressed="false">Ouvir a Ode à Alegria</button>
+          <p class="hint">Liga o som do teu dispositivo.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="tiles" aria-hidden="true" style="--tile-bg:var(--paper);background-color:var(--teal-d);transform:scaleY(-1);margin-bottom:-1px"></div>
+
+<!-- ============ PERGUNTAS ============ -->
+<section class="sec" id="perguntas" style="padding-top:clamp(40px,6vw,88px)">
+  <div class="wrap faq-in">
+    <div class="faq-side">
+      <p class="eyebrow rv"><svg viewBox="0 0 60 60" aria-hidden="true"><use href="#i-star"/></svg>Para as famílias</p>
+      <h2 class="h2 rv" style="--d:1">Antes de <em>nos visitar</em></h2>
+      <p class="lead rv" style="--d:2">As perguntas que quase todas as famílias fazem. As respostas finais serão confirmadas com o externato.</p>
+      <img class="rv" style="--d:3" src="img/dia-livros.jpg" width="1400" height="934" loading="lazy" alt="Livros infantis ilustrados numa carteira de sala de aula">
+    </div>
+    <div class="faq">
+      <details class="k-sun rv" open>
+        <summary>Que idades podem entrar?<i aria-hidden="true"></i></summary>
+        <div class="ans"><span class="tbc">A confirmar com o cliente</span></div>
+      </details>
+      <details class="k-rose rv" style="--d:1">
+        <summary>Qual é o horário?<i aria-hidden="true"></i></summary>
+        <div class="ans"><span class="tbc">A confirmar com o cliente</span></div>
+      </details>
+      <details class="k-sky rv" style="--d:1">
+        <summary>Como funcionam as inscrições?<i aria-hidden="true"></i></summary>
+        <div class="ans"><span class="tbc">A confirmar com o cliente</span> <p style="margin-top:10px">Para já, o melhor é ligar ou escrever-nos: os contactos estão mesmo ao fundo desta página.</p></div>
+      </details>
+      <details class="k-peach rv" style="--d:1">
+        <summary>Quanto custa?<i aria-hidden="true"></i></summary>
+        <div class="ans"><span class="tbc">Mensalidades: a confirmar com o cliente</span></div>
+      </details>
+      <details class="k-sage rv" style="--d:1">
+        <summary>Inglês, Ginástica e Música estão incluídos?<i aria-hidden="true"></i></summary>
+        <div class="ans"><span class="tbc">A confirmar com o cliente</span></div>
+      </details>
+      <details class="k-sun rv" style="--d:1">
+        <summary>Posso visitar o externato?<i aria-hidden="true"></i></summary>
+        <div class="ans"><span class="tbc">Marcação de visitas: a confirmar com o cliente</span> <p style="margin-top:10px">Ligue ou escreva-nos e combinamos uma data.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<div class="tiles" aria-hidden="true" style="--tile-bg:var(--paper-2);background-color:var(--paper);margin-bottom:-1px"></div>
+
+<!-- ============ CONTACTO ============ -->
+<section class="contact sec" id="contacto" style="padding-top:clamp(48px,7vw,96px)">
+  <div class="wrap ct-in">
+    <div>
+      <p class="eyebrow rv"><svg viewBox="0 0 60 60" aria-hidden="true"><use href="#i-star"/></svg>Contactos</p>
+      <h2 class="h2 rv" style="--d:1">Venha conhecer <em>o externato</em>.</h2>
+      <p class="lead rv" style="--d:2">Ligue ou escreva-nos para combinar uma visita. Teremos todo o gosto em mostrar-lhe a casa.</p>
+
+      <div class="ct-list">
+        <a class="ct k-sun rv" href="tel:+351219381190"><small>Telefone</small><b>219 381 190</b></a>
+        <a class="ct k-rose rv" style="--d:1" href="tel:+351969839254"><small>Telemóvel</small><b>969 839 254</b></a>
+        <a class="ct k-sky wide rv" style="--d:1" href="mailto:oadriaozinho@gmail.com"><small>Email</small><b>oadriaozinho@gmail.com</b></a>
+        <a class="ct k-sage wide rv" style="--d:2" href="https://www.google.com/maps/search/?api=1&amp;query=R.%20Pres.%20Samora%20Machel%204%2C%202620-061%20Olival%20Basto" target="_blank" rel="noopener"><small>Morada · ver no mapa</small><b>R. Pres. Samora Machel 4<br>2620-061 Olival Basto</b></a>
+        <div class="ct k-peach wide rv" style="--d:2"><small>Horário</small><span class="tbc">A confirmar com o cliente</span></div>
+      </div>
+
+      <div class="ct-photo rv">
+        <img src="img/preescolar-desenho.jpg" width="1400" height="1867" loading="lazy" alt="Criança a desenhar uma casa com lápis de cor, vista de cima">
+        <span>Aqui também se pinta fora das linhas.</span>
+      </div>
+    </div>
+
+    <form class="form rv" id="demoForm" novalidate style="--d:1">
+      <h3>Escreva-nos</h3>
+      <p>Diga-nos o nome e a idade da criança e entramos em contacto.</p>
+      <div class="fld"><input id="f-nome" name="nome" type="text" placeholder=" " autocomplete="off"><label for="f-nome">O seu nome</label></div>
+      <div class="fld"><input id="f-contacto" name="contacto" type="text" placeholder=" " autocomplete="off"><label for="f-contacto">Telefone ou email</label></div>
+      <div class="fld sel"><select id="f-fase" name="fase"><option value="">Escolha…</option><option>Creche</option><option>Pré-escolar</option><option>Ainda não sei</option></select><label for="f-fase">Para que fase?</label></div>
+      <div class="fld"><textarea id="f-msg" name="mensagem" placeholder=" "></textarea><label for="f-msg">Mensagem</label></div>
+      <button class="btn" type="submit">Enviar mensagem</button>
+      <p id="formNote" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ RODAPÉ ============ -->
+<footer class="foot">
+  <div class="road" aria-hidden="true"></div>
+  <svg class="car" id="car" viewBox="0 0 100 60" aria-hidden="true">
+    <rect x="4" y="26" width="92" height="22" rx="9" fill="#F2A9A0"/><path d="M24 26l10-16h30l14 16z" fill="#F2A9A0"/><path d="M30 25l8-12h12v12zM54 25V13h9l11 12z" fill="#DCEEF2"/>
+    <rect x="4" y="38" width="92" height="5" fill="#DB867B"/><circle cx="26" cy="49" r="9" fill="#2C4A42"/><circle cx="26" cy="49" r="3.5" fill="#fff"/><circle cx="76" cy="49" r="9" fill="#2C4A42"/><circle cx="76" cy="49" r="3.5" fill="#fff"/>
+  </svg>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-logo"><img src="img/logo-original.png" width="442" height="452" loading="lazy" alt="Logótipo do Externato Adriãozinho"></div>
+      <p class="foot-say">Um lugar para <em>brincar</em>, aprender e crescer.</p>
+      <nav aria-label="Rodapé"><ul>
+        <li><a href="#degraus">Creche e Pré-escolar</a></li>
+        <li><a href="#atividades">Atividades</a></li>
+        <li><a href="#perguntas">Perguntas</a></li>
+        <li><a href="#contacto">Contactos</a></li>
+      </ul></nav>
+    </div>
+    <p class="foot-demo"><b>Website de demonstração criado pela DD Digital para o Externato Adriãozinho.</b> Textos, atividades e conteúdos são ilustrativos e não vinculativos; idades, horários, mensalidades e condições de inscrição estão por confirmar com o cliente e o formulário não envia nada. Os contactos e a morada foram fornecidos pelo cliente. Logótipo e ilustração fornecidos pelo cliente. Fotografias: Unsplash.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  /* ---------- utilitários ---------- */
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const noPre = document.documentElement.classList.contains('nopre');
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+  /* ---------- cabeçalho e menu mobile ---------- */
+  const hdr = $('#top'), nav = $('#nav'), burger = $('#burger');
+  function setMenu(open){
+    nav.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open);
+    burger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+  }
+  burger.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
+  $$('a', nav).forEach(a => a.addEventListener('click', () => setMenu(false)));
+  addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+
+  /* ligação ativa por secção */
+  const links = $$('.nav ul a');
+  const spy = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    links.forEach(a => a.setAttribute('aria-current', a.getAttribute('href') === '#' + e.target.id));
+  }), {rootMargin:'-45% 0px -50% 0px'});
+  ['degraus','atividades','perguntas','contacto'].forEach(id => spy.observe($('#' + id)));
+
+  /* ---------- reveals ---------- */
+  const rv = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting){ e.target.classList.add('in'); rv.unobserve(e.target); }
+  }), {rootMargin:'0px 0px -8% 0px', threshold:.08});
+  $$('.rv').forEach(el => rv.observe(el));
+
+  /* ---------- hero: cubos de letras ---------- */
+  const blocks = $$('.blk');
+  const st = blocks.map(b => ({lift:0, tilt:0, tl:0, tt:0, small: !!b.closest('.row-small')}));
+  let mx = -999, my = -999, loopOn = false, ready = noPre || reduce;
+  setTimeout(() => ready = true, 2600);
+
+  function hop(i){
+    const f = blocks[i].firstElementChild;
+    f.animate([
+      {transform:'translateY(0) scale(1,1) rotate(0)'},
+      {transform:'translateY(2px) scale(1.08,.88) rotate(0)', offset:.15},
+      {transform:`translateY(${st[i].small ? -26 : -44}px) scale(.95,1.06) rotate(${i % 2 ? 9 : -9}deg)`, offset:.5},
+      {transform:'translateY(0) scale(1.06,.92) rotate(0)', offset:.78},
+      {transform:'translateY(0) scale(1,1) rotate(0)'}
+    ], {duration:620, easing:'cubic-bezier(.3,.7,.4,1)'});
+  }
+  blocks.forEach((b, i) => b.addEventListener('pointerdown', () => { if (ready) hop(i); }));
+
+  function waveBlocks(){
+    if (reduce || document.hidden || !ready) return;
+    blocks.forEach((_, i) => setTimeout(() => hop(i), i * 85));
+  }
+  setTimeout(waveBlocks, noPre ? 800 : 3200);
+  setInterval(() => { const r = $('.hero').getBoundingClientRect(); if (r.bottom > 80 && r.top < innerHeight * .6) waveBlocks(); }, 11000);
+
+  function blockLoop(){
+    let moving = false;
+    blocks.forEach((b, i) => {
+      const r = b.getBoundingClientRect(), s = st[i];
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      const d = Math.hypot(mx - cx, my - cy), R = 170;
+      const k = Math.pow(clamp(1 - d / R, 0, 1), 1.4);
+      s.tl = k * (s.small ? 12 : 22);
+      s.tt = k * clamp((mx - cx) / R, -1, 1) * -9;
+      s.lift += (s.tl - s.lift) * .16; s.tilt += (s.tt - s.tilt) * .16;
+      if (Math.abs(s.tl - s.lift) > .05 || Math.abs(s.tt - s.tilt) > .05) moving = true;
+      const f = b.firstElementChild;
+      f.style.setProperty('--lift', s.lift.toFixed(2));
+      f.style.setProperty('--tilt', s.tilt.toFixed(2));
+    });
+    if (moving || (mx > -900)) requestAnimationFrame(blockLoop); else loopOn = false;
+  }
+  if (finePointer && !reduce){
+    const hero = $('.hero');
+    hero.addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; if (ready && !loopOn){ loopOn = true; requestAnimationFrame(blockLoop); } });
+    hero.addEventListener('pointerleave', () => { mx = my = -999; });
+  }
+
+  /* ---------- manifesto: palavras que acendem + torre de argolas ---------- */
+  function splitWords(el){
+    [...el.childNodes].forEach(n => {
+      if (n.nodeType === 3){
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(t => {
+          if (!t) return;
+          if (/^\s+$/.test(t)) frag.appendChild(document.createTextNode(t));
+          else { const s = document.createElement('span'); s.className = 'w'; s.textContent = t; frag.appendChild(s); }
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1) splitWords(n);
+    });
+  }
+  const big = $('#bigText'); splitWords(big);
+  const words = $$('.w', big), rings = $$('#tower .ring');
+  function manifesto(){
+    const r = big.getBoundingClientRect();
+    const p = reduce ? 1 : clamp((innerHeight * .82 - r.top) / (innerHeight * .55 + r.height * .35), 0, 1);
+    const n = Math.round(p * words.length);
+    words.forEach((w, i) => w.classList.toggle('lit', i < n));
+    const k = Math.round(p * rings.length);
+    rings.forEach((g, i) => g.classList.toggle('on', i < k));
+  }
+
+  /* ---------- inglês: cartões que viram ---------- */
+  const cards = $$('.fc');
+  cards.forEach(c => c.addEventListener('click', () => {
+    const on = c.classList.toggle('flip'); c.setAttribute('aria-pressed', on);
+  }));
+  new IntersectionObserver((es, o) => es.forEach(e => {
+    if (!e.isIntersecting) return; o.disconnect();
+    if (reduce) return;
+    cards.forEach((c, i) => {
+      setTimeout(() => c.classList.add('flip'), 500 + i * 120);
+      setTimeout(() => c.classList.remove('flip'), 1900 + i * 120);
+    });
+  }), {threshold:.5}).observe($('#cards'));
+
+  /* ---------- ginástica: o explorador sobe o escadote ---------- */
+  const gp = $('#gymPath'), gk = $('#gymKid'), kid = $('#kidBody'), cheer = $('#cheer'), again = $('#gymAgain');
+  const GL = gp.getTotalLength();
+  const ease = {inOut: t => t < .5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2, in: t => t*t};
+  function setT(t){
+    const p = gp.getPointAtLength(GL * t);
+    const bob = (t < .5 && t > 0 && t < 1) ? Math.sin(t * 60) * 1.6 : 0;
+    gk.setAttribute('transform', `translate(${p.x.toFixed(1)} ${(p.y + bob).toFixed(1)})`);
+  }
+  const tween = (a, b, ms, fn) => new Promise(res => {
+    const t0 = performance.now();
+    (function f(now){ const k = clamp((now - t0) / ms, 0, 1); setT(a + (b - a) * fn(k)); k < 1 ? requestAnimationFrame(f) : res(); })(t0);
+  });
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  let gymBusy = false;
+  async function gymRun(){
+    if (gymBusy) return; gymBusy = true; again.disabled = true;
+    kid.classList.remove('up'); cheer.classList.remove('on');
+    setT(0); await wait(250);
+    await tween(0, .5, 2800, ease.inOut);
+    kid.classList.add('up'); cheer.classList.add('on'); await wait(1100);
+    kid.classList.remove('up'); cheer.classList.remove('on');
+    await tween(.5, 1, 1100, ease.in);
+    gymBusy = false; again.disabled = false;
+  }
+  again.addEventListener('click', gymRun);
+  if (reduce){ setT(.5); kid.classList.add('up'); cheer.classList.add('on'); }
+  else new IntersectionObserver((es, o) => es.forEach(e => { if (e.isIntersecting){ o.disconnect(); gymRun(); } }), {threshold:.6}).observe($('#ginastica'));
+
+  /* ---------- música: xilofone e Ode à Alegria ---------- */
+  const bars = $$('.bar');
+  const FREQ = [261.63, 293.66, 329.63, 349.23, 392.00];  /* Dó Ré Mi Fá Sol */
+  let ac = null;
+  function tone(n, dur){
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    if (ac.state === 'suspended') ac.resume();
+    const t = ac.currentTime, g = ac.createGain();
+    [[1, .5], [2, .14], [3.01, .05]].forEach(([m, v]) => {
+      const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = FREQ[n] * 2 * m;
+      const gg = ac.createGain(); gg.gain.value = v; o.connect(gg); gg.connect(g); o.start(t); o.stop(t + dur + .1);
+    });
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.5, t + .01); g.gain.exponentialRampToValueAtTime(.0008, t + dur);
+    g.connect(ac.destination);
+  }
+  const NOTE = '<svg class="note" viewBox="0 0 22 30" aria-hidden="true"><ellipse cx="7" cy="24" rx="6" ry="4.5" transform="rotate(-18 7 24)"/><rect x="11.5" y="3" width="3" height="21" rx="1.5"/><path d="M14 3q8 2 6 11q-1-5-6-6z"/></svg>';
+  function press(n, dur = 1.1){
+    const b = bars[n];
+    try { tone(n, dur); } catch(e){}
+    b.classList.add('hit'); setTimeout(() => b.classList.remove('hit'), 220);
+    if (!reduce){ b.insertAdjacentHTML('beforeend', NOTE); const el = b.lastElementChild; setTimeout(() => el.remove(), 1100); }
+  }
+  bars.forEach(b => b.addEventListener('pointerdown', e => { e.preventDefault(); press(+b.dataset.n); }));
+  bars.forEach(b => b.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); press(+b.dataset.n); } }));
+
+  /* Ode à Alegria (Beethoven, domínio público): [nota, tempos] */
+  const E=2,F=3,G=4,D=1,C=0;
+  const ODE = [[E,1],[E,1],[F,1],[G,1],[G,1],[F,1],[E,1],[D,1],[C,1],[C,1],[D,1],[E,1],[E,1.5],[D,.5],[D,2],
+               [E,1],[E,1],[F,1],[G,1],[G,1],[F,1],[E,1],[D,1],[C,1],[C,1],[D,1],[E,1],[D,1.5],[C,.5],[C,2]];
+  const odeBtn = $('#odeBtn'); let odeTimers = [];
+  function odeStop(){ odeTimers.forEach(clearTimeout); odeTimers = []; odeBtn.setAttribute('aria-pressed', 'false'); odeBtn.textContent = 'Ouvir a Ode à Alegria'; }
+  odeBtn.addEventListener('click', () => {
+    if (odeBtn.getAttribute('aria-pressed') === 'true'){ odeStop(); return; }
+    odeBtn.setAttribute('aria-pressed', 'true'); odeBtn.textContent = 'Parar';
+    const beat = 430; let t = 150;
+    ODE.forEach(([n, b]) => { odeTimers.push(setTimeout(() => press(n, Math.max(.6, b * .5)), t)); t += b * beat; });
+    odeTimers.push(setTimeout(odeStop, t + 400));
+  });
+
+  /* ---------- rodapé: o carrinho passa uma vez ---------- */
+  const car = $('#car');
+  new IntersectionObserver((es, o) => es.forEach(e => { if (e.isIntersecting){ o.disconnect(); if (!reduce) car.classList.add('go'); } }), {threshold:.3}).observe($('.foot'));
+
+  /* ---------- formulário de demonstração: não envia nada ---------- */
+  $('#demoForm').addEventListener('submit', e => {
+    e.preventDefault();
+    $('#formNote').textContent = 'Isto é uma demonstração: nenhum dado foi enviado nem guardado.';
+  });
+
+  /* ---------- scroll (um só rAF) ---------- */
+  let tick = false;
+  function onScroll(){
+    if (tick) return; tick = true;
+    requestAnimationFrame(() => { tick = false; hdr.classList.toggle('solid', scrollY > 24); manifesto(); });
+  }
+  addEventListener('scroll', onScroll, {passive:true}); addEventListener('resize', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>
