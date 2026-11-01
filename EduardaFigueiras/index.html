@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eduarda Figueiras · Psicóloga — Demonstração</title>
+<meta name="description" content="Demonstração de website para Eduarda Figueiras, psicóloga: ansiedade e comportamento alimentar, consultas online. Criado pela DD Digital.">
+<meta name="theme-color" content="#2A1C16">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232A1C16'/%3E%3Cpath d='M18 52V30a14 14 0 0 1 28 0v22' fill='none' stroke='%23C38E82' stroke-width='3'/%3E%3Cpath d='M25 52V32a7 7 0 0 1 14 0v20' fill='%23F4ECE3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italianno&family=Red+Hat+Display:wght@300;400;500;700;800&family=Red+Hat+Text:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
+
+<style>
+/* =====================================================================
+   EDUARDA FIGUEIRAS · Psicóloga (Ansiedade & Comportamento Alimentar) — DEMO (DD Digital)
+   CONCEITO DE LAYOUT E HERO
+   O feed da cliente repete três coisas: o ARCO (linhas finas atrás das
+   figuras), a ETIQUETA-PÍLULA a marcar palavras (“botão de desligar”) e a
+   NOITE (“durante o dia controlo-me, mas à noite perco-me…”, a luz do
+   frigorífico). Hero: uma PORTA EM ARCO fechada, de noite; entreabre-se,
+   a luz entra e o retrato surge no arco enquanto o dia nasce. Clique/toque
+   fecha e abre. Assinaturas: o ciclo “já estraguei tudo” como anel que se
+   quebra com uma pausa; “antes de abrires o frigorífico” (ferramenta de
+   reflexão); globo de pontos com conversor de fuso horário; formas de
+   trabalhar como mosaico de “posts”. Formas: arcos, pílulas, cantos
+   arredondados 14–18px. Paleta amostrada do feed: rosa-terra, tan, cacau.
+   ===================================================================== */
+
+/* ============ 1. VARIÁVEIS ============ */
+:root{
+  --papel:#FAF5EF; --creme:#F4ECE3; --linho:#E8D9CC; --blush:#EBCFC4;
+  --tan:#C9AA94; --rosa:#C38E82; --rosa-d:#A27562; --rosa-dd:#8A5848;
+  --cacau:#2A1C16; --cacau-2:#3A2A22; --tinta:#35241D; --luz:#FFE2BD;
+  --line:rgba(53,36,29,.16); --line-l:rgba(244,236,227,.2);
+  --disp:'Red Hat Display',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --text:'Red Hat Text',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --script:'Italianno','Segoe Script',cursive;
+  --banner:34px; --hdr:68px;
+  --pad:clamp(20px,5vw,64px); --sec:clamp(84px,10vw,150px);
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+
+/* ============ 2. BASE ============ */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--banner) + var(--hdr) + 6px);-webkit-text-size-adjust:100%}
+body{margin:0;padding-top:var(--banner);background:var(--creme);color:var(--tinta);font:400 16.5px/1.7 var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3,h4,p,ul,ol,figure,blockquote,dl,dd{margin:0}
+ul,ol{padding:0;list-style:none}
+b,strong{font-weight:700}
+:focus-visible{outline:2px solid var(--rosa-dd);outline-offset:3px;border-radius:6px}
+.dk :focus-visible{outline-color:var(--rosa)}
+.wrap{width:100%;max-width:1360px;margin:0 auto;padding-inline:var(--pad)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+section{position:relative}
+[hidden]{display:none!important}
+.sc{font:400 1.32em/.8 var(--script);letter-spacing:0;color:var(--rosa-dd)}
+.dk .sc{color:var(--rosa)}
+
+/* etiqueta-pílula (eyebrow) */
+.pill{display:inline-flex;align-items:center;gap:9px;padding:7px 15px;border-radius:999px;background:var(--blush);color:var(--cacau);font:500 11.5px/1.3 var(--disp);letter-spacing:.14em;text-transform:uppercase}
+.dk .pill{background:rgba(195,142,130,.2);color:var(--blush)}
+/* marcador (o “realce” do feed): pílula atrás das palavras */
+.mk{display:inline-block;padding:0 .34em .06em;border-radius:.3em;background:var(--blush);color:var(--cacau);font-weight:700;line-height:1.15;clip-path:inset(0 0 0 0 round .3em)}
+.dk .mk{background:var(--rosa)}
+.js .mk.pre{clip-path:inset(0 100% 0 0 round .3em);transition:clip-path .9s var(--ease) .15s}
+.js .mk.pre.on{clip-path:inset(0 0 0 0 round .3em)}
+
+h2{font:300 clamp(2.4rem,5vw,4.6rem)/1.04 var(--disp);letter-spacing:-.025em;margin-top:20px;text-wrap:balance}
+h2 b{font-weight:700}
+h2 .sc{font-size:1.18em;line-height:.85}
+.lede{font-size:clamp(16px,1.25vw,18.5px);max-width:54ch;color:rgba(53,36,29,.86)}
+.dk .lede{color:rgba(244,236,227,.82)}
+.tbc{display:inline-block;padding:0 9px;border:1px dashed var(--rosa-dd);border-radius:6px;color:var(--rosa-dd);font:400 12.5px/1.7 var(--text);letter-spacing:.02em;background:rgba(195,142,130,.12)}
+.dk .tbc{border-color:var(--rosa);color:var(--blush);background:rgba(195,142,130,.1)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:16px 26px;border-radius:16px;background:var(--cacau);color:var(--papel);font:700 14px/1.1 var(--disp);letter-spacing:.02em;text-decoration:none;border:1.5px solid var(--cacau);transition:background .35s,color .35s,transform .35s var(--ease)}
+.btn:hover{background:var(--rosa-dd);border-color:var(--rosa-dd)}
+.btn:active{transform:scale(.97)}
+.btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;transition:transform .35s var(--ease)}
+.btn:hover svg{transform:translateX(4px)}
+.btn--ghost{background:transparent;color:var(--cacau)}
+.btn--ghost:hover{background:var(--cacau);border-color:var(--cacau);color:var(--papel)}
+.btn--rose{background:var(--rosa);border-color:var(--rosa);color:var(--cacau)}
+.btn--rose:hover{background:var(--blush);border-color:var(--blush);color:var(--cacau)}
+.btn--light{background:var(--papel);border-color:var(--papel);color:var(--cacau)}
+.btn--light:hover{background:var(--blush);border-color:var(--blush);color:var(--cacau)}
+
+.js .rv{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease) calc(var(--d,0)*1ms),transform .9s var(--ease) calc(var(--d,0)*1ms)}
+.js .rv.in{opacity:1;transform:none}
+
+/* ============ 3. FAIXA DEMO + SELO ============ */
+.banner{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--banner);display:flex;align-items:center;justify-content:center;gap:12px;padding-inline:12px;background:var(--cacau);color:var(--papel);font:400 11.5px/1 var(--text);letter-spacing:.04em;text-align:center;border-bottom:1px solid rgba(195,142,130,.35)}
+.banner b{background:var(--rosa);color:var(--cacau);padding:4px 10px;border-radius:999px;letter-spacing:.2em;font:700 10px/1 var(--disp)}
+.banner .s{display:none}
+.seal{position:fixed;left:16px;bottom:16px;z-index:60;padding:9px 15px;border-radius:999px;background:var(--cacau);color:var(--papel);font:500 10px/1 var(--disp);letter-spacing:.16em;text-transform:uppercase;display:flex;gap:9px;align-items:center;box-shadow:0 6px 22px rgba(42,28,22,.28)}
+.seal i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--rosa)}
+@media (max-width:640px){.banner .l{display:none}.banner .s{display:inline}.seal{display:none}}
+
+/* ============ 4. CABEÇALHO ============ */
+.hdr{position:sticky;top:var(--banner);z-index:90;height:var(--hdr);background:var(--papel);border-bottom:1px solid var(--line)}
+.hdr .wrap{height:100%;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{text-decoration:none;display:flex;align-items:center;gap:12px;line-height:1;white-space:nowrap}
+.brand svg{width:26px;height:30px;flex:none}
+.brand__n{font:300 clamp(11.5px,3.1vw,14px)/1 var(--disp);letter-spacing:.1em;text-transform:uppercase}
+.brand__n b{font-weight:800}
+.nav{display:flex;align-items:center;gap:clamp(10px,1.5vw,22px)}
+.nav a{font:500 13px/1 var(--disp);letter-spacing:.02em;text-decoration:none;padding:10px 12px;border-radius:999px;transition:background .3s}
+.nav a:hover{background:var(--blush)}
+.nav .btn{padding:12px 20px;font-size:13px;color:var(--papel);border-radius:14px}
+.nav .btn:hover{background:var(--rosa-dd)}
+.burger{display:none;width:44px;height:44px;border:1.5px solid var(--tinta);border-radius:14px;background:transparent;position:relative}
+.burger i{position:absolute;left:12px;right:12px;height:1.5px;background:var(--tinta);transition:transform .4s var(--ease),top .4s var(--ease)}
+.burger i:nth-child(1){top:17px}.burger i:nth-child(2){top:25px}
+.menu-open .burger i:nth-child(1){top:21px;transform:rotate(45deg)}
+.menu-open .burger i:nth-child(2){top:21px;transform:rotate(-45deg)}
+@media (max-width:1100px){
+  .burger{display:block}
+  .nav{position:fixed;left:0;right:0;top:calc(var(--banner) + var(--hdr));bottom:0;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:0;padding:22px var(--pad) 30px;background:var(--papel);transform:translateY(-8px);opacity:0;visibility:hidden;transition:opacity .4s,transform .4s var(--ease),visibility .4s;overflow-y:auto;overscroll-behavior:contain;z-index:1}
+  .menu-open .nav{opacity:1;visibility:visible;transform:none}
+  .nav a{font:300 clamp(2rem,9vw,3rem)/1.15 var(--disp);letter-spacing:-.02em;padding:13px 0;border-radius:0;border-bottom:1px solid var(--line);width:100%}
+  .nav a:hover{background:none}
+  .nav .btn{margin-top:26px;font:700 14px/1 var(--disp);width:auto;padding:17px 26px;border-radius:16px;border-bottom:1.5px solid var(--cacau)}
+  /* o fundo não anda com o menu aberto (JS fixa o body e guarda o scroll) */
+  body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+}
+
+/* ============ 5. HERO — a porta em arco ============ */
+.hero{position:relative;overflow-x:clip;background:var(--cacau);color:var(--papel);isolation:isolate}
+.hero__bg{position:absolute;inset:0;z-index:-1}
+.hero__bg--night{background:radial-gradient(70% 60% at 72% 58%,#43312A 0%,var(--cacau) 62%)}
+.hero__bg--day{background:radial-gradient(60% 70% at 72% 52%,#FFE9CF 0%,rgba(255,233,207,0) 70%),linear-gradient(180deg,var(--creme) 0%,#EBD2C5 100%);opacity:0;transition:opacity 1.6s ease}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:center;gap:clamp(24px,4vw,70px);min-height:clamp(640px,calc(100svh - var(--banner) - var(--hdr)),880px);padding-block:clamp(28px,4vw,56px)}
+.hero__txt{display:grid;position:relative;z-index:2}
+.hero__txt>*{grid-area:1/1;align-self:center}
+
+/* estado fechado (noite): duas linhas do feed */
+.hero__closed{transition:opacity .9s ease,transform .9s var(--ease)}
+.hero__closed p{margin:0}
+.hero__closed .l1{font:300 clamp(2.3rem,5.1vw,4.9rem)/1.05 var(--disp);letter-spacing:-.025em;color:var(--creme)}
+.hero__closed .l1 b{font-weight:700;white-space:nowrap}
+.hero__closed .l2{font:400 clamp(3.2rem,7.2vw,6.8rem)/.9 var(--script);color:var(--rosa);margin-top:.12em}
+.hero__closed .l1,.hero__closed .l2{opacity:0;transform:translateY(16px);transition:opacity 1s ease,transform 1s var(--ease)}
+.hero.s1 .l1,.hero.s2 .l2{opacity:1;transform:none}
+.hero__hint{margin-top:30px!important;font:500 11.5px/1 var(--disp);letter-spacing:.16em;text-transform:uppercase;color:rgba(244,236,227,.55);opacity:0;transition:opacity 1s ease}
+.hero.s2 .hero__hint{opacity:1}
+
+/* estado aberto (dia): o conteúdo verdadeiro (h1) */
+.hero__open{color:var(--cacau);transition:opacity 1s ease .55s,transform 1s var(--ease) .55s}
+.hero h1{font:300 clamp(2.15rem,4.5vw,4.3rem)/1.06 var(--disp);letter-spacing:-.03em;margin-top:22px;text-wrap:balance}
+.hero h1 .mk{font-weight:700;margin-block:.05em}
+.hero h1 .sc{display:block;margin-top:.14em;font-size:1.42em;color:var(--rosa-dd);letter-spacing:.005em}
+.hero .lede{margin-top:20px;max-width:46ch}
+.hero__cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.hero__world{display:flex;align-items:center;gap:10px;margin-top:30px;font:500 13px/1.4 var(--disp);color:rgba(53,36,29,.8)}
+.hero__world svg{width:22px;height:22px;flex:none;fill:none;stroke:var(--rosa-dd);stroke-width:1.4}
+
+/* alternância de estados (sem JS = aberto, estado final) */
+.js .hero:not([data-state]) .hero__open,.js .hero[data-state=closed] .hero__open,.js .hero[data-state=ajar] .hero__open{opacity:0;visibility:hidden;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease,visibility 0s .5s}
+.hero[data-state=open] .hero__closed{opacity:0;visibility:hidden;transform:translateY(-14px);transition:opacity .9s ease,transform .9s var(--ease),visibility 0s .9s}
+html:not(.js) .hero__closed{display:none}
+.js .hero:not([data-state]) .hero__bg--day,.js .hero[data-state=closed] .hero__bg--day,.js .hero[data-state=ajar] .hero__bg--day{opacity:0}
+html:not(.js) .hero__bg--day,.hero[data-state=open] .hero__bg--day{opacity:1}
+html:not(.js) .hero{color:var(--cacau)}
+.hero[data-state=open]{color:var(--cacau)}
+
+/* a porta */
+.stage{display:flex;flex-direction:column;align-items:center;gap:22px;position:relative;z-index:1}
+.door{--a:78deg;--lit:1;position:relative;height:min(64svh,610px);min-height:420px;aspect-ratio:4/5.2;perspective:1700px;perspective-origin:18% 50%;}
+.door__arches i{position:absolute;border:1.5px solid var(--rosa);border-bottom:0;border-radius:999px 999px 0 0;pointer-events:none;opacity:.55}
+.door__arches i:nth-child(1){inset:-16px -16px 0}
+.door__arches i:nth-child(2){inset:-34px -34px 0;opacity:.28}
+.door__room{position:absolute;inset:0;border-radius:999px 999px 0 0;overflow:hidden;background:linear-gradient(180deg,#FFE9CF,#F0C9B1)}
+.room__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%;transform:scale(1.04)}
+.room__tint{position:absolute;inset:0;background:linear-gradient(180deg,#F8D7BF,#EFB89F);mix-blend-mode:multiply;opacity:.55}
+.room__glow{position:absolute;inset:0;background:radial-gradient(70% 55% at 50% 100%,rgba(255,226,189,.55),rgba(255,226,189,0) 70%);mix-blend-mode:soft-light}
+.room__dark{position:absolute;inset:0;background:#1B120E;opacity:calc(1 - var(--lit));transition:opacity 1.4s ease}
+.door__leaf{position:absolute;inset:0;padding:0;border:0;border-radius:999px 999px 0 0;background:linear-gradient(90deg,#3E2D25 0%,#33241D 60%,#2C1F19 100%);transform-origin:0 50%;transform:rotateY(var(--a));transition:transform 1.7s cubic-bezier(.6,0,.2,1);box-shadow:inset 0 0 0 1.5px rgba(195,142,130,.28);overflow:hidden}
+.door__leaf::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,226,189,.0),rgba(255,226,189,.22));opacity:0;transition:opacity 1.2s}
+.door[data-open] .door__leaf::after{opacity:1}
+.leaf__in{position:absolute;left:12%;right:12%;top:11%;bottom:8%;border:1.5px solid rgba(195,142,130,.42);border-radius:999px 999px 0 0}
+.leaf__in::after{content:"";position:absolute;left:14%;right:14%;top:16%;bottom:14%;border:1px solid rgba(195,142,130,.22);border-radius:999px 999px 0 0}
+.leaf__knob{position:absolute;right:8%;top:56%;width:15px;height:15px;border-radius:50%;background:var(--rosa);box-shadow:0 0 0 5px rgba(195,142,130,.22)}
+.door__sill{position:absolute;left:-26px;right:-26px;bottom:-2px;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--luz),transparent);opacity:.9;filter:blur(.4px)}
+.door__sill::after{content:"";position:absolute;left:8%;right:8%;top:100%;height:90px;background:linear-gradient(180deg,rgba(255,226,189,.34),rgba(255,226,189,0));clip-path:polygon(4% 0,96% 0,100% 100%,0 100%);transition:opacity 1s}
+.hero[data-state=open] .door__sill::after{opacity:.2}
+.door__toggle{display:inline-flex;align-items:center;gap:10px;padding:11px 18px;border-radius:999px;background:rgba(195,142,130,.18);border:1.5px solid var(--rosa);color:var(--creme);font:500 12.5px/1 var(--disp);letter-spacing:.06em;transition:background .35s,color .35s,border-color .35s}
+.door__toggle:hover{background:var(--rosa);color:var(--cacau)}
+.door__toggle svg{width:14px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6}
+.hero[data-state=open] .door__toggle{color:var(--cacau);background:rgba(255,255,255,.35);border-color:var(--rosa-d)}
+.hero[data-state=open] .door__toggle:hover{background:var(--cacau);color:var(--papel);border-color:var(--cacau)}
+html:not(.js) .door__toggle{display:none}
+
+/* estados da porta */
+.js .hero:not([data-state]) .door,.js .hero[data-state=closed] .door{--a:0deg;--lit:0}
+.js .hero[data-state=ajar] .door{--a:15deg;--lit:.55}
+.js .hero[data-state=ajar] .door__leaf{transition-duration:.9s}
+.js .hero:not([data-state]) .door__sill,.js .hero[data-state=closed] .door__sill{animation:flick 3.4s ease-in-out infinite}
+@keyframes flick{0%,100%{opacity:.75}45%{opacity:1}70%{opacity:.62}}
+
+@media (max-width:900px){
+  .hero .wrap{grid-template-columns:1fr;min-height:0;gap:34px;padding-block:34px 56px}
+  .stage{order:-1}
+  .hero__txt>*{align-self:start}
+  .door{height:min(44svh,360px);min-height:290px}
+  .door__arches i:nth-child(2){display:none}
+  .hero__closed .l1{font-size:clamp(2.1rem,9vw,3.1rem)}
+  .hero__closed .l2{font-size:clamp(3rem,15vw,4.6rem)}
+  .hero h1{font-size:clamp(2rem,8.4vw,2.9rem)}
+  .hero__cta .btn{flex:1 1 100%}
+}
+
+/* ============ 6. MANIFESTO ============ */
+.man{padding-block:var(--sec);background:var(--creme);overflow-x:clip}
+.man .wrap{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.7fr);gap:clamp(30px,6vw,100px);align-items:center}
+.man__t{font:300 clamp(1.9rem,3.7vw,3.5rem)/1.22 var(--disp);letter-spacing:-.022em}
+.man__t .w{opacity:.2;transition:opacity .5s ease}
+.man__t .w.lit{opacity:1}
+.man__t strong{font-weight:700}
+.man__note{display:block;margin-top:26px;font-size:clamp(2.2rem,3.6vw,3.2rem);line-height:.9}
+.man__fig{position:relative;justify-self:center;width:min(100%,360px)}
+.man__fig .arc{aspect-ratio:3/4.1;border-radius:999px 999px 0 0;overflow:hidden;background:var(--linho)}
+.man__fig .arc img{width:100%;height:100%;object-fit:cover}
+.man__fig::before{content:"";position:absolute;inset:-14px -14px 0;border:1.5px solid var(--rosa);border-bottom:0;border-radius:999px 999px 0 0;opacity:.6}
+.man__fig .pill{position:absolute;left:-10px;bottom:34px;z-index:2;background:var(--papel);box-shadow:0 8px 24px rgba(42,28,22,.14)}
+@media (max-width:900px){.man .wrap{grid-template-columns:1fr}.man__fig{order:-1;width:min(70%,280px);justify-self:start}}
+
+/* ============ 7. CICLO ============ */
+.cyc{padding-block:var(--sec);background:var(--linho);overflow-x:clip}
+.cyc .wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);grid-template-areas:"head ring" "card ring";gap:clamp(26px,4vw,64px) clamp(30px,6vw,100px);align-items:start}
+.cyc__head{grid-area:head}
+.cyc__head .lede{margin-top:22px}
+.cyc__card{grid-area:card;align-self:start}
+.cyc__ring{grid-area:ring;position:relative;width:min(100%,640px);justify-self:center;aspect-ratio:1;container-type:inline-size}
+.cyc__ring svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.cyc__arc{fill:none;stroke:var(--rosa-d);stroke-width:2;stroke-dasharray:3 9;stroke-linecap:round;transition:opacity .6s}
+.cyc__arc.cut{opacity:.2}
+.cyc__flow{animation:flow 1.6s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-12}}
+.cyc__exit{fill:none;stroke:var(--cacau);stroke-width:2.4;stroke-linecap:round}
+.cyc__dot{fill:var(--cacau)}
+.cyc__halo{fill:var(--rosa);opacity:.35}
+.nd{position:absolute;transform:translate(-50%,-50%);padding:.62em 1.05em;border-radius:999px;border:1.5px solid var(--rosa-d);background:var(--papel);color:var(--cacau);font:500 clamp(11.5px,3.1cqw,16px)/1.1 var(--disp);white-space:nowrap;transition:background .35s,color .35s,border-color .35s,transform .35s var(--ease)}
+.nd:hover{border-color:var(--cacau)}
+.nd.on{background:var(--cacau);color:var(--papel);border-color:var(--cacau);transform:translate(-50%,-50%) scale(1.08)}
+.nd small{display:block;font:500 .62em/1 var(--disp);letter-spacing:.14em;color:var(--rosa-dd);margin-bottom:.35em;text-transform:uppercase}
+.nd.on small{color:var(--rosa)}
+.cyc__core{position:absolute;left:50%;top:50%;width:31%;aspect-ratio:1;transform:translate(-50%,-50%);display:grid;place-items:center;text-align:center;border-radius:50%;pointer-events:none}
+.cyc__core .sc{font-size:clamp(2.4rem,9cqw,4.6rem);line-height:.9;color:var(--rosa-dd);transition:opacity .5s}
+.cyc__core .ps{position:absolute;inset:0;display:grid;place-items:center;border-radius:50%;background:var(--cacau);color:var(--papel);font:700 clamp(14px,4.4cqw,22px)/1.1 var(--disp);opacity:0;transform:scale(.6);transition:opacity .6s,transform .7s var(--ease);box-shadow:0 0 0 12px rgba(195,142,130,.25),0 0 0 26px rgba(195,142,130,.12)}
+.cyc__core .ps small{display:block;font:500 .5em/1.3 var(--text);letter-spacing:.06em;margin-top:6px;color:var(--blush)}
+.cyc.brk .cyc__core .sc{opacity:0}
+.cyc.brk .cyc__core .ps{opacity:1;transform:none}
+.card{background:var(--papel);border-radius:18px;padding:clamp(22px,3vw,32px);box-shadow:0 14px 40px rgba(42,28,22,.08);min-height:218px;position:relative}
+.card__n{display:flex;justify-content:space-between;align-items:center;font:500 11.5px/1 var(--disp);letter-spacing:.14em;text-transform:uppercase;color:var(--rosa-dd)}
+.card h3{font:700 clamp(1.5rem,2.3vw,2rem)/1.1 var(--disp);letter-spacing:-.02em;margin-top:14px}
+.card p{margin-top:10px;max-width:50ch;color:rgba(53,36,29,.86)}
+.card__act{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap}
+.card.sw h3,.card.sw p{animation:swap .6s var(--ease)}
+@keyframes swap{from{opacity:0;transform:translateY(8px)}}
+@media (max-width:900px){
+  .cyc .wrap{grid-template-columns:1fr;grid-template-areas:"head" "ring" "card"}
+  .card{min-height:0}
+}
+
+/* ============ 8. PAUSA — antes de abrires o frigorífico ============ */
+.pz{padding-block:var(--sec);background:var(--cacau);color:var(--papel);overflow-x:clip}
+.pz .wrap{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(32px,6vw,100px);align-items:start}
+.pz__l{position:sticky;top:calc(var(--banner) + var(--hdr) + 30px)}
+.pz__l .lede{margin-top:22px}
+.pz__fig{margin-top:34px;position:relative;width:min(100%,330px)}
+.pz__fig .arc{aspect-ratio:4/4.6;border-radius:999px 999px 0 0;overflow:hidden}
+.pz__fig img{width:100%;height:100%;object-fit:cover;object-position:50% 70%}
+.pz__fig::before{content:"";position:absolute;inset:-14px -14px 0;border:1.5px solid var(--rosa);border-bottom:0;border-radius:999px 999px 0 0;opacity:.5}
+.tool{position:relative;background:var(--creme);color:var(--tinta);border-radius:26px;padding:clamp(24px,3.4vw,44px);overflow:hidden;isolation:isolate}
+.tool::before{content:"";position:absolute;left:50%;top:-30%;width:120%;height:70%;transform:translateX(-50%);background:radial-gradient(50% 60% at 50% 0%,rgba(255,226,189,.9),rgba(255,226,189,0) 72%);z-index:-1;pointer-events:none}
+.tool .fs{min-width:0}
+.tool .lg{margin:0;font:700 clamp(1.15rem,1.7vw,1.4rem)/1.25 var(--disp);letter-spacing:-.01em;display:flex;gap:12px;align-items:baseline}
+.tool .lg i{font:500 11px/1 var(--disp);font-style:normal;letter-spacing:.14em;color:var(--rosa-dd);text-transform:uppercase;white-space:nowrap}
+.tool .fs+.fs{margin-top:30px;padding-top:28px;border-top:1px solid var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.chip span{display:inline-block;padding:10px 17px;border-radius:999px;border:1.5px solid var(--rosa-d);background:rgba(255,255,255,.5);font:500 14px/1.1 var(--disp);transition:background .3s,color .3s,border-color .3s,transform .3s var(--ease)}
+.chip input:hover+span{border-color:var(--cacau)}
+.chip input:checked+span{background:var(--cacau);border-color:var(--cacau);color:var(--papel);transform:translateY(-2px)}
+.chip input:focus-visible+span{outline:2px solid var(--rosa-dd);outline-offset:3px}
+.rng{margin-top:22px}
+.rng input{-webkit-appearance:none;appearance:none;width:100%;height:12px;border-radius:999px;background:linear-gradient(90deg,var(--linho),var(--rosa));outline-offset:6px;margin:0}
+.rng input::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:var(--cacau);border:4px solid var(--papel);box-shadow:0 2px 10px rgba(42,28,22,.35);cursor:grab}
+.rng input::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--cacau);border:4px solid var(--papel);box-shadow:0 2px 10px rgba(42,28,22,.35);cursor:grab}
+.rng div{display:flex;justify-content:space-between;margin-top:12px;font:500 12.5px/1.2 var(--disp);color:rgba(53,36,29,.8)}
+.res{margin-top:30px;padding:clamp(20px,2.6vw,28px);border-radius:18px;background:var(--cacau);color:var(--papel)}
+.meter{position:relative;height:10px;border-radius:999px;background:linear-gradient(90deg,var(--tan),var(--rosa),#E58A74)}
+.meter i{position:absolute;top:50%;left:calc(var(--s,.5)*100%);width:24px;height:24px;border-radius:50%;background:var(--papel);border:5px solid var(--cacau);outline:2px solid var(--papel);transform:translate(-50%,-50%);transition:left .8s var(--ease)}
+.res.idle .meter i{opacity:.0}
+.meter__l{display:flex;justify-content:space-between;margin-top:12px;font:500 11px/1.2 var(--disp);letter-spacing:.1em;text-transform:uppercase;color:var(--blush)}
+.res h3{font:700 clamp(1.3rem,2vw,1.7rem)/1.15 var(--disp);letter-spacing:-.01em;margin-top:22px}
+.res p{margin-top:8px;color:rgba(244,236,227,.88);max-width:56ch}
+.res .small{font-size:13px;color:rgba(244,236,227,.62);margin-top:14px}
+.res__act{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px;align-items:center}
+.tm{display:flex;align-items:center;gap:20px;margin-top:22px;padding-top:22px;border-top:1px solid var(--line-l)}
+.tm svg{width:92px;height:92px;flex:none;transform:rotate(-90deg)}
+.tm circle{fill:none;stroke-width:5}
+.tm .bg{stroke:rgba(244,236,227,.18)}
+.tm .fg{stroke:var(--rosa);stroke-linecap:round}
+.tm b{display:block;font:700 1.8rem/1 var(--disp);letter-spacing:-.02em}
+.tm span{font-size:14px;color:rgba(244,236,227,.82)}
+.linkb{background:none;border:0;padding:6px 0;font:500 13px/1.4 var(--disp);letter-spacing:.04em;color:var(--blush);text-decoration:underline;text-underline-offset:4px}
+@media (max-width:900px){.pz .wrap{grid-template-columns:1fr}.pz__l{position:static}.pz__fig{width:min(70%,280px)}}
+
+/* ============ 9. FORMAS DE TRABALHAR (mosaico de “posts”) ============ */
+.fm{padding-block:var(--sec);background:var(--papel);overflow-x:clip}
+.fm__h{display:flex;justify-content:space-between;align-items:end;gap:30px;flex-wrap:wrap}
+.fm__h .lede{max-width:40ch}
+.mos{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(14px,1.8vw,24px);margin-top:clamp(34px,5vw,60px)}
+.tile{position:relative;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(22px,2.6vw,36px);min-height:340px}
+.tile h3{font:300 clamp(1.8rem,3vw,2.8rem)/1.08 var(--disp);letter-spacing:-.025em}
+.tile h3 b{font-weight:700}
+.tile p{margin-top:12px;max-width:44ch;font-size:15.5px}
+.tile .pill{align-self:flex-start}
+.tile__act{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.t1{grid-column:span 5;grid-row:span 2;color:var(--papel);padding:0;min-height:560px;background:var(--cacau-2)}
+.t1 .arcimg{position:absolute;inset:0}
+.t1 .arcimg img{width:100%;height:100%;object-fit:cover}
+.t1 .arcimg::before{content:"";position:absolute;inset:0;z-index:1;background:#C38E82;mix-blend-mode:soft-light;opacity:.65}
+.t1 .arcimg::after{z-index:1;content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(42,28,22,0) 10%,rgba(42,28,22,.92) 60%)}
+.t1 .tin{position:relative;margin-top:auto;padding:clamp(22px,2.6vw,36px)}
+.t1 .pill{position:absolute;left:clamp(22px,2.6vw,36px);top:clamp(22px,2.6vw,36px);z-index:2;background:var(--papel);color:var(--cacau)}
+.t2{grid-column:span 7;background:var(--tan);color:var(--cacau)}
+.t2 .big{font:400 clamp(4.4rem,9vw,8.4rem)/.8 var(--script);color:var(--cacau);margin-top:6px;letter-spacing:0}
+.t2 .big small{display:block;font:700 clamp(.9rem,1.4vw,1.2rem)/1 var(--disp);letter-spacing:.34em;text-transform:uppercase;margin-bottom:10px}
+.t2::after{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:300px;border:1.5px solid rgba(53,36,29,.3);border-bottom:0;border-radius:999px 999px 0 0;pointer-events:none}
+.t3{grid-column:span 7;background:var(--cacau);color:var(--papel);overflow:hidden}
+.t3::before{content:"";position:absolute;right:6%;bottom:-2px;width:36%;height:82%;border:1.5px solid rgba(195,142,130,.5);border-bottom:0;border-radius:999px 999px 0 0;pointer-events:none}
+.t3 .pill{background:var(--papel);color:var(--cacau)}
+.t3 h3{max-width:12ch;margin-top:16px}
+.t3 p{max-width:34ch}
+.t3 .sc{color:var(--rosa);font-size:1.15em}
+.t3 .cal{display:inline-flex;align-items:center;gap:12px;margin-top:20px;padding:11px 16px;border-radius:14px;background:rgba(244,236,227,.1);font:500 13.5px/1.3 var(--disp)}
+.t3 .cal svg{width:22px;height:22px;fill:none;stroke:var(--rosa);stroke-width:1.5;flex:none}
+@media (max-width:900px){.t2::after{width:150px;height:180px;right:-70px;top:-50px;opacity:.55}.t1,.t2,.t3{grid-column:1/-1;grid-row:auto}.t1{min-height:480px}.tile{min-height:300px}.t3::before{opacity:.5}}
+
+/* ============ 10. ONLINE — globo ============ */
+.onl{padding-block:var(--sec);background:var(--tan);color:var(--cacau);overflow-x:clip}
+.onl .wrap{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:clamp(30px,6vw,90px);align-items:center}
+.onl .lede{color:rgba(42,28,22,.88);margin-top:22px}
+.onl h2 .sc{color:var(--cacau)}
+.onl .pill{background:rgba(250,245,239,.6)}
+.cities{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.city{padding:9px 15px;border-radius:999px;border:1.5px solid var(--cacau);background:transparent;font:500 13.5px/1.1 var(--disp);transition:background .3s,color .3s}
+.city:hover{background:rgba(250,245,239,.5)}
+.city[aria-pressed=true]{background:var(--cacau);color:var(--papel)}
+.tz{margin-top:24px;padding:20px 22px;border-radius:18px;background:var(--papel);display:flex;align-items:center;gap:18px;min-height:96px}
+.tz__t{font:700 clamp(2rem,3.4vw,3rem)/1 var(--disp);letter-spacing:-.03em;white-space:nowrap}
+.tz__d{font-size:15px;line-height:1.5;color:rgba(53,36,29,.86)}
+.tz__d small{display:block;font-size:12.5px;color:var(--rosa-dd);margin-top:4px}
+.globe{position:relative;width:min(100%,600px);aspect-ratio:1;margin-inline:auto;touch-action:pan-y;cursor:grab}
+.globe:active{cursor:grabbing}
+.globe canvas{position:absolute;inset:0;width:100%;height:100%}
+.globe__cap{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);padding:7px 14px;border-radius:999px;background:var(--papel);font:500 11.5px/1 var(--disp);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;pointer-events:none}
+@media (max-width:900px){.onl .wrap{grid-template-columns:1fr}.globe{order:-1;width:min(100%,420px)}}
+
+/* ============ 11. SOBRE ============ */
+.ab{padding-block:var(--sec);background:var(--creme);overflow-x:clip}
+.ab .wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(34px,7vw,110px);align-items:center}
+.ab__fig{position:relative;width:min(100%,470px);justify-self:center}
+.ab__fig .arc{aspect-ratio:4/5.2;border-radius:999px 999px 0 0;overflow:hidden;background:var(--linho)}
+.ab__fig .arc img{width:100%;height:100%;object-fit:cover;object-position:50% 14%}
+.ab__fig::before,.ab__fig::after{content:"";position:absolute;border:1.5px solid var(--rosa);border-bottom:0;border-radius:999px 999px 0 0;pointer-events:none}
+.ab__fig::before{inset:-16px -16px 0;opacity:.7}
+.ab__fig::after{inset:-36px -36px 0;opacity:.3}
+.ab__fig .pill{position:absolute;right:-12px;bottom:40px;z-index:2;background:var(--papel);box-shadow:0 8px 24px rgba(42,28,22,.14)}
+.ab h2{font-size:clamp(2.2rem,4.4vw,4rem)}
+.ab p{margin-top:18px;max-width:56ch}
+.ab__q{margin-top:28px;font-size:clamp(2.4rem,4vw,3.6rem);line-height:.9}
+.ab__l{margin-top:26px;display:grid;gap:10px;max-width:56ch}
+.ab__l li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-top:1px solid var(--line);font-size:15.5px}
+.ab__l li:last-child{border-bottom:1px solid var(--line)}
+.ab__l b{font:700 12px/1 var(--disp);letter-spacing:.12em;text-transform:uppercase;min-width:130px;color:var(--rosa-dd)}
+@media (max-width:900px){.ab .wrap{grid-template-columns:1fr}.ab__fig{width:min(78%,380px);justify-self:start}.ab__l li{flex-direction:column;gap:6px}}
+
+/* ============ 12. PERGUNTAS ============ */
+.fq{padding-block:var(--sec);background:var(--blush);overflow-x:clip}
+.fq .wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(30px,6vw,100px);align-items:start}
+.fq__l{position:sticky;top:calc(var(--banner) + var(--hdr) + 30px)}
+.fq__l .lede{margin-top:20px}
+details{border-top:1.5px solid var(--cacau)}
+details:last-child{border-bottom:1.5px solid var(--cacau)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:24px 0;font:500 clamp(1.1rem,1.7vw,1.4rem)/1.3 var(--disp);letter-spacing:-.01em}
+summary::-webkit-details-marker{display:none}
+summary i{flex:none;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--cacau);position:relative;transition:transform .45s var(--ease),background .3s}
+summary i::before,summary i::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:1.5px;background:var(--cacau);transform:translate(-50%,-50%);transition:transform .45s var(--ease)}
+summary i::after{transform:translate(-50%,-50%) rotate(90deg)}
+details[open] summary i{background:var(--cacau)}
+details[open] summary i::before,details[open] summary i::after{background:var(--blush)}
+details[open] summary i::after{transform:translate(-50%,-50%) rotate(0)}
+details p{padding:0 54px 26px 0;max-width:62ch;color:rgba(42,28,22,.88)}
+@media (max-width:900px){.fq .wrap{grid-template-columns:1fr}.fq__l{position:static}details p{padding-right:0}}
+
+/* ============ 13. CONTACTO ============ */
+.ct{padding-block:var(--sec);background:var(--cacau);color:var(--papel);overflow-x:clip}
+.ct .wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(34px,6vw,100px);align-items:start}
+.ct h2{font-size:clamp(3rem,8vw,7.4rem);line-height:.9;font-weight:300;margin-top:22px}
+.ct h2 .sc{font-size:1.25em;display:block;margin-top:.04em;color:var(--rosa)}
+.ct .lede{margin-top:26px}
+.ct__d{margin-top:34px;display:grid;gap:0}
+.ct__d div{display:flex;gap:18px;align-items:baseline;padding:15px 0;border-top:1px solid var(--line-l);font-size:15px}
+.ct__d div:last-child{border-bottom:1px solid var(--line-l)}
+.ct__d dt{font:700 11.5px/1 var(--disp);letter-spacing:.14em;text-transform:uppercase;min-width:110px;color:var(--rosa)}
+.form{background:var(--creme);color:var(--tinta);border-radius:24px;padding:clamp(24px,3.4vw,42px);display:grid;gap:18px}
+.form label{display:grid;gap:8px;font:700 12px/1 var(--disp);letter-spacing:.1em;text-transform:uppercase;color:var(--rosa-dd)}
+.form input,.form select,.form textarea{width:100%;padding:15px 16px;border-radius:14px;border:1.5px solid rgba(53,36,29,.28);background:var(--papel);font:400 16px/1.4 var(--text);color:var(--tinta);letter-spacing:0;text-transform:none;transition:border-color .3s,box-shadow .3s}
+.form textarea{min-height:130px;resize:vertical}
+.form input:focus,.form select:focus,.form textarea:focus{outline:0;border-color:var(--cacau);box-shadow:0 0 0 4px rgba(195,142,130,.3)}
+.form .row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form .note{font-size:13px;color:rgba(53,36,29,.7)}
+.form .ok{padding:16px 18px;border-radius:14px;background:var(--cacau);color:var(--papel);font-size:15px}
+@media (max-width:900px){.ct .wrap{grid-template-columns:1fr}.form .row{grid-template-columns:1fr}.ct__d div{flex-direction:column;gap:6px}}
+
+/* ============ 14. RODAPÉ ============ */
+.ftr{background:var(--cacau-2);color:rgba(244,236,227,.78);padding:56px 0 40px;font-size:14px;overflow-x:clip}
+.ftr .brand{color:var(--papel)}
+.ftr__top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center;padding-bottom:30px;border-bottom:1px solid var(--line-l)}
+.ftr__top nav{display:flex;gap:18px;flex-wrap:wrap}
+.ftr__top nav a{font:500 13px/1 var(--disp);text-decoration:none;padding:8px 0}
+.ftr__top nav a:hover{color:var(--rosa)}
+.ftr__demo{margin-top:28px;padding:18px 20px;border-radius:16px;background:rgba(195,142,130,.14);border:1px dashed var(--rosa);color:var(--blush);line-height:1.6}
+.ftr__demo b{color:var(--papel)}
+.ftr__small{margin-top:18px;font-size:12.5px;color:rgba(244,236,227,.58);line-height:1.6}
+
+/* ============ 15. MOVIMENTO REDUZIDO ============ */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .cyc__flow,.door__sill{animation:none!important}
+  .js .rv{opacity:1;transform:none;transition:none}
+  .hero__bg--day,.door__leaf,.room__dark{transition:none!important}
+  .man__t .w{opacity:1}
+}
+</style>
+</head>
+
+<body>
+<!-- ============ FAIXA DEMO + SELO ============ -->
+<div class="banner" role="note"><b>DEMO</b><span class="l">Website de demonstração criado pela DD Digital para Eduarda Figueiras · conteúdo ilustrativo</span><span class="s">Demonstração · Eduarda Figueiras</span></div>
+<div class="seal" aria-hidden="true"><i></i>Versão de demonstração</div>
+
+<!-- ============ CABEÇALHO ============ -->
+<header class="hdr">
+  <div class="wrap">
+    <a class="brand" href="#topo" aria-label="Eduarda Figueiras, psicóloga — início">
+      <svg viewBox="0 0 26 30" fill="none" aria-hidden="true"><path d="M2 29V13a11 11 0 0 1 22 0v16" stroke="#A27562" stroke-width="1.6"/><path d="M8 29V15a5 5 0 0 1 10 0v14" fill="#C38E82"/></svg>
+      <span class="brand__n">Eduarda<b>Figueiras</b> <b style="font-weight:300">·</b> Psicóloga</span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Principal">
+      <a href="#ciclo">O ciclo</a>
+      <a href="#pausa">A pausa</a>
+      <a href="#formas">Formas de trabalhar</a>
+      <a href="#online">Online</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#perguntas">Perguntas</a>
+      <a class="btn" href="#contacto">Marcar conversa</a>
+    </nav>
+    <button class="burger" id="burger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav"><i></i><i></i></button>
+  </div>
+</header>
+
+<main>
+<!-- ============ HERO — a porta em arco ============ -->
+<section class="hero" id="topo" aria-labelledby="h1">
+  <div class="hero__bg hero__bg--night"></div>
+  <div class="hero__bg hero__bg--day"></div>
+  <div class="wrap">
+    <div class="hero__txt">
+      <div class="hero__closed" aria-hidden="true">
+        <p class="l1">Durante o dia, <b>controlo-me.</b></p>
+        <p class="l2">mas à noite, perco-me…</p>
+        <p class="hero__hint">Toca na porta · há luz do outro lado</p>
+      </div>
+      <div class="hero__open">
+        <span class="pill">Psicóloga · Ansiedade &amp; Comportamento Alimentar</span>
+        <h1 id="h1">Não é <span class="mk">falta de força de vontade.</span> <span class="sc">É o teu corpo a pedir outra coisa.</span></h1>
+        <p class="lede">Sou a Eduarda. Ajudo-te a perceber o que a ansiedade e a comida estão a tentar dizer, para que comer deixe de ser um campo de batalha. Online, onde quer que estejas.</p>
+        <div class="hero__cta">
+          <a class="btn" href="#contacto">Marcar conversa <svg viewBox="0 0 16 16"><path d="M1 8h13M9 3l5 5-5 5"/></svg></a>
+          <a class="btn btn--ghost" href="#formas">Curso FALA COMIGO · vagas abertas</a>
+        </div>
+        <p class="hero__world"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><ellipse cx="12" cy="12" rx="4.2" ry="10"/><path d="M2 12h20M4 6.6h16M4 17.4h16"/></svg>A espalhar a saúde mental por + de 10 países</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="door" id="door" data-open>
+        <div class="door__arches" aria-hidden="true"><i></i><i></i></div>
+        <div class="door__room">
+          <img class="room__img" src="img/eduarda-retrato.jpg" alt="Retrato de Eduarda Figueiras, psicóloga, sorridente, com o rosto apoiado nas mãos" width="1066" height="1066" fetchpriority="high">
+          <div class="room__tint"></div>
+          <div class="room__glow"></div>
+          <div class="room__dark"></div>
+        </div>
+        <button class="door__leaf" id="leaf" type="button" aria-label="Abrir ou fechar a porta"><span class="leaf__in"></span><span class="leaf__knob"></span></button>
+        <span class="door__sill" aria-hidden="true"></span>
+      </div>
+      <button class="door__toggle" id="toggle" type="button" aria-pressed="false"><svg viewBox="0 0 14 17" aria-hidden="true"><path d="M1 16V7a6 6 0 0 1 12 0v9M1 16h12"/></svg><span id="toggleT">Abrir a porta</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MANIFESTO ============ -->
+<section class="man" id="manifesto" aria-label="Manifesto">
+  <div class="wrap">
+    <div>
+      <p class="man__t" id="manT">Podem parecer <span class="mk pre">disciplina</span>, mas alimentam a <span class="mk pre">fome emocional</span>. Comer às escondidas, prometer recomeçar na segunda, sentir culpa antes do último garfo. <strong>Isto não é falta de carácter.</strong> É a forma que aprendeste de te acalmares quando o dia pesa demais. E dá para aprender outra.</p>
+      <span class="sc man__note rv">(sim, isto também conta)</span>
+    </div>
+    <figure class="man__fig rv">
+      <div class="arc"><img src="img/biscoito-cerejas.jpg" alt="Prato antigo com cerejas e um biscoito em forma de coração" loading="lazy"></div>
+      <span class="pill">sem culpa</span>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ CICLO ============ -->
+<section class="cyc" id="ciclo" aria-labelledby="cycT">
+  <div class="wrap">
+    <div class="cyc__head rv">
+      <span class="pill">O ciclo</span>
+      <h2 id="cycT">“Já estraguei tudo, <b>agora tanto faz.</b>” <span class="sc">Conheces este pensamento?</span></h2>
+      <p class="lede">A fome emocional raramente é um episódio isolado. Costuma ser um ciclo: quanto mais controlo, mais tensão; quanto mais tensão, mais perdes o controlo. Toca nas etapas, ou vê onde a pausa pode entrar.</p>
+    </div>
+    <div class="cyc__ring" id="ring">
+      <svg viewBox="0 0 600 600" aria-hidden="true" id="ringSvg"></svg>
+      <div class="cyc__core"><span class="sc">ciclo</span><span class="ps" aria-hidden="true"><span>Pausa<small>o desvio</small></span></span></div>
+    </div>
+    <div class="cyc__card">
+      <div class="card" id="card" aria-live="polite">
+        <div class="card__n"><span id="cardN">1 de 5</span><span>etapa do ciclo</span></div>
+        <h3 id="cardH">Controlo</h3>
+        <p id="cardP">Regras rígidas, “hoje vou portar-me bem”. Parece força, mas é tensão a acumular.</p>
+        <div class="card__act"><button class="btn" id="brk" type="button">Quebrar o ciclo</button><a class="btn btn--ghost" id="toPz" href="#pausa" hidden>Experimentar a pausa</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PAUSA — antes de abrires o frigorífico ============ -->
+<section class="pz dk" id="pausa" aria-labelledby="pzT">
+  <div class="wrap">
+    <div class="pz__l">
+      <span class="pill">Reflexão rápida</span>
+      <h2 id="pzT">Antes de abrires o frigorífico, <span class="sc">pergunta-te.</span></h2>
+      <p class="lede">Três perguntas para ouvires melhor o que o teu corpo (e a tua cabeça) estão a pedir. Não é um teste nem um diagnóstico: é um momento para parar antes de decidir.</p>
+      <figure class="pz__fig"><div class="arc"><img src="img/brownies-noite.jpg" alt="Pilha de brownies de chocolate num prato escuro" loading="lazy"></div></figure>
+    </div>
+
+    <div class="tool" id="tool">
+      <div class="fs" role="group" aria-labelledby="lg1">
+        <p class="lg" id="lg1"><i>1</i> O que sentiste nas últimas horas?</p>
+        <div class="chips" id="emo">
+          <label class="chip"><input type="checkbox" value="c"><span>Cansaço</span></label>
+          <label class="chip"><input type="checkbox" value="a"><span>Ansiedade</span></label>
+          <label class="chip"><input type="checkbox" value="t"><span>Tédio</span></label>
+          <label class="chip"><input type="checkbox" value="s"><span>Solidão</span></label>
+          <label class="chip"><input type="checkbox" value="x"><span>Stress</span></label>
+          <label class="chip"><input type="checkbox" value="r"><span>Tristeza</span></label>
+          <label class="chip"><input type="checkbox" value="n" id="emoN"><span>Nada de especial</span></label>
+        </div>
+      </div>
+      <div class="fs" role="group" aria-labelledby="lg2">
+        <p class="lg" id="lg2"><i>2</i> Onde sentes a fome?</p>
+        <div class="rng"><input type="range" id="where" min="0" max="100" value="50" aria-label="Onde sentes a fome: do estômago à cabeça"><div><span>No estômago</span><span>Na cabeça</span></div></div>
+      </div>
+      <div class="fs" role="group" aria-labelledby="lg3">
+        <p class="lg" id="lg3"><i>3</i> Como começou?</p>
+        <div class="chips" id="how">
+          <label class="chip"><input type="radio" name="how" value="g"><span>Aos poucos</span></label>
+          <label class="chip"><input type="radio" name="how" value="s"><span>De repente</span></label>
+        </div>
+      </div>
+
+      <div class="res idle" id="res" aria-live="polite">
+        <div class="meter" id="meter" style="--s:.5"><i></i></div>
+        <div class="meter__l"><span>Fome do corpo</span><span>Fome das emoções</span></div>
+        <h3 id="resH">Responde e vê o que o teu corpo diz.</h3>
+        <p id="resP">Escolhe o que sentes, move o cursor e diz-me como a fome começou. A leitura aparece aqui.</p>
+        <p class="small">Reflexão rápida, ilustrativa. Não é um diagnóstico nem substitui o acompanhamento por um/a psicólogo/a.</p>
+        <div class="res__act" id="resAct" hidden>
+          <button class="btn btn--rose" id="tmStart" type="button">Dar-me 10 minutos</button>
+          <a class="btn btn--light" id="toForm" href="#contacto">Falar com a Eduarda</a>
+        </div>
+        <div class="tm" id="tm" hidden>
+          <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="bg" cx="50" cy="50" r="44"/><circle class="fg" id="tmFg" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dashoffset="0"/></svg>
+          <div><b id="tmT">10:00</b><span id="tmM">Bebe água, respira, escreve o que sentes. Depois pergunta-te outra vez.</span><br><button class="linkb" id="tmFast" type="button">Pré-visualizar em 10 segundos (demo)</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FORMAS DE TRABALHAR ============ -->
+<section class="fm" id="formas" aria-labelledby="fmT">
+  <div class="wrap">
+    <div class="fm__h rv">
+      <div><span class="pill">Formas de trabalhar</span><h2 id="fmT">Há mais do que uma forma de <span class="sc">falar comigo.</span></h2></div>
+      <p class="lede">Conversa individual, curso ou webinar: escolhe o formato que te cabe no momento. Todos online.</p>
+    </div>
+    <div class="mos">
+      <article class="tile t1 rv">
+        <div class="arcimg"><img src="img/sofa-manta-janela.jpg" alt="Sofá com manta junto a uma janela com luz suave" loading="lazy"></div>
+        <span class="pill">Consultas online</span>
+        <div class="tin">
+          <h3>Um espaço <b>só teu,</b> a partir de casa.</h3>
+          <p>Ansiedade, comportamento alimentar, culpa e autoestima. Duração, frequência e valor: <span class="tbc">a confirmar com a cliente</span></p>
+          <div class="tile__act"><a class="btn btn--light" href="#contacto">Marcar conversa</a></div>
+        </div>
+      </article>
+      <article class="tile t2 rv" style="--d:90">
+        <div>
+          <span class="pill" style="background:rgba(250,245,239,.65)">Vagas abertas</span>
+          <div class="big"><small>Curso</small>Fala comigo</div>
+        </div>
+        <div>
+          <p>O curso da Eduarda. Programa, formato, duração e valor: <span class="tbc">a confirmar com a cliente</span></p>
+          <div class="tile__act"><a class="btn" href="#contacto" data-assunto="Curso Fala Comigo">Quero saber mais</a></div>
+        </div>
+      </article>
+      <article class="tile t3 rv" style="--d:180">
+        <div>
+          <span class="pill">Webinar</span>
+          <h3>Entre a <b>ansiedade</b> <span class="sc">e a comida</span></h3>
+          <p>Como reconhecer e quebrar o ciclo da fome emocional, da culpa e da baixa autoestima.</p>
+        </div>
+        <div>
+          <span class="cal"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Próxima data: <span class="tbc">a confirmar</span></span>
+          <div class="tile__act"><a class="btn btn--rose" href="#contacto" data-assunto="Webinar">Garante o teu lugar</a></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ONLINE — globo ============ -->
+<section class="onl" id="online" aria-labelledby="onT">
+  <div class="wrap">
+    <div>
+      <span class="pill">Online</span>
+      <h2 id="onT">Cuida da tua mente, <span class="sc">onde quer que estejas.</span></h2>
+      <p class="lede">A conversa chega onde tu estás. A Eduarda fala de saúde mental a mais de dez países, por isso o fuso horário conta: escolhe onde estás e vê que horas são quando, em Lisboa, é a hora de uma sessão de exemplo.</p>
+      <div class="cities" id="cities" role="group" aria-label="Escolhe a tua cidade"></div>
+      <div class="tz" aria-live="polite"><div class="tz__t" id="tzT">20:30</div><div class="tz__d" id="tzD">Exemplo: uma sessão às 20h30 em Lisboa.<small>Escolhe uma cidade para ver a tua hora. Horários reais: a confirmar.</small></div></div>
+    </div>
+    <div class="globe" id="globe"><canvas id="gc" aria-label="Globo com pontos nos continentes e cidades assinaladas" role="img"></canvas><span class="globe__cap">Arrasta para rodar</span></div>
+  </div>
+</section>
+
+<!-- ============ SOBRE ============ -->
+<section class="ab" id="sobre" aria-labelledby="abT">
+  <div class="wrap">
+    <figure class="ab__fig rv">
+      <div class="arc"><img src="img/eduarda-retrato.jpg" alt="Eduarda Figueiras, psicóloga, de relógio no pulso e sorriso caloroso" loading="lazy"></div>
+      <span class="pill">Psicóloga</span>
+    </figure>
+    <div>
+      <span class="pill">Sobre</span>
+      <h2 id="abT">Olá, sou a <b>Eduarda.</b></h2>
+      <p class="lede">Acompanho pessoas que se sentem presas entre a ansiedade e a comida: quem se controla o dia todo e se perde à noite, quem se culpa depois de comer, quem já não sabe distinguir fome de emoção.</p>
+      <p>Acredito que comer não é o problema, é muitas vezes a resposta. E que se pode aprender uma resposta mais gentil, ao teu ritmo e sem julgamentos.</p>
+      <p class="sc ab__q">Cuida da tua mente, onde quer que estejas.</p>
+      <ul class="ab__l">
+        <li><b>Formação</b><span class="tbc">a confirmar com a cliente</span></li>
+        <li><b>Cédula profissional</b><span class="tbc">a confirmar com a cliente</span></li>
+        <li><b>Experiência</b><span class="tbc">a confirmar com a cliente</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PERGUNTAS ============ -->
+<section class="fq" id="perguntas" aria-labelledby="fqT">
+  <div class="wrap">
+    <div class="fq__l">
+      <span class="pill">Perguntas</span>
+      <h2 id="fqT">O que podes querer <b>saber.</b></h2>
+      <p class="lede">Respostas ilustrativas: ficam por validar com a Eduarda antes do site final.</p>
+    </div>
+    <div class="fq__r">
+      <details open><summary>Como funcionam as consultas online?<i></i></summary><p>Encontramo-nos por videochamada, de um sítio onde te sintas à vontade. Plataforma, duração e valores ficam por confirmar com a Eduarda.</p></details>
+      <details><summary>Isto é fome emocional ou só gulodice?<i></i></summary><p>Todos comemos por prazer ou por conforto às vezes, e isso é normal. Vale a pena olhar com mais atenção quando acontece muitas vezes, vem acompanhado de culpa ou parece fora do teu controlo. Uma conversa ajuda a perceber.</p></details>
+      <details><summary>Preciso de fazer dieta ou plano alimentar?<i></i></summary><p>A psicologia não prescreve dietas. Trabalha a tua relação com a comida, as emoções e os pensamentos à volta dela. Quando for útil, pode articular-se com outros profissionais de saúde.</p></details>
+      <details><summary>E se eu viver fora de Portugal?<i></i></summary><p>A conversa é online, por isso o essencial é teres internet e um espaço tranquilo. Horários e condições para quem vive fora de Portugal ficam por confirmar.</p></details>
+      <details><summary>E se eu não souber por onde começar?<i></i></summary><p>Começa por uma conversa. Não precisas de chegar com tudo organizado nem com “um problema grande”: podes começar pelo que sentes hoje.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACTO ============ -->
+<section class="ct dk" id="contacto" aria-labelledby="ctT">
+  <div class="wrap">
+    <div>
+      <span class="pill">Contacto</span>
+      <h2 id="ctT">Fala <span class="sc">comigo.</span></h2>
+      <p class="lede">Escreve-me com calma. Não tens de ter as palavras certas: a primeira conversa serve para nos conhecermos.</p>
+      <dl class="ct__d">
+        <div><dt>Email</dt><dd><span class="tbc">a confirmar com a cliente</span></dd></div>
+        <div><dt>Telefone</dt><dd><span class="tbc">a confirmar com a cliente</span></dd></div>
+        <div><dt>Instagram</dt><dd><span class="tbc">a confirmar com a cliente</span></dd></div>
+        <div><dt>Horário</dt><dd><span class="tbc">a confirmar com a cliente</span></dd></div>
+      </dl>
+    </div>
+    <form class="form" id="form" novalidate>
+      <div class="row">
+        <label>Nome<input type="text" name="nome" autocomplete="name" placeholder="O teu nome"></label>
+        <label>Email<input type="email" name="email" autocomplete="email" placeholder="o.teu@email.pt"></label>
+      </div>
+      <label>O que te traz cá?
+        <select name="assunto" id="assunto">
+          <option>Ansiedade</option><option>Comportamento alimentar</option><option>Curso Fala Comigo</option><option>Webinar</option><option>Ainda não sei</option>
+        </select>
+      </label>
+      <label>Mensagem<textarea name="msg" id="msg" placeholder="Conta-me o que quiseres, ao teu ritmo."></textarea></label>
+      <button class="btn" type="submit">Enviar mensagem <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5"/></svg></button>
+      <p class="note">Formulário de demonstração: não envia nada nem guarda dados.</p>
+      <p class="ok" id="ok" hidden role="status">Obrigado! Esta é uma demonstração criada pela DD Digital: a mensagem não foi enviada. No site final, chegaria diretamente à Eduarda.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<!-- ============ RODAPÉ ============ -->
+<footer class="ftr dk">
+  <div class="wrap">
+    <div class="ftr__top">
+      <a class="brand" href="#topo"><svg viewBox="0 0 26 30" fill="none" aria-hidden="true"><path d="M2 29V13a11 11 0 0 1 22 0v16" stroke="#C38E82" stroke-width="1.6"/><path d="M8 29V15a5 5 0 0 1 10 0v14" fill="#C38E82"/></svg><span class="brand__n">Eduarda<b>Figueiras</b> · Psicóloga</span></a>
+      <nav aria-label="Rodapé"><a href="#ciclo">O ciclo</a><a href="#pausa">A pausa</a><a href="#formas">Formas de trabalhar</a><a href="#online">Online</a><a href="#sobre">Sobre</a><a href="#contacto">Contacto</a></nav>
+    </div>
+    <p class="ftr__demo"><b>Website de demonstração</b> criado pela DD Digital para Eduarda Figueiras. Textos, perguntas, ferramentas e exemplos são ilustrativos e não vinculativos; contactos, valores, horários, formação e dados profissionais ficam por confirmar com a cliente. Retrato: fornecido pela cliente (Instagram). Restantes fotografias: Unsplash. O mapa do globo usa dados Natural Earth (domínio público). O logótipo foi recriado para esta demonstração.</p>
+    <p class="ftr__small">Este site é informativo e não substitui a avaliação nem o acompanhamento por um/a profissional de saúde. Em situação de urgência ou de crise, ligue 112 ou contacte o SNS 24 (808 24 24 24).</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+'use strict';
+/* ---------- utilitários ---------- */
+var $=function(s,c){return (c||document).querySelector(s)};
+var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+var clamp=function(v,a,b){return Math.min(b,Math.max(a,v))};
+var sleep=function(ms){return new Promise(function(r){setTimeout(r,ms)})};
+var ease=function(k){return k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2};
+var html=document.documentElement;
+var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var nopre=/[?&]nopre/.test(location.search);
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+if(!location.hash) window.scrollTo(0,0);
+
+/* ---------- cabeçalho / menu mobile ---------- */
+var burger=$('#burger'), nav=$('#nav'), menuY=0;
+function setMenu(o){
+  var was=document.body.classList.contains('menu-open'); if(o===was) return;
+  if(o){menuY=window.scrollY;document.body.style.top=-menuY+'px';html.style.scrollBehavior='auto'}
+  document.body.classList.toggle('menu-open',o);
+  if(!o){document.body.style.top='';window.scrollTo(0,menuY);html.style.scrollBehavior=''}
+  burger.setAttribute('aria-expanded',o);burger.setAttribute('aria-label',o?'Fechar menu':'Abrir menu')
+}
+window.addEventListener('resize',function(){if(window.innerWidth>1100)setMenu(false)});
+burger.addEventListener('click',function(){setMenu(!document.body.classList.contains('menu-open'))});
+$$('a',nav).forEach(function(a){a.addEventListener('click',function(e){
+  if(!document.body.classList.contains('menu-open')) return;
+  var id=a.getAttribute('href'), t=id&&id.charAt(0)==='#'&&document.querySelector(id);
+  setMenu(false);
+  if(t){e.preventDefault();t.scrollIntoView()}
+})});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')setMenu(false)});
+
+/* ---------- reveals ---------- */
+var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px',threshold:.06}):null;
+$$('.rv').forEach(function(el){io?io.observe(el):el.classList.add('in')});
+
+/* ---------- hero: a porta ---------- */
+var hero=$('#topo'), door=$('#door'), leaf=$('#leaf'), tog=$('#toggle'), togT=$('#toggleT'), intro=true;
+function setState(s){
+  hero.setAttribute('data-state',s);
+  var open=s==='open';
+  if(open) door.setAttribute('data-open',''); else door.removeAttribute('data-open');
+  tog.setAttribute('aria-pressed',open); togT.textContent=open?'Fechar a porta':'Abrir a porta';
+  hero.classList.add('s1','s2');
+}
+async function runIntro(){
+  await sleep(250); hero.classList.add('s1');
+  await sleep(750); if(!intro) return; hero.classList.add('s2');
+  await sleep(1000); if(!intro) return; hero.setAttribute('data-state','ajar');
+  await sleep(750); if(!intro) return; intro=false; setState('open');
+}
+function flip(){
+  if(intro){intro=false;setState('open');return}
+  setState(hero.getAttribute('data-state')==='open'?'closed':'open');
+}
+leaf.addEventListener('click',flip); tog.addEventListener('click',flip);
+if(reduce||nopre){intro=false;setState('open')}else{
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(runIntro)}else{window.addEventListener('load',runIntro)}
+  setTimeout(function(){if(!hero.getAttribute('data-state')&&intro){intro=false;setState('open')}},7000); // rede de segurança
+}
+
+/* ---------- manifesto: palavras que acendem ---------- */
+var manT=$('#manT'), words=[];
+(function split(node){
+  Array.prototype.slice.call(node.childNodes).forEach(function(n){
+    if(n.nodeType===3){
+      var f=document.createDocumentFragment();
+      n.textContent.split(/(\s+)/).forEach(function(t){
+        if(!t) return;
+        if(/^\s+$/.test(t)){f.appendChild(document.createTextNode(t));return}
+        var s=document.createElement('span');s.className='w';s.textContent=t;words.push(s);f.appendChild(s)
+      });
+      node.replaceChild(f,n)
+    }else if(n.nodeType===1){split(n)}
+  })
+})(manT);
+var mks=$$('.mk.pre',manT);
+var tick=false;
+function onScroll(){
+  tick=false; var vh=window.innerHeight, r=manT.getBoundingClientRect();
+  var p=clamp((vh*.86-r.top)/(r.height+vh*.3),0,1);
+  words.forEach(function(w,i){w.classList.toggle('lit',i/words.length<p+.02)});
+  mks.forEach(function(m){var w=m.querySelector('.w');m.classList.toggle('on',!!w&&w.classList.contains('lit'))});
+}
+window.addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(onScroll)}},{passive:true});
+window.addEventListener('resize',onScroll); onScroll();
+
+/* ---------- o ciclo ---------- */
+var STEPS=[
+  ['Controlo','Regras rígidas, “hoje vou portar-me bem”. Parece força, mas é tensão a acumular.'],
+  ['Tensão','O dia pesa: cansaço, ansiedade, tarefas. O corpo pede pausa e a resposta é mais controlo.'],
+  ['Perco-me','À noite, a comida aparece como alívio rápido. Não é fome do corpo: é ansiedade a pedir calma.'],
+  ['Estraguei tudo','O pensamento “agora tanto faz” prolonga o episódio em vez de o parar.'],
+  ['Culpa','Chega a culpa, a vergonha, a baixa autoestima, e a promessa de recomeçar com ainda mais controlo.']
+];
+var NS='http://www.w3.org/2000/svg', R=215, CX=300, CY=300;
+var ringEl=$('#ring'), svg=$('#ringSvg'), cyc=$('#ciclo');
+var card=$('#card'), cardN=$('#cardN'), cardH=$('#cardH'), cardP=$('#cardP'), brk=$('#brk'), toPz=$('#toPz');
+var rad=function(d){return d*Math.PI/180}, pt=function(d){return [CX+R*Math.cos(rad(d)),CY+R*Math.sin(rad(d))]};
+var arcs=[], nodes=[];
+function mk(tag,at){var e=document.createElementNS(NS,tag);for(var k in at)e.setAttribute(k,at[k]);return e}
+STEPS.forEach(function(s,i){
+  var a0=-90+72*i+13, a1=-90+72*(i+1)-13, p0=pt(a0), p1=pt(a1);
+  var p=mk('path',{d:'M'+p0[0].toFixed(1)+' '+p0[1].toFixed(1)+' A'+R+' '+R+' 0 0 1 '+p1[0].toFixed(1)+' '+p1[1].toFixed(1),'class':'cyc__arc cyc__flow'});
+  svg.appendChild(p); arcs.push(p);
+  var q=pt(-90+72*i), b=document.createElement('button');
+  b.type='button'; b.className='nd'; b.style.left=(q[0]/6)+'%'; b.style.top=(q[1]/6)+'%';
+  b.innerHTML='<small>'+(i+1)+'</small>'+s[0]; b.setAttribute('aria-label','Etapa '+(i+1)+': '+s[0]);
+  ringEl.appendChild(b); nodes.push(b);
+});
+var exit=mk('path',{d:'M'+pt(126)[0].toFixed(1)+' '+pt(126)[1].toFixed(1)+' Q 300 360 300 300','class':'cyc__exit',pathLength:1,'stroke-dasharray':'1 1.1','stroke-dashoffset':1});
+exit.style.transition='stroke-dashoffset 1.2s ease';
+svg.appendChild(exit);
+var halo=mk('circle',{r:20,'class':'cyc__halo'}), dot=mk('circle',{r:9,'class':'cyc__dot'});
+svg.appendChild(halo); svg.appendChild(dot);
+var C={phi:-90,mode:'run',t0:0,from:0,delta:0,dur:0,hold:0,sel:-1,broken:false,vis:false,raf:0,last:0};
+var n4=pt(126);
+function setDot(x,y){dot.setAttribute('cx',x.toFixed(1));dot.setAttribute('cy',y.toFixed(1));halo.setAttribute('cx',x.toFixed(1));halo.setAttribute('cy',y.toFixed(1))}
+function showStep(i){
+  if(C.sel===i&&!C.broken) return; C.sel=i;
+  nodes.forEach(function(n,k){n.classList.toggle('on',k===i)});
+  cardN.textContent=(i+1)+' de 5'; cardH.textContent=STEPS[i][0]; cardP.textContent=STEPS[i][1];
+  card.classList.remove('sw'); void card.offsetWidth; card.classList.add('sw');
+}
+function showPause(){
+  C.sel=-1; nodes.forEach(function(n,k){n.classList.toggle('on',k===3)});
+  cardN.textContent='Pausa'; cardH.textContent='É aqui que a pausa entra';
+  cardP.textContent='Entre o impulso e o gesto cabe um espaço. Notar o que sentes, respirar, escrever, pedir ajuda… e só depois decidir. Sem culpa e sem “agora tanto faz”.';
+  card.classList.remove('sw'); void card.offsetWidth; card.classList.add('sw');
+}
+function frame(ts){
+  C.raf=0; if(!C.vis) return;
+  var dt=C.last?Math.min(.05,(ts-C.last)/1000):0; C.last=ts;
+  if(C.mode==='run'){
+    if(!reduce&&ts>C.hold) C.phi+=24*dt;
+    var p=pt(C.phi); setDot(p[0],p[1]);
+    showStep(((Math.round((C.phi+90)/72)%5)+5)%5);
+  }else if(C.mode==='hop'){
+    var k=clamp((ts-C.t0)/C.dur,0,1), p=pt(C.from+C.delta*ease(k)); setDot(p[0],p[1]);
+    if(k>=1){C.mode='divert';C.t0=ts;C.dur=1200;exit.setAttribute('stroke-dashoffset',0)}
+  }else if(C.mode==='divert'){
+    var k=clamp((ts-C.t0)/C.dur,0,1), e=ease(k), t=1-e;
+    var x=t*t*n4[0]+2*t*e*300+e*e*300, y=t*t*n4[1]+2*t*e*360+e*e*300; setDot(x,y);
+    if(k>=1){C.mode='rest';cyc.classList.add('brk');showPause();toPz.hidden=false;brk.textContent='Ver o ciclo outra vez'}
+  }else if(C.mode==='back'){
+    var k=clamp((ts-C.t0)/C.dur,0,1), e=ease(k), t=1-e;
+    var x=t*t*300+2*t*e*300+e*e*n4[0], y=t*t*300+2*t*e*360+e*e*n4[1]; setDot(x,y);
+    if(k>=1){C.mode='run';C.phi=126;C.hold=ts+1500;C.sel=-1}
+  }else if(C.mode==='rest'){
+    var pulse=1+.18*Math.sin(ts/380); halo.setAttribute('r',(20*pulse).toFixed(1));
+  }
+  if(!reduce||C.mode!=='run'||C.sel<0) C.raf=requestAnimationFrame(frame);
+}
+function kickC(){if(!C.raf&&C.vis){C.last=0;C.raf=requestAnimationFrame(frame)}}
+function breakCycle(){
+  if(!C.broken){
+    C.broken=true; arcs[3].classList.add('cut'); arcs[4].classList.add('cut');
+    var cur=((C.phi%360)+360)%360, tg=126, d=((tg-cur)%360+360)%360;
+    C.from=C.phi; C.delta=d; C.t0=performance.now(); C.dur=500+d/360*1600; C.mode='hop';
+    showStep(3); C.sel=3; kickC();
+  }else{
+    C.broken=false; cyc.classList.remove('brk'); arcs.forEach(function(a){a.classList.remove('cut')});
+    exit.setAttribute('stroke-dashoffset',1); halo.setAttribute('r',20); toPz.hidden=true; brk.textContent='Quebrar o ciclo';
+    C.mode='back'; C.t0=performance.now(); C.dur=1000; kickC();
+  }
+}
+brk.addEventListener('click',breakCycle);
+nodes.forEach(function(b,i){b.addEventListener('click',function(){
+  C.sel=-1; showStep(i);
+  if(C.mode==='run'){C.phi=-90+72*i;var p=pt(C.phi);setDot(p[0],p[1]);C.hold=performance.now()+8000;kickC()}
+})});
+setDot(pt(-90)[0],pt(-90)[1]); showStep(0);
+if('IntersectionObserver' in window) new IntersectionObserver(function(es){C.vis=es[0].isIntersecting;if(C.vis)kickC()},{threshold:.15}).observe(ringEl);
+else {C.vis=true;kickC()}
+
+/* ---------- a pausa (ferramenta) ---------- */
+var emo=$$('#emo input'), emoN=$('#emoN'), where=$('#where'), how=$$('#how input');
+var res=$('#res'), meter=$('#meter'), resH=$('#resH'), resP=$('#resP'), resAct=$('#resAct');
+var touched={w:false};
+function calc(){
+  var E=emo.filter(function(c){return c.checked&&c.value!=='n'}).length, h=how.filter(function(r){return r.checked})[0];
+  var any=E>0||emoN.checked||touched.w||!!h; if(!any){res.classList.add('idle');return}
+  var s=Math.min(E,3)/3*.45+(+where.value)/100*.35+(h?(h.value==='s'?.2:0):.1);
+  if(emoN.checked&&!touched.w&&!h) s=.15;
+  res.classList.remove('idle'); meter.style.setProperty('--s',clamp(s,.03,.97).toFixed(2)); resAct.hidden=false;
+  if(s<.3){resH.textContent='Parece fome do corpo.';resP.textContent='O estômago está a pedir e isso é legítimo. Come com calma, sem culpa e sem pressa. Comer também é cuidar.'}
+  else if(s<.6){resH.textContent='Pode haver um pouco de tudo.';resP.textContent='Dá-te uma pausa curta: bebe água, respira e pergunta-te outra vez. Se a fome continuar, come. Se mudar, repara no que mudou.'}
+  else{resH.textContent='Pode ser fome emocional.';resP.textContent='Em vez de lutares contra ti, dá-te uma pausa e escreve o que sentes. Se isto acontece muitas vezes ou te custa a viver, falar com um/a psicólogo/a pode ajudar.'}
+}
+emo.forEach(function(c){c.addEventListener('change',function(){
+  if(c===emoN&&c.checked) emo.forEach(function(o){if(o!==emoN)o.checked=false});
+  else if(c.checked) emoN.checked=false;
+  calc()})});
+where.addEventListener('input',function(){touched.w=true;calc()});
+how.forEach(function(r){r.addEventListener('change',calc)});
+/* temporizador de 10 minutos */
+var tm=$('#tm'), tmT=$('#tmT'), tmM=$('#tmM'), tmFg=$('#tmFg'), tmTimer=0, CIRC=276.46;
+function runTimer(sec){
+  clearInterval(tmTimer); tm.hidden=false; var t0=Date.now();
+  function step(){
+    var el=(Date.now()-t0)/1000, left=Math.max(0,sec-el), m=Math.floor(left/60), s=Math.ceil(left%60);
+    if(s===60){m+=1;s=0}
+    tmT.textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+    tmFg.setAttribute('stroke-dashoffset',(CIRC*(el/sec)).toFixed(1));
+    if(left<=0){clearInterval(tmTimer);tmT.textContent='00:00';tmM.textContent='Passaram os 10 minutos. Como estás agora? A fome mudou?'}
+  }
+  tmM.textContent='Bebe água, respira, escreve o que sentes. Depois pergunta-te outra vez.'; step(); tmTimer=setInterval(step,250)
+}
+$('#tmStart').addEventListener('click',function(){runTimer(600)});
+$('#tmFast').addEventListener('click',function(){runTimer(10)});
+
+/* ---------- formas: ligações que preenchem o assunto ---------- */
+var assunto=$('#assunto'), msg=$('#msg');
+$$('[data-assunto]').forEach(function(a){a.addEventListener('click',function(){assunto.value=a.getAttribute('data-assunto')})});
+$('#toForm').addEventListener('click',function(){
+  if(!msg.value){var h=resH.textContent;msg.value='Fiz a reflexão “Antes de abrires o frigorífico” e o resultado foi: '+h.replace(/\.$/,'')+'. Gostava de falar sobre isto.'}
+  assunto.value='Comportamento alimentar'
+});
+
+/* ---------- o globo ---------- */
+var LAND='000000000000000000000000000000,000000000000000000000000000000,00000003ffffff0000000000000000,00000177e7fffc00f0000007000000,000003b6807ffc000000c03fe03800,00001ebfe03ff80000021dfffe0000,03fcd7f4fc3ff8001e00dfffffffe6,1fffffffffffffff81200800000000,27fffffefe1e0700ffffffffffffff,07fffff8380c0003dfffffffffff1c,00c0fffc1f000030cfffffffffe060,04007fffbf800031bfffffffffc0e0,00003fffffc0005bffffffffffe080,00003ffffa60001fffffffffffe000,00001fffff80000ffd73ffffffc000,00001ffff8000079bc33ffffff1800,00001ffff000007137fbfffff61000,00000fffe000007743fbfffffb2000,000007ffc000003f00fffffff8c000,000001ff8000007ffffffffff80000,000003f0400000fffffbfffff80000,000001f0200001ffff7c1ffff00000,00000070200001ffffbf0fffc00000,0080003e2c0001ffffbf078f000000,00000007000001ffffdc0607880000,00000001800001fffff00607800000,00000000970000fffff80205040000,000000001f8000fffff80100120000,000000001fe00001fff0000e300000,000000003ff00001ffe000067c0000,000000007ffc0001ffc0000368a000,000000007fff8000ffc000010c3a00,000000003fff80007fc00000e03c00,000000003fff00007fc00000008000,000000001fff00007fc8000000c000,0000000007fe0000ffd8000007f800,0000000007fe00007f1800000ffc10,0000000007fc00007f1000003ffe00,0000000007f000007e0000003fff00,0000000007f000003e0000001fff00,0000000007e000003c0000001e7e00,000000000f80000000000000103e02,000000000f80000000000000001c01,000000000f00000000000000000402,000000000e0000000000000000000c,000000001e00000000000000000000,000000001c00000000000000000000,000000000c00000000000000000000,000000000000000000000000000000,000000000000000000000000000000,000000000000000000000000000000,000000000100000000000000004000,0000000002000000001ff1fffffc00,000000000f000037ffffeffffffff8,0001de3fff0001fffffffffffffff0,00ffffffe0003fffffffffffffffe0,000ffffff39c1fffffffffffffffc0,007ffffffffffffffffffffffffff8,000000000000000000000000000000,000000000000000000000000000000'; // grelha 3° (60×120), 1 = terra; linha 0 = 88°N
+var CITIES=[
+  {n:'Lisboa',la:38.72,lo:-9.14,tz:'Europe/Lisbon'},{n:'Londres',la:51.51,lo:-.13,tz:'Europe/London'},{n:'Paris',la:48.86,lo:2.35,tz:'Europe/Paris'},
+  {n:'Genebra',la:46.2,lo:6.14,tz:'Europe/Zurich'},{n:'Luanda',la:-8.84,lo:13.23,tz:'Africa/Luanda'},{n:'Maputo',la:-25.97,lo:32.57,tz:'Africa/Maputo'},
+  {n:'São Paulo',la:-23.55,lo:-46.63,tz:'America/Sao_Paulo'},{n:'Nova Iorque',la:40.71,lo:-74.0,tz:'America/New_York'},{n:'Toronto',la:43.65,lo:-79.38,tz:'America/Toronto'},{n:'Dubai',la:25.2,lo:55.27,tz:'Asia/Dubai'}
+];
+var land=[]; LAND.split(',').forEach(function(hx,r){
+  var bits=''; for(var i=0;i<hx.length;i++) bits+=('000'+parseInt(hx.charAt(i),16).toString(2)).slice(-4);
+  for(var c=0;c<120;c++) if(bits.charAt(c)==='1') land.push([88-3*r,-180+3*c]);
+});
+var gc=$('#gc'), gx=gc.getContext('2d'), gl=$('#globe'), cities=$('#cities');
+var G={lo:-9,la:22,tlo:-9,tla:22,sel:-1,arc:0,drag:false,vis:false,raf:0,px:0,idle:true,W:0,dpr:1};
+function sizeG(){G.dpr=Math.min(2,window.devicePixelRatio||1);G.W=gl.clientWidth;gc.width=G.W*G.dpr;gc.height=G.W*G.dpr}
+function proj(la,lo,k){
+  var p=rad(la), l=rad(lo-G.lo), p0=rad(G.la), R0=G.W*.44*(k||1);
+  var cc=Math.sin(p0)*Math.sin(p)+Math.cos(p0)*Math.cos(p)*Math.cos(l);
+  return [G.W/2+R0*Math.cos(p)*Math.sin(l), G.W/2-R0*(Math.cos(p0)*Math.sin(p)-Math.sin(p0)*Math.cos(p)*Math.cos(l)), cc];
+}
+function gcPoint(a,b,t){ // interpolação ao longo do círculo máximo
+  var v=function(c){var p=rad(c.la),l=rad(c.lo);return [Math.cos(p)*Math.cos(l),Math.cos(p)*Math.sin(l),Math.sin(p)]};
+  var A=v(a),B=v(b),d=Math.acos(clamp(A[0]*B[0]+A[1]*B[1]+A[2]*B[2],-1,1)), s=Math.sin(d)||1, f=Math.sin((1-t)*d)/s, g=Math.sin(t*d)/s;
+  var x=f*A[0]+g*B[0], y=f*A[1]+g*B[1], z=f*A[2]+g*B[2];
+  return {la:Math.atan2(z,Math.hypot(x,y))*180/Math.PI,lo:Math.atan2(y,x)*180/Math.PI};
+}
+function drawG(ts){
+  G.raf=0; if(!G.vis) return;
+  var W=G.W; if(!W){sizeG();W=G.W}
+  if(G.idle&&!G.drag&&!reduce) G.lo+=.09; else if(!G.drag){G.lo+=(G.tlo-G.lo)*.07;G.la+=(G.tla-G.la)*.07}
+  if(G.sel>=0&&G.arc<1) G.arc=Math.min(1,G.arc+.018);
+  var d=G.dpr; gx.setTransform(d,0,0,d,0,0); gx.clearRect(0,0,W,W);
+  var R0=W*.44, g=gx.createRadialGradient(W*.42,W*.38,R0*.1,W/2,W/2,R0);
+  g.addColorStop(0,'rgba(255,240,226,.85)');g.addColorStop(1,'rgba(235,207,196,.55)');
+  gx.fillStyle=g; gx.beginPath(); gx.arc(W/2,W/2,R0,0,7); gx.fill();
+  gx.lineWidth=1.5; gx.strokeStyle='rgba(42,28,22,.55)'; gx.stroke();
+  gx.fillStyle='#2A1C16';
+  for(var i=0;i<land.length;i++){var q=proj(land[i][0],land[i][1]); if(q[2]>0){gx.globalAlpha=.3+.7*q[2];gx.beginPath();gx.arc(q[0],q[1],W*.0042*(.6+.5*q[2]),0,7);gx.fill()}}
+  gx.globalAlpha=1;
+  var L=CITIES[0];
+  if(G.sel>0){ // arco Lisboa → cidade
+    var T=CITIES[G.sel], n=Math.round(60*G.arc); gx.beginPath(); var st=false;
+    for(var j=0;j<=n;j++){var t=j/60, c=gcPoint(L,T,t), q=proj(c.la,c.lo,1+.2*Math.sin(Math.PI*t)), b=proj(c.la,c.lo); if(b[2]>.02){st?gx.lineTo(q[0],q[1]):gx.moveTo(q[0],q[1]);st=true}else st=false}
+    gx.lineWidth=2.6; gx.strokeStyle='#A27562'; gx.lineCap='round'; gx.stroke();
+  }
+  CITIES.forEach(function(c,i){
+    var q=proj(c.la,c.lo); if(q[2]<=.02) return; var on=i===G.sel, home=i===0;
+    if(home){var pr=(ts/900)%1; gx.beginPath(); gx.arc(q[0],q[1],W*(.012+.03*pr),0,7); gx.strokeStyle='rgba(195,142,130,'+(.8*(1-pr)).toFixed(2)+')'; gx.lineWidth=2; gx.stroke()}
+    gx.beginPath(); gx.arc(q[0],q[1],W*(home||on?.011:.008),0,7); gx.fillStyle=on||home?'#C38E82':'#FAF5EF'; gx.fill(); gx.lineWidth=2; gx.strokeStyle='#2A1C16'; gx.stroke();
+  });
+  G.raf=requestAnimationFrame(drawG);
+}
+function kickG(){if(!G.raf&&G.vis)G.raf=requestAnimationFrame(drawG)}
+CITIES.slice(1).forEach(function(c,k){
+  var b=document.createElement('button'); b.type='button'; b.className='city'; b.textContent=c.n; b.setAttribute('aria-pressed','false');
+  b.addEventListener('click',function(){pickCity(k+1)}); cities.appendChild(b);
+});
+function wallMin(tz,t){var p=new Intl.DateTimeFormat('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(t)),h=0,m=0;p.forEach(function(x){if(x.type==='hour')h=+x.value;if(x.type==='minute')m=+x.value});return h*60+m}
+function pickCity(i){
+  var c=CITIES[i]; G.sel=i; G.arc=0; G.idle=false;
+  var mid=gcPoint(CITIES[0],c,.5); G.tlo=mid.lo; G.tla=clamp(mid.la*.7,-30,45);
+  var dl=((G.tlo-G.lo+540)%360)-180; G.tlo=G.lo+dl;
+  $$('.city',cities).forEach(function(b,k){b.setAttribute('aria-pressed',k===i-1)});
+  var now=new Date(), base=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate(),20,30);
+  var t=base+(20*60+30-wallMin('Europe/Lisbon',base))*60000, df=new Intl.DateTimeFormat('pt-PT',{timeZone:c.tz,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(t));
+  var dd=Math.round((wallMin(c.tz,t)-wallMin('Europe/Lisbon',t))/60);
+  var dayLbl=(new Date(t).toLocaleDateString('en-CA',{timeZone:c.tz}))===(new Date(t).toLocaleDateString('en-CA',{timeZone:'Europe/Lisbon'}))?'':' (dia seguinte)';
+  $('#tzT').textContent=df;
+  $('#tzD').innerHTML='Quando em Lisboa são 20:30, em '+c.n+' são '+df+dayLbl+'.<small>Exemplo ilustrativo (diferença de '+((dd>0?'+':'')+dd)+' h). Horários reais: a confirmar.</small>';
+  kickG();
+}
+gl.addEventListener('pointerdown',function(e){G.drag=true;G.px=e.clientX;gl.setPointerCapture(e.pointerId)});
+gl.addEventListener('pointermove',function(e){if(!G.drag)return;G.lo-=(e.clientX-G.px)*.4;G.tlo=G.lo;G.px=e.clientX;G.idle=false;});
+gl.addEventListener('pointerup',function(){G.drag=false});
+gl.addEventListener('pointercancel',function(){G.drag=false});
+window.addEventListener('resize',sizeG); sizeG();
+if(reduce){G.idle=false;G.tlo=G.lo=-9}
+if('IntersectionObserver' in window) new IntersectionObserver(function(es){G.vis=es[0].isIntersecting;if(G.vis)kickG()},{threshold:.05}).observe(gl);
+else {G.vis=true;kickG()}
+
+/* ---------- formulário de demonstração ---------- */
+$('#form').addEventListener('submit',function(e){e.preventDefault();$('#ok').hidden=false;$('#ok').scrollIntoView({block:'nearest',behavior:reduce?'auto':'smooth'})});
+})();
+</script>
+</body>
+</html>
