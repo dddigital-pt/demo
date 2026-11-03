@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rita Barroca — Demonstração</title>
+<meta name="description" content="Demonstração de website para Rita Barroca, psicóloga clínica e formadora certificada: autoconhecimento e autocuidado, em consulta online.">
+<meta name="theme-color" content="#FBE8E5">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Mulish:wght@300;400;600;700&family=Mrs+Saint+Delafield&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   RITA BARROCA — demonstração (DD Digital)
+   CONCEITO DE LAYOUT E HERO
+   Gesto central: a borboleta do logótipo, com o contorno a caneta e o
+   preenchimento coral ligeiramente desalinhado ("fora de registo").
+   Hero: a Rita entre as duas asas de uma borboleta que se desenha a caneta,
+   se colore e abre; "Conhece-te." numa asa, "Cuida-te." na outra
+   (Autoconhecimento | Autocuidado). Asas em 3D falso (scaleX) que respiram,
+   aceleram com o rato e ao toque.
+   Fio condutor: o preenchimento coral deslocado em molduras, divisórias e
+   ícones; uma foto em forma de asa; baralho de perguntas; voo da borboleta
+   pelos 4 passos do acompanhamento.
+   ========================================================================== */
+
+/* ---------- 0. Variáveis ---------- */
+:root{
+  --blush:#FBE8E5; --blush-2:#F6D6CF; --paper:#FFF8F4; --cream:#FFF1E8;
+  --coral:#F7A18C; --coral-2:#FBC0B0; --coral-d:#B9503A;
+  --ink:#1E1517; --ink-2:#5A4A4C;
+  --slate:#2C4452; --slate-d:#1F3441; --slate-l:#9DB3BF;
+  --amber:#FFD8A0;
+  --f-h:'Bellefair',Georgia,'Times New Roman',serif;
+  --f-b:'Mulish',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-s:'Mrs Saint Delafield','Snell Roundhand','Brush Script MT',cursive;
+  --bar:34px; --hd:68px; --pad:clamp(20px,5vw,72px);
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+
+/* ---------- 1. Base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--bar) + var(--hd) + 8px);-webkit-text-size-adjust:100%}
+body{margin:0;padding-top:calc(var(--bar) + var(--hd));background:var(--paper);color:var(--ink);font:400 1.0625rem/1.65 var(--f-b);overflow-x:clip;-webkit-font-smoothing:antialiased}
+body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+img,svg{display:block;max-width:100%}
+img{height:auto}
+a{color:inherit}
+h1,h2,h3,p{margin:0}
+h2,h3{font-family:var(--f-h);font-weight:400;line-height:1.05;letter-spacing:-.005em}
+:focus-visible{outline:2px solid var(--coral-d);outline-offset:3px;border-radius:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{width:min(1240px,100% - 2*var(--pad));margin-inline:auto}
+.wrap>*{min-width:0}
+.kick{display:inline-flex;align-items:center;gap:.7em;font:600 .72rem/1 var(--f-b);letter-spacing:.2em;text-transform:uppercase;color:var(--coral-d)}
+.kick::before{content:"";width:34px;height:1.5px;background:currentColor}
+.script{font-family:var(--f-s);font-weight:400;line-height:.8;letter-spacing:0}
+.btn{display:inline-flex;align-items:center;gap:.7em;padding:.95em 1.55em;border-radius:999px;background:none;color:var(--paper);font:600 .86rem/1 var(--f-b);letter-spacing:.06em;text-decoration:none;border:0;cursor:pointer;position:relative;isolation:isolate;transition:transform .35s var(--ease),color .3s}
+.btn::before{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--coral);transform:translate(5px,6px);z-index:-2;transition:transform .35s var(--ease)}
+.btn::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--ink);z-index:-1;transition:background .3s}
+.btn:hover{transform:translate(2px,2px)}
+.btn:hover::before{transform:translate(2px,3px)}
+.btn--ghost{color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.btn--ghost::before{display:none}
+.btn--ghost::after{background:transparent}
+.btn--ghost:hover{color:var(--paper)}
+.btn--ghost:hover::after{background:var(--ink)}
+.btn--sm{padding:.78em 1.2em;font-size:.78rem}
+.tbc{display:inline-block;padding:.15em .7em;border:1px dashed currentColor;border-radius:999px;font:600 .72rem/1.6 var(--f-b);letter-spacing:.04em;opacity:.85}
+/* reveals (só com JS; sem JS tudo visível) */
+.js .rv{opacity:0;transform:translateY(26px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--rd,0s)}
+.js .rv.in{opacity:1;transform:none}
+/* divisória "fora de registo": barra coral deslocada + fio de tinta */
+.dv{position:relative;height:16px;width:min(1240px,100% - 2*var(--pad));margin-inline:auto}
+.dv::before{content:"";position:absolute;left:0;right:0;top:4px;height:8px;background:var(--coral-2);transform:translate(8px,3px)}
+.dv::after{content:"";position:absolute;left:0;right:0;top:6px;height:1.5px;background:var(--ink)}
+
+/* ---------- 2. Aviso de demonstração (A2) ---------- */
+.demo-bar{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--bar);display:flex;align-items:center;justify-content:center;gap:.8em;padding:0 12px;background:var(--slate-d);color:var(--blush);font:600 .74rem/1 var(--f-b);letter-spacing:.04em;white-space:nowrap}
+.demo-bar .tag{background:var(--coral);color:var(--ink);padding:.3em .7em;border-radius:3px;letter-spacing:.18em;font-weight:700}
+.demo-bar .short{display:none}
+.demo-chip{position:fixed;right:18px;bottom:18px;z-index:90;display:flex;align-items:center;gap:.6em;padding:.65em 1.1em;border-radius:999px;background:var(--slate-d);color:var(--blush);font:600 .72rem/1 var(--f-b);letter-spacing:.1em;text-transform:uppercase;box-shadow:0 8px 24px rgba(31,52,65,.25);pointer-events:none}
+.demo-chip i{width:8px;height:8px;border-radius:50%;background:var(--coral)}
+
+/* ---------- 3. Cabeçalho e menu ---------- */
+.hd{position:fixed;top:var(--bar);left:0;right:0;z-index:80;height:var(--hd);display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);background:transparent;transition:background .4s,box-shadow .4s}
+.hd.solid{background:rgba(251,232,229,.94);box-shadow:0 1px 0 rgba(30,21,23,.1);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.brand img{height:54px;width:auto}
+.nav{display:flex;align-items:center;gap:clamp(16px,2.4vw,38px)}
+.nav a:not(.btn){font:600 .8rem/1 var(--f-b);letter-spacing:.1em;text-transform:uppercase;text-decoration:none;position:relative;padding:6px 0}
+.nav a:not(.btn)::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.5px;background:var(--coral-d);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease)}
+.nav a:not(.btn):hover::after{transform:scaleX(1)}
+.burger{display:none;width:46px;height:46px;border:0;background:transparent;cursor:pointer;position:relative}
+.burger span:not(.sr){position:absolute;left:11px;right:11px;height:1.5px;background:var(--ink);transition:transform .35s var(--ease)}
+.burger span:nth-child(1){top:20px}.burger span:nth-child(2){top:27px}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(3.5px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){transform:translateY(-3.5px) rotate(-45deg)}
+
+/* ---------- 4. Hero: a borboleta que se desenha e abre ---------- */
+.hero{--hh:clamp(640px,calc(100svh - var(--bar) - var(--hd)),1000px);position:relative;height:var(--hh);overflow:clip;background:radial-gradient(55% 62% at 50% 60%,#FFEBDD 0%,rgba(255,235,221,0) 72%),var(--blush)}
+.hero__stage{position:absolute;inset:0}
+.bfly{position:absolute;left:50%;top:46%;width:min(84vw,calc(var(--hh)*1.5));height:auto;aspect-ratio:10/7;overflow:visible;transform:translate(-50%,-50%) translate(calc(var(--mx,0)*-14px),calc(var(--my,0)*-8px)) rotate(var(--sway,0deg));will-change:transform}
+.wing{transform-origin:500px 440px;transform:scaleX(var(--k,1))}
+.ink{fill:none;stroke:var(--ink);stroke-width:5.2;stroke-linecap:round;stroke-linejoin:round}
+.ink.vein{stroke-width:2.2;opacity:.5}
+.ink.body{stroke-width:7}
+.fill{fill:var(--coral);stroke:none;transform-origin:500px 440px;transform:translate(-8px,14px) scale(.92)}
+.fill.lo{fill:var(--coral-2)}
+/* estado inicial (só com JS) e entrada */
+.js .hero:not(.go) .ink{stroke-dasharray:1;stroke-dashoffset:1}
+.js .hero.go:not(.done) .ink{stroke-dasharray:1;stroke-dashoffset:0;transition:stroke-dashoffset 1.5s cubic-bezier(.5,0,.2,1) var(--d,0s)}
+.js .hero:not(.go) .fill{opacity:0;transform:none}
+.js .hero.go:not(.instant) .fill{transition:opacity .9s ease 1.15s,transform 1.2s cubic-bezier(.3,.9,.3,1) 1.35s}
+.hero__rita{position:absolute;left:50%;bottom:0;height:80%;z-index:2;transform:translateX(-50%) translate(calc(var(--mx,0)*9px),calc(var(--my,0)*5px))}
+.hero__rita img{height:100%;width:auto;max-width:none}
+.js .hero:not(.go) .hero__rita img{opacity:0;transform:translateY(34px)}
+.js .hero.go:not(.instant) .hero__rita img{transition:opacity 1.2s ease .85s,transform 1.4s var(--ease) .85s}
+.h1{position:absolute;inset:0;z-index:3;pointer-events:none;font:400 clamp(3rem,6.3vw,7.6rem)/.9 var(--f-h);letter-spacing:-.02em;margin:0}
+.h1 .w{position:absolute;display:block;white-space:nowrap}
+.h1 .w--a{left:var(--pad);top:6%}
+.h1 .w--b{right:var(--pad);top:37%}
+.h1 .w small{display:block;margin-bottom:.35em;font:600 .72rem/1 var(--f-b);letter-spacing:.22em;text-transform:uppercase;color:var(--coral-d)}
+.js .hero:not(.go) .w{opacity:0;transform:translateY(.28em)}
+.js .hero.go:not(.instant) .w{transition:opacity 1s ease var(--wd,.9s),transform 1.2s var(--ease) var(--wd,.9s)}
+.hero__foot{position:absolute;left:0;right:0;bottom:0;z-index:4;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding:0 var(--pad) 70px;pointer-events:none}
+.hero__foot>*{pointer-events:auto}
+.lead{max-width:27ch;font-size:1.08rem;line-height:1.6;color:var(--ink)}
+.lead .eyebrow{display:block;margin-bottom:.9em}
+.cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:1.4em}
+.cred{text-align:right;font:600 .72rem/1.9 var(--f-b);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+.cred b{color:var(--ink);font-weight:700}
+.js .hero:not(.go) .hero__foot{opacity:0;transform:translateY(16px)}
+.js .hero.go:not(.instant) .hero__foot{transition:opacity 1s ease 1.7s,transform 1s var(--ease) 1.7s}
+.hero__hint{position:absolute;left:50%;top:2.4%;transform:translateX(-50%);z-index:3;font:600 .66rem/1 var(--f-b);letter-spacing:.22em;text-transform:uppercase;color:var(--ink-2);opacity:.7;white-space:nowrap}
+
+/* ---------- 5. Manifesto (palavras que acendem) ---------- */
+.mani{padding:clamp(80px,13vw,180px) 0 clamp(70px,10vw,140px);background:var(--paper);position:relative}
+.mani .wrap{display:grid;grid-template-columns:1fr minmax(0,1020px) 1fr}
+.mani p.lit{grid-column:2;font:400 clamp(1.9rem,4.4vw,3.9rem)/1.16 var(--f-h);letter-spacing:-.01em}
+.lit .wd{opacity:.2;transition:opacity .5s}
+.lit .wd.on{opacity:1}
+.lit .sc{font-family:var(--f-s);font-size:1.5em;line-height:.6;color:var(--coral-d)}
+.mani .note{grid-column:2;margin-top:2.2rem;display:flex;align-items:center;gap:1rem;color:var(--ink-2);font-size:.95rem}
+.mani .note svg{width:56px;flex:none}
+
+/* ---------- 6. Sobre ---------- */
+.sobre{padding:clamp(70px,9vw,130px) 0;background:var(--blush)}
+.sobre .wrap{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(36px,6vw,96px);align-items:center}
+.wingframe{position:relative;width:min(100%,560px);aspect-ratio:446/404;margin-inline:auto}
+.wingframe .tint,.wingframe img.ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:url(#clipWingL)}
+.wingframe .tint{background:var(--coral);transform:translate(-16px,18px)}
+.wingframe img.ph{object-position:30% 40%}
+.wingframe svg.line{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.wingframe svg.line .ink{stroke-width:2.4;vector-effect:non-scaling-stroke}
+.cedula{position:absolute;right:-6%;bottom:-9%;width:min(62%,330px);transform:rotate(-4deg);filter:drop-shadow(0 12px 22px rgba(30,21,23,.25));transition:transform .5s var(--ease)}
+.cedula:hover{transform:rotate(-1deg) translateY(-4px)}
+.sobre h2{font-size:clamp(2.2rem,4.2vw,3.7rem);margin:.5em 0 .6em}
+.sobre h2 em{font-style:normal;font-family:var(--f-s);font-size:1.35em;line-height:.5;color:var(--coral-d)}
+.sobre p{max-width:54ch}
+.sobre p+p{margin-top:1em}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 26px;margin-top:2.2rem;padding-top:1.6rem;border-top:1.5px solid var(--ink);align-items:end}
+.facts .big{grid-row:span 2;font:400 clamp(4.4rem,8vw,7rem)/.82 var(--f-h);color:var(--ink);position:relative;isolation:isolate}
+.facts .big::after{content:"";position:absolute;left:4%;right:-4%;bottom:6%;height:34%;background:var(--coral);z-index:-1;transform:rotate(-2deg)}
+.facts dt{font:600 .74rem/1.4 var(--f-b);letter-spacing:.16em;text-transform:uppercase}
+.facts dd{margin:0;font-size:.92rem;color:var(--ink-2)}
+.pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:1.6rem}
+.pills span{padding:.5em 1em;border-radius:999px;border:1.5px solid var(--ink);font:600 .78rem/1.2 var(--f-b);letter-spacing:.06em}
+
+/* ---------- 7. Baralho de perguntas ---------- */
+.perg{padding:clamp(80px,10vw,150px) 0;background:var(--blush-2);position:relative;overflow-x:clip}
+.perg .wrap{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:clamp(30px,6vw,90px);align-items:center}
+.perg h2{font-size:clamp(2.3rem,4.8vw,4.4rem);margin:.45em 0 .5em}
+.perg h2 .script{font-size:1.4em;color:var(--coral-d);display:inline-block;transform:translateY(.08em)}
+.perg .sub{max-width:46ch;color:var(--ink-2)}
+.tabs{display:inline-flex;margin:1.8rem 0 1.4rem;padding:5px;border-radius:999px;background:rgba(255,248,244,.7);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.tabs button{font:600 .8rem/1 var(--f-b);letter-spacing:.1em;text-transform:uppercase;padding:.95em 1.5em;border:0;border-radius:999px;background:transparent;color:var(--ink);cursor:pointer;transition:background .3s,color .3s}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.acts{display:flex;flex-wrap:wrap;gap:12px;margin-top:1.2rem}
+.perg .fine{margin-top:1.6rem;font-size:.82rem;color:var(--ink-2);max-width:48ch}
+.deck{position:relative;width:min(310px,74vw);aspect-ratio:5/7;margin-inline:auto;perspective:1300px}
+.ghost{position:absolute;inset:0;border-radius:90px 16px 90px 16px;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.ghost.g1{transform:rotate(-7deg) translate(-10px,6px);background:var(--coral-2)}
+.ghost.g2{transform:rotate(6deg) translate(12px,4px)}
+.slot{position:absolute;inset:0;transition:transform .55s var(--ease),opacity .45s}
+.slot.out{transform:translate(70%,-14%) rotate(18deg);opacity:0}
+.slot.pre{transform:translate(-24%,4%) rotate(-10deg) scale(.94);opacity:0;transition:none}
+.qcard{position:absolute;inset:0;padding:0;border:0;background:none;cursor:pointer;transform-style:preserve-3d;transition:transform .85s var(--ease);font:inherit;color:inherit;text-align:left}
+.qcard.flipped{transform:rotateY(180deg)}
+.qcard.notrans{transition:none}
+.face{position:absolute;inset:0;border-radius:90px 16px 90px 16px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.face.back{background:var(--cream);box-shadow:inset 0 0 0 1.5px var(--ink),0 22px 40px rgba(30,21,23,.18);display:grid;place-items:center}
+.face.back::before{content:"";position:absolute;inset:12px;border-radius:80px 10px 80px 10px;border:1px solid rgba(30,21,23,.35)}
+.face.back svg{width:78%}
+.face.back .hint{position:absolute;bottom:9%;left:0;right:0;text-align:center;font:600 .64rem/1 var(--f-b);letter-spacing:.24em;text-transform:uppercase;color:var(--ink-2)}
+.face.front{transform:rotateY(180deg);background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--ink),0 22px 40px rgba(30,21,23,.18);padding:15% 12% 12% 13%;display:flex;flex-direction:column;justify-content:space-between}
+.face.front .k{font:600 .68rem/1 var(--f-b);letter-spacing:.2em;text-transform:uppercase;color:var(--coral-d)}
+.face.front .q{font:400 clamp(1.35rem,2.5vw,1.8rem)/1.2 var(--f-h)}
+.face.front .qft{display:flex;align-items:center;gap:10px;font:600 .64rem/1 var(--f-b);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2)}
+.face.front .qft::before{content:"";width:26px;height:1.5px;background:currentColor}
+
+/* ---------- 8. Acompanhamento: o voo da borboleta ---------- */
+.voo{padding:clamp(80px,10vw,150px) 0 clamp(90px,11vw,160px);background:var(--paper);position:relative;overflow-x:clip}
+.voo .head{max-width:760px}
+.voo h2{font-size:clamp(2.3rem,4.8vw,4.4rem);margin:.45em 0 .4em}
+.voo h2 em{font-style:normal;font-family:var(--f-s);font-size:1.3em;color:var(--coral-d);line-height:.6}
+.flight{position:relative;margin-top:clamp(40px,6vw,80px)}
+.flight svg.path{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0}
+.flight .dash{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-dasharray:2 9;stroke-linecap:round;opacity:.45}
+.flight .trail{fill:none;stroke:var(--coral);stroke-width:5;stroke-linecap:round}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(18px,3vw,44px);position:relative;z-index:1}
+.st{position:relative}
+.st:nth-child(even){margin-top:clamp(60px,9vw,130px)}
+.st .gl{width:92px;height:92px;margin-bottom:18px;background:var(--paper);border-radius:50%}
+.st .gl svg{width:100%;height:100%;overflow:visible}
+.st .gl .ln{fill:none;stroke:var(--ink);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;opacity:.38;transition:opacity .6s}
+.st .gl .fl{fill:var(--coral);opacity:0;transform:translate(3px,4px);transition:opacity .6s .1s}
+.st.on .gl .ln{opacity:1}.st.on .gl .fl{opacity:1}
+.st .n{font:600 .7rem/1 var(--f-b);letter-spacing:.2em;color:var(--coral-d);text-transform:uppercase}
+.st h3{font-size:clamp(1.6rem,2.3vw,2.1rem);margin:.35em 0 .45em}
+.st p{font-size:.98rem;color:var(--ink-2);max-width:30ch;background:var(--paper)}
+.voo .nota{margin-top:clamp(36px,5vw,64px);font-size:.88rem;color:var(--ink-2)}
+.moth{position:absolute;left:0;top:0;width:54px;height:54px;margin:-27px 0 0 -27px;z-index:2;pointer-events:none;will-change:transform}
+.moth svg{width:100%;height:100%;overflow:visible}
+.moth .wl,.moth .wr{transform-origin:50px 55px}
+.moth.fly .wl,.moth.fly .wr{animation:flap .26s ease-in-out infinite alternate}
+.moth .wl{transform:scaleX(.7)}.moth .wr{transform:scaleX(.7)}
+.moth.fly .wl,.moth.fly .wr{transform:none}
+@keyframes flap{from{transform:scaleX(1)}to{transform:scaleX(.28)}}
+
+/* ---------- 9. Formação (secção escura) ---------- */
+.form{padding:clamp(80px,10vw,150px) 0;background:var(--slate-d);color:var(--blush);position:relative;overflow-x:clip}
+.form .wrap{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:clamp(34px,6vw,96px);align-items:center}
+.form .kick{color:var(--coral)}
+.form h2{font-size:clamp(2.4rem,5vw,4.6rem);margin:.45em 0 .5em}
+.form h2 em{font-style:normal;font-family:var(--f-s);font-size:1.3em;color:var(--coral);line-height:.6}
+.form .txt{max-width:48ch;color:var(--slate-l)}
+.fmts{list-style:none;margin:2.2rem 0 0;padding:0;border-top:1px solid rgba(251,232,229,.3);max-width:560px}
+.fmts li{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:baseline;padding:1.05rem 0;border-bottom:1px solid rgba(251,232,229,.3);transition:padding .4s var(--ease),background .4s}
+.fmts li:hover{padding-left:12px}
+.fmts .no{font:600 .72rem/1 var(--f-b);letter-spacing:.18em;color:var(--coral)}
+.fmts .nm{font:400 1.5rem/1.15 var(--f-h)}
+.fmts .tbc{color:var(--slate-l);font-size:.66rem}
+.lampframe{position:relative;width:min(100%,400px);margin-inline:auto;aspect-ratio:1}
+.lampframe .tint{position:absolute;inset:0;border-radius:50%;background:var(--coral);transform:translate(16px,18px)}
+.lampframe .ph{position:absolute;inset:0;border-radius:50%;overflow:hidden;box-shadow:0 0 0 1.5px var(--blush)}
+.lampframe .ph img{width:100%;height:100%;object-fit:cover}
+.lampframe .logo{position:absolute;left:50%;bottom:-8%;width:62%;transform:translateX(-50%);filter:drop-shadow(0 8px 18px rgba(0,0,0,.35))}
+
+/* ---------- 10. Dúvidas ---------- */
+.duv{padding:clamp(80px,10vw,150px) 0;background:var(--cream)}
+.duv .wrap{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:clamp(30px,6vw,100px);align-items:start}
+.duv .side{position:sticky;top:calc(var(--bar) + var(--hd) + 30px)}
+.duv h2{font-size:clamp(2.3rem,4.4vw,3.9rem);margin:.45em 0 .5em}
+.duv .side p{color:var(--ink-2);max-width:34ch}
+details{border-top:1.5px solid var(--ink)}
+details:last-of-type{border-bottom:1.5px solid var(--ink)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:1.4rem 0;font:400 clamp(1.3rem,2.1vw,1.7rem)/1.2 var(--f-h)}
+summary::-webkit-details-marker{display:none}
+summary .pm{flex:none;width:30px;height:30px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--ink);position:relative;transition:transform .4s var(--ease),background .3s}
+summary .pm::before,summary .pm::after{content:"";position:absolute;left:8px;right:8px;top:14px;height:1.5px;background:var(--ink);transition:transform .4s var(--ease)}
+summary .pm::after{transform:rotate(90deg)}
+details[open] summary .pm{background:var(--coral);transform:rotate(180deg)}
+details[open] summary .pm::after{transform:rotate(0)}
+details .ans{padding:0 0 1.6rem;max-width:60ch;color:var(--ink-2)}
+details .ans a{color:var(--coral-d);font-weight:600}
+
+/* ---------- 11. Contacto ---------- */
+.cont{padding:clamp(80px,10vw,150px) 0 clamp(90px,10vw,140px);background:var(--blush);position:relative;overflow-x:clip}
+.cont .wrap{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(34px,6vw,100px);align-items:start}
+.cont .big{font-size:clamp(4.6rem,10vw,8.8rem);color:var(--coral-d);display:block;margin:.35em 0 .2em -.04em}
+.cont .tx{max-width:40ch;color:var(--ink-2)}
+.dados{list-style:none;margin:2rem 0 0;padding:0;display:grid;gap:12px}
+.dados li{display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:center;font-size:.95rem}
+.dados b{font:600 .7rem/1 var(--f-b);letter-spacing:.18em;text-transform:uppercase}
+.fm{padding:clamp(26px,4vw,48px);border-radius:90px 16px 90px 16px;position:relative;isolation:isolate}
+.fm::before{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--coral);transform:translate(14px,16px);z-index:-2}
+.fm::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--ink);z-index:-1}
+.fm h3{font-size:1.9rem;margin-bottom:1.2rem;padding-left:clamp(10px,2.4vw,34px)}
+.fld{position:relative;margin-bottom:1.15rem}
+.fld label{display:block;font:600 .68rem/1 var(--f-b);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.45rem;color:var(--ink-2)}
+.fld input,.fld textarea,.fld select{width:100%;font:400 1rem/1.5 var(--f-b);color:var(--ink);background:transparent;border:0;border-bottom:1.5px solid var(--ink);padding:.5em 0;border-radius:0;outline:0}
+.fld textarea{min-height:112px;resize:vertical}
+.fld input:focus,.fld textarea:focus,.fld select:focus{border-bottom-color:var(--coral-d);box-shadow:0 1.5px 0 var(--coral-d)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.fm .btn{margin-top:.6rem}
+.fm .ok{display:none;margin-top:1.2rem;padding:1em 1.2em;background:var(--blush);border-left:4px solid var(--coral-d);font-size:.92rem}
+.fm .ok.show{display:block}
+
+/* ---------- 12. Rodapé ---------- */
+.ft{background:var(--ink);color:var(--blush);padding:clamp(50px,6vw,84px) 0 28px}
+.ft .wrap{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:clamp(24px,5vw,80px);align-items:start}
+.ft img{width:min(240px,100%)}
+.ft p{font-size:.86rem;line-height:1.7;color:rgba(251,232,229,.78);max-width:72ch}
+.ft p+p{margin-top:.8em}
+.ft .legal{grid-column:1/-1;margin-top:28px;padding-top:20px;border-top:1px solid rgba(251,232,229,.2);display:flex;flex-wrap:wrap;gap:8px 26px;font:600 .68rem/1.5 var(--f-b);letter-spacing:.14em;text-transform:uppercase;color:rgba(251,232,229,.6)}
+
+/* ---------- 13. Responsivo ---------- */
+@media (max-width:1100px){
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .st:nth-child(even){margin-top:0}
+}
+@media (max-width:900px){
+  :root{--hd:62px}
+  .sobre .wrap,.perg .wrap,.form .wrap,.duv .wrap,.cont .wrap,.ft .wrap{grid-template-columns:1fr}
+  .duv .side{position:static}
+  .perg .deckcol{order:2}
+  .brand img{height:44px}
+  .burger{display:block}
+  .hd{background:rgba(251,232,229,.98)}
+  .hd.solid{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--blush)}
+  .nav{position:fixed;top:calc(var(--bar) + var(--hd));left:0;right:0;bottom:0;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:0;padding:14px var(--pad) 40px;background:var(--paper);overflow-y:auto;overscroll-behavior:contain;transform:translateY(-8px);opacity:0;visibility:hidden;transition:opacity .3s,transform .4s var(--ease),visibility 0s .4s}
+  .nav.open{opacity:1;visibility:visible;transform:none;transition:opacity .3s,transform .4s var(--ease)}
+  .nav a:not(.btn){width:100%;padding:20px 0;border-bottom:1px solid rgba(30,21,23,.14);font:400 1.9rem/1.1 var(--f-h);letter-spacing:0;text-transform:none}
+  .nav a:not(.btn)::after{display:none}
+  .nav .btn{margin-top:26px}
+  .demo-chip{display:none}
+}
+@media (max-width:760px){
+  .demo-bar .long{display:none}.demo-bar .short{display:inline}
+  /* hero em mobile: composição própria, texto e CTA por baixo do palco */
+  .hero{height:auto;min-height:0;max-height:none;overflow:clip;padding-bottom:6px}
+  .hero__stage{position:relative;inset:auto;height:min(166vw,740px)}
+  .bfly{top:35%;height:auto;width:min(146vw,900px)}
+  .hero__rita{height:auto;width:min(74vw,400px)}
+  .hero__rita img{width:100%;height:auto}
+  .h1{font-size:clamp(3.1rem,16.6vw,5.4rem)}
+  .h1 .w--a{top:2%}
+  .h1 .w--b{top:13.5%}
+  .hero__hint{display:none}
+  .hero__foot{position:static;flex-direction:column;align-items:flex-start;padding:6px var(--pad) 40px;gap:22px}
+  .cred{text-align:left}
+  .mani .wrap{display:block}
+  .steps{grid-template-columns:1fr}
+  .st{padding-left:116px}
+  .st .gl{position:absolute;left:0;top:0;margin:0}
+  .st p{max-width:none}
+  .fmts li{grid-template-columns:34px 1fr}
+  .fmts .tbc{grid-column:2;justify-self:start}
+  .row2{grid-template-columns:1fr}
+  .facts{grid-template-columns:1fr;gap:4px}
+  .facts .big{grid-row:auto}
+  .facts dt,.facts dd{grid-column:1!important}
+  .dados li{grid-template-columns:96px 1fr}
+  .cedula{right:-2%;bottom:-12%}
+}
+/* ---------- 14. Movimento reduzido ---------- */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0s!important}
+  .js .rv{opacity:1;transform:none}
+  .lit .wd{opacity:1}
+}
+</style>
+</head>
+<body>
+
+<!-- Definições SVG partilhadas: geometria da borboleta (asa direita; a esquerda é o espelho) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <path id="pUp" pathLength="1" d="M506 418 C522 300 585 170 700 100 C790 46 905 36 940 98 C972 156 925 262 838 330 C760 392 640 428 506 446 Z"/>
+    <path id="pLo" pathLength="1" d="M508 446 C610 444 722 452 792 504 C852 550 838 636 768 650 C696 662 606 604 552 540 C522 504 510 478 508 446 Z"/>
+    <path id="pV1" pathLength="1" d="M530 402 C542 308 604 200 706 136 C790 84 872 80 906 114"/>
+    <path id="pV2" pathLength="1" d="M544 468 C612 468 708 476 764 518 C806 550 800 604 762 614"/>
+    <!-- foto em forma de asa (espelhada): coordenadas em bounding box -->
+    <clipPath id="clipWingL" clipPathUnits="objectBoundingBox">
+      <path transform="translate(1 0) scale(-0.002242 0.002475) translate(-506 -42)" d="M506 418 C522 300 585 170 700 100 C790 46 905 36 940 98 C972 156 925 262 838 330 C760 392 640 428 506 446 Z"/>
+    </clipPath>
+  </defs>
+</svg>
+
+<!-- A2.1 Faixa DEMO -->
+<div class="demo-bar" role="note"><b class="tag">DEMO</b><span class="long">Website de demonstração criado pela DD Digital para Rita Barroca · conteúdo ilustrativo</span><span class="short">Demonstração · Rita Barroca</span></div>
+<!-- A2.2 Selo -->
+<div class="demo-chip" aria-hidden="true"><i></i>Versão de demonstração</div>
+
+<header class="hd" id="top">
+  <a class="brand" href="#inicio" aria-label="Rita Barroca, psicóloga — início"><img src="img/logo.png" alt="Rita Barroca — Psicóloga" width="797" height="368"></a>
+  <nav class="nav" id="nav" aria-label="Principal">
+    <a href="#sobre">Sobre</a>
+    <a href="#perguntas">Perguntas</a>
+    <a href="#acompanhamento">Acompanhamento</a>
+    <a href="#formacao">Formação</a>
+    <a href="#duvidas">Dúvidas</a>
+    <a class="btn btn--sm" href="#contacto">Marcar conversa</a>
+  </nav>
+  <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="nav"><span></span><span></span><span class="sr">Menu</span></button>
+</header>
+
+<main>
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="inicio" aria-labelledby="h1">
+  <div class="hero__stage" id="stage">
+    <svg class="bfly" id="bfly" viewBox="0 0 1000 700" aria-hidden="true" focusable="false">
+      <!-- asa esquerda (espelho da direita) -->
+      <g class="wing wing--l"><g transform="translate(1000 0) scale(-1 1)">
+        <use href="#pLo" class="fill lo"/><use href="#pUp" class="fill"/>
+        <use href="#pLo" class="ink" style="--d:.5s"/><use href="#pUp" class="ink" style="--d:.2s"/>
+        <use href="#pV1" class="ink vein" style="--d:1s"/><use href="#pV2" class="ink vein" style="--d:1.1s"/>
+      </g></g>
+      <!-- asa direita -->
+      <g class="wing wing--r">
+        <use href="#pLo" class="fill lo"/><use href="#pUp" class="fill"/>
+        <use href="#pLo" class="ink" style="--d:.55s"/><use href="#pUp" class="ink" style="--d:.25s"/>
+        <use href="#pV1" class="ink vein" style="--d:1.05s"/><use href="#pV2" class="ink vein" style="--d:1.15s"/>
+      </g>
+      <!-- corpo e antenas -->
+      <path class="ink body" pathLength="1" style="--d:0s" d="M500 300 C506 380 506 470 500 590"/>
+      <path class="ink" pathLength="1" style="--d:.9s" d="M500 306 C486 262 458 234 426 216"/>
+      <path class="ink" pathLength="1" style="--d:.95s" d="M500 306 C514 262 542 234 574 216"/>
+    </svg>
+    <div class="hero__rita"><img src="img/rita-recorte.webp" width="1147" height="1282" alt="Rita Barroca, psicóloga, sorri com a mão no queixo"></div>
+    <h1 class="h1" id="h1"><span class="w w--a" style="--wd:.85s"><small class="sr">Rita Barroca · Psicóloga</small>Conhece-te.</span> <span class="w w--b" style="--wd:1.1s">Cuida-te.</span></h1>
+    <p class="hero__hint">Toca na borboleta</p>
+  </div>
+  <div class="hero__foot">
+    <div class="lead">
+      <span class="kick eyebrow">Psicóloga clínica · Formadora certificada</span>
+      Consultas online, com a Rita e uma equipa dedicada. Para quem quer perceber-se melhor e tratar-se com mais gentileza.
+      <div class="cta"><a class="btn" href="#contacto">Marcar uma conversa</a><a class="btn btn--ghost" href="#acompanhamento">Ver como funciona</a></div>
+    </div>
+    <div class="cred"><b>Autoconhecimento</b> | <b>Autocuidado</b><br>Online · CP 26887<br>ERS E164727</div>
+  </div>
+</section>
+
+<!-- ===================== MANIFESTO ===================== -->
+<section class="mani" id="manifesto" aria-label="Manifesto">
+  <div class="wrap">
+    <p class="lit" id="lit">Conhecer-te é perceber o que sentes e o que precisas. Cuidar-te é fazer alguma coisa com isso. <span class="sc">Uma sem a outra</span> fica sempre a meio do caminho.</p>
+    <p class="note rv"><svg viewBox="0 0 60 30" aria-hidden="true"><path d="M2 15 C14 4 24 4 30 15 C36 26 46 26 58 15" fill="none" stroke="#1E1517" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="1 6"/></svg>Duas asas. É assim que a Rita pensa o acompanhamento.</p>
+  </div>
+</section>
+<div class="dv" aria-hidden="true"></div>
+
+<!-- ===================== SOBRE ===================== -->
+<section class="sobre" id="sobre" aria-labelledby="t-sobre">
+  <div class="wrap">
+    <div class="wingframe rv">
+      <div class="tint" aria-hidden="true"></div>
+      <img class="ph" src="img/rita-sala.jpg" width="1350" height="1245" loading="lazy" alt="Rita Barroca numa sala acolhedora, com luz quente ao fundo">
+      <svg class="line" viewBox="0 0 446 404" aria-hidden="true"><g transform="translate(446 0) scale(-1 1) translate(-506 -42)"><use href="#pUp" class="ink"/></g></svg>
+      <img class="cedula" src="img/cedula.png" width="889" height="498" loading="lazy" alt="Cédula profissional de psicóloga de Rita Barroca, n.º 26887">
+    </div>
+    <div class="rv" style="--rd:.1s">
+      <span class="kick">Sobre a Rita</span>
+      <h2 id="t-sobre">Para te ouvires melhor, às vezes é preciso alguém que <em>ouça contigo.</em></h2>
+      <p>A Rita Barroca é psicóloga clínica e formadora certificada. Acompanha pessoas que querem conhecer-se melhor e cuidar de si com mais gentileza, em consulta online, com uma equipa dedicada ao lado.</p>
+      <p><span class="tbc">Apresentação, percurso e forma de trabalhar: a confirmar com a Rita</span></p>
+      <dl class="facts">
+        <dt class="big" aria-hidden="true" style="font-weight:400">+500</dt>
+        <dt style="grid-column:2"><span class="sr">Mais de 500 </span>pessoas transformadas</dt>
+        <dd style="grid-column:2">Como a Rita escreve no seu perfil.</dd>
+      </dl>
+      <div class="pills" aria-label="Em resumo"><span>Psic. clínica + equipa dedicada</span><span>Consultas online</span><span>CP 26887</span><span>ERS E164727</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PERGUNTAS (baralho) ===================== -->
+<section class="perg" id="perguntas" aria-labelledby="t-perg">
+  <div class="wrap">
+    <div>
+      <span class="kick">Para levares contigo</span>
+      <h2 id="t-perg">Uma pergunta de cada vez. <span class="script">Escolhe um lado.</span></h2>
+      <p class="sub">Duas asas, dois baralhos. Vira a carta, lê devagar e responde só para ti. Se uma pergunta ficar a fazer eco, podes levá-la para a conversa com a Rita.</p>
+      <div class="tabs" role="tablist" aria-label="Baralho">
+        <button type="button" role="tab" id="tab-c" aria-selected="true" aria-controls="deck" data-mode="conhece">Conhece-te</button>
+        <button type="button" role="tab" id="tab-u" aria-selected="false" aria-controls="deck" data-mode="cuida" tabindex="-1">Cuida-te</button>
+      </div>
+      <div class="acts">
+        <button class="btn btn--ghost" type="button" id="next">Outra pergunta</button>
+        <button class="btn" type="button" id="take">Levar para a conversa</button>
+      </div>
+      <p class="fine">Exercício de reflexão. Não substitui acompanhamento psicológico nem é um diagnóstico.</p>
+    </div>
+    <div class="deckcol">
+      <div class="deck" id="deck" role="tabpanel" aria-labelledby="tab-c">
+        <div class="ghost g1" aria-hidden="true"></div><div class="ghost g2" aria-hidden="true"></div>
+        <div class="slot" id="slot">
+          <button class="qcard" id="qcard" type="button" aria-label="Virar a carta">
+            <span class="face back">
+              <svg viewBox="0 0 1000 700" aria-hidden="true"><g class="wing" style="--k:1"><g transform="translate(1000 0) scale(-1 1)"><use href="#pLo" class="fill lo"/><use href="#pUp" class="fill"/><use href="#pLo" class="ink"/><use href="#pUp" class="ink"/></g></g><g><use href="#pLo" class="fill lo"/><use href="#pUp" class="fill"/><use href="#pLo" class="ink"/><use href="#pUp" class="ink"/></g><path class="ink body" d="M500 300 C506 380 506 470 500 590"/></svg>
+              <span class="hint">Toca para virar</span>
+            </span>
+            <span class="face front"><span class="k" id="qk">Conhece-te</span><span class="q" id="q"></span><span class="qft" id="qn">1 de 5</span></span>
+          </button>
+        </div>
+      </div>
+      <p class="sr" id="qlive" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ACOMPANHAMENTO (voo) ===================== -->
+<section class="voo" id="acompanhamento" aria-labelledby="t-voo">
+  <div class="wrap">
+    <div class="head">
+      <span class="kick">Como funciona</span>
+      <h2 id="t-voo">Do primeiro passo às <em>tuas próprias asas.</em></h2>
+      <p style="color:var(--ink-2);max-width:52ch">Cada percurso é diferente, mas há um caminho que se repete: começar pela conversa, conhecer, cuidar e, aos poucos, seguir com mais ferramentas tuas.</p>
+    </div>
+    <div class="flight" id="flight">
+      <svg class="path" id="flightSvg" aria-hidden="true"><path class="dash" id="fDash"/><path class="trail" id="fTrail"/></svg>
+      <div class="moth" id="moth" aria-hidden="true">
+        <svg viewBox="0 0 100 100"><g class="wl"><path d="M50 55 C46 36 30 18 14 18 C8 18 8 30 14 40 C22 52 36 58 50 60 Z" fill="#F7A18C" stroke="#1E1517" stroke-width="3" stroke-linejoin="round"/><path d="M50 62 C40 64 26 68 24 80 C22 90 36 92 44 82 C48 76 50 68 50 62 Z" fill="#FBC0B0" stroke="#1E1517" stroke-width="3" stroke-linejoin="round"/></g><g class="wr"><path d="M50 55 C54 36 70 18 86 18 C92 18 92 30 86 40 C78 52 64 58 50 60 Z" fill="#F7A18C" stroke="#1E1517" stroke-width="3" stroke-linejoin="round"/><path d="M50 62 C60 64 74 68 76 80 C78 90 64 92 56 82 C52 76 50 68 50 62 Z" fill="#FBC0B0" stroke="#1E1517" stroke-width="3" stroke-linejoin="round"/></g><path d="M50 40 L50 78" stroke="#1E1517" stroke-width="4.5" stroke-linecap="round"/></svg>
+      </div>
+      <ol class="steps">
+        <li class="st rv">
+          <div class="gl"><svg viewBox="0 0 92 92" aria-hidden="true"><path class="fl" d="M14 62 C20 40 44 28 78 30 C74 52 52 68 14 62 Z"/><path class="ln" d="M14 62 C20 40 44 28 78 30 C74 52 52 68 14 62 Z M14 62 C34 54 52 46 70 36"/><circle class="ln" cx="38" cy="40" r="4"/><circle class="ln" cx="50" cy="44" r="3.2"/><circle class="ln" cx="30" cy="46" r="2.6"/></svg></div>
+          <span class="n">Passo 1</span><h3>Primeira conversa</h3><p>Contas o que te trouxe aqui. Sem pressa, sem julgamento e sem teres de ter tudo arrumado.</p>
+        </li>
+        <li class="st rv" style="--rd:.1s">
+          <div class="gl"><svg viewBox="0 0 92 92" aria-hidden="true"><circle class="fl" cx="20" cy="60" r="8"/><circle class="fl" cx="33" cy="52" r="8"/><circle class="fl" cx="47" cy="48" r="8"/><circle class="fl" cx="61" cy="50" r="8"/><circle class="fl" cx="74" cy="56" r="9.5"/><circle class="ln" cx="17" cy="57" r="8"/><circle class="ln" cx="30" cy="49" r="8"/><circle class="ln" cx="44" cy="45" r="8"/><circle class="ln" cx="58" cy="47" r="8"/><circle class="ln" cx="71" cy="53" r="9.5"/><path class="ln" d="M74 44 C76 36 81 32 86 30 M70 45 C69 37 71 32 74 28"/></svg></div>
+          <span class="n">Passo 2</span><h3>Conhecer-te</h3><p>Percebemos o que sentes, o que repetes sem dar por isso e o que já não te serve.</p>
+        </li>
+        <li class="st rv" style="--rd:.2s">
+          <div class="gl"><svg viewBox="0 0 92 92" aria-hidden="true"><path class="ln" d="M46 6 L46 24"/><path class="fl" d="M46 24 C62 28 66 50 58 68 C54 78 38 78 34 68 C26 50 30 28 46 24 Z"/><path class="ln" d="M46 24 C62 28 66 50 58 68 C54 78 38 78 34 68 C26 50 30 28 46 24 Z"/><path class="ln" d="M36 40 C42 43 50 43 56 40 M33 52 C41 56 51 56 59 52 M35 63 C42 66 50 66 57 63"/></svg></div>
+          <span class="n">Passo 3</span><h3>Cuidar-te</h3><p>Mudanças pequenas que cabem na tua vida real, uma de cada vez e ao teu ritmo.</p>
+        </li>
+        <li class="st rv" style="--rd:.3s">
+          <div class="gl"><svg viewBox="0 0 92 92" aria-hidden="true"><path class="fl" d="M46 48 C42 30 30 18 14 18 C8 20 10 34 18 44 C26 54 38 56 46 54 Z M46 56 C38 58 28 62 26 72 C26 80 38 80 44 72 C46 68 46 62 46 56 Z"/><path class="fl" d="M46 48 C50 30 62 18 78 18 C84 20 82 34 74 44 C66 54 54 56 46 54 Z M46 56 C54 58 64 62 66 72 C66 80 54 80 48 72 C46 68 46 62 46 56 Z"/><path class="ln" d="M46 48 C42 30 30 18 14 18 C8 20 10 34 18 44 C26 54 38 56 46 54 M46 56 C38 58 28 62 26 72 C26 80 38 80 44 72 C46 68 46 62 46 56 M46 48 C50 30 62 18 78 18 C84 20 82 34 74 44 C66 54 54 56 46 54 M46 56 C54 58 64 62 66 72 C66 80 54 80 48 72 C46 68 46 62 46 56"/><path class="ln" d="M46 34 L46 76"/></svg></div>
+          <span class="n">Passo 4</span><h3>Voar com as tuas asas</h3><p>Com mais ferramentas, vamos decidindo juntos quando e como continuar.</p>
+        </li>
+      </ol>
+    </div>
+    <p class="nota"><span class="tbc">Número, duração e frequência das sessões: a confirmar com a Rita</span></p>
+  </div>
+</section>
+
+<!-- ===================== FORMAÇÃO ===================== -->
+<section class="form" id="formacao" aria-labelledby="t-form">
+  <div class="wrap">
+    <div class="rv">
+      <span class="kick">Formadora certificada</span>
+      <h2 id="t-form">Também <em>ensino</em> a cuidar.</h2>
+      <p class="txt">A Rita é formadora certificada. Os temas, formatos, datas e valores das formações vão ser definidos com ela. Estes são só exemplos de como esta secção pode ficar.</p>
+      <ul class="fmts">
+        <li><span class="no">01</span><span class="nm">Workshops</span><span class="tbc">a confirmar</span></li>
+        <li><span class="no">02</span><span class="nm">Formação para equipas e empresas</span><span class="tbc">a confirmar</span></li>
+        <li><span class="no">03</span><span class="nm">Palestras e sessões em grupo</span><span class="tbc">a confirmar</span></li>
+      </ul>
+    </div>
+    <div class="lampframe rv" style="--rd:.12s">
+      <div class="tint" aria-hidden="true"></div>
+      <div class="ph"><img src="img/sala-candeeiro.jpg" width="940" height="900" loading="lazy" alt="Candeeiro aceso e flores numa cómoda, na sala onde a Rita recebe"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DÚVIDAS ===================== -->
+<section class="duv" id="duvidas" aria-labelledby="t-duv">
+  <div class="wrap">
+    <div class="side rv">
+      <span class="kick">Dúvidas</span>
+      <h2 id="t-duv">O que costuma perguntar-se.</h2>
+      <p>Respostas ilustrativas. A Rita confirma cada uma antes de o website ser publicado.</p>
+    </div>
+    <div class="rv" style="--rd:.1s">
+      <details>
+        <summary>Como funcionam as consultas online?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans">São feitas por videochamada, a partir do sítio onde te sentires mais à vontade. <span class="tbc">Plataforma, duração e formato das sessões: a confirmar</span></div>
+      </details>
+      <details>
+        <summary>Preciso de ter “um problema” para começar?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans">Não. Muita gente chega só com a sensação de que podia estar melhor, ou com vontade de se conhecer mais. Na primeira conversa percebemos juntos o que faz sentido para ti.</div>
+      </details>
+      <details>
+        <summary>Quantas sessões vou precisar?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans">Não há um número certo: depende de ti e do que procuras. Define-se com a Rita depois da primeira conversa. <span class="tbc">Frequência e valores: a confirmar</span></div>
+      </details>
+      <details>
+        <summary>O que partilho fica confidencial?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans">O sigilo é um dever da profissão e a base de qualquer acompanhamento psicológico. A Rita explica o enquadramento na primeira conversa.</div>
+      </details>
+      <details>
+        <summary>E se estiver numa situação de crise?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans">Este website não é um serviço de urgência. Se estás em risco ou em sofrimento intenso, liga 112 ou contacta o SNS 24 (808 24 24 24).</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTACTO ===================== -->
+<section class="cont" id="contacto" aria-labelledby="t-cont">
+  <div class="wrap">
+    <div class="rv">
+      <span class="kick">Contacto</span>
+      <h2 id="t-cont" class="script big">Vamos conversar?</h2>
+      <p class="tx">Escreve-me com calma. Não precisas de explicar tudo: basta dizeres o que te trouxe até aqui.</p>
+      <ul class="dados">
+        <li><b>Consultas</b><span>Online</span></li>
+        <li><b>Email</b><span class="tbc">a confirmar com a cliente</span></li>
+        <li><b>Telefone</b><span class="tbc">a confirmar com a cliente</span></li>
+        <li><b>Instagram</b><span class="tbc">a confirmar com a cliente</span></li>
+        <li><b>Horário</b><span class="tbc">a confirmar com a cliente</span></li>
+      </ul>
+    </div>
+    <form class="fm rv" id="fm" style="--rd:.1s" novalidate>
+      <h3>Marcar uma conversa</h3>
+      <div class="row2">
+        <div class="fld"><label for="f-nome">Nome</label><input id="f-nome" name="nome" type="text" autocomplete="name" placeholder="O teu nome"></div>
+        <div class="fld"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" placeholder="nome@email.pt"></div>
+      </div>
+      <div class="fld"><label for="f-int">Procuro</label>
+        <select id="f-int" name="interesse"><option>Uma primeira conversa</option><option>Autoconhecimento</option><option>Autocuidado</option><option>Formação ou workshop</option></select></div>
+      <div class="fld"><label for="msg">O que te traz aqui? (opcional)</label><textarea id="msg" name="mensagem" placeholder="Escreve o que quiseres partilhar"></textarea></div>
+      <button class="btn" type="submit">Enviar mensagem</button>
+      <p class="ok" id="ok" role="status">Isto é uma demonstração: a mensagem não foi enviada nem guardada em lado nenhum.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<!-- ===================== RODAPÉ ===================== -->
+<footer class="ft">
+  <div class="wrap">
+    <img src="img/logo-claro.png" width="797" height="368" loading="lazy" alt="Rita Barroca — Psicóloga">
+    <div>
+      <p><b>Website de demonstração</b> criado pela DD Digital para Rita Barroca. Textos, perguntas, formatos de formação e respostas são ilustrativos e não vinculativos; moradas, contactos, horários e valores ficam por confirmar com a cliente.</p>
+      <p>O logótipo e a fotografia foram fornecidos pela cliente (a cédula profissional e o número de registo vêm do seu perfil). Não foram usadas fotografias de banco. Este website não presta aconselhamento psicológico nem é um serviço de urgência: em caso de crise, 112 ou SNS 24 (808 24 24 24).</p>
+    </div>
+    <div class="legal"><span>CP 26887</span><span>ERS E164727</span><span>Demonstração · DD Digital</span></div>
+  </div>
+</footer>
+
+<script>
+/* ==========================================================================
+   JS — organizado por funcionalidade (futuro: separar em ficheiros)
+   ========================================================================== */
+(function(){
+'use strict';
+var $=function(s,c){return (c||document).querySelector(s)};
+var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+var reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
+var nopre=/[?&]nopre\b/.test(location.search);
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+var html=document.documentElement, body=document.body;
+function clamp(v,a,b){return Math.min(b,Math.max(a,v))}
+
+/* ---------- menu mobile ---------- */
+var burger=$('#burger'), nav=$('#nav'), menuY=0, menuOpen=false;
+function setMenu(open){
+  if(open===menuOpen) return;
+  menuOpen=open;
+  if(open){ menuY=window.scrollY; body.style.top=(-menuY)+'px'; body.classList.add('menu-open'); }
+  else { body.classList.remove('menu-open'); body.style.top=''; html.style.scrollBehavior='auto'; window.scrollTo(0,menuY); html.style.scrollBehavior=''; }
+  nav.classList.toggle('open',open);
+  burger.setAttribute('aria-expanded',String(open));
+}
+burger.addEventListener('click',function(){setMenu(!menuOpen)});
+document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&menuOpen){setMenu(false);burger.focus()} });
+matchMedia('(min-width:901px)').addEventListener('change',function(m){ if(m.matches) setMenu(false) });
+$$('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click',function(e){
+    var id=a.getAttribute('href'); if(id.length<2) return;
+    var t=$(id); if(!t) return;
+    e.preventDefault();
+    var was=menuOpen; setMenu(false);
+    requestAnimationFrame(function(){ t.scrollIntoView({behavior:reduced||was?'auto':'smooth',block:'start'}); history.replaceState(null,'',id); });
+  });
+});
+
+/* ---------- cabeçalho ---------- */
+var hd=$('#top');
+function onScrollHd(){ hd.classList.toggle('solid',window.scrollY>40) }
+window.addEventListener('scroll',onScrollHd,{passive:true}); onScrollHd();
+
+/* ---------- reveals ---------- */
+(function(){
+  var els=$$('.rv');
+  if(!('IntersectionObserver' in window)||reduced){ els.forEach(function(e){e.classList.add('in')}); return }
+  var io=new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)} }) },{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+  els.forEach(function(e){io.observe(e)});
+})();
+
+/* ---------- hero: borboleta que se desenha, abre e respira ---------- */
+(function(){
+  var hero=$('#inicio'), stage=$('#stage'), bf=$('#bfly');
+  var instant=reduced||nopre;
+  var phase=0, boost=0, amp=.36, mx=0, my=0, tmx=0, tmy=0, visible=true, last=0, raf=0, t0=0, hov=0;
+  function start(){
+    hero.classList.add('go');
+    if(instant){ hero.classList.add('instant','done'); return }
+    setTimeout(function(){ hero.classList.add('done'); boost=1; kick() },2900);
+  }
+  /* o JS só liga o loop quando o hero está no ecrã */
+  function frame(t){
+    raf=0; if(!visible) return;
+    var dt=Math.min(.05,(t-last)/1000||.016); last=t;
+    boost*=Math.pow(.2,dt);           /* decai ~ 1,4 s */
+    hov*=Math.pow(.35,dt);
+    var e=Math.max(boost,hov);
+    phase+=dt*(1.55+e*13);
+    var a=.34+e*.3;
+    var k=1-a*(.5-.5*Math.cos(phase));
+    bf.style.setProperty('--k',k.toFixed(3));
+    bf.style.setProperty('--sway',(Math.sin(t/1700)*1.1).toFixed(2)+'deg');
+    mx+=(tmx-mx)*.06; my+=(tmy-my)*.06;
+    stage.style.setProperty('--mx',mx.toFixed(3)); stage.style.setProperty('--my',my.toFixed(3));
+    raf=requestAnimationFrame(frame);
+  }
+  function kick(){ if(!raf&&visible&&!reduced){ last=performance.now(); raf=requestAnimationFrame(frame) } }
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){ visible=es[0].isIntersecting; if(visible) kick() }).observe(hero);
+  }
+  /* rato: parallax suave e asas mais vivas ao passar; toque/clique: voo agitado */
+  if(fine){
+    stage.addEventListener('pointermove',function(e){
+      var r=stage.getBoundingClientRect();
+      tmx=((e.clientX-r.left)/r.width-.5)*2; tmy=((e.clientY-r.top)/r.height-.5)*2;
+      var dx=Math.abs(tmx), dy=Math.abs(tmy-.1); if(dx<.5) hov=Math.max(hov,.22+(.5-dx)*.5);
+      kick();
+    });
+    stage.addEventListener('pointerleave',function(){tmx=0;tmy=0});
+  }
+  stage.addEventListener('pointerdown',function(){ boost=1; kick() });
+  var go=function(){ if(document.fonts&&document.fonts.ready){ Promise.race([document.fonts.ready,new Promise(function(r){setTimeout(r,1200)})]).then(start) } else start() };
+  if(document.readyState==='complete') go(); else window.addEventListener('load',go);
+  if(reduced){ bf.style.setProperty('--k','1') } else kick();
+})();
+
+/* ---------- manifesto: palavras que acendem com o scroll ---------- */
+(function(){
+  var el=$('#lit'); if(!el) return;
+  function split(node){
+    Array.prototype.slice.call(node.childNodes).forEach(function(n){
+      if(n.nodeType===3){
+        var parts=n.nodeValue.split(/(\s+)/), frag=document.createDocumentFragment();
+        parts.forEach(function(p){ if(!p) return; if(/^\s+$/.test(p)) frag.appendChild(document.createTextNode(p)); else { var s=document.createElement('span'); s.className='wd'; s.textContent=p; frag.appendChild(s) } });
+        node.replaceChild(frag,n);
+      } else if(n.nodeType===1 && n.className!=='wd'){ split(n) }
+    });
+  }
+  split(el);
+  var words=$$('.wd',el);
+  function upd(){
+    var r=el.getBoundingClientRect(), vh=innerHeight;
+    var p=clamp((vh*.82-r.top)/(r.height+vh*.35),0,1);
+    var n=Math.round(p*words.length*1.08);
+    words.forEach(function(w,i){ w.classList.toggle('on',i<n) });
+  }
+  if(reduced){ words.forEach(function(w){w.classList.add('on')}); return }
+  window.addEventListener('scroll',upd,{passive:true}); window.addEventListener('resize',upd); upd();
+})();
+
+/* ---------- baralho de perguntas ---------- */
+(function(){
+  var DECK={
+    conhece:['O que é que sinto neste momento, e em que parte do corpo o sinto?','Que frase me repito mais vezes? De quem foi ela, em primeiro lugar?','Da última vez que disse “está tudo bem”, estava mesmo?','O que é que eu faria se não tivesse de agradar a ninguém?','Que parte de mim anda a pedir atenção há algum tempo?'],
+    cuida:['Qual é o gesto mais pequeno que me faria bem hoje? Faço só esse.','A quem posso dizer “agora não consigo”, sem pedir desculpa?','O que é que posso tirar da lista de hoje sem que o mundo acabe?','Se falasse comigo como falo com alguém de quem gosto, como soaria?','Quando foi a última vez que descansei sem fazer mais nada ao mesmo tempo?']
+  };
+  var mode='conhece', idx=0, busy=false;
+  var card=$('#qcard'), slot=$('#slot'), q=$('#q'), qk=$('#qk'), qn=$('#qn'), live=$('#qlive'), deck=$('#deck');
+  var tabs=$$('.tabs [role=tab]');
+  function render(){
+    var list=DECK[mode];
+    q.textContent=list[idx]; qk.textContent=mode==='conhece'?'Conhece-te':'Cuida-te'; qn.textContent=(idx+1)+' de '+list.length;
+  }
+  function flip(on){
+    var f=on===undefined?!card.classList.contains('flipped'):on;
+    card.classList.toggle('flipped',f);
+    card.setAttribute('aria-label',f?'Virar a carta':'Virar a carta');
+    if(f) live.textContent=qk.textContent+': '+q.textContent;
+  }
+  function swap(newIdx,newMode){
+    if(busy) return; busy=true;
+    var change=function(){
+      if(newMode) mode=newMode; idx=newIdx;
+      card.classList.add('notrans'); card.classList.remove('flipped'); render();
+      slot.classList.remove('out'); slot.classList.add('pre');
+      void slot.offsetWidth;
+      slot.classList.remove('pre'); card.classList.remove('notrans');
+      setTimeout(function(){busy=false;if(!reduced) flip(true)},reduced?0:380);
+    };
+    if(reduced){ change(); return }
+    slot.classList.add('out'); setTimeout(change,430);
+  }
+  card.addEventListener('click',function(){ flip() });
+  $('#next').addEventListener('click',function(){ swap((idx+1)%DECK[mode].length) });
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      if(t.dataset.mode===mode) return;
+      tabs.forEach(function(x){ var on=x===t; x.setAttribute('aria-selected',on); x.tabIndex=on?0:-1 });
+      deck.setAttribute('aria-labelledby',t.id);
+      swap(0,t.dataset.mode);
+    });
+    t.addEventListener('keydown',function(e){
+      if(e.key==='ArrowRight'||e.key==='ArrowLeft'){ var o=tabs[tabs.indexOf(t)?0:1]; o.focus(); o.click() }
+    });
+  });
+  $('#take').addEventListener('click',function(){
+    var m=$('#msg'); m.value='Uma pergunta que me ficou na cabeça: “'+q.textContent+'”\n\n';
+    $('#contacto').scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});
+    setTimeout(function(){ m.focus({preventScroll:true}); m.setSelectionRange(m.value.length,m.value.length) },reduced?0:700);
+  });
+  render();
+})();
+
+/* ---------- acompanhamento: a borboleta voa pelos 4 passos ---------- */
+(function(){
+  var box=$('#flight'); if(!box) return;
+  var svg=$('#flightSvg'), dash=$('#fDash'), trail=$('#fTrail'), moth=$('#moth');
+  var steps=$$('.st',box), glyphs=$$('.gl',box);
+  var L=0, marks=[], lastScroll=0, flyTimer=0;
+  function catmull(p){
+    var d='M'+p[0][0].toFixed(1)+' '+p[0][1].toFixed(1);
+    for(var i=0;i<p.length-1;i++){
+      var p0=p[i-1]||p[i], p1=p[i], p2=p[i+1], p3=p[i+2]||p2;
+      d+=' C'+(p1[0]+(p2[0]-p0[0])/6).toFixed(1)+' '+(p1[1]+(p2[1]-p0[1])/6).toFixed(1)+' '+(p2[0]-(p3[0]-p1[0])/6).toFixed(1)+' '+(p2[1]-(p3[1]-p1[1])/6).toFixed(1)+' '+p2[0].toFixed(1)+' '+p2[1].toFixed(1);
+    }
+    return d;
+  }
+  function build(){
+    var r=box.getBoundingClientRect(); if(!r.width) return;
+    svg.setAttribute('viewBox','0 0 '+r.width+' '+r.height);
+    var pts=glyphs.map(function(g){ var b=g.getBoundingClientRect(); return [b.left-r.left+b.width/2,b.top-r.top+b.height/2] });
+    var vertical=Math.abs(pts[1][0]-pts[0][0])<20;     /* 1 coluna (mobile) */
+    var p=[]; var s0=pts[0], sN=pts[pts.length-1];
+    p.push(vertical?[s0[0]-6,s0[1]-70]:[Math.max(10,s0[0]-120),s0[1]-10]);
+    pts.forEach(function(pt,i){
+      p.push(pt);
+      if(i<pts.length-1){
+        var n=pts[i+1], m=[(pt[0]+n[0])/2,(pt[1]+n[1])/2], sg=i%2?1:-1;
+        if(vertical) m[0]+=sg*Math.min(60,r.width*.14); else m[1]+=sg*Math.min(70,r.height*.14);
+        p.push(m);
+      }
+    });
+    p.push(vertical?[sN[0]+4,Math.min(r.height-4,sN[1]+110)]:[Math.min(r.width-10,sN[0]+150),sN[1]-20]);
+    var d=catmull(p);
+    dash.setAttribute('d',d); trail.setAttribute('d',d);
+    L=trail.getTotalLength();
+    trail.style.strokeDasharray=L+' '+L;
+    /* comprimento do percurso em que cada glifo é "tocado" */
+    marks=pts.map(function(pt){
+      var best=0,bd=1e9; for(var l=0;l<=L;l+=6){ var q=trail.getPointAtLength(l), dd=(q.x-pt[0])*(q.x-pt[0])+(q.y-pt[1])*(q.y-pt[1]); if(dd<bd){bd=dd;best=l} }
+      return best;
+    });
+    update(true);
+  }
+  function update(force){
+    if(!L) return;
+    var r=box.getBoundingClientRect(), vh=innerHeight;
+    var p=clamp((vh*.62-r.top)/(r.height*.92),0,1);
+    if(reduced) p=1;
+    var len=p*L;
+    trail.style.strokeDashoffset=String(L-len);
+    var pt=trail.getPointAtLength(len), pt2=trail.getPointAtLength(Math.min(L,len+3)), pt1=trail.getPointAtLength(Math.max(0,len-3));
+    var ang=Math.atan2(pt2.y-pt1.y,pt2.x-pt1.x)*180/Math.PI+90;
+    moth.style.transform='translate('+pt.x.toFixed(1)+'px,'+pt.y.toFixed(1)+'px) rotate('+ang.toFixed(1)+'deg)';
+    steps.forEach(function(s,i){ s.classList.toggle('on',len>=marks[i]-6) });
+    if(!force && !reduced){ moth.classList.add('fly'); clearTimeout(flyTimer); flyTimer=setTimeout(function(){moth.classList.remove('fly')},260) }
+  }
+  window.addEventListener('scroll',function(){update(false)},{passive:true});
+  window.addEventListener('resize',build);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(build);
+  window.addEventListener('load',build); build();
+})();
+
+/* ---------- formulário de demonstração (não envia nada) ---------- */
+(function(){
+  var f=$('#fm'); if(!f) return;
+  f.addEventListener('submit',function(e){ e.preventDefault(); $('#ok').classList.add('show') });
+})();
+})();
+</script>
+</body>
+</html>
