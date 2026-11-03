@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Damn Curls by Filipa Diaz — Biolink (demonstração)</title>
+<meta name="description" content="Demonstração de biolink para Damn Curls by Filipa Diaz — especialista em cabelos com curvatura. Conteúdo ilustrativo.">
+<meta name="theme-color" content="#592ED3">
+<meta property="og:title" content="Damn Curls by Filipa Diaz — Biolink (demonstração)">
+<meta property="og:description" content="Cachos com curl-fiança. Demonstração de biolink criada pela DD Digital.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='50' fill='%23F5CDE3'/%3E%3Cg fill='%23DD3128'%3E%3Ccircle cx='50' cy='54' r='30'/%3E%3Ccircle cx='20' cy='62' r='12'/%3E%3Ccircle cx='22' cy='40' r='12'/%3E%3Ccircle cx='36' cy='25' r='12'/%3E%3Ccircle cx='56' cy='20' r='12'/%3E%3Ccircle cx='76' cy='29' r='12'/%3E%3Ccircle cx='82' cy='50' r='12'/%3E%3Ccircle cx='79' cy='71' r='12'/%3E%3Ccircle cx='64' cy='84' r='11'/%3E%3Ccircle cx='36' cy='84' r='11'/%3E%3C/g%3E%3Cpath d='M50 44C41 58 42 78 50 100C58 78 59 58 50 44Z' fill='%23F5CDE3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Caveat:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ===== NOTAS DA DEMO — Damn Curls Bio (biolink) =====
+*Herdado de Damn Curls 2 (mesma marca, pedido do cliente):* paleta violeta/rosa/lilás/coral/vermelho, Baloo 2 + DM Sans + Caveat, símbolo SVG do cabelo cacheado, fio de cabelo em canvas que muda de cacho (2/3/4) e segue o rato/dedo, pilha de cartões-polaroid arrastável, fitas cruzadas com velocidade ligada ao scroll, stickers inclinados, faixa DEMO + selo + nota ·
+*Novo (pensado para biolink):* coluna única mobile-first; fio em ecrã inteiro por trás dos botões; wordmark de letras que saltam ao toque; selo do avatar com texto a rodar; balão “a tua mensagem” que se escreve sozinho e muda com o tipo de cacho e com o serviço escolhido (é o que seguiria para o WhatsApp); botões-sticker que “saltam” ao entrar e largam confetti de cachos ao toque; Serviços e “Dica curl do dia” como stickers que se abrem (dado a rolar); antes & depois em polaroid.
+   (Armadilhas técnicas: ver ARMADILHAS.md na pasta Demo/) ===== */
+
+/* Conceito — Damn Curls Bio
+   Hero: pilha de cartões pequena + wordmark gigante; o fio de cabelo corre pelo ecrã inteiro (por trás do conteúdo) e muda de cacho com o tipo escolhido.
+   Estrutura: topo (cartões, wordmark, tipo de cacho) → balão + botão principal → stickers de links → antes & depois → dados a confirmar → fitas → rodapé.
+   Linguagem de forma: stickers inclinados, cantos redondos, pílulas, letra manuscrita (Caveat) para anotações. */
+:root {
+  --pink: #F5CDE3;
+  --pink-soft: #FBE5F0;
+  --lav: #BDA8F6;
+  --lav-soft: #E6DCFB;
+  --violet: #592ED3;
+  --violet-deep: #4824B0;
+  --cream: #FFF7FB;
+  --ink: #1D0F52;
+  --ink-soft: #5A4A86;
+  --red: #DD3128;
+  --coral: #FF7A6B;
+  --font-display: "Baloo 2", "Arial Rounded MT Bold", "Helvetica Neue", sans-serif;
+  --font-body: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-hand: "Caveat", "Comic Sans MS", cursive;
+  --bar: 34px;
+  --ease-pop: cubic-bezier(.3, 1.5, .5, 1);
+  color-scheme: light;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--violet); color: var(--cream);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; box-shadow: 0 0 0 6px var(--ink); }
+h1, h2, h3, p, figure, ul { margin: 0; padding: 0; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; line-height: 1; letter-spacing: -.02em; }
+.hand { font-family: var(--font-hand); font-weight: 700; line-height: 1; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ===== faixa DEMO + selo + nota (aviso de demonstração) ===== */
+.demo-bar {
+  position: sticky; top: 0; z-index: 45; min-height: calc(var(--bar) + env(safe-area-inset-top, 0px)); padding-top: env(safe-area-inset-top, 0px);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: var(--ink); color: var(--cream); text-align: center;
+  font-size: 13px; padding-inline: 14px; white-space: nowrap; overflow: hidden;
+}
+.demo-bar b { background: var(--red); color: #fff; padding: 2px 9px; border-radius: 99px; font-size: 11px; letter-spacing: .12em; flex: none; }
+.demo-bar span { overflow: hidden; text-overflow: ellipsis; }
+.demo-bar .s { display: none; }
+.demo-chip {
+  position: fixed; right: 14px; bottom: 14px; z-index: 50;
+  background: var(--ink); color: var(--cream); font-size: 12px; font-weight: 500;
+  padding: 8px 14px; border-radius: 99px; box-shadow: 0 6px 24px rgba(29,15,82,.35);
+  display: flex; align-items: center; gap: 8px;
+}
+.demo-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); animation: pulse 1.8s infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+@media (max-width: 640px) {
+  .demo-bar .l { display: none; } .demo-bar .s { display: inline; }
+  .demo-chip { display: none; }
+}
+
+/* ===== fundo: fio de cabelo + marcas decorativas ===== */
+#strand { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+.deco { position: fixed; z-index: 1; width: 230px; height: 230px; color: var(--pink); opacity: .1; --cut: var(--violet); pointer-events: none; display: none; animation: float 9s ease-in-out infinite; }
+.deco.a { left: 6vw; top: 24vh; }
+.deco.b { right: 6vw; bottom: 12vh; width: 300px; height: 300px; animation-delay: -4s; animation-direction: reverse; }
+@keyframes float { 50% { transform: translateY(-22px) rotate(8deg); } }
+@media (min-width: 900px) { .deco { display: block; } }
+
+/* ===== coluna ===== */
+.col {
+  position: relative; z-index: 2; container-type: inline-size; overflow-x: clip; /* o cartão que “voa” não pode alargar o viewport no telemóvel */
+  max-width: 460px; margin-inline: auto; padding: 14px 18px 40px;
+  padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px));
+}
+.col > * { min-width: 0; }
+
+/* entrada “pop”: só começa quando o elemento aparece (.in); fill backwards para não bloquear os hovers */
+.js .pop:not(.in) { opacity: 0; }
+.js .pop.in { animation: pop .85s var(--ease-pop) backwards; animation-delay: var(--d, 0s); }
+@keyframes pop { from { opacity: 0; transform: translateY(46px) scale(.82) rotate(calc(var(--r, 0deg) * -4)); } }
+
+/* ===== topo ===== */
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--pink); text-align: center; margin-bottom: 16px; }
+.stage { position: relative; width: min(100%, 290px); margin: 0 auto 22px; }
+.stack-wrap { width: 60%; margin-inline: auto; }
+.stack { position: relative; aspect-ratio: 3/4; touch-action: pan-y; cursor: grab; outline-offset: 8px; }
+.sc { position: absolute; inset: 0; border-radius: 22px; background: var(--cream); padding: 6px; box-shadow: 0 26px 36px -18px rgba(0,0,0,.55); transition: transform .7s cubic-bezier(.2,.8,.2,1), opacity .35s; user-select: none; -webkit-user-select: none; }
+.sc img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; border-radius: 17px; pointer-events: none; }
+.sc[data-pos="0"] { transform: rotate(-2deg); z-index: 3; }
+.sc[data-pos="1"] { transform: translate(20px, -6px) rotate(5deg) scale(.96); z-index: 2; }
+.sc[data-pos="2"] { transform: translate(-18px, -12px) rotate(-7deg) scale(.92); z-index: 1; }
+.sc.fly[data-pos] { transform: translate(112%, 6%) rotate(16deg); opacity: 0; transition-duration: .45s; }
+
+/* selo do avatar: texto a rodar à volta da Filipa */
+.avatar { position: absolute; left: -6px; bottom: -18px; width: 92px; height: 92px; z-index: 5; border-radius: 50%; background: var(--pink); box-shadow: 0 14px 24px -10px rgba(0,0,0,.55); }
+.avatar svg { position: absolute; inset: 0; width: 100%; height: 100%; animation: spin 16s linear infinite; }
+.avatar text { font-family: var(--font-display); font-weight: 800; font-size: 11.5px; letter-spacing: .02em; fill: var(--violet); text-transform: uppercase; }
+.avatar img { position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; object-fit: cover; border: 3px solid var(--cream); }
+@keyframes spin { to { transform: rotate(360deg); } }
+/* selo do tipo de cacho */
+.tag { position: absolute; right: -2px; top: -6px; z-index: 5; width: 76px; height: 76px; border-radius: 50%; background: var(--red); color: #fff; display: grid; place-content: center; text-align: center; transform: rotate(10deg); box-shadow: 0 12px 20px -8px rgba(0,0,0,.5); }
+.tag b { font-family: var(--font-display); font-weight: 800; font-size: 2.1rem; line-height: .85; }
+.tag small { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; line-height: 1.1; }
+.tag.bump { animation: bump .6s var(--ease-pop); }
+@keyframes bump { from { transform: rotate(-22deg) scale(.5); } }
+.nudge { position: absolute; left: 0; top: 4px; z-index: 5; font-size: 1.35rem; color: var(--coral); transform: rotate(-8deg); transition: opacity .5s; pointer-events: none; }
+.nudge.off { opacity: 0; }
+
+/* wordmark: letras que saltam ao toque */
+.word-wrap { position: relative; }
+.word { font-weight: 800; font-size: 17px; font-size: 17.4cqw; line-height: .82; letter-spacing: -.045em; color: var(--pink); text-align: center; white-space: nowrap; cursor: pointer; user-select: none; -webkit-user-select: none; padding: .1em 0 .06em; }
+.word .ch { display: inline-block; }
+.js .word .ch { animation: drop .9s var(--ease-pop) backwards; animation-delay: calc(var(--i) * .055s + .1s); }
+@keyframes drop { from { opacity: 0; transform: translateY(-150%) rotate(calc(var(--i) * 5deg - 14deg)); } }
+.by { display: block; width: max-content; margin: -2px 6px 0 auto; font-size: 1.7rem; color: var(--cream); transform: rotate(-4deg); }
+.tagline { font-family: var(--font-display); font-weight: 700; letter-spacing: -.02em; font-size: 1.6rem; line-height: 1.05; text-align: center; margin: 10px 0 16px; }
+.tagline em { font-style: normal; color: var(--pink); }
+
+.pick-l { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 10px; color: var(--pink); display: flex; align-items: center; justify-content: center; gap: 8px; }
+.pick-l svg { width: 18px; height: 18px; flex: none; animation: wiggle 2.4s ease-in-out infinite; }
+@keyframes wiggle { 50% { transform: rotate(18deg) translateY(-2px); } }
+.pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.pill { border: 0; background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255,247,251,.5); color: var(--cream); padding: 9px 14px; min-height: 44px; border-radius: 99px; font-weight: 500; font-size: 14.5px; transition: background .25s, color .25s, box-shadow .25s, transform .3s var(--ease-pop); display: inline-flex; align-items: center; gap: 7px; }
+.pill b { font-family: var(--font-display); font-weight: 800; font-size: 1.2em; line-height: 1; color: var(--pink); }
+.pill:active { transform: scale(.92); }
+.pill[aria-checked="true"] { background: var(--pink); color: var(--ink); box-shadow: none; transform: rotate(-2deg) scale(1.05); }
+.pill[aria-checked="true"] b { color: var(--red); }
+.picker-d { font-size: 14px; text-align: center; min-height: 3em; max-width: 24em; margin: 12px auto 0; opacity: .9; }
+
+/* ===== balão + botão principal ===== */
+.say { margin-top: 8px; }
+.say-l { font-size: 1.3rem; color: var(--coral); margin: 0 0 6px 6px; transform: rotate(-2deg); display: flex; align-items: center; gap: 6px; width: max-content; }
+.say-l svg { width: 30px; height: 18px; }
+.bubble { position: relative; background: var(--cream); color: var(--ink); border-radius: 22px 22px 6px 22px; padding: 13px 16px; margin: 0 0 16px 18px; font-size: 15px; line-height: 1.45; box-shadow: 0 16px 26px -18px rgba(0,0,0,.6); min-height: 4.6em; }
+.bubble::after { content: ""; position: absolute; right: 34px; bottom: -8px; width: 18px; height: 18px; background: var(--cream); transform: rotate(45deg); border-radius: 0 0 5px 0; }
+.bubble .ghost { visibility: hidden; }
+.bubble .caret { display: inline-block; width: 2px; height: 1em; margin-left: 2px; background: var(--violet); vertical-align: -.14em; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.ctaw { position: relative; }
+.cta {
+  position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: 72px; padding: 10px 11px 10px 24px; border-radius: 99px; text-decoration: none;
+  background: var(--pink); color: var(--ink); box-shadow: 0 20px 30px -14px rgba(0,0,0,.6);
+  font-family: var(--font-display); font-weight: 800; font-size: 1.45rem; line-height: 1.02; letter-spacing: -.02em;
+  transform: rotate(-1deg); transition: transform .3s var(--ease-pop);
+  animation: wig 5.5s 2.4s ease-in-out infinite;
+}
+.cta small { display: block; font-family: var(--font-body); font-weight: 500; font-size: 12.5px; letter-spacing: 0; margin-top: 3px; }
+.cta::before { content: ""; position: absolute; inset: 0; border-radius: 99px; border: 3px solid var(--pink); animation: ring 2.4s ease-out infinite; pointer-events: none; }
+.cta .go { width: 52px; height: 52px; border-radius: 50%; background: var(--red); color: #fff; display: grid; place-items: center; flex: none; transition: transform .3s var(--ease-pop); }
+.cta .go svg { width: 22px; height: 22px; }
+.cta:active { transform: rotate(0) scale(.96); animation: none; }
+@keyframes ring { from { transform: scale(1); opacity: .9; } to { transform: scale(1.1, 1.38); opacity: 0; } }
+@keyframes wig { 0%, 88%, 100% { transform: rotate(-1deg); } 91% { transform: rotate(-3.5deg) scale(1.02); } 94% { transform: rotate(1.2deg) scale(1.02); } 97% { transform: rotate(-1.5deg); } }
+
+/* ===== stickers de links ===== */
+.sec { font-size: 1.7rem; color: var(--pink); margin: 36px 0 14px 6px; display: flex; align-items: center; gap: 8px; transform: rotate(-2deg); width: max-content; }
+.sec svg { width: 40px; height: 24px; flex: none; }
+.links { list-style: none; display: grid; gap: 14px; }
+.lk {
+  --c: var(--cream); --cc: var(--ink); --ic: var(--red); --icc: #fff; --r: -1.2deg;
+  position: relative; background: var(--c); color: var(--cc); border-radius: 28px; transform: rotate(var(--r));
+  box-shadow: 0 16px 24px -16px rgba(0,0,0,.6); transition: transform .45s var(--ease-pop), box-shadow .3s;
+}
+.lk:nth-child(1) { --c: var(--lav-soft); --r: 1deg; }
+.lk:nth-child(2) { --c: var(--cream); --r: -1.4deg; }
+.lk:nth-child(3) { --c: var(--coral); --ic: var(--ink); --icc: var(--pink); --r: 1.2deg; }
+.lk:nth-child(4) { --c: var(--ink); --cc: var(--cream); --ic: var(--pink); --icc: var(--ink); --r: -1deg; }
+.lk:nth-child(5) { --c: var(--pink-soft); --r: 1.4deg; }
+.lk-h { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 50px minmax(0, 1fr) auto; align-items: center; gap: 14px; width: 100%; min-height: 68px; padding: 9px 16px 9px 9px; cursor: pointer; border-radius: 28px; text-decoration: none; }
+.lk-h:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; box-shadow: 0 0 0 6px var(--ink); }
+.ic { width: 50px; height: 50px; border-radius: 50%; background: var(--ic); color: var(--icc); display: grid; place-items: center; transition: transform .5s var(--ease-pop); }
+.ic svg { width: 24px; height: 24px; }
+.lk-h strong { display: block; font-family: var(--font-display); font-weight: 700; font-size: 1.22rem; line-height: 1.05; letter-spacing: -.01em; }
+.lk-h em { display: block; font-style: normal; font-family: var(--font-hand); font-weight: 700; font-size: 1.2rem; line-height: 1.05; opacity: .8; margin-top: 2px; }
+.lk-h .ar { width: 20px; height: 20px; opacity: .85; transition: transform .3s; }
+.tbc { display: inline-block; font-size: 11.5px; font-weight: 500; border: 1.5px dashed currentColor; border-radius: 99px; padding: 1px 9px; opacity: .85; white-space: nowrap; }
+.lk:active { transform: rotate(0) scale(.97); }
+@media (hover: hover) and (pointer: fine) {
+  .lk:hover { transform: rotate(0) translateY(-4px); box-shadow: 0 24px 30px -18px rgba(0,0,0,.7); }
+  .lk:hover .ic { transform: rotate(-12deg) scale(1.1); }
+  .lk:hover .ar { transform: translateX(4px); }
+  .cta:hover { transform: rotate(0) translateY(-3px); animation: none; }
+  .cta:hover .go { transform: rotate(-10deg) scale(1.1); }
+}
+
+/* sticker que se abre (serviços, dica do dia) */
+.acc .chev { width: 20px; height: 20px; transition: transform .45s var(--ease-pop); }
+.acc.open { --r: 0deg; }
+.acc.open .chev { transform: rotate(180deg); }
+.panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .5s cubic-bezier(.2,.8,.2,1); }
+.acc.open .panel { grid-template-rows: 1fr; }
+.panel > div { min-height: 0; overflow: hidden; visibility: hidden; transition: visibility 0s .5s; }
+.acc.open .panel > div { visibility: visible; transition-delay: 0s; }
+.panel-in { padding: 4px 16px 18px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 0; background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; padding: 8px 14px; min-height: 44px; border-radius: 99px; font-weight: 500; font-size: 14.5px; display: inline-flex; align-items: center; gap: 8px; transition: background .25s, color .25s, transform .3s var(--ease-pop); }
+.chip i { font-style: normal; font-family: var(--font-display); font-weight: 800; width: 22px; height: 22px; border-radius: 50%; background: var(--red); color: #fff; display: grid; place-items: center; font-size: .85rem; line-height: 1; }
+.chip:active { transform: scale(.94); }
+.chip[aria-checked="true"] { background: var(--violet); color: #fff; box-shadow: none; transform: rotate(-1.5deg); }
+.note-h { font-size: 1.25rem; margin-top: 12px; color: var(--violet); }
+.tipcard { background: var(--ink); color: var(--cream); border-radius: 22px; padding: 18px 20px; min-height: 8.2em; display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
+.tipcard .lab { font-size: 1.5rem; color: var(--coral); }
+.tipcard h3 { font-size: 1.32rem; line-height: 1.1; }
+.tipcard.swap > * { animation: swap .6s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes swap { from { opacity: 0; transform: translateY(16px) rotate(2deg); } }
+.again { margin-top: 12px; border: 0; background: var(--violet); color: #fff; font-weight: 700; font-size: 15px; padding: 10px 18px 10px 12px; min-height: 48px; border-radius: 99px; display: inline-flex; align-items: center; gap: 10px; transition: transform .3s var(--ease-pop); }
+.again:active { transform: scale(.94); }
+.again svg { width: 26px; height: 26px; }
+.again.roll svg { animation: roll .8s cubic-bezier(.3,1.2,.4,1); }
+@keyframes roll { from { transform: rotate(-360deg) scale(.6); } }
+
+/* ===== antes & depois ===== */
+.ba { position: relative; width: min(68%, 280px); margin: 0 auto; background: var(--cream); padding: 10px 10px 12px; border-radius: 26px; transform: rotate(-2deg); box-shadow: 0 30px 40px -24px rgba(0,0,0,.65); transition: transform .5s var(--ease-pop); }
+.ba img { width: 100%; border-radius: 18px; }
+.ba .tape { position: absolute; top: -14px; left: 50%; width: 100px; height: 30px; margin-left: -50px; background: rgba(189,168,246,.85); transform: rotate(3deg); }
+.ba .hand { position: absolute; right: -18px; bottom: 28px; background: var(--red); color: #fff; font-size: 1.5rem; padding: 6px 16px 8px; border-radius: 99px; transform: rotate(5deg); box-shadow: 0 10px 16px -8px rgba(0,0,0,.5); }
+.ba-note { margin-top: 16px; font-size: 12.5px; text-align: center; opacity: .8; }
+.ba-wrap { cursor: pointer; }
+.ba-wrap:active .ba { transform: rotate(1deg) scale(.97); }
+
+/* ===== dados a confirmar ===== */
+.info { display: grid; gap: 12px; margin: 0; font-size: 15px; }
+.info div { display: flex; gap: 14px; align-items: baseline; border-top: 1px solid rgba(255,247,251,.25); padding-top: 12px; }
+.info dt { font-weight: 700; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; min-width: 90px; color: var(--pink); }
+.info dd { margin: 0; }
+.info .tbc { border-color: rgba(255,247,251,.6); background: var(--violet-deep); opacity: 1; }
+
+/* ===== fitas cruzadas ===== */
+.ribbons { position: relative; z-index: 5; height: 150px; margin-bottom: -75px; overflow: hidden; pointer-events: none; }
+.band { position: absolute; left: -6%; right: -6%; top: 50%; height: 52px; margin-top: -26px; overflow: hidden; display: flex; align-items: center; }
+.band.a { background: var(--ink); color: var(--pink); transform: rotate(-2.4deg); z-index: 1; }
+.band.b { background: var(--red); color: var(--cream); transform: rotate(2.2deg); z-index: 2; }
+.trk { display: flex; width: max-content; will-change: transform; }
+.grp { display: flex; align-items: center; flex: none; }
+.grp span { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; white-space: nowrap; display: flex; align-items: center; }
+.grp svg { width: 24px; height: 24px; margin: 0 22px; flex: none; opacity: .95; }
+.band.a .grp svg { color: var(--coral); --cut: var(--ink); }
+.band.b .grp svg { color: var(--pink); --cut: var(--red); }
+
+/* ===== rodapé ===== */
+footer { position: relative; z-index: 2; background: var(--pink); color: var(--ink); padding: 112px 0 calc(28px + env(safe-area-inset-bottom, 0px)); overflow: hidden; }
+.f-in { max-width: 460px; margin-inline: auto; padding-inline: 18px; container-type: inline-size; }
+.f-word { font-family: var(--font-display); font-weight: 800; font-size: 15.6px; font-size: 16.2cqw; line-height: .85; letter-spacing: -.045em; color: var(--violet); margin-bottom: 22px; white-space: nowrap; text-align: center; }
+.f-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; font-size: 13px; border-top: 1.5px solid rgba(29,15,82,.25); padding-top: 16px; }
+.f-row a { text-underline-offset: 3px; }
+.f-demo { margin-top: 16px; font-size: 12.5px; background: var(--cream); color: var(--ink); padding: 12px 16px; border-radius: 14px; }
+/* crédito DD Digital (texto fixo) */
+.credito { margin-top: 20px; font-size: .78rem; color: var(--ink-soft); text-align: center; }
+.credito a { color: var(--violet); text-decoration: none; font-weight: 700; background: linear-gradient(var(--red), var(--red)) 0 100% / 0 1px no-repeat; transition: color .2s, background-size .3s ease; }
+.credito a:hover, .credito a:focus-visible { color: var(--ink); background-size: 100% 1px; }
+.credito-emoji { display: inline-block; transform-origin: 70% 70%; animation: piscar 6s ease-in-out infinite; }
+@keyframes piscar { 0%, 86%, 100% { transform: rotate(0) scale(1); } 90% { transform: rotate(-14deg) scale(1.2); } 94% { transform: rotate(10deg) scale(1.2); } 97% { transform: rotate(0) scale(1); } }
+
+/* toast + confetti de cachos */
+.toast { position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 160%); background: var(--ink); color: var(--cream); padding: 13px 20px; border-radius: 22px; font-size: 14px; line-height: 1.35; z-index: 60; transition: transform .45s var(--ease-pop); box-shadow: 0 12px 30px rgba(29,15,82,.5); width: max-content; max-width: calc(100vw - 32px); text-align: center; }
+.toast.show { transform: translate(-50%, 0); }
+.bp { position: fixed; z-index: 70; border-radius: 50%; pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  .cta::before, .avatar svg { animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- símbolo: silhueta de cabelo cacheado (do site Damn Curls 2); --cut é a cor do fundo para o recorte do rosto -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="mark" viewBox="0 0 100 100">
+    <g fill="currentColor">
+      <circle cx="50" cy="54" r="30"/>
+      <circle cx="20" cy="62" r="12"/><circle cx="22" cy="40" r="12"/><circle cx="36" cy="25" r="12"/>
+      <circle cx="56" cy="20" r="12"/><circle cx="76" cy="29" r="12"/><circle cx="82" cy="50" r="12"/>
+      <circle cx="79" cy="71" r="12"/><circle cx="64" cy="84" r="11"/><circle cx="36" cy="84" r="11"/>
+      <circle cx="22" cy="80" r="9"/><circle cx="70" cy="9" r="6"/>
+    </g>
+    <path d="M50 44C41 58 42 78 50 100C58 78 59 58 50 44Z" fill="var(--cut, #F5CDE3)"/>
+  </symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5.5h16a1 1 0 011 1V16a1 1 0 01-1 1H10l-5 4v-4H4a1 1 0 01-1-1V6.5a1 1 0 011-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 10h8M8 13h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-curl" viewBox="0 0 24 24"><path d="M12 3c4.6 0 6.6 3.4 4.4 5.6S10 10.4 10 13.6s3.4 4.6 6 3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M5 21l3.4-3.4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-insta" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-dice" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><g fill="currentColor"><circle cx="8.5" cy="8.5" r="1.5"/><circle cx="15.5" cy="8.5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="8.5" cy="15.5" r="1.5"/><circle cx="15.5" cy="15.5" r="1.5"/></g></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 12h17M12 3.5c3 3 3 14 0 17M12 3.5c-3 3-3 14 0 17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.8-5.9-6.8-11.2a6.8 6.8 0 0113.6 0C18.8 15.1 12 21 12 21z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="9.8" r="2.4" fill="currentColor"/></symbol>
+  <symbol id="i-squig" viewBox="0 0 52 30"><path d="M2 20C14 4 30 4 36 16S22 26 26 14s16-6 24 6M44 12l6 8-9 3" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div class="demo-bar"><b>DEMO</b><span class="l">Biolink de demonstração criado pela DD Digital para Damn Curls by Filipa Diaz · conteúdo ilustrativo</span><span class="s">Demonstração · Damn Curls</span></div>
+
+<canvas id="strand" aria-hidden="true"></canvas>
+<svg class="deco a" aria-hidden="true"><use href="#mark"/></svg>
+<svg class="deco b" aria-hidden="true"><use href="#mark"/></svg>
+
+<main class="col" id="topo">
+
+  <!-- ===== topo: cartões, wordmark, tipo de cacho ===== -->
+  <header>
+    <p class="eyebrow">Especialista em cabelos com curvatura</p>
+
+    <div class="stage">
+      <p class="nudge hand" id="nudge" aria-hidden="true">arrasta!</p>
+      <div class="stack-wrap">
+        <div class="stack" id="stack" tabindex="0" role="group" aria-roledescription="carrossel" aria-label="Exemplos de cabelos com curvatura (setas do teclado para mudar)">
+          <figure class="sc" data-type="3" data-pos="0"><img src="img/card-tipo3.jpg" width="700" height="1050" alt="Mulher com cabelo longo e cacheado escuro" fetchpriority="high"></figure>
+          <figure class="sc" data-type="4" data-pos="1"><img src="img/card-tipo4.jpg" width="800" height="1204" alt="Mulher com afro, olhar para a câmara"></figure>
+          <figure class="sc" data-type="2" data-pos="2"><img src="img/card-tipo2.jpg" width="800" height="1067" alt="Mulher de cabelo escuro ondulado sobre fundo terracota"></figure>
+        </div>
+      </div>
+      <div class="tag" id="tag" aria-hidden="true"><b>3</b><small>Cacheado</small></div>
+      <div class="avatar">
+        <svg viewBox="0 0 100 100" aria-hidden="true"><defs><path id="ring" d="M50 50m-38 0a38 38 0 1 1 76 0a38 38 0 1 1-76 0"/></defs><text><textPath href="#ring" textLength="236" lengthAdjust="spacing">by Filipa Diaz · curl-fiança · </textPath></text></svg>
+        <img src="img/filipa-avatar.jpg" width="280" height="280" alt="Filipa Diaz a sorrir">
+      </div>
+    </div>
+
+    <div class="word-wrap">
+      <h1 class="word" id="word" aria-label="Damn curls">Damn curls</h1>
+      <span class="by hand" aria-hidden="true">by Filipa Diaz</span>
+    </div>
+    <p class="tagline">Cachos com <em>curl-fiança.</em></p>
+
+    <p class="pick-l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4 0 6 3 4 5s-6 2-6 5 3 4 5 3"/><path d="M5 20l3-3"/></svg>Qual é o teu cacho?</p>
+    <div class="pills" role="radiogroup" aria-label="Tipo de cabelo">
+      <button class="pill" role="radio" aria-checked="false" data-type="2"><b>2</b> Ondulado</button>
+      <button class="pill" role="radio" aria-checked="true" data-type="3"><b>3</b> Cacheado</button>
+      <button class="pill" role="radio" aria-checked="false" data-type="4"><b>4</b> Crespo</button>
+    </div>
+    <p class="picker-d" id="pdesc" aria-live="polite">Cachos definidos em espiral. Pedem corte cacho a cacho e muita hidratação.</p>
+  </header>
+
+  <!-- ===== balão + ação principal ===== -->
+  <section class="say" aria-labelledby="say-t">
+    <h2 class="say-l hand" id="say-t">a tua mensagem, já escrita<svg aria-hidden="true"><use href="#i-squig"/></svg></h2>
+    <div class="bubble" id="bubble"><span class="sr" id="msgSr" aria-live="polite"></span><span id="typed" aria-hidden="true"></span></div>
+    <div class="ctaw pop" style="--d:.6s">
+      <!-- LINK PRINCIPAL: na versão final → https://wa.me/351XXXXXXXXX?text=<mensagem do balão> (número a confirmar com o cliente) -->
+      <a class="cta" href="#" data-dest="o WhatsApp da Filipa, já com a mensagem do balão">
+        <span>Marcar avaliação<small>pelo WhatsApp · número a confirmar</small></span>
+        <span class="go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== LINKS: editar aqui ===== -->
+  <h2 class="sec hand">mais curl-fiança<svg aria-hidden="true"><use href="#i-squig"/></svg></h2>
+  <ul class="links">
+
+    <li class="lk acc pop" id="accSvc">
+      <button class="lk-h" type="button" aria-expanded="false" aria-controls="panelSvc" id="hSvc">
+        <span class="ic" aria-hidden="true"><svg><use href="#i-curl"/></svg></span>
+        <span><strong>Serviços</strong><em>escolhe um e vai para a mensagem</em></span>
+        <svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg>
+      </button>
+      <div class="panel" id="panelSvc" role="region" aria-labelledby="hSvc"><div><div class="panel-in">
+        <div class="chips" id="svcChips" role="radiogroup" aria-label="Serviço a marcar"></div>
+        <p class="note-h hand">a lista final e os valores são confirmados com a Filipa</p>
+      </div></div></div>
+    </li>
+
+    <li class="lk pop" style="--d:.06s">
+      <!-- LINK: Instagram → https://instagram.com/<utilizador> (a confirmar com o cliente) -->
+      <a class="lk-h" href="#" data-dest="o Instagram da Filipa">
+        <span class="ic" aria-hidden="true"><svg><use href="#i-insta"/></svg></span>
+        <span><strong>Instagram</strong><em>dicas, testes &amp; reviews</em></span>
+        <span class="tbc">@ a confirmar</span>
+      </a>
+    </li>
+
+    <li class="lk acc pop" id="accTip" style="--d:.12s">
+      <button class="lk-h" type="button" aria-expanded="false" aria-controls="panelTip" id="hTip">
+        <span class="ic" aria-hidden="true"><svg><use href="#i-dice"/></svg></span>
+        <span><strong>Dica curl do dia</strong><em>toca e deixa o dado decidir</em></span>
+        <svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg>
+      </button>
+      <div class="panel" id="panelTip" role="region" aria-labelledby="hTip"><div><div class="panel-in">
+        <div class="tipcard" id="tipCard" aria-live="polite"><span class="lab hand" id="tipLab"></span><h3 id="tipTx"></h3></div>
+        <button class="again" type="button" id="again"><svg aria-hidden="true"><use href="#i-dice"/></svg>Outra dica</button>
+        <p class="note-h hand">títulos de publicações do Instagram da Filipa</p>
+      </div></div></div>
+    </li>
+
+    <li class="lk pop" style="--d:.18s">
+      <!-- LINK: website → endereço do site final (a confirmar) -->
+      <a class="lk-h" href="#" data-dest="o website da Damn Curls">
+        <span class="ic" aria-hidden="true"><svg><use href="#i-globe"/></svg></span>
+        <span><strong>Website</strong><em>a casa dos cachos</em></span>
+        <svg class="ar" aria-hidden="true"><use href="#i-arrow"/></svg>
+      </a>
+    </li>
+
+    <li class="lk pop" style="--d:.24s">
+      <!-- LINK: localização → ligação do Google Maps (morada a confirmar com o cliente) -->
+      <a class="lk-h" href="#" data-dest="o Google Maps com a localização da Filipa">
+        <span class="ic" aria-hidden="true"><svg><use href="#i-pin"/></svg></span>
+        <span><strong>Como chegar</strong><em>vem ter connosco</em></span>
+        <span class="tbc">morada a confirmar</span>
+      </a>
+    </li>
+  </ul>
+
+  <!-- ===== antes & depois ===== -->
+  <h2 class="sec hand">do Instagram<svg aria-hidden="true"><use href="#i-squig"/></svg></h2>
+  <a class="ba-wrap pop" href="#" data-dest="as publicações do Instagram da Filipa" style="display:block;text-decoration:none">
+    <figure class="ba">
+      <i class="tape"></i>
+      <img src="img/antes-depois.jpg" width="563" height="744" alt="Antes e depois de um cabelo cacheado escuro, visto de costas" loading="lazy">
+      <figcaption class="hand">antes → depois</figcaption>
+    </figure>
+    <p class="ba-note">Imagem do Instagram da Filipa. Na versão final, os destaques são os reais.</p>
+  </a>
+
+  <!-- ===== dados por confirmar ===== -->
+  <h2 class="sec hand">os dados da Filipa<svg aria-hidden="true"><use href="#i-squig"/></svg></h2>
+  <dl class="info">
+    <div><dt>Instagram</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+    <div><dt>WhatsApp</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+    <div><dt>Local</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+    <div><dt>Horário</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+  </dl>
+</main>
+
+<div class="ribbons" aria-hidden="true">
+  <div class="band a"><div class="trk"><div class="grp">
+    <span>Avaliação<svg><use href="#mark"/></svg></span><span>Corte para curvatura<svg><use href="#mark"/></svg></span><span>Definição<svg><use href="#mark"/></svg></span><span>Tratamento VIP<svg><use href="#mark"/></svg></span><span>Rotina &amp; produtos<svg><use href="#mark"/></svg></span>
+  </div></div></div>
+  <div class="band b"><div class="trk"><div class="grp">
+    <span>Técnica<svg><use href="#mark"/></svg></span><span>Cuidado<svg><use href="#mark"/></svg></span><span>Curl-fiança<svg><use href="#mark"/></svg></span><span>Curvatura natural<svg><use href="#mark"/></svg></span>
+  </div></div></div>
+</div>
+
+<footer>
+  <div class="f-in">
+    <div class="f-word" aria-hidden="true">Damn curls</div>
+    <div class="f-row">
+      <span>© 2026 Damn Curls by Filipa Diaz</span>
+      <span>Fotografias: <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a> e Instagram da Filipa</span>
+    </div>
+    <p class="f-demo"><b>Biolink de demonstração.</b> Criado pela DD Digital como proposta de design. Textos, serviços e dicas são ilustrativos e não vinculativos; não representam informação final do negócio. Fotografias de banco gratuito (Unsplash) e do Instagram da cliente (antes &amp; depois e retrato da Filipa). A adequação de cada técnica ou tratamento depende sempre da avaliação do cabelo. Nenhum botão envia dados: tudo o que se vê aqui é só uma amostra.</p>
+    <p class="credito">Spoiler: este biolink não se fez sozinho <span class="credito-emoji" aria-hidden="true">😉</span> <a href="https://dddigital.pt" target="_blank" rel="noopener">DD Digital</a>.</p>
+  </div>
+</footer>
+
+<div class="demo-chip"><i></i>Versão de demonstração · DD Digital</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+document.documentElement.classList.add('js');
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = matchMedia('(hover:hover) and (pointer:fine)').matches;
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+/* ---------- dados ---------- */
+const TYPES = {
+  2: { name: 'Ondulado', mode: 0, r: 15, k: .05, wm: 1,
+       desc: 'Ondas suaves em S. Pedem leveza: hidratação sem peso e um corte que lhes dê movimento.' },
+  3: { name: 'Cacheado', mode: 1, r: 17, k: .115, wm: 1,
+       desc: 'Cachos definidos em espiral. Pedem corte cacho a cacho e muita hidratação.' },
+  4: { name: 'Crespo', mode: 1, r: 7.5, k: .3, wm: 1.15,
+       desc: 'Coils apertados, cheios de volume. Pedem humidade, paciência e técnica própria.' }
+};
+const SERVICES = ['Avaliação de cachos', 'Corte para curvatura', 'Definição & finalização', 'Tratamento VIP', 'Rotina & produtos'];
+const TIPS = [
+  ['Dica', 'Um pequeno ajuste que vira o jogo: touca difusora, sim ou não?'],
+  ['Dica', 'Acidificante: parece simples, mas faz toda a diferença'],
+  ['Teste', 'Será que a escova da Temu funciona?'],
+  ['Rotina', 'Depois de descobrir a minha sequência de finalização, nunca mais voltei atrás']
+];
+const state = { type: 3, service: SERVICES[0] };
+
+/* ---------- toast ---------- */
+const toast = $('#toast'); let tt;
+function say(t) { toast.textContent = t; toast.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('show'), 4200); }
+
+/* ---------- confetti de cachos ao toque ---------- */
+const CONF = ['#F5CDE3', '#FF7A6B', '#BDA8F6', '#FFF7FB', '#DD3128'];
+function burst(x, y) {
+  if (reduced) return;
+  for (let i = 0; i < 10; i++) {
+    const el = document.createElement('i'), s = 7 + Math.random() * 10, a = Math.random() * 6.283, d = 40 + Math.random() * 70;
+    el.className = 'bp'; el.style.cssText = `left:${x}px;top:${y}px;width:${s}px;height:${s}px;background:${CONF[i % CONF.length]}`;
+    document.body.appendChild(el);
+    el.animate([
+      { transform: 'translate(-50%,-50%) scale(.3)', opacity: 1 },
+      { transform: `translate(calc(-50% + ${Math.cos(a) * d}px), calc(-50% + ${Math.sin(a) * d - 18}px)) scale(1)`, opacity: 1, offset: .55 },
+      { transform: `translate(calc(-50% + ${Math.cos(a) * d * 1.15}px), calc(-50% + ${Math.sin(a) * d + 26}px)) scale(.4)`, opacity: 0 }
+    ], { duration: 650 + Math.random() * 250, easing: 'cubic-bezier(.2,.8,.2,1)' }).onfinish = () => el.remove();
+  }
+  if (navigator.vibrate) navigator.vibrate(8);
+}
+document.addEventListener('pointerdown', e => { if (e.target.closest('.lk-h, .cta, .pill, .chip, .again, .ba-wrap')) burst(e.clientX, e.clientY); });
+
+/* ---------- links de demonstração ---------- */
+$$('a[data-dest]').forEach(a => a.addEventListener('click', e => {
+  e.preventDefault();
+  say(`Demonstração: aqui abriria ${a.dataset.dest}. Nada é enviado.`);
+}));
+
+/* ---------- wordmark: letras que saltam ---------- */
+const word = $('#word');
+word.innerHTML = [...word.textContent].map((c, i) => c === ' ' ? ' ' : `<span class="ch" style="--i:${i}" aria-hidden="true">${c}</span>`).join('');
+function jump() {
+  if (reduced) return;
+  $$('.ch', word).forEach((c, i) => c.animate(
+    [{ transform: 'none' }, { transform: `translateY(-34%) rotate(${i % 2 ? 7 : -7}deg)` }, { transform: 'none' }],
+    { duration: 650, delay: i * 45, easing: 'cubic-bezier(.3,1.4,.5,1)' }));
+}
+word.addEventListener('click', jump);
+setTimeout(jump, 1600);
+
+/* ---------- balão que se escreve sozinho ---------- */
+const typed = $('#typed'), msgSr = $('#msgSr'); let typing = 0;
+function message() {
+  return `Olá Filipa! Gostava de marcar: ${state.service.toLowerCase().replace('vip', 'VIP')}. O meu cabelo é ${TYPES[state.type].name.toLowerCase()} (tipo ${state.type}). Quando tens disponibilidade?`;
+}
+function typeMsg() {
+  const full = message(); msgSr.textContent = full; clearInterval(typing);
+  const draw = n => { typed.innerHTML = `${esc(full.slice(0, n))}<span class="caret"></span><span class="ghost">${esc(full.slice(n))}</span>`; };
+  if (reduced) { typed.textContent = full; return; }
+  let n = 0; draw(0);
+  typing = setInterval(() => { n += 2; draw(n); if (n >= full.length) { clearInterval(typing); typed.innerHTML = esc(full); } }, 18);
+}
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+/* ---------- tipo de cacho: pilha de cartões ---------- */
+const stack = $('#stack'), cards = $$('.sc', stack);
+let order = [0, 1, 2], busy = false, idleUntil = 0;
+const front = () => cards[order[0]];
+function renderStack() { cards.forEach((c, i) => c.dataset.pos = order.indexOf(i)); }
+function stackTo(n) {
+  let guard = 0;
+  while (+front().dataset.type !== n && guard++ < 3) order.push(order.shift());
+  renderStack();
+}
+function userTouched() { idleUntil = performance.now() + 14000; $('#nudge').classList.add('off'); }
+function next() {
+  if (busy) return; busy = true;
+  const f = front(); f.classList.add('fly');
+  setTimeout(() => {
+    f.classList.remove('fly'); order.push(order.shift()); renderStack();
+    setType(+front().dataset.type);
+    setTimeout(() => busy = false, 450);
+  }, reduced ? 0 : 440);
+}
+function prev() {
+  if (busy) return; busy = true;
+  const c = cards[order[order.length - 1]];
+  c.style.transition = 'none'; c.classList.add('fly'); void c.offsetWidth;
+  order.unshift(order.pop()); renderStack(); setType(+front().dataset.type);
+  c.style.transition = ''; c.classList.remove('fly');
+  setTimeout(() => busy = false, 700);
+}
+let sx = null;
+stack.addEventListener('pointerdown', e => { sx = e.clientX; userTouched(); });
+addEventListener('pointerup', e => {
+  if (sx === null) return;
+  const dx = e.clientX - sx; sx = null;
+  if (dx < -40) next(); else if (dx > 40) prev(); else if (Math.abs(dx) < 8 && e.target.closest('#stack')) next();
+});
+stack.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') { userTouched(); next(); }
+  if (e.key === 'ArrowLeft') { userTouched(); prev(); }
+});
+setInterval(() => {
+  if (reduced || document.hidden || performance.now() < idleUntil) return;
+  next();
+}, 5200);
+
+/* ---------- estado: tipo de cacho ---------- */
+const tag = $('#tag');
+function setType(n) {
+  if (state.type === n && tag.dataset.on) return;
+  state.type = n; tag.dataset.on = 1;
+  $$('.pill').forEach(b => b.setAttribute('aria-checked', b.dataset.type == n));
+  $('#pdesc').textContent = TYPES[n].desc;
+  tag.innerHTML = `<b>${n}</b><small>${TYPES[n].name}</small>`;
+  tag.classList.remove('bump'); void tag.offsetWidth; tag.classList.add('bump');
+  strandTarget(n); stackTo(n); typeMsg();
+}
+$$('.pill').forEach(b => b.addEventListener('click', () => { userTouched(); setType(+b.dataset.type); }));
+
+/* ---------- serviços (sticker que se abre) ---------- */
+const svcChips = $('#svcChips');
+SERVICES.forEach((s, i) => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'chip'; b.setAttribute('role', 'radio'); b.dataset.s = s;
+  b.innerHTML = `<i>${i + 1}</i>${s}`;
+  b.addEventListener('click', () => { state.service = s; syncSvc(); typeMsg(); say('Mensagem atualizada lá em cima: ' + s.toLowerCase().replace('vip', 'VIP') + '.'); });
+  svcChips.appendChild(b);
+});
+function syncSvc() { $$('.chip', svcChips).forEach(c => c.setAttribute('aria-checked', c.dataset.s === state.service)); }
+syncSvc();
+
+/* ---------- stickers que se abrem ---------- */
+function setAcc(li, open) {
+  li.classList.toggle('open', open);
+  $('.lk-h', li).setAttribute('aria-expanded', open);
+}
+$$('.acc').forEach(li => $('.lk-h', li).addEventListener('click', () => {
+  const open = !li.classList.contains('open');
+  $$('.acc').forEach(o => setAcc(o, o === li && open));
+  if (open && li.id === 'accTip') rollTip();
+  if (open) setTimeout(() => li.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }), 520);
+}));
+
+/* ---------- dica curl do dia (dado a rolar) ---------- */
+let tipI = -1; const tipCard = $('#tipCard'), again = $('#again');
+function rollTip() {
+  let n; do { n = Math.floor(Math.random() * TIPS.length); } while (n === tipI);
+  tipI = n;
+  $('#tipLab').textContent = TIPS[n][0]; $('#tipTx').textContent = TIPS[n][1];
+  tipCard.classList.remove('swap'); void tipCard.offsetWidth; tipCard.classList.add('swap');
+  again.classList.remove('roll'); void again.offsetWidth; again.classList.add('roll');
+}
+again.addEventListener('click', rollTip);
+
+/* ---------- reveal (pop) ---------- */
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .1, rootMargin: '0px 0px -4% 0px' });
+$$('.pop').forEach((el, i) => { if (!el.style.getPropertyValue('--d')) el.style.setProperty('--d', '0s'); io.observe(el); });
+$$('.lk.pop').forEach(li => li.style.setProperty('--d', `${(+li.style.getPropertyValue('--d').replace('s', '') || 0) + .75}s`));
+
+/* ---------- fitas cruzadas: velocidade ligada ao scroll ---------- */
+const bands = $$('.band').map((el, i) => {
+  const trk = $('.trk', el), grp = $('.grp', trk);
+  while (trk.scrollWidth < innerWidth * 2.2) trk.appendChild(grp.cloneNode(true));
+  if ($$('.grp', trk).length % 2) trk.appendChild(grp.cloneNode(true));
+  return { trk, dir: i ? 1 : -1, off: 0, half: trk.scrollWidth / 2 };
+});
+bands[1].off = -bands[1].half;
+let lastY = scrollY, vel = 0, ribbonsVisible = false;
+function ribbons(dt) {
+  const dy = Math.abs(scrollY - lastY); lastY = scrollY;
+  vel += (Math.min(dy, 90) - vel) * .12;
+  const sp = (.55 + vel * .4) * dt / 16;
+  bands.forEach(b => {
+    b.off += sp * b.dir;
+    if (b.dir < 0 && b.off <= -b.half) b.off += b.half;
+    if (b.dir > 0 && b.off >= 0) b.off -= b.half;
+    b.trk.style.transform = `translate3d(${b.off.toFixed(1)}px,0,0)`;
+  });
+}
+new IntersectionObserver(es => { ribbonsVisible = es[0].isIntersecting; }).observe($('.ribbons'));
+
+/* ---------- fio de cabelo (canvas fixo, ecrã inteiro) ---------- */
+const cv = $('#strand'), ctx = cv.getContext('2d');
+const STRANDS = [
+  { c: '#F5CDE3', w: 3.6, ph: 0,   rm: 1 },
+  { c: '#FFF7FB', w: 2.6, ph: 2.1, rm: .8 },
+  { c: '#FF7A6B', w: 2.6, ph: 4.2, rm: 1.18 }
+];
+const STEP = 3;
+let MAX = 430, W = 0, H = 0, trail = [], head = { x: 0, y: 0 }, target = { x: 0, y: 0 };
+let cur = { ...TYPES[3] }, goal = TYPES[3];
+let pointerAt = -1e9, autoT = 0, last = performance.now();
+
+function strandTarget(n) { goal = TYPES[n]; if (reduced) { Object.assign(cur, goal); draw(); } }
+function resize() {
+  const d = Math.min(devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight; MAX = W < 700 ? 300 : 430;
+  cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+  if (reduced) draw();
+}
+function autopilot() {
+  const t = autoT;
+  target.x = W * (.5 + .42 * Math.sin(t * .62 + .4) + .05 * Math.sin(t * 2.1));
+  target.y = H * (.5 + .36 * Math.sin(t * .83) + .05 * Math.sin(t * 2.7 + 1));
+}
+function advance(dt, now) {
+  autoT += dt / 1000;
+  if (now - pointerAt >= 2200) autopilot();
+  head.x += (target.x - head.x) * .14; head.y += (target.y - head.y) * .14;
+  let p = trail[trail.length - 1];
+  if (!p) { trail.push({ x: head.x, y: head.y, s: 0 }); return; }
+  let dx = head.x - p.x, dy = head.y - p.y, d = Math.hypot(dx, dy);
+  while (d >= STEP) {
+    const q = { x: p.x + dx / d * STEP, y: p.y + dy / d * STEP, s: p.s + STEP };
+    trail.push(q); p = q; dx = head.x - p.x; dy = head.y - p.y; d = Math.hypot(dx, dy);
+  }
+  while (trail.length > MAX) trail.shift();
+}
+function ease() { for (const k of ['r', 'k', 'wm', 'mode']) cur[k] += (goal[k] - cur[k]) * .07; }
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  const n = trail.length; if (n < 3) return;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  for (const st of STRANDS) {
+    ctx.strokeStyle = st.c;
+    const r = cur.r * st.rm, m = cur.mode;
+    const at = (a, b, f, nx, ny) => {
+      const ang = (a.s + (b.s - a.s) * f) * cur.k + st.ph;
+      const lx = Math.cos(ang) * r, ly = Math.sin(ang) * r, wv = Math.sin(ang) * r;
+      return [a.x + (b.x - a.x) * f + nx * wv * (1 - m) + lx * m, a.y + (b.y - a.y) * f + ny * wv * (1 - m) + ly * m];
+    };
+    let a = trail[0], b = trail[1], dx = b.x - a.x, dy = b.y - a.y, l = Math.hypot(dx, dy) || 1;
+    let [px, py] = at(a, b, 0, -dy / l, dx / l);
+    for (let i = 1; i < n; i++) {
+      a = trail[i - 1]; b = trail[i];
+      dx = b.x - a.x; dy = b.y - a.y; l = Math.hypot(dx, dy) || 1;
+      const nx = -dy / l, ny = dx / l, t = i / n;
+      ctx.lineWidth = st.w * cur.wm * (.2 + .8 * t);
+      ctx.globalAlpha = Math.min(1, t * 3);
+      ctx.beginPath(); ctx.moveTo(px, py);
+      const steps = Math.ceil(l / 1.2);
+      for (let j = 1; j <= steps; j++) { [px, py] = at(a, b, j / steps, nx, ny); ctx.lineTo(px, py); }
+      ctx.stroke();
+    }
+  }
+  ctx.globalAlpha = 1;
+}
+function frame(now) {
+  requestAnimationFrame(frame);
+  const dt = Math.min(now - last, 50); last = now;
+  if (document.hidden) return;
+  if (ribbonsVisible) ribbons(dt);
+  ease(); advance(dt, now); draw();
+}
+/* rato, dedo (também enquanto se faz scroll) */
+function pointer(x, y) { if (reduced) return; target.x = x; target.y = y; pointerAt = performance.now(); }
+addEventListener('pointermove', e => pointer(e.clientX, e.clientY), { passive: true });
+addEventListener('pointerdown', e => pointer(e.clientX, e.clientY), { passive: true });
+addEventListener('touchmove', e => { const t = e.touches[0]; if (t) pointer(t.clientX, t.clientY); }, { passive: true });
+
+resize();
+addEventListener('resize', () => { resize(); bands.forEach(b => b.half = b.trk.scrollWidth / 2); });
+head.x = target.x = W * .5; head.y = target.y = H * .5;
+for (let i = 0; i < 700; i++) advance(16, 0);     // pré-desenha o fio para o primeiro frame já ter cacho
+setType(3);
+document.fonts && document.fonts.ready.then(() => { bands.forEach(b => b.half = b.trk.scrollWidth / 2); });
+if (reduced) { Object.assign(cur, goal); draw(); } else requestAnimationFrame(frame);
+</script>
+</body>
+</html>
