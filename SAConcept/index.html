@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<title>SA Concept by Sara Andreia — Demonstração</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Demonstração de website para SA Concept by Sara Andreia: massagens, branqueamento dentário, lifting de pestanas e formações. Beleza e bem-estar.">
+<meta name="theme-color" content="#121110">
+<link rel="icon" type="image/png" href="img/monograma.png">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&family=Prata&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   SA CONCEPT — conceito de layout e de hero
+   Hero: linhas de ouro "tensas" (canvas) que a mão — rato ou toque — acalma
+   e deixa fluir; a mesma ideia (do tenso ao sereno) repete-se nas ondas
+   douradas que separam as secções (a curva do poster "Formação").
+   Estrutura: preto → creme → preto → creme/preto → taupe → preto.
+   Forma: ondas, anéis finos de ouro (como os ícones dos posters), cantos retos.
+   ===================================================================== */
+
+/* ============ 1. VARIÁVEIS ============ */
+:root{
+  --ink:#121110; --ink2:#1c1a17; --ink3:#27231f;
+  --cream:#ece4d9; --paper:#f5f0e8; --taupe:#d8cebf;
+  --gold:#b88a45; --gold-d:#7c5524; --gold-l:#dfbb78; --gold-xl:#f2dfb2;
+  --txt:#1d1a17; --mut:#6b6358; --mut-l:rgba(236,228,217,.66);
+  --gold-grad:linear-gradient(100deg,#9a6c2e 0%,#e2bf7e 38%,#b88a45 62%,#f0dba8 100%);
+  --serif:'Prata','Bodoni 72','Didot',Georgia,serif;
+  --sans:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --pad:clamp(20px,5vw,72px); --banner:34px; --hdr:76px;
+  --sec:clamp(88px,11vw,168px);
+}
+@media (max-width:700px){:root{--banner:38px;--hdr:66px}}
+
+/* ============ 2. BASE ============ */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--banner) + var(--hdr) + 8px);-webkit-text-size-adjust:100%}
+body{background:var(--ink);color:var(--cream);font:400 16px/1.7 var(--sans);overflow-x:clip;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold-l);outline-offset:3px}
+.wrap{max-width:1320px;margin:0 auto;padding-inline:var(--pad)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.eyebrow{font:500 11.5px/1 var(--sans);letter-spacing:.34em;text-transform:uppercase;color:var(--gold-l)}
+.on-light .eyebrow,.light .eyebrow{color:var(--gold-d)}
+h1,h2,h3{font-family:var(--serif);font-weight:400;letter-spacing:.005em}
+.light .gold,.light .say__t .w.g.lit{background-image:linear-gradient(100deg,#6f4a1d 0%,#a87b3a 45%,#7c5524 100%)}
+.gold{background:var(--gold-grad);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:15px 28px;border:1px solid var(--gold);background:var(--gold-grad);background-size:200% 100%;color:#1a130a;font:600 11.5px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:background-position .6s var(--ease),transform .3s var(--ease)}
+.btn:hover{background-position:100% 0;transform:translateY(-2px)}
+.btn--ghost{background:transparent;color:var(--gold-l)}
+.btn--ghost:hover{background:rgba(223,187,120,.12)}
+.light .btn--ghost{color:var(--gold-d);border-color:var(--gold-d)}
+.light .btn--ghost:hover{background:rgba(124,85,36,.08)}
+/* marcador "a confirmar com o cliente" */
+.tbc{display:inline-block;padding:3px 10px;border:1px dashed var(--gold);color:var(--gold-l);font:500 11.5px/1.5 var(--sans);letter-spacing:.06em;white-space:nowrap}
+.light .tbc{color:var(--gold-d);border-color:var(--gold-d)}
+/* reveals */
+.js .rv{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease) calc(var(--d,0)*1ms),transform .9s var(--ease) calc(var(--d,0)*1ms)}
+.js .rv.in{opacity:1;transform:none}
+
+/* ============ 3. ONDAS DOURADAS (separadores de secção) ============ */
+/* a onda fica por cima da secção (bottom:100%) e tem a cor dessa secção */
+.wvbox{position:absolute;left:0;right:0;bottom:calc(100% - 1px);height:clamp(34px,5.5vw,84px);overflow:hidden;pointer-events:none;z-index:3}
+.wv{position:absolute;left:0;bottom:0;width:max(200%,2600px);height:100%;color:var(--wave,var(--cream));animation:wvmove 60s linear infinite}
+.wv .f{fill:currentColor;stroke:none}
+.wv .l{fill:none;stroke:url(#goldline);stroke-width:1.6}
+.wv .l2{opacity:.4;transform:translateY(7px)}
+@keyframes wvmove{to{transform:translateX(-50%)}}
+
+/* ============ 4. FAIXA DEMO + SELO ============ */
+.banner{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--banner);display:flex;align-items:center;justify-content:center;gap:12px;padding-inline:12px;background:var(--gold-grad);color:#1a130a;font:500 11.5px/1 var(--sans);letter-spacing:.05em;text-align:center}
+.banner b{background:#1a130a;color:var(--gold-xl);padding:4px 9px;letter-spacing:.24em;font-weight:600;font-size:10px}
+.banner .s{display:none}
+@media (max-width:700px){.banner .l{display:none}.banner .s{display:inline}}
+.seal{position:fixed;left:16px;bottom:16px;z-index:60;padding:9px 14px;background:var(--ink);color:var(--gold-l);font:500 10px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--gold);display:flex;gap:8px;align-items:center}
+.seal i{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+@media (max-width:700px){.seal{display:none}}
+
+/* ============ 5. CABEÇALHO ============ */
+.hdr{position:sticky;top:var(--banner);z-index:90;height:var(--hdr);margin-top:var(--banner);background:var(--ink);border-bottom:1px solid rgba(223,187,120,.18)}
+.hdr .wrap{height:100%;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{display:flex;align-items:center;gap:14px;text-decoration:none;line-height:1}
+.brand img{width:34px;height:auto}
+.brand__n{display:block;font:400 17px/1 var(--serif);letter-spacing:.3em;text-transform:uppercase}
+.brand__s{display:block;margin-top:7px;font:500 8.5px/1 var(--sans);letter-spacing:.5em;text-transform:uppercase;color:var(--gold-l)}
+.nav{display:flex;align-items:center;gap:clamp(18px,2.6vw,40px)}
+.nav a{font:500 11.5px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;text-decoration:none;padding:12px 0;background:linear-gradient(var(--gold-l),var(--gold-l)) 0 calc(100% - 6px)/0 1px no-repeat;transition:background-size .45s var(--ease)}
+.nav a:hover{background-size:100% 1px}
+.nav a.btn{padding:14px 22px;background:var(--gold-grad);background-size:200% 100%;background-position:0 0;color:#1a130a}
+.nav a.btn:hover{background-position:100% 0}
+.burger{display:none;width:44px;height:44px;border:1px solid rgba(223,187,120,.4);background:transparent;position:relative;cursor:pointer}
+.burger i{position:absolute;left:12px;right:12px;height:1px;background:var(--gold-l);transition:transform .4s var(--ease),top .4s var(--ease)}
+.burger i:nth-child(1){top:18px}.burger i:nth-child(2){top:25px}
+.menu-open .burger i:nth-child(1){top:21px;transform:rotate(45deg)}
+.menu-open .burger i:nth-child(2){top:21px;transform:rotate(-45deg)}
+@media (max-width:960px){
+  .burger{display:block}
+  /* sem backdrop-filter no cabeçalho (criaria bloco contentor para o menu fixed) e fundo sólido */
+  .nav{position:fixed;left:0;right:0;top:calc(var(--banner) + var(--hdr));bottom:0;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:0;padding:28px var(--pad);background:var(--ink);transform:translateY(-8px);opacity:0;visibility:hidden;transition:opacity .4s,transform .4s var(--ease),visibility .4s;overflow-y:auto;overscroll-behavior:contain;z-index:1}
+  .menu-open .nav{opacity:1;visibility:visible;transform:none}
+  .nav a{font:400 clamp(2rem,9vw,2.8rem)/1.2 var(--serif);letter-spacing:0;text-transform:none;padding:14px 0;border-bottom:1px solid rgba(223,187,120,.2);width:100%;background:none}
+  .nav a.btn{margin-top:28px;font:600 12px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;width:auto;padding:17px 28px;border:1px solid var(--gold);background:var(--gold-grad);background-size:200% 100%}
+  body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+}
+
+/* ============ 6. PRELOADER ============ */
+.pre{display:none}
+.js .pre{display:flex;position:fixed;inset:0;z-index:200;background:var(--ink);align-items:center;justify-content:center;flex-direction:column;gap:22px;transition:opacity .7s var(--ease),visibility .7s}
+.pre.done{opacity:0;visibility:hidden}
+.pre__m{position:relative;width:min(130px,32vw)}
+.pre__m img{width:100%;clip-path:inset(100% 0 0 0);animation:preIn 1.25s var(--ease) .15s forwards}
+.pre__m::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,246,222,.7) 50%,transparent 60%) 120% 0/300% 100% no-repeat;-webkit-mask:url(img/monograma.png) center/contain no-repeat;mask:url(img/monograma.png) center/contain no-repeat;animation:preSheen 1s ease 1.1s forwards} /* o brilho percorre só o desenho do monograma */
+.pre__t{font:500 10.5px/1 var(--sans);letter-spacing:.5em;text-transform:uppercase;color:var(--gold-l);opacity:0;animation:fadeUp .8s var(--ease) .9s forwards}
+@keyframes preIn{to{clip-path:inset(0 0 0 0)}}
+@keyframes preSheen{to{background-position:-20% 0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ============ 7. HERO — a mão que acalma as linhas ============ */
+.hero{position:relative;overflow-x:clip;min-height:calc(100svh - var(--banner) - var(--hdr));display:flex;align-items:center;padding:clamp(48px,8vw,100px) 0 clamp(72px,9vw,130px);background:radial-gradient(120% 90% at 78% 40%,#221d17 0%,var(--ink) 62%)}
+#lines{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.hero__shade{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(18,17,16,.72) 0%,rgba(18,17,16,.38) 46%,transparent 70%)}
+.hero__wrap{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(28px,4vw,72px);align-items:center;width:100%}
+.hero__copy{position:relative;container-type:inline-size}
+.hero__copy .eyebrow{display:block;margin-bottom:clamp(20px,2.6vw,32px)}
+.hl{font:400 min(12.2cqw,7.6rem)/1 var(--serif);letter-spacing:-.01em}
+.hl .ln{display:block;overflow:hidden;padding-bottom:.1em}
+.hl .ln span{display:block}
+.hl .ln:nth-child(2){padding-left:.28em}
+.lede{max-width:46ch;margin-top:clamp(22px,2.6vw,34px);font:300 clamp(1.02rem,1.5vw,1.2rem)/1.75 var(--sans);color:var(--mut-l)}
+.cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:clamp(26px,3vw,40px)}
+.hint{display:flex;align-items:center;gap:12px;margin-top:clamp(26px,3vw,40px);font:500 10.5px/1 var(--sans);letter-spacing:.28em;text-transform:uppercase;color:var(--gold-l)}
+.hint i{width:9px;height:9px;border-radius:50%;border:1px solid var(--gold-l);animation:hintPulse 2.4s ease-out infinite}
+.hint .t{display:inline}.hint .m{display:none}
+@media (hover:hover) and (pointer:fine){.hint .t{display:none}.hint .m{display:inline}}
+@keyframes hintPulse{0%{box-shadow:0 0 0 0 rgba(223,187,120,.55)}80%,100%{box-shadow:0 0 0 12px rgba(223,187,120,0)}}
+/* estado inicial (animado só com JS; sem JS tudo aparece) */
+.js .hero .rvh{opacity:0;transform:translateY(18px);transition:opacity .9s var(--ease) calc(var(--d,0)*1ms),transform .9s var(--ease) calc(var(--d,0)*1ms)}
+.js .hl .ln span{transform:translateY(105%);transition:transform 1.1s var(--ease) calc(var(--d,0)*1ms)}
+.ready .hero .rvh{opacity:1;transform:none}
+.ready .hl .ln span{transform:none}
+/* retrato com a base cortada em onda */
+.ph{position:relative;justify-self:end;width:min(100%,470px);margin:0}
+.ph__clip{clip-path:url(#wclip);aspect-ratio:4/5.35;background:var(--ink2)}
+.ph__in{width:100%;height:100%}
+.ph__in img{width:100%;height:100%;object-fit:cover;object-position:50% 10%}
+.js .ph__in{opacity:0;transform:translateY(7%) scale(1.07);transition:opacity 1.3s var(--ease) .35s,transform 1.8s var(--ease) .35s}
+.ready .ph__in{opacity:1;transform:none}
+.ph__line{position:absolute;left:0;right:0;top:0;width:100%;aspect-ratio:4/5.35;fill:none;pointer-events:none;overflow:visible}
+.ph__line path{stroke:url(#goldline);stroke-width:1.6;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:0}
+.ph__line path+path{opacity:.4;transform:translateY(7px)}
+.js .ph__line path{stroke-dashoffset:1;transition:stroke-dashoffset 2.2s var(--ease) .9s}
+.ready .ph__line path{stroke-dashoffset:0}
+.ph__seal{position:absolute;left:-26px;bottom:6%;width:96px;height:96px;border-radius:50%;background:var(--ink);border:1px solid var(--gold);display:grid;place-items:center;box-shadow:0 0 0 7px rgba(18,17,16,.55)}
+.ph__seal::before{content:"";position:absolute;inset:6px;border-radius:50%;border:1px solid rgba(223,187,120,.35)}
+.ph__seal img{width:38px}
+.ph figcaption{position:absolute;right:-14px;top:8%;writing-mode:vertical-rl;font:500 10px/1 var(--sans);letter-spacing:.42em;text-transform:uppercase;color:var(--gold-l)}
+@media (max-width:860px){
+  .hero{padding-top:36px;align-items:flex-start}
+  .hero__wrap{grid-template-columns:1fr;gap:34px}
+  .hero__shade{background:linear-gradient(180deg,rgba(18,17,16,.66) 0%,rgba(18,17,16,.3) 55%,transparent 80%)}
+  .hl{font-size:min(13cqw,5rem)}
+  .ph{justify-self:center;width:min(100%,380px)}
+  .ph__seal{left:-6px;width:78px;height:78px}.ph__seal img{width:30px}
+  .ph figcaption{right:-8px}
+}
+
+/* ============ 8. SECÇÕES (base) ============ */
+.sec,.ig,.form__top,.form__bot{overflow-x:clip} /* molduras desfasadas não alargam o ecrã */
+.sec{position:relative;padding:var(--sec) 0}
+.light{background:var(--cream);color:var(--txt);--wave:var(--cream)}
+.dark{background:var(--ink);color:var(--cream);--wave:var(--ink)}
+.sec h2{font-size:clamp(2.3rem,5.4vw,4.6rem);line-height:1.04;margin-top:18px}
+.sec .p{max-width:54ch;margin-top:22px;font:300 1.06rem/1.85 var(--sans)}
+.light .p{color:#3b352d}
+.dark .p{color:var(--mut-l)}
+
+/* ============ 9. SOBRE ============ */
+#sobre{--wave:var(--cream)}
+.about{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:clamp(36px,6vw,110px);align-items:center}
+.about__ph{position:relative;max-width:460px;width:100%}
+.about__ph::before{content:"";position:absolute;inset:-16px 16px 16px -16px;border:1px solid var(--gold);z-index:0}
+.about__ph .box{position:relative;z-index:1;overflow:hidden;aspect-ratio:4/5.2;background:var(--taupe)}
+.about__ph img{width:100%;height:100%;object-fit:cover;object-position:50% 18%}
+.about__ph .tag{position:absolute;z-index:2;right:-14px;bottom:30px;background:var(--ink);color:var(--gold-l);padding:12px 18px;font:500 10px/1.4 var(--sans);letter-spacing:.28em;text-transform:uppercase}
+.facts{margin-top:32px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 28px;max-width:560px}
+.facts div{border-top:1px solid rgba(124,85,36,.35);padding-top:12px}
+.facts dt{font:500 10.5px/1 var(--sans);letter-spacing:.26em;text-transform:uppercase;color:var(--gold-d)}
+.facts dd{margin-top:9px;font-size:.95rem}
+/* frase de assinatura */
+.say{margin-top:clamp(70px,9vw,130px);display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:clamp(30px,5vw,80px);align-items:center}
+.say__t{font:400 clamp(2.6rem,7.4vw,6.6rem)/1.02 var(--serif);letter-spacing:-.01em}
+.say__t .w{display:inline-block;opacity:.14;transition:opacity .45s}
+.say__t .w.lit{opacity:1}
+.say__t .w.g.lit{background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.say__s{margin-top:22px;font:300 1.08rem/1.8 var(--sans);color:#3b352d;max-width:40ch}
+.say__ph{position:relative;aspect-ratio:1/1.12;max-width:360px;justify-self:end;width:100%}
+.say__ph .a{position:absolute;left:0;top:0;width:68%;height:72%;overflow:hidden}
+.say__ph .b{position:absolute;right:0;bottom:0;width:62%;height:62%;overflow:hidden;border:6px solid var(--cream)}
+.say__ph img{width:100%;height:100%;object-fit:cover}
+.say__ph::after{content:"";position:absolute;left:14%;top:12%;right:-6%;bottom:-6%;border:1px solid var(--gold);z-index:-1}
+@media (max-width:860px){
+  .about,.say{grid-template-columns:1fr}
+  .about__ph{margin-left:16px}
+  .say__ph{justify-self:start;max-width:300px}
+}
+
+/* ============ 10. TRATAMENTOS (palco + 4 painéis) ============ */
+#tratamentos{--wave:var(--ink)}
+.trat__head{max-width:760px}
+.dialwrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(36px,6vw,110px);margin-top:clamp(44px,6vw,80px);align-items:start}
+.dial{position:sticky;top:calc(var(--banner) + var(--hdr) + 28px);width:min(100%,520px);aspect-ratio:1}
+.dial__ring{position:absolute;inset:0;width:100%;height:100%;fill:none;stroke:url(#goldline);overflow:visible}
+.dial__ring .o{stroke-width:.5;stroke-dasharray:.6 1.6;animation:spin 140s linear infinite;transform-origin:50% 50%}
+.dial__ring .m{stroke-width:.4;opacity:.55}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dial__stage{position:absolute;inset:7%;border-radius:50%;overflow:hidden;background:var(--ink2)}
+.dial__ph{position:absolute;inset:0;clip-path:circle(0% at 50% 50%);z-index:0}
+.dial__ph img{width:100%;height:100%;object-fit:cover}
+.dial__ph.was{clip-path:circle(75% at 50% 50%);z-index:1}
+.dial__ph.on{clip-path:circle(75% at 50% 50%);z-index:2;transition:clip-path 1s var(--ease)}
+.dial__ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,17,16,.05),rgba(18,17,16,.35))}
+.dial__cap{position:absolute;left:0;right:0;bottom:11%;z-index:3;text-align:center;font:500 10.5px/1 var(--sans);letter-spacing:.4em;text-transform:uppercase;color:var(--gold-xl)}
+.trs{border-top:1px solid rgba(223,187,120,.22)}
+.tr{border-bottom:1px solid rgba(223,187,120,.22)}
+.tr__h button{width:100%;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:clamp(14px,2vw,26px);padding:clamp(18px,2.4vw,28px) 0;background:none;border:0;text-align:left;cursor:pointer}
+.ring{display:grid;place-items:center;width:clamp(54px,5.2vw,68px);height:clamp(54px,5.2vw,68px);border:1px solid var(--gold);border-radius:50%;flex:none;transition:background .4s,transform .5s var(--ease)}
+.ring svg{width:62%;height:62%;fill:none;stroke:var(--gold-l);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.tr__t{font:400 clamp(1.5rem,2.6vw,2.3rem)/1.1 var(--serif);transition:color .4s}
+.tr__n{font:500 11px/1 var(--sans);letter-spacing:.3em;color:var(--gold-l);opacity:.7}
+.tr:not(.on) .tr__h button:hover .ring{background:rgba(223,187,120,.1)}
+.tr.on .ring{background:rgba(223,187,120,.14);transform:rotate(-8deg)}
+.tr.on .tr__t{color:var(--gold-xl)}
+.tr__p{display:grid;grid-template-rows:0fr;transition:grid-template-rows .7s var(--ease)}
+.tr.on .tr__p{grid-template-rows:1fr}
+.tr__pi{min-height:0;overflow:hidden}
+.tr__pi>div{padding:0 0 clamp(24px,3vw,36px);padding-left:calc(clamp(54px,5.2vw,68px) + clamp(14px,2vw,26px))}
+.tr__pi p{max-width:52ch;font:300 1rem/1.8 var(--sans);color:var(--mut-l)}
+.tr__pi .go{display:inline-block;margin-top:18px;font:600 11px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--gold-l);text-decoration:none;padding:6px 0;background:linear-gradient(var(--gold-l),var(--gold-l)) 0 100%/100% 1px no-repeat}
+.note{margin-top:14px;font:400 12.5px/1.6 var(--sans);color:rgba(236,228,217,.5)}
+.mods{list-style:none;margin-top:20px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px;counter-reset:m}
+.mods li{counter-increment:m;border-top:1px solid rgba(223,187,120,.16);padding:13px 0 14px;position:relative}
+.mods li::before{content:"0" counter(m);position:absolute;right:0;top:14px;font:500 10px/1 var(--sans);letter-spacing:.2em;color:var(--gold);opacity:.7}
+.mods b{display:block;font:500 .96rem/1.3 var(--sans);color:var(--gold-xl);padding-right:26px}
+.mods span{display:block;margin-top:5px;font:300 .86rem/1.6 var(--sans);color:var(--mut-l)}
+.tr__img{display:none}
+@media (max-width:900px){
+  .dialwrap{grid-template-columns:1fr}
+  .dial{display:none}
+  .tr__pi>div{padding-left:0}
+  .tr__img{display:block;margin-bottom:20px;aspect-ratio:16/10;overflow:hidden;border-radius:0}
+  .tr__img img{width:100%;height:100%;object-fit:cover}
+  .mods{grid-template-columns:1fr}
+}
+
+/* ============ 11. FORMAÇÃO (creme + base preta em onda, como o poster) ============ */
+.form{position:relative;color:var(--txt)}
+.form__top{position:relative;background:var(--paper);padding:var(--sec) 0 clamp(60px,8vw,110px);--wave:var(--paper)}
+.fgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(36px,6vw,100px);align-items:start}
+.fhead{position:sticky;top:calc(var(--banner) + var(--hdr) + 28px);container-type:inline-size}
+.fhead h2{font:400 min(14cqw,6.4rem)/1 var(--serif);letter-spacing:.01em;text-transform:uppercase}
+.fhead h2{margin-top:18px}
+.lotus{display:flex;align-items:center;gap:18px;margin:26px 0;color:var(--gold-d)}
+.lotus i{flex:1;height:1px;background:var(--gold-d);opacity:.55;max-width:200px}
+.lotus svg{width:44px;height:30px;fill:none;stroke:currentColor;stroke-width:1.3;stroke-linejoin:round}
+.fsay{font:300 clamp(1.15rem,2vw,1.6rem)/1.55 var(--sans);letter-spacing:.06em;text-transform:uppercase;max-width:22ch}
+.fsay b{font-weight:600}
+.courses{list-style:none}
+.courses li{border-bottom:1px solid rgba(124,85,36,.35)}
+.courses li:first-child{border-top:1px solid rgba(124,85,36,.35)}
+.courses a{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:clamp(16px,2.4vw,30px);padding:clamp(18px,2.4vw,28px) 0;text-decoration:none}
+.courses .ring{border-color:var(--gold-d)}
+.courses .ring svg{stroke:var(--gold-d)}
+.courses h3{font:500 clamp(1.02rem,1.9vw,1.35rem)/1.3 var(--sans);letter-spacing:.12em;text-transform:uppercase}
+.courses small{display:block;margin-top:6px;font:400 .82rem/1.4 var(--sans);letter-spacing:.04em;color:var(--mut);text-transform:none}
+.courses .arr{width:44px;height:44px;border:1px solid var(--gold-d);border-radius:50%;display:grid;place-items:center;color:var(--gold-d);transition:background .4s,color .4s,transform .5s var(--ease)}
+.courses .arr svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5}
+.courses a:hover .arr,.courses a:focus-visible .arr{background:var(--gold-d);color:var(--paper);transform:translateX(4px)}
+.courses a:hover .ring{background:rgba(124,85,36,.1)}
+.form__bot{position:relative;background:var(--ink);color:var(--cream);padding:clamp(70px,9vw,130px) 0 clamp(60px,8vw,100px);--wave:var(--ink)}
+.fbrand{text-align:center}
+.fbrand img{width:clamp(78px,10vw,118px);margin:0 auto}
+.fbrand p{margin-top:18px;font:500 11px/1 var(--sans);letter-spacing:.5em;text-transform:uppercase;color:var(--gold-l)}
+.steps{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-top:clamp(44px,6vw,80px);--p:0}
+.steps::before,.steps::after{content:"";position:absolute;left:12.5%;right:12.5%;top:42px;height:1px}
+.steps::before{background:rgba(223,187,120,.25)}
+.steps::after{background:var(--gold-grad);transform-origin:0 50%;transform:scaleX(var(--p))}
+.step{position:relative;text-align:center;opacity:.4;transition:opacity .6s}
+.step.on{opacity:1}
+.step .ring{margin:0 auto;width:84px;height:84px;background:var(--ink)}
+.step.on .ring{background:rgba(223,187,120,.12)}
+.step h3{margin-top:18px;font:500 .8rem/1.5 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--gold-xl)}
+.fnote{margin-top:clamp(36px,5vw,60px);text-align:center;font:400 .85rem/1.7 var(--sans);color:rgba(236,228,217,.55)}
+@media (max-width:860px){
+  .fgrid{grid-template-columns:1fr}
+  .fhead{position:static}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 16px}
+  .steps::before,.steps::after{display:none}
+  .step{opacity:1}
+  .step .ring{width:72px;height:72px}
+}
+
+/* ============ 12. INSTAGRAM ============ */
+.ig{position:relative;background:var(--taupe);color:var(--txt);--wave:var(--taupe);padding:var(--sec) 0}
+.ig__grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(36px,6vw,100px);align-items:center}
+.ig__ph{position:relative;max-width:520px;width:100%;justify-self:center;perspective:1200px}
+.ig__ph .tilt{position:relative;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .5s var(--ease);box-shadow:0 30px 60px -28px rgba(29,26,23,.55)}
+.ig__ph img{width:100%}
+.ig__ph::before{content:"";position:absolute;inset:18px -18px -18px 18px;border:1px solid var(--gold-d);z-index:-1}
+.ig .btn{margin-top:30px}
+@media (max-width:860px){.ig__grid{grid-template-columns:1fr}.ig__ph::before{inset:12px -10px -12px 10px}}
+
+/* ============ 13. MARCAR ============ */
+#marcar{--wave:var(--ink)}
+.book{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(36px,6vw,100px);align-items:start}
+.pick{margin-top:30px}
+.pick__q{font:500 10.5px/1 var(--sans);letter-spacing:.28em;text-transform:uppercase;color:var(--gold-l)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.chip{position:relative}
+.chip input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.chip span{display:inline-flex;align-items:center;min-height:44px;padding:10px 18px;border:1px solid rgba(223,187,120,.45);border-radius:999px;font:400 .88rem/1.2 var(--sans);transition:background .3s,color .3s,border-color .3s}
+.chip:hover span{border-color:var(--gold-l)}
+.chip input:checked+span{background:var(--gold-grad);color:#1a130a;border-color:var(--gold)}
+.chip input:focus-visible+span{outline:2px solid var(--gold-xl);outline-offset:3px}
+.pick__tip{min-height:3.4em;margin-top:18px;font:300 .98rem/1.7 var(--sans);color:var(--mut-l);max-width:48ch}
+.contacts{margin-top:30px;display:grid;gap:14px;list-style:none}
+.contacts li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;border-top:1px solid rgba(223,187,120,.2);padding-top:14px}
+.contacts b{font:500 10.5px/1 var(--sans);letter-spacing:.26em;text-transform:uppercase;color:var(--gold-l);min-width:96px}
+.card{background:var(--ink2);border:1px solid rgba(223,187,120,.32);padding:clamp(24px,3.4vw,46px);position:relative}
+.card::before{content:"";position:absolute;inset:8px;border:1px solid rgba(223,187,120,.12);pointer-events:none}
+.card h3{font-size:clamp(1.6rem,2.6vw,2.2rem);line-height:1.15}
+.card>p{margin-top:10px;font:300 .95rem/1.7 var(--sans);color:var(--mut-l)}
+.fld{margin-top:20px;display:block}
+.fld span{display:block;font:500 10.5px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--gold-l)}
+.fld input,.fld select,.fld textarea{display:block;width:100%;margin-top:10px;padding:12px 0;min-height:46px;background:transparent;border:0;border-bottom:1px solid rgba(223,187,120,.4);border-radius:0;color:var(--cream);font:300 1rem/1.5 var(--sans);transition:border-color .3s}
+.fld select{appearance:none;-webkit-appearance:none;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%23dfbb78' stroke-width='1.4'%3E%3Cpath d='M1 1l5 5 5-5'/%3E%3C/svg%3E") right 4px center no-repeat}
+.fld select option{background:var(--ink2);color:var(--cream)}
+.fld textarea{resize:vertical;min-height:96px}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:0;border-color:var(--gold-xl)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+.card .btn{margin-top:30px;width:100%}
+.msg{display:none;margin-top:18px;padding:14px 16px;border:1px dashed var(--gold);font:400 .9rem/1.6 var(--sans);color:var(--gold-xl)}
+.msg.show{display:block}
+@media (max-width:860px){.book{grid-template-columns:1fr}.two{grid-template-columns:1fr}}
+
+/* ============ 14. RODAPÉ ============ */
+.foot{background:var(--ink);border-top:1px solid rgba(223,187,120,.18);padding:clamp(48px,6vw,80px) 0 clamp(90px,10vw,56px)}
+.foot__row{display:flex;flex-wrap:wrap;gap:28px 60px;justify-content:space-between;align-items:center}
+.foot img{width:44px}
+.foot nav{display:flex;flex-wrap:wrap;gap:6px 26px}
+.foot nav a{font:500 11px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;text-decoration:none;padding:12px 0;color:var(--mut-l)}
+.foot nav a:hover{color:var(--gold-l)}
+.foot__demo{margin-top:36px;padding-top:26px;border-top:1px solid rgba(223,187,120,.16);font-size:12.5px;line-height:1.75;color:rgba(236,228,217,.56);max-width:100ch}
+.foot__demo b{color:var(--gold-l);font-weight:600;letter-spacing:.14em}
+
+/* ============ 15. MOVIMENTO REDUZIDO ============ */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .rv,.js .hero .rvh,.js .hl .ln span,.js .ph__in{opacity:1!important;transform:none!important}
+  .js .ph__line path{stroke-dashoffset:0}
+  .say__t .w{opacity:1}
+  .pre{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ FAIXA DEMO (fixa, sem botão de fechar) ============ -->
+<div class="banner" role="note"><b>DEMO</b><span class="l">Website de demonstração criado pela DD Digital para SA Concept by Sara Andreia · conteúdo ilustrativo</span><span class="s">Demonstração · SA Concept</span></div>
+<div class="seal" aria-hidden="true"><i></i>Versão de demonstração</div>
+
+<!-- definições SVG partilhadas (gradiente do ouro, recorte em onda do retrato) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="goldline" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9a6c2e"/><stop offset=".35" stop-color="#e8cc8e"/><stop offset=".65" stop-color="#b88a45"/><stop offset="1" stop-color="#f0dba8"/></linearGradient>
+    <clipPath id="wclip" clipPathUnits="objectBoundingBox"><path d="M0 0H1V.86C.86 .94 .72 .95 .56 .89C.4 .83 .2 .8 0 .9Z"/></clipPath>
+    <!-- onda reutilizável (período 720, repete 4×) -->
+  </defs>
+</svg>
+
+<!-- ============ PRELOADER (≤ 3 s; ?nopre salta) ============ -->
+<div class="pre" id="pre" aria-hidden="true"><div class="pre__m"><img src="img/monograma.png" alt="" width="130" height="157"></div><div class="pre__t">Beleza · Bem-estar</div></div>
+
+<!-- ============ CABEÇALHO ============ -->
+<header class="hdr">
+  <div class="wrap">
+    <a class="brand" href="#inicio" aria-label="SA Concept — início">
+      <img src="img/monograma.png" alt="" width="34" height="41">
+      <span><span class="brand__n">Sara Andreia</span><span class="brand__s">Concept</span></span>
+    </a>
+    <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav"><i></i><i></i></button>
+    <nav class="nav" id="nav" aria-label="Principal">
+      <a href="#sobre">Sobre</a>
+      <a href="#tratamentos">Tratamentos</a>
+      <a href="#formacao">Formação</a>
+      <a href="#instagram">Instagram</a>
+      <a class="btn" href="#marcar">Marcar</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ===================================================================
+     HERO — "Tensão fora. Brilho dentro."
+     As linhas de ouro começam tensas; a mão (rato/toque) acalma-as.
+     =================================================================== -->
+<section class="hero" id="inicio" aria-label="Início">
+  <canvas id="lines" aria-hidden="true"></canvas>
+  <div class="hero__shade"></div>
+  <div class="wrap hero__wrap">
+    <div class="hero__copy">
+      <p class="eyebrow rvh" style="--d:100">Beleza · Bem-estar</p>
+      <h1 class="hl" aria-label="Tensão fora. Brilho dentro.">
+        <span class="ln" aria-hidden="true"><span style="--d:150">Tensão fora.</span></span>
+        <span class="ln" aria-hidden="true"><span class="gold" style="--d:300">Brilho dentro.</span></span>
+      </h1>
+      <p class="lede rvh" style="--d:550">Massagens, branqueamento dentário, lifting de pestanas e formações, com a assinatura de Sara Andreia.</p>
+      <div class="cta rvh" style="--d:700">
+        <a class="btn" href="#marcar">Marcar um momento</a>
+        <a class="btn btn--ghost" href="#tratamentos">Ver tratamentos</a>
+      </div>
+      <p class="hint rvh" style="--d:850"><i></i><span class="m">Passe a mão pelas linhas</span><span class="t">Toque nas linhas</span></p>
+    </div>
+    <figure class="ph">
+      <div class="ph__clip"><div class="ph__in"><img src="img/sara.jpg" width="776" height="1700" alt="Sara Andreia, de blusa preta cruzada, a sorrir e a olhar para o lado"></div></div>
+      <svg class="ph__line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path pathLength="1" d="M0 90C20 80 40 83 56 89C72 95 86 94 100 86"/>
+        <path pathLength="1" d="M0 90C20 80 40 83 56 89C72 95 86 94 100 86"/>
+      </svg>
+      <span class="ph__seal" aria-hidden="true"><img src="img/monograma.png" alt="" width="38" height="46"></span>
+      <figcaption aria-hidden="true">Sara Andreia · Concept</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ===================================================================
+     SOBRE
+     =================================================================== -->
+<section class="sec light" id="sobre">
+  <div class="wvbox" aria-hidden="true"><svg class="wv" viewBox="0 0 2880 80" preserveAspectRatio="none"><path class="f" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34V80H0Z"/><path class="l" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34"/><path class="l l2" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34"/></svg></div>
+  <div class="wrap">
+    <div class="about">
+      <figure class="about__ph rv">
+        <div class="box"><img src="img/sara-estudio.jpg" width="1100" height="1467" loading="lazy" alt="Sara Andreia a sorrir, de uniforme preto, na sala de tratamentos, com um certificado de formação em lash lifting na parede"></div>
+        <span class="tag">Sara Andreia</span>
+      </figure>
+      <div>
+        <p class="eyebrow rv">Sobre</p>
+        <h2 class="rv" style="--d:80">Cuidar é um ofício.<br><span class="gold">E uma forma de estar.</span></h2>
+        <p class="p rv" style="--d:140">O SA Concept é o espaço de beleza e bem-estar de Sara Andreia: massagens, branqueamento dentário, lifting de pestanas e formações para quem quer aprender a cuidar dos outros.</p>
+        <p class="p rv" style="--d:200">Cada sessão começa por ouvir. Só depois se escolhe o toque, o ritmo e o tratamento que fazem sentido para cada pessoa.</p>
+        <dl class="facts rv" style="--d:260">
+          <div><dt>Morada</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+          <div><dt>Horário</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+          <div><dt>Percurso e certificações</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+          <div><dt>Marcações</dt><dd>Por mensagem ou telefone <span class="tbc">a confirmar</span></dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- frase de assinatura: as palavras acendem ao scroll (frase do Instagram da cliente) -->
+    <div class="say">
+      <div>
+        <p class="say__t" id="say" aria-label="Massagem não é luxo. É cuidado.">Massagem não é <span class="g">luxo.</span> É <span class="g">cuidado.</span></p>
+        <p class="say__s rv">Uma pausa a sério, com mãos treinadas, numa vida que raramente pára. Sem promessas milagrosas: só atenção, técnica e tempo.</p>
+      </div>
+      <div class="say__ph rv" style="--d:100">
+        <div class="a"><img src="img/massagem-antebraco.jpg" width="1400" height="2100" loading="lazy" alt="Duas pessoas a massajar um antebraço, em tons quentes"></div>
+        <div class="b"><img src="img/spa-mel-toalhas.jpg" width="1400" height="2100" loading="lazy" alt="Toalhas enroladas, vela e frasco de mel sobre uma superfície clara"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     TRATAMENTOS — palco circular + 4 painéis
+     =================================================================== -->
+<section class="sec dark" id="tratamentos">
+  <div class="wvbox" aria-hidden="true"><svg class="wv" viewBox="0 0 2880 80" preserveAspectRatio="none"><path class="f" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34V80H0Z"/><path class="l" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34"/><path class="l l2" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34"/></svg></div>
+  <div class="wrap">
+    <div class="trat__head">
+      <p class="eyebrow rv">Tratamentos</p>
+      <h2 class="rv" style="--d:80">Quatro formas<br>de <span class="gold">cuidar.</span></h2>
+      <p class="p rv" style="--d:140">Escolha uma e veja o que inclui. Os preços e a duração de cada sessão ficam por confirmar com a cliente.</p>
+    </div>
+
+    <div class="dialwrap">
+      <!-- palco circular (só ecrã largo); no telemóvel cada painel traz a sua foto -->
+      <div class="dial rv" aria-hidden="true">
+        <svg class="dial__ring" viewBox="0 0 100 100"><circle class="o" cx="50" cy="50" r="49.4"/><circle class="m" cx="50" cy="50" r="46"/></svg>
+        <div class="dial__stage">
+          <div class="dial__ph on"><img src="img/massagem-oleo-costas.jpg" width="1400" height="933" alt=""></div>
+          <div class="dial__ph"><img src="img/sorriso.jpg" width="1400" height="2100" alt=""></div>
+          <div class="dial__ph"><img src="img/pestanas-perfil.jpg" width="1400" height="1946" alt=""></div>
+          <div class="dial__ph"><img src="img/massagem-maos-toalha.jpg" width="1400" height="2100" alt=""></div>
+          <div class="dial__cap" id="dialCap">Massagens</div>
+        </div>
+      </div>
+
+      <div class="trs" id="trs">
+        <!-- 1 · MASSAGENS -->
+        <article class="tr on">
+          <h3 class="tr__h"><button type="button" id="tb0" aria-expanded="true" aria-controls="tp0"><span class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 48C22 42 20 30 32 16C44 30 42 42 32 48Z"/><path d="M32 48C18 48 10 40 8 30C20 30 28 36 32 48Z"/><path d="M32 48C46 48 54 40 56 30C44 30 36 36 32 48Z"/></svg></span><span class="tr__t">Massagens</span><span class="tr__n">01</span></button></h3>
+          <div class="tr__p" id="tp0" role="region" aria-labelledby="tb0"><div class="tr__pi"><div>
+            <div class="tr__img"><img src="img/massagem-oleo-costas.jpg" width="1400" height="933" loading="lazy" alt="Terapeuta a deitar óleo nas mãos junto às costas de uma pessoa deitada"></div>
+            <p>Seis modalidades, escolhidas depois de uma conversa sobre o que cada pessoa precisa.</p>
+            <ul class="mods">
+              <li><b>Modeladora / Redutora</b><span>Manobras firmes e ritmadas para trabalhar o contorno do corpo. Os resultados variam de pessoa para pessoa.</span></li>
+              <li><b>Relaxamento</b><span>Movimentos lentos e envolventes para desacelerar o corpo e a cabeça.</span></li>
+              <li><b>Drenagem linfática</b><span>Toque suave e cadenciado, em sequência, a acompanhar o fluxo natural do corpo.</span></li>
+              <li><b>Pré e pós-natal</b><span>Cuidado adaptado a cada fase, sempre com avaliação prévia.</span></li>
+              <li><b>Pós-operatório</b><span>Acompanhamento suave após cirurgia, apenas com indicação do profissional de saúde que segue o caso.</span></li>
+              <li><b>Ligaduras neuromusculares</b><span>Técnica com ligaduras aplicada em zonas específicas, depois de avaliação.</span></li>
+            </ul>
+            <a class="go" href="#marcar" data-int="Massagens">Marcar uma massagem</a>
+          </div></div></div>
+        </article>
+        <!-- 2 · BRANQUEAMENTO DENTÁRIO -->
+        <article class="tr">
+          <h3 class="tr__h"><button type="button" id="tb1" aria-expanded="false" aria-controls="tp1"><span class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 20C20 12 27 11 32 14C37 11 44 12 44 20C44 29 40 31 39 41C38.4 48 36.4 53 34.4 53C32.4 53 33 43 32 41C31 43 31.6 53 29.6 53C27.6 53 25.6 48 25 41C24 31 20 29 20 20Z"/></svg></span><span class="tr__t">Branqueamento dentário</span><span class="tr__n">02</span></button></h3>
+          <div class="tr__p" id="tp1" role="region" aria-labelledby="tb1"><div class="tr__pi"><div>
+            <div class="tr__img"><img src="img/sorriso.jpg" width="1400" height="2100" loading="lazy" alt="Sorriso com dentes claros em grande plano"></div>
+            <p>Um sorriso mais claro, com acompanhamento. A adequação, o número de sessões e os cuidados depois do tratamento dependem de uma avaliação prévia.</p>
+            <p class="note">Nem todas as situações são indicadas para branqueamento.</p>
+            <a class="go" href="#marcar" data-int="Branqueamento dentário">Marcar avaliação</a>
+          </div></div></div>
+        </article>
+        <!-- 3 · LIFTING DE PESTANAS -->
+        <article class="tr">
+          <h3 class="tr__h"><button type="button" id="tb2" aria-expanded="false" aria-controls="tp2"><span class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 28C22 42 42 42 54 28"/><path d="M17 36L12 43M25 40L22 48M32 42V50M39 40L42 48M47 36L52 43"/></svg></span><span class="tr__t">Lifting de pestanas</span><span class="tr__n">03</span></button></h3>
+          <div class="tr__p" id="tp2" role="region" aria-labelledby="tb2"><div class="tr__pi"><div>
+            <div class="tr__img"><img src="img/pestanas-perfil.jpg" width="1400" height="1946" loading="lazy" alt="Olho de perfil com pestanas longas e curvadas"></div>
+            <p>Pestanas naturais com mais curvatura e definição, sem extensões. O efeito e a duração variam de pessoa para pessoa.</p>
+            <p class="note">Recomenda-se avaliação prévia, sobretudo em caso de alergias ou sensibilidade ocular.</p>
+            <a class="go" href="#marcar" data-int="Lifting de pestanas">Marcar lifting</a>
+          </div></div></div>
+        </article>
+        <!-- 4 · FORMAÇÕES -->
+        <article class="tr">
+          <h3 class="tr__h"><button type="button" id="tb3" aria-expanded="false" aria-controls="tp3"><span class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 16L9 27L32 38L55 27Z"/><path d="M19 33V43C26 49 38 49 45 43V33"/><path d="M55 27V41"/></svg></span><span class="tr__t">Formações</span><span class="tr__n">04</span></button></h3>
+          <div class="tr__p" id="tp3" role="region" aria-labelledby="tb3"><div class="tr__pi"><div>
+            <div class="tr__img"><img src="img/massagem-maos-toalha.jpg" width="1400" height="2100" loading="lazy" alt="Mãos a praticar uma manobra de massagem sobre uma toalha branca"></div>
+            <p>Para quem quer transformar paixão em profissão: lifting de pestanas, massagem modeladora e redutora, massagem de relaxamento e branqueamento dentário.</p>
+            <a class="go" href="#formacao">Ver formações</a>
+          </div></div></div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     FORMAÇÃO — topo creme + base preta em onda (como o poster)
+     =================================================================== -->
+<section class="form" id="formacao">
+  <div class="form__top light">
+    <div class="wvbox" aria-hidden="true"><svg class="wv" viewBox="0 0 2880 80" preserveAspectRatio="none" style="--wave:var(--paper)"><path class="f" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34V80H0Z"/><path class="l" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34"/><path class="l l2" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34"/></svg></div>
+    <div class="wrap fgrid">
+      <div class="fhead">
+        <p class="eyebrow rv">Para quem quer aprender</p>
+        <h2 class="rv" style="--d:80">Formação</h2>
+        <div class="lotus rv" style="--d:120" aria-hidden="true"><i></i><svg viewBox="0 0 44 30"><path d="M22 27C16 23 15 14 22 4C29 14 28 23 22 27Z"/><path d="M22 27C12 27 6 22 4 15C13 15 19 19 22 27Z"/><path d="M22 27C32 27 38 22 40 15C31 15 25 19 22 27Z"/></svg><i></i></div>
+        <p class="fsay rv" style="--d:160">Invista no seu <b>futuro.</b> Transforme paixão em <b>profissão.</b></p>
+        <p class="rv" style="--d:220;margin-top:24px"><span class="tbc">datas, duração e valores: a confirmar com o cliente</span></p>
+      </div>
+      <ol class="courses">
+        <li class="rv"><a href="#marcar" data-int="Formação: Lifting de pestanas"><span class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 28C22 42 42 42 54 28"/><path d="M17 36L12 43M25 40L22 48M32 42V50M39 40L42 48M47 36L52 43"/></svg></span><h3>Lifting<br>de pestanas<small>Pedir informação</small></h3><span class="arr" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M2 8h12M9 3l5 5-5 5"/></svg></span></a></li>
+        <li class="rv" style="--d:70"><a href="#marcar" data-int="Formação: Massagem modeladora / redutora"><span class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M26 12C20 26 30 32 24 52M38 12C44 26 34 32 40 52"/><path d="M8 32H18M14 28L18 32L14 36M56 32H46M50 28L46 32L50 36"/></svg></span><h3>Massagem<br>redutora e modeladora<small>Pedir informação</small></h3><span class="arr" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M2 8h12M9 3l5 5-5 5"/></svg></span></a></li>
+        <li class="rv" style="--d:140"><a href="#marcar" data-int="Formação: Massagem de relaxamento"><span class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 48C22 42 20 30 32 16C44 30 42 42 32 48Z"/><path d="M32 48C18 48 10 40 8 30C20 30 28 36 32 48Z"/><path d="M32 48C46 48 54 40 56 30C44 30 36 36 32 48Z"/></svg></span><h3>Massagem<br>de relaxamento<small>Pedir informação</small></h3><span class="arr" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M2 8h12M9 3l5 5-5 5"/></svg></span></a></li>
+        <li class="rv" style="--d:210"><a href="#marcar" data-int="Formação: Branqueamento dentário"><span class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 20C20 12 27 11 32 14C37 11 44 12 44 20C44 29 40 31 39 41C38.4 48 36.4 53 34.4 53C32.4 53 33 43 32 41C31 43 31.6 53 29.6 53C27.6 53 25.6 48 25 41C24 31 20 29 20 20Z"/></svg></span><h3>Branqueamento<br>dentário<small>Pedir informação</small></h3><span class="arr" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M2 8h12M9 3l5 5-5 5"/></svg></span></a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="form__bot dark">
+    <div class="wvbox" aria-hidden="true"><svg class="wv" viewBox="0 0 2880 80" preserveAspectRatio="none" style="--wave:var(--ink)"><path class="f" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34V80H0Z"/><path class="l" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34"/><path class="l l2" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34"/></svg></div>
+    <div class="wrap">
+      <div class="fbrand rv"><img src="img/monograma.png" width="118" height="142" loading="lazy" alt="Monograma AS de Sara Andreia Concept"><p>Sara Andreia · Concept</p></div>
+      <ol class="steps" id="steps" style="list-style:none">
+        <li class="step"><span class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="27" r="13"/><path d="M32 20.5l2.4 5 5.4.7-4 3.8 1 5.4-4.8-2.6-4.8 2.6 1-5.4-4-3.8 5.4-.7Z"/><path d="M25 38L21 54L32 48L43 54L39 38"/></svg></span><h3>Formação certificada</h3></li>
+        <li class="step"><span class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 20C21 16 28 18 32 23C36 18 43 16 54 20V47C43 43 36 45 32 49C28 45 21 43 10 47Z"/><path d="M32 23V49"/></svg></span><h3>Aprendizagem prática</h3></li>
+        <li class="step"><span class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="23" cy="24" r="6"/><circle cx="41" cy="24" r="6"/><path d="M11 46C11 34 35 34 35 46M29 46C29 34 53 34 53 46"/></svg></span><h3>Acompanhamento personalizado</h3></li>
+        <li class="step"><span class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M30 12C31 24 35 28 47 29C35 30 31 34 30 46C29 34 25 30 13 29C25 28 29 24 30 12Z"/><path d="M47 38C47.5 43 49 44.5 54 45C49 45.5 47.5 47 47 52C46.5 47 45 45.5 40 45C45 44.5 46.5 43 47 38Z"/></svg></span><h3>Apoio para começar</h3></li>
+      </ol>
+      <p class="fnote rv">Programa, certificação e condições: <span class="tbc">a confirmar com o cliente</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     INSTAGRAM
+     =================================================================== -->
+<section class="ig light" id="instagram">
+  <div class="wvbox" aria-hidden="true"><svg class="wv" viewBox="0 0 2880 80" preserveAspectRatio="none" style="--wave:var(--taupe)"><path class="f" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34V80H0Z"/><path class="l" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34"/><path class="l l2" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34"/></svg></div>
+  <div class="wrap ig__grid">
+    <figure class="ig__ph rv" id="igph">
+      <div class="tilt"><img src="img/instagram-sara-telemovel.jpg" width="1100" height="1467" loading="lazy" alt="Sara Andreia em cima de um telemóvel que mostra o feed de Instagram do SA Concept com publicações de massagens e lifting de pestanas"></div>
+    </figure>
+    <div>
+      <p class="eyebrow rv">Instagram</p>
+      <h2 class="rv" style="--d:80">Do ecrã<br>para a <span class="gold">cabine.</span></h2>
+      <p class="p rv" style="--d:140">O Instagram é a montra do dia a dia: tratamentos, formações e bastidores. É lá que muita gente conhece o trabalho de Sara antes de marcar.</p>
+      <p class="rv" style="--d:200;margin-top:20px"><span class="tbc">@ do Instagram: a confirmar com o cliente</span></p>
+      <a class="btn btn--ghost rv" style="--d:240" href="#marcar">Falar com a Sara</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     MARCAR
+     =================================================================== -->
+<section class="sec dark" id="marcar">
+  <div class="wvbox" aria-hidden="true"><svg class="wv" viewBox="0 0 2880 80" preserveAspectRatio="none" style="--wave:var(--ink)"><path class="f" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34V80H0Z"/><path class="l" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34"/><path class="l l2" d="M0 34Q180 4 360 34T720 34T1080 34T1440 34T1800 34T2160 34T2520 34T2880 34"/></svg></div>
+  <div class="wrap book">
+    <div>
+      <p class="eyebrow rv">Marcar</p>
+      <h2 class="rv" style="--d:80">Reserve<br>o seu <span class="gold">momento.</span></h2>
+      <div class="pick rv" style="--d:140" role="radiogroup" aria-labelledby="pickq">
+        <p class="pick__q" id="pickq">O que procura hoje?</p>
+        <div class="chips" id="chips">
+          <label class="chip"><input type="radio" name="need" value="Massagem de relaxamento" data-tip="Massagem de relaxamento: movimentos lentos para desacelerar o corpo e a cabeça."><span>Desacelerar</span></label>
+          <label class="chip"><input type="radio" name="need" value="Massagem modeladora / redutora" data-tip="Massagem modeladora e redutora: manobras firmes e ritmadas para trabalhar o contorno. Os resultados variam."><span>Trabalhar o contorno</span></label>
+          <label class="chip"><input type="radio" name="need" value="Drenagem linfática" data-tip="Drenagem linfática: toque suave e cadenciado, em sequência."><span>Sentir o corpo mais leve</span></label>
+          <label class="chip"><input type="radio" name="need" value="Massagem pós-operatória" data-tip="Massagem pós-operatória: só com indicação do profissional de saúde que acompanha o caso."><span>Depois de uma cirurgia</span></label>
+          <label class="chip"><input type="radio" name="need" value="Branqueamento dentário" data-tip="Branqueamento dentário: começa com uma avaliação para perceber se é indicado."><span>Um sorriso mais claro</span></label>
+          <label class="chip"><input type="radio" name="need" value="Lifting de pestanas" data-tip="Lifting de pestanas: curvatura e definição das pestanas naturais, sem extensões."><span>Um olhar mais definido</span></label>
+          <label class="chip"><input type="radio" name="need" value="Formações" data-tip="Formações: lifting de pestanas, massagens e branqueamento dentário. Peça o programa."><span>Aprender uma profissão</span></label>
+        </div>
+        <p class="pick__tip" id="tip" aria-live="polite">Escolha uma opção e o pedido ao lado fica preenchido.</p>
+      </div>
+      <ul class="contacts rv" style="--d:200">
+        <li><b>Telefone</b><span class="tbc">a confirmar com o cliente</span></li>
+        <li><b>WhatsApp</b><span class="tbc">a confirmar com o cliente</span></li>
+        <li><b>Email</b><span class="tbc">a confirmar com o cliente</span></li>
+        <li><b>Morada</b><span class="tbc">a confirmar com o cliente</span></li>
+      </ul>
+    </div>
+    <div class="card rv" style="--d:120">
+      <h3>Pedir marcação</h3>
+      <p>Isto é uma demonstração: o formulário não envia nada.</p>
+      <form id="demoForm" novalidate>
+        <div class="two">
+          <label class="fld"><span>Nome</span><input type="text" name="nome" autocomplete="name" placeholder="O seu nome"></label>
+          <label class="fld"><span>Telemóvel</span><input type="tel" name="tel" autocomplete="tel" placeholder="9XX XXX XXX"></label>
+        </div>
+        <label class="fld"><span>Interesse</span>
+          <select name="int" id="intSel">
+            <option value="">Escolha uma opção</option>
+            <option>Massagem modeladora / redutora</option>
+            <option>Massagem de relaxamento</option>
+            <option>Drenagem linfática</option>
+            <option>Massagem pré e pós-natal</option>
+            <option>Massagem pós-operatória</option>
+            <option>Ligaduras neuromusculares</option>
+            <option>Branqueamento dentário</option>
+            <option>Lifting de pestanas</option>
+            <option>Formações</option>
+            <option>Formação: Lifting de pestanas</option>
+            <option>Formação: Massagem modeladora / redutora</option>
+            <option>Formação: Massagem de relaxamento</option>
+            <option>Formação: Branqueamento dentário</option>
+          </select>
+        </label>
+        <label class="fld"><span>Mensagem</span><textarea name="msg" rows="3" placeholder="Diga-nos o que procura e quando lhe dá mais jeito."></textarea></label>
+        <button class="btn" type="submit">Enviar (demonstração)</button>
+        <p class="msg" id="demoMsg" role="status">Demonstração: nenhum dado foi enviado nem guardado. No site final, este pedido chegaria à Sara.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ RODAPÉ ============ -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__row">
+      <img src="img/monograma.png" width="44" height="53" loading="lazy" alt="Monograma AS">
+      <nav aria-label="Rodapé"><a href="#sobre">Sobre</a><a href="#tratamentos">Tratamentos</a><a href="#formacao">Formação</a><a href="#instagram">Instagram</a><a href="#marcar">Marcar</a></nav>
+    </div>
+    <p class="foot__demo"><b>DEMO</b> · Website de demonstração criado pela DD Digital para SA Concept by Sara Andreia. Textos, tratamentos, formações e perguntas são ilustrativos e não vinculativos; morada, telefone, email, horário, preços, datas e certificações ficam por confirmar com o cliente. O monograma, a fotografia de Sara e a imagem do Instagram foram fornecidos pela cliente; as restantes fotografias são do Unsplash. As referências a tratamentos de estética e de saúde são ilustrativas: a adequação de cada tratamento depende sempre de avaliação por profissional. O tratamento "Pós-operatório" exige indicação do profissional de saúde que acompanha o caso.</p>
+  </div>
+</footer>
+
+<script>
+/* =====================================================================
+   SCRIPT — organizado por funcionalidade
+   ===================================================================== */
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches, NOPRE=/nopre/.test(location.search);
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+
+/* ---------- preloader + arranque do hero ---------- */
+var started=false;
+function ready(){
+  if(started) return; started=true;
+  document.documentElement.classList.add('ready');
+  var pre=$('#pre'); if(pre){pre.classList.add('done');setTimeout(function(){pre.style.display='none'},800)}
+  hero.start();
+}
+window.addEventListener('load',function(){
+  if(RM||NOPRE){ready()} else {setTimeout(ready,1900)}
+});
+setTimeout(ready,4500); /* rede de segurança */
+
+/* ---------- cabeçalho / menu mobile ---------- */
+var burger=$('#burger'), nav=$('#nav'), menuY=0;
+function setMenu(o){
+  var was=document.body.classList.contains('menu-open'); if(o===was) return;
+  if(o){menuY=window.scrollY;document.body.style.top=-menuY+'px';document.documentElement.style.scrollBehavior='auto'}
+  document.body.classList.toggle('menu-open',o);
+  if(!o){document.body.style.top='';window.scrollTo(0,menuY);document.documentElement.style.scrollBehavior=''}
+  burger.setAttribute('aria-expanded',o);burger.setAttribute('aria-label',o?'Fechar menu':'Abrir menu');
+}
+window.addEventListener('resize',function(){if(window.innerWidth>960)setMenu(false)});
+burger.addEventListener('click',function(){setMenu(!document.body.classList.contains('menu-open'))});
+$$('a',nav).forEach(function(a){a.addEventListener('click',function(e){
+  if(!document.body.classList.contains('menu-open')) return;
+  var id=a.getAttribute('href'), t=id&&id.charAt(0)==='#'&&document.querySelector(id);
+  setMenu(false);
+  if(t){e.preventDefault();t.scrollIntoView()}
+})});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')setMenu(false)});
+
+/* ---------- reveals ---------- */
+var io='IntersectionObserver' in window ? new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px',threshold:.08}) : null;
+$$('.rv').forEach(function(el){io?io.observe(el):el.classList.add('in')});
+
+/* ---------- hero: linhas de ouro que a mão acalma ---------- */
+var hero=(function(){
+  var sec=$('#inicio'), cv=$('#lines'), ctx=cv.getContext('2d');
+  var W=0,H=0,N=0,P=0,NX=96,ys=[],T=null,t0=performance.now();
+  var hand={x:-999,y:-999,on:false,mx:-999,my:-999,mouse:false};
+  var auto=null,lastAuto=0,lastUser=-1e9,visible=true,raf=0,running=false,dir=1;
+  function size(){
+    var r=sec.getBoundingClientRect(), dpr=Math.min(2,window.devicePixelRatio||1);
+    W=Math.max(1,r.width);H=Math.max(1,r.height);
+    cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
+    var n=W<700?20:30;
+    if(n!==N||!T){N=n;T=new Float32Array(N*NX);T.fill(RM?0:1)}
+    ys=[];for(var i=0;i<N;i++)ys.push(H*(0.05+0.92*i/(N-1)));
+    P=Math.max(48,Math.round(W/9));
+    if(!running)draw(0);
+  }
+  function ease(k){return k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2}
+  function startAuto(y,fromTouch){
+    var now=performance.now();
+    var y0=(typeof y==='number')?y:H*(0.28+Math.random()*0.5);
+    auto={s:now,d:fromTouch?1500:2800,x0:dir>0?-140:W+140,x1:dir>0?W+140:-140,y:y0,amp:H*0.05,ph:Math.random()*6};
+    dir=-dir;lastAuto=now;
+  }
+  function step(now,t){
+    /* mão automática (varrimento) */
+    if(auto){
+      var k=(now-auto.s)/auto.d;
+      if(k>=1){auto=null;hand.on=false}
+      else{hand.x=auto.x0+(auto.x1-auto.x0)*ease(k);hand.y=auto.y+Math.sin(k*7.5+auto.ph)*auto.amp;hand.on=true}
+    }else if(hand.mouse){
+      hand.x+=(hand.mx-hand.x)*.28;hand.y+=(hand.my-hand.y)*.28;hand.on=true;
+    }else{
+      hand.on=false;
+      if(now-lastUser>6500&&now-lastAuto>8500)startAuto();
+    }
+    var R=Math.max(90,Math.min(150,W*.11)), s2=2*Math.pow(R*.62,2);
+    for(var i=0;i<N;i++){
+      var y=ys[i], dy=y-hand.y, row=i*NX;
+      for(var j=0;j<NX;j++){
+        var c=row+j, v=T[c];
+        if(hand.on){
+          var dx=(j+.5)/NX*W-hand.x, f=Math.exp(-(dx*dx+dy*dy)/s2);
+          if(f>.02)v-=f*.16;
+        }
+        /* volta devagar a uma tensão leve (nunca à tensão total) */
+        if(v<.5)v+=.0005;
+        T[c]=v<0?0:v>1?1:v;
+      }
+    }
+  }
+  function draw(t){
+    ctx.clearRect(0,0,W,H);
+    if(hand.on){
+      var g=ctx.createRadialGradient(hand.x,hand.y,0,hand.x,hand.y,170);
+      g.addColorStop(0,'rgba(223,187,120,.14)');g.addColorStop(1,'rgba(223,187,120,0)');
+      ctx.fillStyle=g;ctx.fillRect(hand.x-170,hand.y-170,340,340);
+    }
+    var R=Math.max(90,Math.min(150,W*.11)), sg=2*Math.pow(R*.6,2);
+    for(var i=0;i<N;i++){
+      var la=.22+.6*Math.sin(Math.PI*(.12+.76*i/(N-1)));
+      var xs=new Float32Array(P+1), yy=new Float32Array(P+1), tt=new Float32Array(P+1);
+      for(var j=0;j<=P;j++){
+        var x=j/P*W, fx=x/W*(NX-1), a=Math.floor(fx), b=Math.min(NX-1,a+1), fr=fx-a;
+        var tv=T[i*NX+a]*(1-fr)+T[i*NX+b]*fr;
+        var calm=6*Math.sin(x*.006+t*.5+i*.32)+3*Math.sin(x*.013-t*.35+i*.7);
+        var tense=11*Math.sin(x*.071+i*1.9+t*2.6)*Math.sin(x*.029-t*1.7+i*.9)+4*Math.sin(x*.19+t*4.1+i*2.3);
+        var d=ys[i]+calm+tv*tense;
+        if(hand.on){
+          var ddx=x-hand.x, ddy=ys[i]-hand.y, gg=Math.exp(-(ddx*ddx+ddy*ddy)/sg);
+          d+=(ddy>=0?1:-1)*gg*15;
+        }
+        xs[j]=x;yy[j]=d;tt[j]=tv;
+      }
+      var CH=8;
+      for(var s=0;s<P;s+=CH){
+        var e=Math.min(P,s+CH),sum=0;
+        ctx.beginPath();ctx.moveTo(xs[s],yy[s]);
+        for(var k=s+1;k<=e;k++){ctx.lineTo(xs[k],yy[k]);sum+=tt[k]}
+        var ta=sum/(e-s);
+        ctx.strokeStyle='rgba(224,184,108,'+(la*(.34+.66*(1-ta))).toFixed(3)+')';
+        ctx.lineWidth=.8+.8*(1-ta);
+        ctx.stroke();
+      }
+    }
+  }
+  function frame(now){
+    if(!running)return;
+    var t=(now-t0)/1000;
+    step(now,t);draw(t);
+    raf=requestAnimationFrame(frame);
+  }
+  function run(){
+    if(RM||running||!visible||document.hidden||!started)return;
+    running=true;raf=requestAnimationFrame(frame);
+  }
+  function stop(){running=false;cancelAnimationFrame(raf)}
+  /* ponteiro */
+  sec.addEventListener('pointermove',function(e){
+    if(e.pointerType!=='mouse')return;
+    var r=sec.getBoundingClientRect();hand.mx=e.clientX-r.left;hand.my=e.clientY-r.top;
+    if(!hand.mouse){hand.x=hand.mx;hand.y=hand.my}
+    hand.mouse=true;auto=null;lastUser=performance.now();
+  });
+  sec.addEventListener('pointerleave',function(e){if(e.pointerType==='mouse'){hand.mouse=false;lastUser=performance.now()}});
+  sec.addEventListener('pointerdown',function(e){
+    if(e.pointerType==='mouse'||e.target.closest('a,button'))return;
+    var r=sec.getBoundingClientRect();lastUser=performance.now();startAuto(e.clientY-r.top,true);
+  });
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){visible=es[0].isIntersecting;visible?run():stop()},{threshold:0}).observe(sec);
+  }
+  document.addEventListener('visibilitychange',function(){document.hidden?stop():run()});
+  var rz;window.addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(size,120)});
+  size();
+  return {start:function(){
+    if(RM){draw(0);return}
+    lastAuto=performance.now();setTimeout(function(){if(!hand.mouse&&!auto)startAuto()},700);run();
+  }};
+})();
+
+/* ---------- palavras que acendem (scroll) + fio dos passos ---------- */
+(function(){
+  var say=$('#say'), words=[];
+  if(say){
+    (function split(node){
+      Array.prototype.slice.call(node.childNodes).forEach(function(n){
+        if(n.nodeType===3){
+          var frag=document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach(function(p){
+            if(!p)return;
+            if(/^\s+$/.test(p)){frag.appendChild(document.createTextNode(' '));return}
+            var s=document.createElement('span');s.className='w';s.textContent=p;s.setAttribute('aria-hidden','true');
+            if(node!==say)s.classList.add('g');
+            frag.appendChild(s);words.push(s);
+          });
+          node.replaceChild(frag,n);
+        }else if(n.nodeType===1){split(n)}
+      });
+    })(say);
+  }
+  var steps=$('#steps'), items=$$('.step',steps||document);
+  var tick=false;
+  function update(){
+    tick=false;var vh=window.innerHeight;
+    if(say){
+      var r=say.getBoundingClientRect(), p=RM?1:Math.min(1,Math.max(0,(vh*.9-r.top)/(vh*.55+r.height*.4)));
+      var n=Math.round(p*words.length*1.15);
+      words.forEach(function(w,i){w.classList.toggle('lit',i<n)});
+    }
+    if(steps&&items.length){
+      var r2=steps.getBoundingClientRect(), q=RM?1:Math.min(1,Math.max(0,(vh*.85-r2.top)/(vh*.45)));
+      steps.style.setProperty('--p',q.toFixed(3));
+      items.forEach(function(it,i){it.classList.toggle('on',q>=i/(items.length-1)-.001&&q>0)});
+    }
+  }
+  function req(){if(!tick){tick=true;requestAnimationFrame(update)}}
+  window.addEventListener('scroll',req,{passive:true});window.addEventListener('resize',req);update();
+})();
+
+/* ---------- tratamentos: palco circular + painéis ---------- */
+(function(){
+  var arts=$$('#trs .tr'), phs=$$('.dial__ph'), cap=$('#dialCap');
+  var names=['Massagens','Branqueamento dentário','Lifting de pestanas','Formações'], cur=0, tm=0;
+  function pick(i){
+    if(i===cur)return;
+    arts.forEach(function(a,k){var on=k===i;a.classList.toggle('on',on);$('button',a).setAttribute('aria-expanded',on)});
+    var prev=phs[cur], next=phs[i];
+    phs.forEach(function(p){p.classList.remove('was')});
+    prev.classList.remove('on');prev.classList.add('was');
+    void next.offsetWidth;next.classList.add('on');
+    clearTimeout(tm);tm=setTimeout(function(){prev.classList.remove('was')},1100);
+    cap.textContent=names[i];cur=i;
+  }
+  arts.forEach(function(a,i){$('button',a).addEventListener('click',function(){pick(i)})});
+})();
+
+/* ---------- Instagram: inclinação suave (só com rato) ---------- */
+(function(){
+  var f=$('#igph');if(!f||RM||!window.matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+  f.addEventListener('pointermove',function(e){
+    var r=f.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+    f.style.setProperty('--ry',(x*7).toFixed(2)+'deg');f.style.setProperty('--rx',(-y*7).toFixed(2)+'deg');
+  });
+  f.addEventListener('pointerleave',function(){f.style.setProperty('--ry','0deg');f.style.setProperty('--rx','0deg')});
+})();
+
+/* ---------- marcar: "o que procura hoje?" preenche o formulário ---------- */
+(function(){
+  var sel=$('#intSel'), tip=$('#tip');
+  function setInterest(v){
+    if(!sel)return;
+    var ok=false;Array.prototype.forEach.call(sel.options,function(o){if(o.value===v||o.text===v){sel.value=o.value||o.text;ok=true}});
+    return ok;
+  }
+  $$('#chips input').forEach(function(r){r.addEventListener('change',function(){
+    setInterest(r.value);tip.textContent=r.getAttribute('data-tip');
+  })});
+  /* botões "Marcar…" dos tratamentos e cursos escolhem o interesse */
+  $$('a[data-int]').forEach(function(a){a.addEventListener('click',function(){
+    var v=a.getAttribute('data-int');
+    if(setInterest(v)){tip.textContent='Interesse escolhido: '+v+'.'}
+    $$('#chips input').forEach(function(r){r.checked=false});
+  })});
+})();
+
+/* ---------- formulário de demonstração (não envia nada) ---------- */
+$('#demoForm').addEventListener('submit',function(e){e.preventDefault();$('#demoMsg').classList.add('show')});
+})();
+</script>
+</body>
+</html>
