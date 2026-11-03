@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Louise Wandenkolk, Nutricionista — Demonstração</title>
+<meta name="description" content="Demonstração de website para Louise Wandenkolk, nutricionista: acompanhamento nutricional presencial em Lisboa e online para o mundo. Criado pela DD Digital.">
+<meta name="theme-color" content="#043860">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,300..600;1,300..600&family=Plus+Jakarta+Sans:wght@300..700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');history.scrollRestoration='manual';</script>
+<style>
+/* ===== NOTAS DA DEMO — Louise Wandenkolk =====
+*Herdado de Rita Barroca/Mariana Sousa/Vera Alexandra/Eduarda Figueiras/Egas Moniz:* faixa DEMO + selo + nota de rodapé, formulário de demonstração, `?nopre` (aqui salta a animação de entrada do hero), `prefers-reduced-motion`, `IntersectionObserver` para reveals, menu mobile `setMenu` (testado aberto no topo e a meio: painel 750 px = 844 − 94, fundo opaco, página imóvel com a roda do rato, scroll 4000 reposto, botão e ligação), recorte de retrato com `rembg`, extração do logótipo para PNG transparente (versão escura e clara), `<details>`, sem GSAP e um só `requestAnimationFrame` por efeito · *Novo:* hero = o ananás de losangos em canvas (grelha escalonada `cw × 1,4·cw` recortada por uma elipse; cada célula tem `g` = quanto de cor já tem (onda diagonal por `d`) e `p` = pulso do rato/onda; ondas de clique = anel gaussiano que cresce a 620 px/s; pára fora do ecrã e com o separador escondido; com movimento reduzido desenha uma só imagem colorida); coroa de folhas em SVG por trás da cabeça; título cujo "sem graça." fica cinzento até a cor chegar (clique repete); linha de pulsação rosa gerada em JS (cicloide com laços) como as "asas" do logótipo; fita métrica (`repeating-linear-gradient` para os riscos, rótulos criados em JS, marcador em losango por `translateY`, parte desenrolada por `scaleY`, número do passo atual); slider `--v` (0→1) que comanda opacidade da foto a cores sobre a mesma foto em `grayscale`, `color-mix` do fundo e a opacidade cruzada de cada par de frases (anima sozinho ao entrar, cancelável); tabuleiro de favoritas: tiles em losango (`clip-path` + `::before` inset para o contorno) posicionadas em JS numa elipse alta (proporção 1,3), ordenadas por distância ao centro, preenchidas pela ordem de escolha, com chips `aria-pressed`, campo livre e botão que leva a lista para a mensagem do formulário; conversa de exemplo com mensagens que chegam por `setTimeout` ao entrar; aresta de escamas por `mask` (SVG em data-URI + `background:var(--bg)`); Noto Serif Display + Plus Jakarta Sans (novas no registo); paleta e logótipo amostrados dos posts. 6 fotos fornecidas (posts do Instagram com texto: recortadas com `rembg`, caixas de texto removidas por corte/alfa, texto do fundo da foto 14 tapado por interpolação vertical do fundo liso) e nenhuma foto de banco. Marcadores “a confirmar” para WhatsApp, email, morada, horário, formação, cédula, valores, duração e fusos. Voz em tu (pt-PT), embora os posts usem “você”.
+   (Armadilhas técnicas: ver ARMADILHAS.md na pasta Demo/) ===== */
+
+/* =====================================================================
+   LOUISE WANDENKOLK — NUTRICIONISTA · DEMO
+   Conceito de layout e hero: o ANANÁS do logótipo e a sua rede de losangos.
+   Hero = ananás de losangos que passam de cinzento ("sem graça") a cor
+   ("com graça") em onda e ao rato/toque, com a Louise (recorte) à frente e
+   uma coroa de folhas por trás da cabeça. Todas as secções começam com uma
+   aresta de "escamas" (dentes em losango). Assinatura: o ananás que se enche
+   com as comidas favoritas de cada pessoa.
+   Fontes: Noto Serif Display (títulos, itálico expressivo) + Plus Jakarta Sans (corpo).
+   ===================================================================== */
+
+/* ---------- 0. Variáveis ---------- */
+:root{
+  --pearl:#FBF8F6; --paper:#F4F1EF;
+  --blush:#F0D4D8; --blush-soft:#F8E8EA; --rose:#C98895; --rose-light:#E2A9B4;
+  --wine:#944454; --wine-deep:#6E2438;
+  --navy:#043860; --navy-deep:#032A48; --ink:#0B2740; --muted:#4F6378;
+  --grey:#E9E5E3;
+  --serif:"Noto Serif Display",Georgia,serif;
+  --sans:"Plus Jakarta Sans",system-ui,sans-serif;
+  --bar:34px; --hh:68px; --top:calc(var(--bar) + var(--hh));
+  --wrap:1240px; --gut:clamp(20px,4.5vw,64px);
+  --teeth:18px;
+}
+
+/* ---------- 1. Base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--sans);font-weight:400;font-size:1.0625rem;line-height:1.65;color:var(--ink);background:var(--pearl);-webkit-font-smoothing:antialiased;overflow-x:clip}
+body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit}
+h1,h2,h3{font-family:var(--serif);font-weight:300;line-height:1.08;letter-spacing:-.015em;margin:0;font-optical-sizing:auto}
+h1 em,h2 em,h3 em{font-style:italic;font-weight:300;color:var(--wine)}
+p{margin:0 0 1em}
+.wrap{width:min(100% - 2*var(--gut),var(--wrap));margin-inline:auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid var(--wine);outline-offset:3px;border-radius:4px}
+section[id]{scroll-margin-top:calc(var(--top) - 6px)}
+.eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.17em;text-transform:uppercase;color:var(--wine);margin:0 0 1.2rem;display:flex;gap:.7em;align-items:center}
+.eyebrow::before{content:"";width:9px;height:9px;background:currentColor;transform:rotate(45deg);flex:none}
+.tbc{display:inline-block;padding:.02em .6em;border:1px dashed var(--rose);border-radius:99px;font-size:.82em;color:var(--wine);background:var(--blush-soft);font-style:normal;white-space:nowrap}
+
+/* botão em forma de balão (como o balão rosa dos posts) */
+.btn{--bb:var(--navy);--bf:#fff;display:inline-flex;align-items:center;gap:.6em;padding:.95em 1.6em;min-height:48px;border:0;font:600 .92rem/1 var(--sans);letter-spacing:.02em;text-decoration:none;cursor:pointer;color:var(--bf);background:var(--bb);border-radius:18px 18px 18px 4px;transition:transform .25s,background .25s,color .25s}
+.btn:hover{transform:translateY(-2px);background:var(--wine)}
+.btn.ghost{--bb:transparent;--bf:var(--navy);box-shadow:inset 0 0 0 1.5px var(--navy)}
+.btn.ghost:hover{background:var(--navy);color:#fff}
+.btn.rose{--bb:var(--blush);--bf:var(--wine-deep)}
+.btn.rose:hover{background:#fff;color:var(--wine-deep)}
+
+/* aresta de escamas (dentes em losango) no topo de cada secção */
+.zig{position:relative;background:var(--bg)}
+.zig::before{content:"";position:absolute;left:0;right:0;bottom:calc(100% - 1px);height:var(--teeth);background:var(--bg);pointer-events:none;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='18'%3E%3Cpath d='M0 18L18 0L36 18Z'/%3E%3C/svg%3E") repeat-x 50% 0/36px 18px;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='18'%3E%3Cpath d='M0 18L18 0L36 18Z'/%3E%3C/svg%3E") repeat-x 50% 0/36px 18px}
+
+/* revelações ao scroll (só com JS) */
+.js .rv{opacity:0;transform:translateY(20px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.js .rv.in{opacity:1;transform:none}
+
+/* ---------- 2. Aviso de demonstração ---------- */
+.demobar{position:fixed;inset:0 0 auto 0;height:var(--bar);z-index:80;background:var(--wine-deep);color:var(--blush);display:flex;align-items:center;justify-content:center;gap:.8em;padding:0 12px;font-size:.74rem;letter-spacing:.02em}
+.demobar b{background:var(--blush);color:var(--wine-deep);font-weight:700;letter-spacing:.16em;padding:.18em .7em;border-radius:99px;font-size:.66rem}
+.demobar .long{display:inline}.demobar .short{display:none}
+.selo{position:fixed;right:14px;bottom:14px;z-index:70;background:var(--navy);color:#fff;font-size:.7rem;font-weight:600;letter-spacing:.06em;padding:.7em 1.1em .7em .9em;border-radius:14px 14px 4px 14px;display:flex;gap:.6em;align-items:center;box-shadow:0 8px 24px -10px rgba(3,42,72,.7)}
+.selo i{width:8px;height:8px;background:var(--rose-light);transform:rotate(45deg)}
+
+/* ---------- 3. Cabeçalho ---------- */
+.top{position:fixed;top:var(--bar);left:0;right:0;height:var(--hh);z-index:60;background:rgba(251,248,246,.96);transition:box-shadow .3s}
+.top.scrolled{box-shadow:0 1px 0 rgba(4,56,96,.1),0 10px 30px -22px rgba(4,56,96,.5)}
+.top__in{height:100%;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{display:block;flex:none}.logo img{height:40px;width:auto}
+.nav{display:flex;align-items:center;gap:clamp(14px,2vw,30px)}
+.nav a{font-size:.84rem;font-weight:500;text-decoration:none;color:var(--navy);padding:.5em 0;position:relative;min-height:44px;display:inline-flex;align-items:center}
+.nav a:not(.btn)::after{content:"";position:absolute;left:0;right:0;bottom:.35em;height:1.5px;background:var(--wine);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.nav a:not(.btn):hover::after{transform:scaleX(1)}
+.nav a.btn{color:#fff;padding:.8em 1.3em;min-height:44px}
+.nav a.btn:hover{color:#fff}
+.burger{display:none;width:48px;height:48px;border:0;background:none;cursor:pointer;position:relative}
+.burger i{position:absolute;left:12px;right:12px;height:2px;background:var(--navy);transition:transform .3s,opacity .3s}
+.burger i:nth-child(1){top:18px}.burger i:nth-child(2){top:28px}
+.menu-open .burger i:nth-child(1){transform:translateY(5px) rotate(45deg)}
+.menu-open .burger i:nth-child(2){transform:translateY(-5px) rotate(-45deg)}
+
+/* ---------- 4. Hero ---------- */
+.hero{--bg:var(--pearl);position:relative;padding:calc(var(--top) + clamp(18px,3vw,44px)) 0 clamp(70px,9vw,120px);overflow-x:clip;background:var(--pearl)}
+.hero__grid{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);gap:clamp(20px,3vw,56px);align-items:center}
+.hero__text{position:relative;z-index:3}
+.h1{font-size:clamp(2.7rem,6.1vw,6rem);line-height:1.01;letter-spacing:-.025em;color:var(--navy)}
+.h1 em{display:inline-block;padding-right:.04em}
+.sg{font:inherit;letter-spacing:inherit;color:var(--wine);background:linear-gradient(var(--blush),var(--blush)) no-repeat 0 90%/100% 40%;border:0;padding:0 .06em;cursor:pointer;text-align:left;transition:color 1.2s,background-size 1.2s cubic-bezier(.2,.7,.2,1)}
+.js .sg:not(.on){color:#98A1A9;background-size:0 40%}
+.hero__lead{font-size:clamp(1.02rem,1.3vw,1.2rem);max-width:34em;margin:1.6rem 0 1.8rem;color:var(--muted)}
+.hero__cta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:1.8rem}
+.areas{display:flex;flex-wrap:wrap;gap:8px 22px;list-style:none;padding:0;margin:0;font-size:.74rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--navy)}
+.areas li{display:flex;align-items:center;gap:.7em}
+.areas li::before{content:"";width:7px;height:7px;background:var(--rose);transform:rotate(45deg)}
+
+.stage{position:relative;aspect-ratio:600/700;width:100%;max-width:620px;justify-self:center;touch-action:pan-y;--wing:0}
+.stage::before{content:"";position:absolute;left:7%;right:7%;top:20%;bottom:3%;border-radius:50%;border:2.6px solid var(--navy);opacity:.9;
+  background:repeating-linear-gradient(55deg,rgba(4,56,96,.18) 0 1.5px,transparent 1.5px 36px),repeating-linear-gradient(-55deg,rgba(4,56,96,.18) 0 1.5px,transparent 1.5px 36px),var(--blush-soft)}
+.js .stage::before{display:none}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+.pulse{position:absolute;left:-12%;width:124%;top:0;height:100%;z-index:0;overflow:visible;pointer-events:none}
+.pulse path{fill:none;stroke:#EBC2CA;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.crown{position:absolute;left:19%;width:50%;top:-5.5%;z-index:2;overflow:visible}
+.crown path.l{fill:var(--blush);stroke:var(--navy);stroke-width:2.4;stroke-linejoin:round}
+.crown path.v{fill:none;stroke:var(--navy);stroke-width:1.6;stroke-linecap:round;opacity:.7}
+.stage__photo{position:absolute;left:9%;bottom:0;width:82%;z-index:3;filter:drop-shadow(0 18px 24px rgba(4,56,96,.16))}
+.bubble{position:absolute;z-index:4;left:-3%;bottom:15%;margin:0;max-width:14em;background:var(--blush);color:var(--navy);font-weight:600;font-size:clamp(.82rem,1.15vw,1rem);line-height:1.3;padding:.9em 1.2em;border-radius:20px 20px 20px 4px;transform:rotate(-2deg);box-shadow:0 14px 28px -18px rgba(110,36,56,.6)}
+.bubble b{color:var(--wine)}
+.stage__tag{position:absolute;z-index:4;right:-1%;top:22%;margin:0;font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--navy);background:#fff;padding:.8em 1.1em;border-radius:4px 16px 16px 16px;box-shadow:0 14px 30px -20px rgba(4,56,96,.6);line-height:1.5}
+.stage__tag span{color:var(--wine)}
+.stage__hint{grid-column:1/-1;margin:0;text-align:center;font-size:.8rem;color:var(--muted)}
+.stage__hint button{font:inherit;color:var(--wine);background:none;border:0;border-bottom:1px solid currentColor;padding:0 0 1px;cursor:pointer;margin-left:.4em}
+
+/* ---------- 5. Dieta ↔ Acompanhamento (slider) ---------- */
+.dieta{--bg:var(--blush-soft);--v:1;padding:clamp(80px,10vw,140px) 0;position:relative}
+.dieta__grid{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:clamp(30px,6vw,96px);align-items:center}
+.lamp{position:relative;aspect-ratio:1/1.04;width:100%;max-width:520px;justify-self:center;border-radius:46% 46% 6% 6%/34% 34% 6% 6%;overflow:hidden;
+  background:repeating-linear-gradient(55deg,rgba(4,56,96,calc(.05 + var(--v)*.13)) 0 1.5px,transparent 1.5px 38px),repeating-linear-gradient(-55deg,rgba(4,56,96,calc(.05 + var(--v)*.13)) 0 1.5px,transparent 1.5px 38px),color-mix(in srgb,var(--blush) calc(var(--v)*100%),#E3DFDD)}
+.lamp img{position:absolute;left:6%;bottom:0;width:88%;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 18%,#000 90%,transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 18%,#000 90%,transparent 100%)}
+.lamp .g{filter:grayscale(1) contrast(.9) brightness(1.1)}
+.lamp .c{opacity:var(--v)}
+.lamp__cap{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--navy);background:#fff;padding:.5em 1em;border-radius:99px;z-index:2}
+.dieta h2{font-size:clamp(2.1rem,4.4vw,3.9rem);color:var(--navy)}
+.dieta__intro{color:var(--muted);max-width:34em;margin:1.3rem 0 2rem}
+.range{margin:0 0 2rem}
+.range__ends{display:flex;justify-content:space-between;gap:16px;font-size:.76rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.9rem}
+.range__ends button{font:inherit;letter-spacing:inherit;text-transform:inherit;border:0;background:none;cursor:pointer;padding:6px 0;min-height:44px}
+.range__ends .e0{color:#7E8A94}.range__ends .e1{color:var(--wine)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;margin:0;background:none;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:9px;background:linear-gradient(to right,var(--wine) calc(var(--v)*100%),#CBC5C3 0)}
+input[type=range]::-moz-range-track{height:6px;border-radius:9px;background:linear-gradient(to right,var(--wine) calc(var(--v)*100%),#CBC5C3 0)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-9px;background:var(--navy);transform:rotate(45deg);border:3px solid #fff;box-shadow:0 4px 12px -2px rgba(4,56,96,.5);border-radius:3px}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;background:var(--navy);transform:rotate(45deg);border:3px solid #fff;border-radius:3px}
+.pairs{list-style:none;padding:0;margin:0;border-top:1px solid rgba(4,56,96,.15)}
+.pair{display:grid;padding:1.05rem 0;border-bottom:1px solid rgba(4,56,96,.15);font-size:clamp(1rem,1.5vw,1.2rem)}
+.pair>span{grid-area:1/1;align-self:center}
+.pair .a{color:#7E8A94;text-decoration:line-through;text-decoration-color:rgba(126,138,148,.6);opacity:calc(1.1 - var(--v)*1.7)}
+.pair .b{color:var(--navy);font-weight:600;opacity:calc(var(--v)*1.8 - .55)}
+
+/* ---------- 6. Como funciona (fita métrica) ---------- */
+.como{--bg:var(--pearl);padding:clamp(80px,10vw,140px) 0}
+.como__wrap{position:relative;padding-left:clamp(48px,9vw,120px)}
+.tape{position:absolute;left:clamp(4px,2vw,26px);top:0;bottom:0;width:clamp(26px,3.2vw,40px);background:var(--blush-soft);border-radius:4px;overflow:visible}
+.tape::before{content:"";position:absolute;inset:0;border-radius:4px;
+  background:repeating-linear-gradient(to bottom,rgba(4,56,96,.6) 0 1.5px,transparent 1.5px 12px) right 0 top 0/9px 100% no-repeat,
+  repeating-linear-gradient(to bottom,var(--navy) 0 2px,transparent 2px 60px) right 0 top 0/18px 100% no-repeat}
+.tape__fill{position:absolute;inset:0;background:var(--blush);transform:scaleY(0);transform-origin:top;border-radius:4px}
+.tape__lb{position:absolute;left:3px;font-size:.58rem;font-weight:700;color:var(--navy);line-height:1;transform:translateY(-50%)}
+.tape__mark{position:absolute;left:50%;top:0;width:34px;height:34px;margin-left:-17px;z-index:2;will-change:transform;display:grid;place-items:center}
+.tape__mark span{grid-area:1/1;width:100%;height:100%;background:var(--navy);transform:rotate(45deg);border-radius:6px;box-shadow:0 8px 18px -6px rgba(4,56,96,.6)}
+.tape__mark b{grid-area:1/1;position:relative;z-index:1;font:600 .8rem var(--sans);color:#fff}
+.como__head{max-width:46rem;margin-bottom:clamp(40px,6vw,80px)}
+.como__head h2{font-size:clamp(2.1rem,4.4vw,3.9rem);color:var(--navy)}
+.como__head p{color:var(--muted);margin:1.2rem 0 0;max-width:36em}
+.chap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,5vw,80px);align-items:center;margin-bottom:clamp(70px,9vw,130px)}
+.chap:last-child{margin-bottom:0}
+.chap:nth-of-type(even) .chap__media{order:-1}
+.chap__n{display:flex;align-items:baseline;gap:.9em;margin:0 0 1rem;font-size:.72rem;font-weight:700;letter-spacing:.17em;text-transform:uppercase;color:var(--wine)}
+.chap__n b{font:italic 300 clamp(3rem,5vw,4.6rem)/.8 var(--serif);letter-spacing:0;color:var(--rose);text-transform:none}
+.chap h3{font-size:clamp(1.7rem,3.2vw,2.9rem);color:var(--navy);margin-bottom:1.1rem}
+.chap p{color:var(--muted);max-width:34em}
+.dots{list-style:none;padding:0;margin:1.4rem 0 0;display:flex;flex-wrap:wrap;gap:8px}
+.dots li{padding:.5em 1em;font-size:.8rem;font-weight:600;color:var(--navy);background:var(--blush-soft);border-radius:12px 12px 12px 3px;transition:background .3s,color .3s}
+.dots li:hover{background:var(--wine);color:#fff}
+.chap__media{position:relative;display:grid;place-items:end center;min-height:380px}
+.pad{position:absolute;left:50%;bottom:4%;width:min(78%,380px);aspect-ratio:1;transform:translateX(-50%) rotate(45deg);border-radius:14px;
+  background:repeating-linear-gradient(0deg,rgba(4,56,96,.14) 0 1.5px,transparent 1.5px 34px),repeating-linear-gradient(90deg,rgba(4,56,96,.14) 0 1.5px,transparent 1.5px 34px),var(--blush)}
+.chap__media img{position:relative;max-height:520px;width:auto;max-width:100%;filter:drop-shadow(0 16px 20px rgba(4,56,96,.14))}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:1.6rem 0}
+.duo>div{border-top:2px solid var(--navy);padding-top:.9rem}
+.duo h4{margin:0 0 .4rem;font:600 1.05rem/1.25 var(--sans);color:var(--navy)}
+.duo h4 span{display:block;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--wine);margin-bottom:.4rem}
+.duo p{margin:0;font-size:.95rem}
+.callout{background:var(--wine);color:#fff;border-radius:22px 22px 22px 4px;padding:1.2rem 1.5rem;font-weight:500;margin:0;max-width:30em}
+.chap .callout{color:#fff}
+.chat{position:absolute;right:-3%;bottom:4%;width:min(56%,262px);display:flex;flex-direction:column;gap:9px;z-index:3}
+.chat__lb{align-self:flex-end;margin:0;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--wine);background:#fff;padding:.4em .9em;border-radius:99px}
+.msg{margin:0;max-width:88%;font-size:.84rem;line-height:1.4;padding:.75em 1em;border-radius:16px 16px 16px 3px;background:#fff;color:var(--ink);box-shadow:0 10px 24px -14px rgba(4,56,96,.5)}
+.msg.me{align-self:flex-end;background:var(--wine);color:#fff;border-radius:16px 16px 3px 16px}
+.js .msg{opacity:0;transform:translateY(12px) scale(.96);transition:opacity .5s,transform .5s}
+.js .msg.on{opacity:1;transform:none}
+
+/* ---------- 7. As tuas favoritas (ananás que se enche) ---------- */
+.fav{--bg:var(--navy);color:#fff;padding:clamp(80px,10vw,140px) 0;overflow-x:clip}
+.fav__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(30px,6vw,90px);align-items:center}
+.fav h2{font-size:clamp(2.1rem,4.4vw,3.9rem);color:#fff}
+.fav h2 em{color:var(--rose-light)}
+.fav .eyebrow{color:var(--rose-light)}
+.fav__intro{color:#BFD0E0;max-width:34em;margin:1.3rem 0 1.8rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 1.2rem;padding:0;list-style:none}
+.chip{font:500 .88rem/1 var(--sans);color:#fff;background:transparent;border:1.5px solid rgba(255,255,255,.35);border-radius:14px 14px 14px 3px;padding:.8em 1.15em;min-height:44px;cursor:pointer;transition:background .25s,color .25s,border-color .25s,transform .25s}
+.chip:hover{border-color:var(--rose-light);transform:translateY(-1px)}
+.chip[aria-pressed=true]{background:var(--blush);color:var(--wine-deep);border-color:var(--blush);font-weight:700}
+.addrow{display:flex;gap:8px;margin-bottom:1.4rem;max-width:26rem}
+.addrow input{flex:1;min-width:0;font:inherit;font-size:.92rem;color:#fff;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.3);border-radius:14px 14px 14px 3px;padding:.8em 1.1em;min-height:44px}
+.addrow input::placeholder{color:#8FA7BF}
+.addrow button{font:600 .86rem var(--sans);color:var(--navy);background:var(--blush);border:0;border-radius:14px 14px 3px 14px;padding:0 1.2em;min-height:44px;cursor:pointer}
+.fav__msg{min-height:4.6em;font-size:1rem;color:#fff;margin:0 0 1.2rem;max-width:32em}
+.fav__msg small{display:block;margin-top:.5em;color:#8FA7BF;font-size:.78rem;line-height:1.5}
+.fav__count{font:italic 300 1.1rem var(--serif);color:var(--rose-light);margin-bottom:.4rem}
+.boardbox{position:relative;width:100%;max-width:480px;justify-self:center;padding-top:clamp(70px,16vw,96px)}
+.leaves{position:absolute;left:50%;top:0;width:clamp(150px,36%,200px);transform:translateX(-50%);overflow:visible}
+.leaves path.l{fill:var(--rose-light);stroke:#fff;stroke-width:2;stroke-linejoin:round;fill-opacity:.9}
+.board{position:relative;width:100%}
+.tile{position:absolute;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:rgba(255,255,255,.3);display:grid;place-items:center;text-align:center}
+.tile::before{content:"";position:absolute;inset:1.5px;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:var(--navy-deep);transition:background .4s}
+.tile span{position:relative;z-index:1;max-width:62%;font-size:var(--fs,.64rem);font-weight:700;line-height:1.12;color:var(--wine-deep);opacity:0;transition:opacity .4s .1s}
+.tile.on{animation:pop .5s cubic-bezier(.3,1.6,.5,1) both;background:var(--c)}
+.tile.on::before{background:var(--c)}
+.tile.on span{opacity:1}
+.tile.dk span{color:#fff}
+@keyframes pop{0%{transform:scale(.4)}100%{transform:scale(1)}}
+.fav :focus-visible{outline-color:var(--rose-light)}
+.marcar :focus-visible{outline-color:var(--blush)}
+.marcar form :focus-visible{outline-color:var(--wine)}
+.fav__cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.fav__cta button.btn:disabled{opacity:.4;cursor:default;transform:none}
+
+/* ---------- 8. Sobre ---------- */
+.sobre{--bg:var(--blush-soft);padding:clamp(80px,10vw,140px) 0}
+.sobre__grid{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:clamp(30px,6vw,96px);align-items:center}
+.frame{position:relative;margin:0}
+.frame img{width:100%;aspect-ratio:1080/955;object-fit:cover;clip-path:polygon(0 0,calc(100% - 56px) 0,100% 56px,100% 100%,56px 100%,0 calc(100% - 56px))}
+.frame::after{content:"";position:absolute;right:-14px;top:-14px;width:84px;height:84px;border-top:2px solid var(--wine);border-right:2px solid var(--wine);pointer-events:none}
+.sobre h2{font-size:clamp(2.1rem,4.4vw,3.9rem);color:var(--navy);margin-bottom:1.3rem}
+.sobre p.lead{color:var(--muted);max-width:34em}
+.tri{list-style:none;padding:0;margin:1.8rem 0 1.6rem;border-top:1px solid rgba(4,56,96,.18)}
+.tri li{display:grid;grid-template-columns:minmax(0,12.5rem) 1fr;gap:6px 24px;align-items:baseline;padding:1rem 0;border-bottom:1px solid rgba(4,56,96,.18)}
+.tri strong{font:italic 300 clamp(1.4rem,2.2vw,1.9rem)/1.1 var(--serif);color:var(--wine)}
+.tri span{font-size:.95rem;color:var(--muted)}
+.sobre__meta{display:flex;flex-wrap:wrap;gap:10px 18px;font-size:.88rem;align-items:center}
+.sobre__meta a{color:var(--navy);font-weight:600;text-decoration:none;border-bottom:1.5px solid var(--rose)}
+
+/* ---------- 9. Perguntas ---------- */
+.faq{--bg:var(--pearl);padding:clamp(80px,10vw,130px) 0}
+.faq__grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(30px,6vw,96px)}
+.faq h2{font-size:clamp(2.1rem,4vw,3.4rem);color:var(--navy)}
+.faq__side{position:sticky;top:calc(var(--top) + 30px);align-self:start}
+.faq__side p{color:var(--muted);margin-top:1.2rem}
+details{border-bottom:1px solid rgba(4,56,96,.2)}
+details:first-child{border-top:1px solid rgba(4,56,96,.2)}
+summary{list-style:none;cursor:pointer;padding:1.3rem 3rem 1.3rem 0;font:400 clamp(1.2rem,2vw,1.55rem)/1.25 var(--serif);color:var(--navy);position:relative;min-height:48px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"";position:absolute;right:6px;top:50%;width:12px;height:12px;margin-top:-6px;border:1.5px solid var(--wine);transform:rotate(45deg);transition:background .3s,transform .4s}
+details[open] summary::after{background:var(--wine);transform:rotate(225deg)}
+details p{color:var(--muted);margin:0 0 1.4rem;max-width:38em}
+
+/* ---------- 10. Marcação ---------- */
+.marcar{--bg:var(--wine-deep);color:#fff;padding:clamp(80px,10vw,130px) 0;overflow-x:clip;position:relative}
+.marcar__mark{position:absolute;right:-6%;top:50%;width:min(46vw,560px);transform:translateY(-50%);opacity:.12;pointer-events:none}
+.marcar__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(30px,6vw,96px);position:relative}
+.marcar h2{font-size:clamp(2.1rem,4.4vw,3.9rem);color:#fff}
+.marcar h2 em{color:var(--blush)}
+.marcar .eyebrow{color:var(--blush)}
+.marcar__txt p{color:#E9CBD1;max-width:30em;margin:1.3rem 0 1.8rem}
+.cts{list-style:none;padding:0;margin:0;display:grid;gap:.9rem;font-size:.95rem}
+.cts li{display:grid;grid-template-columns:7.5rem 1fr;gap:12px;align-items:baseline;border-top:1px solid rgba(255,255,255,.18);padding-top:.9rem}
+.cts li>b{font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--blush)}
+.cts .tbc{background:rgba(255,255,255,.08);color:var(--blush);border-color:rgba(240,212,216,.5)}
+.cts a{color:#fff;font-weight:600}
+form.f .btn{justify-self:start}
+form.f{background:var(--pearl);color:var(--ink);padding:clamp(22px,3vw,40px);border-radius:26px 26px 26px 6px;display:grid;gap:1.1rem;box-shadow:0 30px 60px -34px rgba(0,0,0,.6)}
+.fld{display:grid;gap:.35rem}
+.fld label,.fld .lb{font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--navy)}
+.fld input[type=text],.fld textarea{font:inherit;font-size:1rem;color:var(--ink);background:#fff;border:1.5px solid rgba(4,56,96,.25);border-radius:12px 12px 12px 3px;padding:.8em 1em;min-height:48px;width:100%}
+.fld textarea{min-height:110px;resize:vertical}
+.fld input:focus,.fld textarea:focus{border-color:var(--wine);outline:0;box-shadow:0 0 0 3px rgba(148,68,84,.18)}
+.radios{display:flex;flex-wrap:wrap;gap:8px}
+.radios label{text-transform:none;letter-spacing:0;font-size:.9rem;font-weight:600;position:relative}
+.radios input{position:absolute;opacity:0}
+.radios span{display:inline-flex;align-items:center;min-height:44px;padding:.6em 1.1em;border:1.5px solid rgba(4,56,96,.3);border-radius:14px 14px 14px 3px;cursor:pointer;transition:background .25s,color .25s}
+.radios input:checked+span{background:var(--navy);color:#fff;border-color:var(--navy)}
+.radios input:focus-visible+span{outline:3px solid var(--wine);outline-offset:2px}
+.f__note{font-size:.8rem;color:var(--muted);margin:0}
+.f__ok{display:none;margin:0;padding:1rem 1.2rem;background:var(--blush);color:var(--wine-deep);border-radius:12px;font-weight:600;font-size:.92rem}
+.f__ok.show{display:block}
+
+/* ---------- 11. Rodapé ---------- */
+.foot{background:var(--navy-deep);color:#A9BDD0;padding:56px 0 90px;font-size:.84rem}
+.foot__row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;align-items:center;margin-bottom:28px}
+.foot img{height:42px;width:auto}
+.foot a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3)}
+.foot__note{border-top:1px solid rgba(255,255,255,.14);padding-top:22px;max-width:62em;line-height:1.6;margin:0 0 .8rem;color:#8FA7BF}
+/* crédito DD Digital */
+.credito{margin:0;font-size:.78rem;color:rgba(255,255,255,.4)}
+.credito a{color:rgba(255,255,255,.65);text-decoration:none;font-weight:500;border:0;background:linear-gradient(var(--rose-light),var(--rose-light)) 0 100%/0 1px no-repeat;transition:color .2s,background-size .3s ease}
+.credito a:hover,.credito a:focus-visible{color:var(--rose-light);background-size:100% 1px}
+.credito-emoji{display:inline-block;transform-origin:70% 70%;animation:piscar 6s ease-in-out infinite}
+@keyframes piscar{0%,86%,100%{transform:rotate(0) scale(1)}90%{transform:rotate(-14deg) scale(1.2)}94%{transform:rotate(10deg) scale(1.2)}97%{transform:rotate(0) scale(1)}}
+
+/* ---------- 12. Telemóvel / tablet ---------- */
+@media (max-width:980px){
+  .hero__grid,.dieta__grid,.fav__grid,.sobre__grid,.faq__grid,.marcar__grid,.chap{grid-template-columns:minmax(0,1fr)}
+  .chap:nth-of-type(even) .chap__media{order:0}
+  .fav__grid>div:first-child{display:contents}
+  .fav__grid{display:flex;flex-direction:column;align-items:stretch;gap:0}
+  .fav .eyebrow{order:1}.fav h2{order:2}.fav__intro{order:3}.chips{order:4}.addrow{order:5}.fav__count{order:6}.fav__msg{order:7}.boardbox{order:8;margin:10px auto 6px}.fav__cta{order:9}
+  .faq__side{position:static}
+  .hero__text{display:contents}
+  .hero__grid>*{min-width:0}
+  .hero .eyebrow{order:1}.hero .h1{order:2}.stage{order:3}.hero__lead{order:4;margin:.4rem 0 0}.hero__cta{order:5}.areas{order:6}.stage__hint{order:7}
+  .hero__grid{align-items:stretch}
+  .hero .h1{margin-bottom:.4rem}
+  .stage{max-width:520px}
+}
+@media (max-width:860px){
+  :root{--hh:60px;--teeth:12px}
+  .logo img{height:34px}
+  .burger{display:block}
+  .top{background:var(--pearl)}
+  .nav{position:fixed;left:0;right:0;top:var(--top);bottom:0;background:var(--pearl);flex-direction:column;align-items:stretch;justify-content:flex-start;gap:0;padding:12px var(--gut) 40px;overflow-y:auto;overscroll-behavior:contain;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .3s,transform .3s,visibility .3s}
+  .menu-open .nav{opacity:1;visibility:visible;transform:none}
+  .nav a{font:300 1.7rem/1.2 var(--serif);padding:.7em 0;border-bottom:1px solid rgba(4,56,96,.14);min-height:56px}
+  .nav a::after{display:none}
+  .nav a.btn{margin-top:1.4rem;justify-content:center;border:0;font:600 1rem var(--sans);padding:1em}
+  .selo{display:none}
+  .demobar .long{display:none}.demobar .short{display:inline}
+  .zig::before{-webkit-mask-size:24px 12px;mask-size:24px 12px}
+}
+@media (max-width:640px){
+  .bubble{left:0;bottom:12%;font-size:.78rem}
+  .stage__tag{right:0;top:18%;font-size:.6rem;padding:.65em .9em}
+  .duo{grid-template-columns:1fr}
+  .chat{position:relative;right:auto;bottom:auto;width:100%;margin-top:18px}
+  .chap__media{min-height:0;place-items:end center}
+  .chap__media img{max-height:400px}
+  .tri li{grid-template-columns:1fr}
+  .cts li{grid-template-columns:1fr;gap:4px}
+  .frame::after{right:-6px;top:-6px}
+  .range__ends{font-size:.66rem}
+  .lamp__cap{font-size:.6rem}
+}
+@media (max-width:860px){ .como__wrap{padding-left:54px} }
+
+/* movimento reduzido: sem loops, sem revelações animadas */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .rv,.js .msg{opacity:1;transform:none}
+  .js .sg:not(.on){color:var(--wine);background-size:100% 40%}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== AVISO DE DEMONSTRAÇÃO (faixa fixa + selo) ===== -->
+<div class="demobar" role="note"><b>DEMO</b>
+  <span class="long">Website de demonstração criado pela DD Digital para Louise Wandenkolk · conteúdo ilustrativo</span>
+  <span class="short">Demonstração · Louise Wandenkolk</span></div>
+<div class="selo" aria-hidden="true"><i></i>Versão de demonstração</div>
+
+<!-- ===== CABEÇALHO ===== -->
+<header class="top" id="top">
+  <div class="wrap top__in">
+    <a class="logo" href="#inicio" aria-label="Louise Wandenkolk, Nutricionista — início"><img src="img/logo.png" width="1061" height="159" alt="Louise Wandenkolk · Nutricionista"></a>
+    <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav"><i></i><i></i></button>
+    <nav class="nav" id="nav" aria-label="Principal">
+      <a href="#dieta">Sem graça?</a>
+      <a href="#acompanhamento">Como funciona</a>
+      <a href="#favoritas">Favoritas</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#perguntas">Perguntas</a>
+      <a href="#marcar" class="btn">Marcar consulta</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ===== HERO: o ananás que ganha graça ===== -->
+<section class="hero" id="inicio">
+  <div class="wrap hero__grid">
+    <div class="hero__text">
+      <p class="eyebrow">Nutricionista · Presencial em Lisboa · Online para o mundo</p>
+      <h1 class="h1">Comer <em>saudável</em> não precisa de ser <button type="button" class="sg on" id="sg" title="Ver a graça a chegar outra vez">sem graça.</button></h1>
+      <p class="hero__lead">Emagrecimento com estratégia, sem dietas que não funcionam. As tuas comidas favoritas também podem fazer parte.</p>
+      <div class="hero__cta">
+        <a class="btn" href="#marcar">Começar o acompanhamento</a>
+        <a class="btn ghost" href="#favoritas">Ver o que cabe no prato</a>
+      </div>
+      <ul class="areas"><li>Comportamento</li><li>Metabolismo</li><li>Nutrição desportiva</li></ul>
+    </div>
+
+    <div class="stage" id="stage">
+      <svg class="pulse" id="pulse" viewBox="-72 0 744 700" aria-hidden="true" preserveAspectRatio="none"><path id="pulsePath" d=""/></svg>
+      <canvas id="lat" aria-hidden="true"></canvas>
+      <!-- coroa de folhas, atrás da cabeça -->
+      <svg class="crown" viewBox="0 0 200 130" aria-hidden="true">
+        <g transform="translate(100 124)">
+          <g transform="rotate(-58)"><path class="l" d="M0 0C-17-34-14-72 0-108C14-72 17-34 0 0Z"/><path class="v" d="M0-8V-90"/></g>
+          <g transform="rotate(58)"><path class="l" d="M0 0C-17-34-14-72 0-108C14-72 17-34 0 0Z"/><path class="v" d="M0-8V-90"/></g>
+          <g transform="rotate(-30)"><path class="l" d="M0 0C-19-38-16-84 0-122C16-84 19-38 0 0Z"/><path class="v" d="M0-8V-100"/></g>
+          <g transform="rotate(30)"><path class="l" d="M0 0C-19-38-16-84 0-122C16-84 19-38 0 0Z"/><path class="v" d="M0-8V-100"/></g>
+          <g><path class="l" d="M0 0C-20-42-17-92 0-126C17-92 20-42 0 0Z"/><path class="v" d="M0-8V-108"/></g>
+        </g>
+      </svg>
+      <img class="stage__photo" src="img/louise-hero.webp" width="589" height="785" alt="Louise Wandenkolk, nutricionista, a sorrir com a mão no rosto" fetchpriority="high">
+      <p class="bubble">Chega de dieta <b>que não funciona.</b></p>
+      <p class="stage__tag">Presencial <span>em Lisboa</span><br>Online <span>para o mundo</span></p>
+    </div>
+    <p class="stage__hint">Passa o rato (ou toca) no ananás para lhe dares graça.<button type="button" id="replay">Ver outra vez</button></p>
+  </div>
+</section>
+
+<!-- ===== SEM GRAÇA → COM GRAÇA (slider) ===== -->
+<section class="dieta zig" id="dieta">
+  <div class="wrap dieta__grid">
+    <div class="lamp rv" aria-hidden="true">
+      <span class="lamp__cap">Louise</span>
+      <img class="g" src="img/louise-sorriso.webp" width="578" height="585" alt="" loading="lazy">
+      <img class="c" src="img/louise-sorriso.webp" width="578" height="585" alt="" loading="lazy">
+    </div>
+    <div>
+      <p class="eyebrow rv">Chega de dieta que não funciona</p>
+      <h2 class="rv">Do «sem graça» ao <em>com graça</em>.</h2>
+      <p class="dieta__intro rv">Há dietas que prometem tudo e pedem demasiado: cortar, esquecer, aguentar. Um acompanhamento a sério parte de outro lado: da tua vida. Desliza e vê o que muda.</p>
+      <div class="range rv">
+        <div class="range__ends"><button type="button" class="e0" id="e0">Dieta que não funciona</button><button type="button" class="e1" id="e1">Acompanhamento</button></div>
+        <input type="range" id="rng" min="0" max="100" value="100" aria-label="De dieta que não funciona para acompanhamento">
+      </div>
+      <ul class="pairs rv">
+        <li class="pair"><span class="a">Uma lista de proibidos</span><span class="b">Escolhas que cabem na tua rotina</span></li>
+        <li class="pair"><span class="a">O mesmo plano para toda a gente</span><span class="b">Um plano a partir da tua história, rotina e objetivos</span></li>
+        <li class="pair"><span class="a">Culpa quando escorregas</span><span class="b">Acolhimento nos dias mais difíceis</span></li>
+        <li class="pair"><span class="a">Só o número da balança</span><span class="b">Avaliação corporal e contexto, não só um número</span></li>
+        <li class="pair"><span class="a">Sozinha(o) até à próxima consulta</span><span class="b">Suporte contínuo pelo WhatsApp</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== COMO FUNCIONA (fita métrica) ===== -->
+<section class="como zig" id="acompanhamento">
+  <div class="wrap como__wrap" id="comoWrap">
+    <div class="tape" id="tape" aria-hidden="true"><div class="tape__fill" id="tapeFill"></div><div class="tape__mark" id="tapeMark"><span></span><b id="tapeNum">1</b></div></div>
+
+    <header class="como__head">
+      <p class="eyebrow rv">Presencial em Lisboa · Online para o mundo</p>
+      <h2 class="rv">Como funciona o meu <em>acompanhamento nutricional</em></h2>
+      <p class="rv">Em três momentos, com o mesmo cuidado: antes, durante e depois da consulta.</p>
+    </header>
+
+    <article class="chap" id="passo1">
+      <div class="chap__txt">
+        <p class="chap__n rv"><b>1</b> Antes da consulta</p>
+        <h3 class="rv">Envio-te um <em>questionário completo.</em></h3>
+        <p class="rv">Nele, analiso a tua história, alimentação, preferências, rotina, desafios e objetivos. Isto permite-me chegar ao atendimento a perceber já os pontos mais importantes do teu caso, para que a consulta seja dirigida ao que realmente precisa de ser cuidado.</p>
+        <ul class="dots rv"><li>História</li><li>Alimentação</li><li>Preferências</li><li>Rotina</li><li>Desafios</li><li>Objetivos</li></ul>
+      </div>
+      <figure class="chap__media rv" style="margin:0"><div class="pad"></div><img src="img/louise-de-pe.webp" width="504" height="1174" alt="Louise de pé, encostada à secretária, com o portátil nas mãos" loading="lazy"></figure>
+    </article>
+
+    <article class="chap" id="passo2">
+      <div class="chap__txt">
+        <p class="chap__n rv"><b>2</b> Na consulta</p>
+        <h3 class="rv">Uma avaliação <em>à tua medida.</em></h3>
+        <div class="duo rv">
+          <div><h4><span>Presencial, em Lisboa</span>No atendimento presencial</h4><p>Realizo a avaliação corporal com circunferências, dobras cutâneas e bioimpedância.</p></div>
+          <div><h4><span>Online, para o mundo</span>No online</h4><p>Esse acompanhamento também acontece de forma detalhada, com fotos e medidas enviadas por ti.</p></div>
+        </div>
+        <p class="callout rv">Quando necessário, também analiso exames e incluo suplementação de forma individualizada.</p>
+      </div>
+      <figure class="chap__media rv" style="margin:0"><div class="pad"></div><img src="img/louise-consulta.webp" width="452" height="644" alt="Louise a sorrir, sentada, durante uma consulta" loading="lazy"></figure>
+    </article>
+
+    <article class="chap" id="passo3">
+      <div class="chap__txt">
+        <p class="chap__n rv"><b>3</b> Depois da consulta</p>
+        <h3 class="rv">O acompanhamento <em>não termina</em> na consulta.</h3>
+        <p class="rv">Contas com um suporte contínuo pelo WhatsApp para tirar dúvidas, alinhar ajustes e receber acolhimento nos momentos em que tudo parece mais difícil.</p>
+        <p class="rv">A minha intenção é que não te sintas só no processo, mas que tenhas atenção e cuidado tanto nos desafios como nas conquistas.</p>
+      </div>
+      <figure class="chap__media rv" style="margin:0" id="chatbox"><div class="pad"></div><img src="img/louise-telemovel.webp" width="634" height="659" alt="Louise a sorrir enquanto olha para o telemóvel" loading="lazy">
+        <div class="chat" aria-label="Exemplo ilustrativo de conversa">
+          <p class="chat__lb">Exemplo ilustrativo</p>
+          <p class="msg me">Tenho um jantar de anos no sábado. E agora?</p>
+          <p class="msg">Vamos ver como encaixá-lo no teu dia. Conta-me como vai ser.</p>
+          <p class="msg me">Hoje não correu como eu queria…</p>
+          <p class="msg">Acontece. Vamos ajustar juntas: um dia não define o processo.</p>
+        </div>
+      </figure>
+    </article>
+  </div>
+</section>
+
+<!-- ===== AS TUAS FAVORITAS (o ananás que se enche) ===== -->
+<section class="fav zig" id="favoritas">
+  <div class="wrap fav__grid">
+    <div>
+      <p class="eyebrow rv">Sem proibições</p>
+      <h2 class="rv">As tuas comidas <em>favoritas</em> também podem fazer parte.</h2>
+      <p class="fav__intro rv">Escolhe as comidas de que não queres abrir mão e vê como o ananás se vai enchendo. Na consulta, falamos de como as encaixar no teu dia.</p>
+      <ul class="chips rv" id="chips" aria-label="Comidas favoritas"></ul>
+      <form class="addrow rv" id="addForm"><label class="sr" for="addIn">Outra comida favorita</label><input id="addIn" type="text" maxlength="24" placeholder="Outra favorita…" autocomplete="off"><button type="submit">Juntar</button></form>
+      <p class="fav__count" id="favCount">0 favoritas no ananás</p>
+      <p class="fav__msg" id="favMsg" aria-live="polite"></p>
+      <div class="fav__cta"><button type="button" class="btn rose" id="favGo" disabled>Levar estas favoritas para a marcação</button></div>
+    </div>
+    <div class="boardbox rv">
+      <svg class="leaves" viewBox="0 0 200 130" aria-hidden="true">
+        <g transform="translate(100 126)">
+          <g transform="rotate(-56)"><path class="l" d="M0 0C-17-34-14-72 0-108C14-72 17-34 0 0Z"/></g>
+          <g transform="rotate(56)"><path class="l" d="M0 0C-17-34-14-72 0-108C14-72 17-34 0 0Z"/></g>
+          <g transform="rotate(-28)"><path class="l" d="M0 0C-19-38-16-84 0-122C16-84 19-38 0 0Z"/></g>
+          <g transform="rotate(28)"><path class="l" d="M0 0C-19-38-16-84 0-122C16-84 19-38 0 0Z"/></g>
+          <g><path class="l" d="M0 0C-20-42-17-92 0-126C17-92 20-42 0 0Z"/></g>
+        </g>
+      </svg>
+      <div class="board" id="board" role="img" aria-label="Ananás de losangos que se enche com as comidas escolhidas"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SOBRE ===== -->
+<section class="sobre zig" id="sobre">
+  <div class="wrap sobre__grid">
+    <figure class="frame rv"><img src="img/louise-sobre.jpg" width="1080" height="955" alt="Louise Wandenkolk, nutricionista, sentada à secretária com o portátil" loading="lazy"></figure>
+    <div>
+      <p class="eyebrow rv">Louise Wandenkolk · Nutricionista</p>
+      <h2 class="rv">Emagrecimento <em>com estratégia.</em></h2>
+      <p class="lead rv">Acompanho pessoas que estão cansadas de dietas que não funcionam. O trabalho assenta em três frentes, sempre com o respeito pela tua realidade:</p>
+      <ul class="tri rv">
+        <li><strong>Comportamento</strong><span>A relação com a comida, as rotinas e os dias em que tudo parece mais difícil.</span></li>
+        <li><strong>Metabolismo</strong><span>Perceber como o teu corpo funciona, com avaliação e acompanhamento.</span></li>
+        <li><strong>Nutrição desportiva</strong><span>A alimentação ao serviço do treino e dos teus objetivos.</span></li>
+      </ul>
+      <p class="sobre__meta rv"><a href="https://instagram.com/nutricionista.louise" target="_blank" rel="noopener">@nutricionista.louise</a> <span>Formação e cédula profissional: <span class="tbc">a confirmar com a cliente</span></span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PERGUNTAS ===== -->
+<section class="faq zig" id="perguntas">
+  <div class="wrap faq__grid">
+    <div class="faq__side rv">
+      <p class="eyebrow">Perguntas frequentes</p>
+      <h2>Antes de <em>começares.</em></h2>
+      <p>Não encontras o que procuras? Escreve-me e respondo-te com calma.</p>
+    </div>
+    <div class="rv">
+      <details><summary>Como é o acompanhamento?</summary><p>Antes da consulta, envio-te um questionário completo. Na consulta fazemos a avaliação, à tua medida. E depois contas com suporte contínuo pelo WhatsApp para tirar dúvidas e alinhar ajustes.</p></details>
+      <details><summary>Posso fazer a consulta online, se não estiver em Portugal?</summary><p>Sim: o atendimento é presencial em Lisboa e online para o mundo. Fusos horários e formas de pagamento: <span class="tbc">a confirmar com a cliente</span>.</p></details>
+      <details><summary>Como é feita a avaliação corporal?</summary><p>No atendimento presencial, com circunferências, dobras cutâneas e bioimpedância. No online, de forma igualmente detalhada, com fotos e medidas enviadas por ti.</p></details>
+      <details><summary>Analisas exames e incluis suplementação?</summary><p>Quando necessário, sim, de forma individualizada. A adequação de qualquer suplementação depende sempre de avaliação individual.</p></details>
+      <details><summary>Quanto custa e quanto dura a consulta?</summary><p>Valores, duração e frequência dos acompanhamentos: <span class="tbc">a confirmar com a cliente</span>.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MARCAÇÃO ===== -->
+<section class="marcar zig" id="marcar">
+  <svg class="marcar__mark" viewBox="0 0 200 300" aria-hidden="true" fill="none" stroke="#fff" stroke-width="2"><ellipse cx="100" cy="190" rx="76" ry="104"/><path d="M30 130 170 250M170 130 30 250M52 100 150 280M148 100 50 280M100 86V294M36 190H164"/></svg>
+  <div class="wrap marcar__grid">
+    <div class="marcar__txt">
+      <p class="eyebrow rv">Marcar consulta</p>
+      <h2 class="rv">Resultados duradouros começam com um cuidado que <em>respeita a tua realidade.</em></h2>
+      <p class="rv">Será um prazer acompanhar-te nesta jornada. Escreve-me e combinamos o melhor formato, presencial ou online.</p>
+      <ul class="cts rv">
+        <li><b>WhatsApp</b><span class="tbc">a confirmar com a cliente</span></li>
+        <li><b>Email</b><span class="tbc">a confirmar com a cliente</span></li>
+        <li><b>Morada</b><span><span class="tbc">a confirmar com a cliente</span> · Lisboa</span></li>
+        <li><b>Horário</b><span class="tbc">a confirmar com a cliente</span></li>
+        <li><b>Instagram</b><a href="https://instagram.com/nutricionista.louise" target="_blank" rel="noopener">@nutricionista.louise</a></li>
+      </ul>
+    </div>
+    <form class="f rv" id="demoForm" novalidate>
+      <div class="fld"><label for="nome">Nome</label><input id="nome" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="contacto">Email ou telemóvel</label><input id="contacto" type="text" autocomplete="off"></div>
+      <div class="fld"><span class="lb" id="modLb">Como preferes a consulta?</span>
+        <div class="radios" role="radiogroup" aria-labelledby="modLb">
+          <label><input type="radio" name="mod" value="Presencial em Lisboa" checked><span>Presencial em Lisboa</span></label>
+          <label><input type="radio" name="mod" value="Online"><span>Online</span></label>
+        </div></div>
+      <div class="fld"><label for="msg">Queres contar-me algo?</label><textarea id="msg" placeholder="O teu objetivo, as tuas dúvidas, as comidas de que não queres abrir mão…"></textarea></div>
+      <button class="btn" type="submit">Enviar pedido</button>
+      <p class="f__ok" id="demoOk" role="status">Isto é uma demonstração: nada foi enviado e nenhum dado foi guardado.</p>
+      <p class="f__note">Formulário de demonstração. Não envia nem guarda nada.</p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<!-- ===== RODAPÉ ===== -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__row">
+      <img src="img/logo-claro.png" width="1061" height="159" alt="Louise Wandenkolk · Nutricionista" loading="lazy">
+      <a href="https://instagram.com/nutricionista.louise" target="_blank" rel="noopener">@nutricionista.louise</a>
+    </div>
+    <p class="foot__note"><strong>Website de demonstração</strong> criado pela DD Digital para Louise Wandenkolk. Textos, serviços e exemplos de conversa são ilustrativos e não vinculativos; morada, contactos, horários e valores estão por confirmar. Fotografias e logótipo: cedidos pela cliente (Instagram @nutricionista.louise). Não é aconselhamento nutricional: a adequação de qualquer acompanhamento depende de avaliação individual por um profissional.</p>
+    <p class="credito">Spoiler: este website não se fez sozinho <span class="credito-emoji" aria-hidden="true">😉</span> <a href="https://dddigital.pt" target="_blank" rel="noopener">DD Digital</a>.</p>
+  </div>
+</footer>
+
+<script>
+/* =====================================================================
+   JS — organizado por funcionalidade
+   ===================================================================== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NOPRE=/[?&]nopre/.test(location.search);
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+
+/* ---------- menu mobile (fundo imóvel, repõe o scroll) ---------- */
+const burger=$('#burger'); let menuY=0;
+function setMenu(open){
+  const is=document.body.classList.contains('menu-open'); if(open===is) return;
+  if(open){ menuY=scrollY; document.body.style.top=-menuY+'px'; document.body.classList.add('menu-open'); }
+  else{
+    document.body.classList.remove('menu-open'); document.body.style.top='';
+    document.documentElement.style.scrollBehavior='auto'; scrollTo(0,menuY); document.documentElement.style.scrollBehavior='';
+  }
+  burger.setAttribute('aria-expanded',open); burger.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');
+}
+burger.addEventListener('click',()=>setMenu(!document.body.classList.contains('menu-open')));
+addEventListener('keydown',e=>{ if(e.key==='Escape') setMenu(false); });
+addEventListener('resize',()=>{ if(innerWidth>860) setMenu(false); });
+$$('#nav a').forEach(a=>a.addEventListener('click',e=>{
+  const id=a.getAttribute('href'); const was=document.body.classList.contains('menu-open');
+  if(was){ e.preventDefault(); setMenu(false); const t=$(id); if(t) t.scrollIntoView(); }
+}));
+const topbar=$('#top');
+addEventListener('scroll',()=>topbar.classList.toggle('scrolled',scrollY>10),{passive:true});
+
+/* ---------- revelações ao scroll ---------- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }),{rootMargin:'0px 0px -8% 0px',threshold:.08});
+$$('.rv').forEach((el,i)=>{ el.style.setProperty('--d',((i%4)*.08)+'s'); io.observe(el); });
+
+/* ---------- hero: ananás de losangos ---------- */
+const PULSE_PATH=(()=>{ // linha de pulsação rosa (as "asas" do logótipo): cicloide com laços, de cada lado do ananás
+  const wing=(x0,dir)=>{ let d=''; for(let t=0;t<=12;t+=.18){ const k=1-t/15;
+      const x=x0+dir*(t*9.2-30*k*Math.sin(t)), y=440-34*k*Math.cos(t)-(t*1.6);
+      d+=(t?'L':'M')+x.toFixed(1)+' '+y.toFixed(1); } return d; };
+  return wing(52,-1)+' '+wing(548,1);
+})();
+$('#pulsePath').setAttribute('d',PULSE_PATH);
+(function heroLattice(){
+  const stage=$('#stage'), cv=$('#lat'), ctx=cv.getContext('2d'), sg=$('#sg');
+  const GREY=[233,229,227], PAL=['#F0D4D8','#F0D4D8','#F8E8EA','#E2A9B4','#C98895','#944454','#043860','#F0D4D8','#E2A9B4'];
+  const rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+  let W=0,H=0,dpr=1,cells=[],cw=0,ch=0,cx=0,cy=0,rx=0,ry=0,intro=false,t0=0,last=0,ptr=null,ripples=[],vis=false,raf=0;
+  let seed=11; const rnd=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; };
+  function build(){
+    const r=stage.getBoundingClientRect(); W=r.width; H=r.height; if(!W) return;
+    dpr=Math.min(devicePixelRatio||1,2); cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    cx=W*.5; cy=H*.585; rx=W*.435; ry=H*.395; cw=Math.max(30,W/11.5); ch=cw*1.4; cells=[]; seed=11;
+    for(let j=-12;j<=12;j++) for(let i=-9;i<=9;i++){
+      const x=cx+(i+((j&1)?.5:0))*cw, y=cy+j*ch/2;
+      if(((x-cx)/rx)**2+((y-cy)/ry)**2>1.16) continue;
+      const d=clamp(((x/W)*.55+(1-y/H)*.9)/1.45,0,1);   // diagonal: de baixo-esquerda para cima-direita
+      cells.push({x,y,d,col:rgb(PAL[(rnd()*PAL.length)|0]),g:RM||NOPRE?1:0,p:0});
+    }
+  }
+  function mix(a,b,t){ return `rgb(${(a[0]+(b[0]-a[0])*t)|0},${(a[1]+(b[1]-a[1])*t)|0},${(a[2]+(b[2]-a[2])*t)|0})`; }
+  function draw(now){
+    const dt=Math.min(60,now-last); last=now;
+    const t=intro?(now-t0)/2600:9;
+    if(intro&&t>.55) sg.classList.add('on');
+    if(intro&&t>1.6) intro=false;
+    ripples=ripples.filter(r=>now-r.t<1000);
+    const decay=Math.exp(-dt/300), hw=cw/2, hh=ch/2;
+    ctx.clearRect(0,0,W,H); ctx.save(); ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,0,7); ctx.clip();
+    ctx.lineWidth=1.5; ctx.lineJoin='round';
+    for(const c of cells){
+      c.g=intro?clamp((t*1.5-c.d*1.1)/.35,0,1):c.g>=1||t>=9?1:c.g;
+      if(!intro&&c.g<1) c.g=1;
+      c.p*=decay;
+      if(ptr){ const d=Math.hypot(c.x-ptr.x,c.y-ptr.y); if(d<cw*1.7) c.p=Math.max(c.p,1-d/(cw*1.7)); }
+      for(const r of ripples){ const d=Math.abs(Math.hypot(c.x-r.x,c.y-r.y)-(now-r.t)*.62); const a=Math.exp(-d*d/1500)*(1-(now-r.t)/1000); if(a>c.p) c.p=a; }
+      if(!RM&&c.g>=1){ const s=.16*(.5+.5*Math.sin(now/1100+c.d*8)); if(s>c.p) c.p=s; }
+      const k=1+.14*c.p, w=hw*k, h=hh*k;
+      ctx.beginPath(); ctx.moveTo(c.x,c.y-h); ctx.lineTo(c.x+w,c.y); ctx.lineTo(c.x,c.y+h); ctx.lineTo(c.x-w,c.y); ctx.closePath();
+      let f=mix(GREY,c.col,c.g); if(c.p>.02&&c.g>=1) f=mix(c.col,[255,255,255],Math.min(.55,c.p*.55));
+      ctx.fillStyle=f; ctx.fill(); ctx.strokeStyle=`rgba(4,56,96,${.22+.4*c.g})`; ctx.stroke();
+    }
+    ctx.restore();
+    ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,0,7); ctx.lineWidth=2.8; ctx.strokeStyle='rgba(4,56,96,.9)'; ctx.stroke();
+  }
+  function loop(now){ raf=0; draw(now); if(vis&&!document.hidden&&!RM) raf=requestAnimationFrame(loop); }
+  function kick(){ if(!raf&&vis&&!document.hidden) raf=requestAnimationFrame(loop); }
+  function play(){ // a graça (re)chega
+    cells.forEach(c=>{c.g=0;c.p=0}); intro=true; t0=performance.now(); sg.classList.remove('on'); drawPulse(); kick();
+  }
+  const pp=$('#pulsePath'); let plen=0;
+  function drawPulse(){ plen=pp.getTotalLength?pp.getTotalLength():0; if(RM||!plen) return; pp.style.transition='none'; pp.style.strokeDasharray=plen; pp.style.strokeDashoffset=plen; pp.getBoundingClientRect(); pp.style.transition='stroke-dashoffset 2.6s ease .3s'; pp.style.strokeDashoffset=0; }
+  // ponteiro: rato por hover, toque por arrasto; clique/toque lança uma onda
+  stage.addEventListener('pointermove',e=>{ const r=stage.getBoundingClientRect(); ptr={x:e.clientX-r.left,y:e.clientY-r.top}; kick(); });
+  stage.addEventListener('pointerleave',()=>{ptr=null});
+  stage.addEventListener('pointerup',()=>{ if(stage.dataset.t) ptr=null; });
+  stage.addEventListener('pointerdown',e=>{ const r=stage.getBoundingClientRect(); ripples.push({x:e.clientX-r.left,y:e.clientY-r.top,t:performance.now()}); kick(); });
+  $('#replay').addEventListener('click',()=>{ if(!RM) play(); });
+  sg.addEventListener('click',()=>{ if(!RM) play(); });
+  new IntersectionObserver(es=>{ vis=es[0].isIntersecting; if(vis){ if(RM) draw(performance.now()); kick(); } },{threshold:0}).observe(stage);
+  document.addEventListener('visibilitychange',kick);
+  let rt; addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ const was=intro; build(); draw(performance.now()); kick(); },150); });
+  build(); last=performance.now();
+  if(RM||NOPRE){ sg.classList.add('on'); draw(performance.now()); }
+  else { sg.classList.remove('on'); intro=true; t0=performance.now(); drawPulse(); }
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ build(); if(RM||NOPRE) draw(performance.now()); });
+})();
+
+/* ---------- slider: sem graça → com graça ---------- */
+(function dieta(){
+  const sec=$('#dieta'), rng=$('#rng'); let touched=false, raf=0;
+  const set=v=>{ sec.style.setProperty('--v',v.toFixed(3)); rng.value=Math.round(v*100); rng.setAttribute('aria-valuetext',Math.round(v*100)+'% acompanhamento'); };
+  rng.addEventListener('input',()=>{ touched=true; cancelAnimationFrame(raf); set(rng.value/100); });
+  const go=v=>{ touched=true; const from=+rng.value/100, s=performance.now(); cancelAnimationFrame(raf);
+    if(RM){ set(v); return; }
+    (function f(n){ const k=clamp((n-s)/900,0,1); set(from+(v-from)*ease(k)); if(k<1) raf=requestAnimationFrame(f); })(s); };
+  $('#e0').addEventListener('click',()=>go(0)); $('#e1').addEventListener('click',()=>go(1));
+  if(RM){ set(1); return; }
+  set(0);
+  new IntersectionObserver((es,o)=>{ if(es[0].isIntersecting&&!touched){ o.disconnect(); const s=performance.now()+500;
+    (function f(n){ if(touched) return; const k=clamp((n-s)/3200,0,1); set(ease(k)); if(k<1) raf=requestAnimationFrame(f); })(s); } },{threshold:.45}).observe(sec);
+})();
+
+/* ---------- fita métrica: marcador e fita a desenrolar ---------- */
+(function tape(){
+  const wrap=$('#comoWrap'), tp=$('#tape'), mark=$('#tapeMark'), fill=$('#tapeFill'), num=$('#tapeNum'), chaps=$$('.chap');
+  let h=0;
+  function labels(){ $$('.tape__lb',tp).forEach(n=>n.remove()); h=tp.offsetHeight; const step=120;
+    for(let i=1;i*step<h-40;i++){ const s=document.createElement('span'); s.className='tape__lb'; s.style.top=i*step+'px'; s.textContent=i*5; tp.appendChild(s); } }
+  let ticking=false;
+  function update(){ ticking=false; const r=wrap.getBoundingClientRect(), vh=innerHeight, line=vh*.5;
+    const p=clamp((line-r.top)/r.height,0,1);
+    mark.style.transform=`translateY(${p*(r.height-36)}px)`; fill.style.transform=`scaleY(${p})`;
+    let n=1; chaps.forEach((c,i)=>{ if(c.getBoundingClientRect().top<line) n=i+1; }); num.textContent=n; }
+  addEventListener('scroll',()=>{ if(!ticking){ ticking=true; requestAnimationFrame(update);} },{passive:true});
+  addEventListener('resize',()=>{ labels(); update(); }); labels(); update();
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ labels(); update(); });
+})();
+
+/* ---------- conversa de exemplo: as mensagens vão chegando ---------- */
+(function chat(){
+  const msgs=$$('#chatbox .msg'); if(!msgs.length) return;
+  if(RM){ msgs.forEach(m=>m.classList.add('on')); return; }
+  new IntersectionObserver((es,o)=>{ if(es[0].isIntersecting){ o.disconnect(); msgs.forEach((m,i)=>setTimeout(()=>m.classList.add('on'),500+i*1300)); } },{threshold:.35}).observe($('#chatbox'));
+})();
+
+/* ---------- favoritas: o ananás que se enche ---------- */
+(function favoritas(){
+  const FOODS=['Pizza','Chocolate','Pão com manteiga','Arroz e feijão','Massa','Gelado','Pastel de nata','Hambúrguer','Bolo de aniversário','Café com leite','Vinho','Churrasco','Batatas fritas','Bacalhau com natas','Brigadeiro','Pipocas'];
+  const SHORT={'Pão com manteiga':'Pão com manteiga','Bolo de aniversário':'Bolo de anos','Bacalhau com natas':'Bacalhau com natas','Café com leite':'Café com leite'};
+  const COLS=[['#F0D4D8',0],['#E2A9B4',0],['#C98895',1],['#944454',1],['#F8E8EA',0],['#F0D4D8',0],['#B9566B',1]];
+  const board=$('#board'), chips=$('#chips'), msg=$('#favMsg'), count=$('#favCount'), go=$('#favGo');
+  const MAX=22; let list=[], slots=[], colN=0; const sel=new Map();   // comida -> índice da tile
+  function layout(){
+    const W=board.clientWidth||480, cols=W<420?4:5, t=W/cols; let rows=Math.ceil(1.3*W/(t/2))-1, pts=[];
+    for(;rows<=30;rows++){ pts=[]; const H=(rows+1)*t/2, cy=H/2;
+      for(let j=0;j<rows;j++) for(let i=0;i<cols;i++){
+        const odd=j&1; if(odd&&i===cols-1) continue;
+        const x=t/2+i*t+(odd?t/2:0), y=t/2+j*t/2;
+        if(((x-W/2)/(W/2))**2+((y-cy)/(H/2))**2<=1.02) pts.push({x,y});
+      }
+      if(pts.length>=MAX) break; }
+    const H=(rows+1)*t/2; board.style.height=H+'px';
+    const keep=new Map(sel); board.innerHTML=''; slots=[]; sel.clear();
+    pts.sort((a,b)=>Math.hypot(a.x-W/2,a.y-H/2)-Math.hypot(b.x-W/2,b.y-H/2));
+    pts.forEach(p=>{ const e=document.createElement('div'); e.className='tile'; e.style.cssText=`left:${p.x-t/2}px;top:${p.y-t/2}px;width:${t}px;height:${t}px;--fs:${Math.max(.56,t/150).toFixed(2)}rem`;
+      e.appendChild(document.createElement('span')); board.appendChild(e); slots.push({e,food:null}); });
+    list.forEach(f=>{ if(keep.has(f)) place(f,true); });
+  }
+  function place(food,quiet){
+    const i=slots.findIndex(s=>!s.food); if(i<0) return false;
+    const s=slots[i], [c,dark]=COLS[(colN++)%COLS.length]; s.food=food; sel.set(food,i);
+    s.e.style.setProperty('--c',c); s.e.classList.toggle('dk',!!dark); s.e.firstChild.textContent=SHORT[food]||food; s.e.classList.add('on');
+    if(quiet) s.e.style.animation='none'; return true;
+  }
+  function free(food){ const i=sel.get(food); if(i==null) return; const s=slots[i]; s.food=null; sel.delete(food); s.e.classList.remove('on','dk'); s.e.style.animation=''; s.e.firstChild.textContent=''; }
+  function text(){
+    const n=list.length; count.textContent=n===1?'1 favorita no ananás':n+' favoritas no ananás'; go.disabled=n===0;
+    let m='Escolhe as comidas de que não queres abrir mão.';
+    if(n>=1) m='Boa escolha. Na consulta, vemos como encaixá-la no teu dia.';
+    if(n>=4) m='Nada disto está proibido. Falamos de quantidade, frequência e contexto, à tua medida.';
+    if(n>=9) m='Já é uma mesa cheia. É um ótimo ponto de partida: construímos um plano que consegues manter.';
+    if(n>=MAX) m='O ananás está cheio! As restantes ficam para a consulta.';
+    msg.innerHTML=''; msg.append(m); const sm=document.createElement('small'); sm.textContent='Ilustrativo. Não é um plano alimentar nem aconselhamento nutricional: depende de avaliação individual.'; msg.appendChild(sm);
+  }
+  function toggle(food,btn){
+    if(sel.has(food)||list.includes(food)){ list=list.filter(f=>f!==food); free(food); if(btn) btn.setAttribute('aria-pressed','false'); }
+    else{ if(list.length>=MAX||!place(food)) { text(); return; } list.push(food); if(btn) btn.setAttribute('aria-pressed','true'); }
+    text();
+  }
+  function chip(food){ const li=document.createElement('li'), b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=food; b.setAttribute('aria-pressed','false'); b.addEventListener('click',()=>toggle(food,b)); li.appendChild(b); chips.appendChild(li); return b; }
+  FOODS.forEach(chip);
+  $('#addForm').addEventListener('submit',e=>{ e.preventDefault(); const i=$('#addIn'), v=i.value.trim().replace(/\s+/g,' '); if(!v) return;
+    const ex=$$('.chip',chips).find(b=>b.textContent.toLowerCase()===v.toLowerCase()); if(ex){ if(ex.getAttribute('aria-pressed')!=='true') toggle(ex.textContent,ex); }
+    else{ const b=chip(v.charAt(0).toUpperCase()+v.slice(1)); toggle(b.textContent,b); } i.value=''; });
+  go.addEventListener('click',()=>{ const m=$('#msg'); m.value='Gostava de falar sobre estas comidas favoritas: '+list.join(', ')+'.'; location.hash='#marcar'; setTimeout(()=>m.focus({preventScroll:true}),600); });
+  layout(); text();
+  let rt; addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(layout,150); });
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(layout);
+})();
+
+/* ---------- formulário de demonstração (não envia nada) ---------- */
+$('#demoForm').addEventListener('submit',e=>{ e.preventDefault(); $('#demoOk').classList.add('show'); });
+</script>
+</body>
+</html>
