@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Acrópole — Demonstração</title>
+<meta name="description" content="Demonstração de website para o Acrópole Restaurante & Gastrobar, Figueira da Foz. Metade bar, metade restaurante.">
+<meta name="theme-color" content="#0E0905">
+<link rel="icon" type="image/png" href="img/acropole-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@100..700&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+/*
+  ACRÓPOLE — CONCEITO
+  Gesto: o logótipo diz "Restaurante & Gastrobar" e parte-se ao meio (ACRÓ | POLE). Metade restaurante, metade bar.
+  Hero: DUAS PORTAS verticais (esquerda restaurante, direita bar). O logótipo real está cortado pela costura e,
+  ao scroll, as portas afastam-se e revelam "Hoje": relógio ao vivo, estado da cozinha e linha do dia (10h–24h).
+  Assinatura: molduras de canto côncavo (a cartela do logótipo), floreados reais do logótipo como divisores.
+
+  Herdado de: Simple/Don.Turista (setup GSAP + pin/scrub, faixa DEMO base, formulário de demonstração),
+              SA Concept (marquee com velocidade ligada ao scroll — só a técnica), Instituto (lista que troca de foto).
+  Novo: portas verticais com logótipo cortado, relógio/linha do dia ao vivo (Europe/Lisbon) com sonda ao toque/rato,
+        moldura "cartela" por máscara de cantos côncavos, floreado do logótipo desenhado do centro para fora,
+        Antonio (condensada, como os títulos dos posts) + Spectral (itálico), paleta ébano/ouro/âmbar.
+
+  Ordem: 0 variáveis · 1 base · 2 faixa DEMO + cabeçalho + menu · 3 peças (cartela, botão, floreado)
+         4 hero (portas) · 5 hoje · 6 mesa · 7 pratos do mês · 8 bar · 10 visitar · 11 rodapé
+*/
+
+/* 0 · VARIÁVEIS */
+:root{
+  --ink:#0E0905; --ink2:#150E07; --wood:#22150A; --slate:#1C1B1A;
+  --gold:#C9B26E; --gold2:#E6D49C; --gold-d:#8F7B3F;
+  --ivory:#EEE8DB; --paper:#EFE7D6; --muted:#A89F8C; --ember:#C23B2B;
+  --f-d:'Antonio','Arial Narrow',sans-serif; --f-b:'Spectral',Georgia,serif;
+  --demo-h:32px; --hh:64px; --wrap:1240px; --gut:clamp(20px,4vw,56px);
+  --seam:.525;            /* posição da costura no logótipo (entre Ó e P) */
+  --lw:min(600px,44vw,72svh);
+  --lh:calc(var(--lw)*.8166);
+}
+@media (max-width:899px){
+  :root{--demo-h:30px;--hh:58px;--lw:min(88vw,50svh*1.2275)}
+}
+
+/* 1 · BASE */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ink);color:var(--ivory);font-family:var(--f-b);font-size:18px;line-height:1.6;overflow-x:clip;-webkit-font-smoothing:antialiased}
+body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+body::after{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.07;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 .95  0 0 0 0 .85  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+h1,h2,h3,p,ol,ul,figure{margin:0}
+ol,ul{padding:0;list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold2);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{width:100%;max-width:var(--wrap);margin:0 auto;padding-inline:var(--gut)}
+.wrap>*{min-width:0}
+.eyebrow{font:500 14px/1 var(--f-d);letter-spacing:.28em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:14px}
+.eyebrow::before{content:"";width:34px;height:1px;background:currentColor}
+.h2{font:200 clamp(52px,9.4vw,150px)/.88 var(--f-d);text-transform:uppercase;letter-spacing:.005em;margin-top:22px}
+.h2 b{font-weight:600;color:var(--gold)}
+.lead{font-size:clamp(18px,1.5vw,22px);color:var(--ivory);max-width:34em;font-weight:300}
+.lead em{color:var(--gold2)}
+.tbc{display:inline-block;font:500 12px/1 var(--f-d);letter-spacing:.18em;text-transform:uppercase;color:var(--gold);border:1px dashed var(--gold-d);padding:6px 9px;vertical-align:middle}
+.sec{position:relative;padding-block:clamp(110px,15vw,210px)}
+
+/* 2 · FAIXA DEMO + CABEÇALHO + MENU */
+.demo{position:fixed;inset:0 0 auto 0;height:var(--demo-h);z-index:100;display:flex;align-items:center;justify-content:center;gap:12px;
+  background:var(--gold);color:var(--ink);font:500 12px/1 var(--f-d);letter-spacing:.16em;text-transform:uppercase;padding-inline:10px;white-space:nowrap}
+.demo i{font-style:normal;background:var(--ink);color:var(--gold);padding:5px 8px 4px;letter-spacing:.22em}
+.demo .short{display:none}
+@media (max-width:640px){.demo .long{display:none}.demo .short{display:inline}}
+.seal{position:fixed;right:18px;bottom:18px;z-index:70;font:500 11px/1 var(--f-d);letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
+  background:rgba(14,9,5,.86);border:1px solid var(--gold-d);padding:9px 12px 8px}
+@media (max-width:899px){.seal{display:none}}
+
+.hdr{position:fixed;top:var(--demo-h);left:0;right:0;height:var(--hh);z-index:90;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding-inline:var(--gut);
+  background:transparent;transition:background-color .4s}
+.hdr.solid,.menu-open .hdr{background:var(--ink)}
+.hdr.solid::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold-d),transparent)}
+.hdr .mini{display:block;height:calc(var(--hh) - 14px);opacity:0;transition:opacity .4s}
+.hdr .mini img{height:100%;width:auto}
+.hdr.solid .mini,.menu-open .hdr .mini{opacity:1}
+.nav{display:flex;gap:clamp(18px,2.4vw,38px)}
+.nav a,.mnav a{font:500 15px/1 var(--f-d);letter-spacing:.2em;text-transform:uppercase;text-decoration:none;position:relative;padding:8px 0}
+.nav a::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .35s}
+.nav a:hover::after,.nav a:focus-visible::after{transform:scaleX(1)}
+.hdr .cta{justify-self:end}
+.burger{display:none;justify-self:end;width:44px;height:44px;position:relative}
+.burger span{position:absolute;left:10px;right:10px;height:1.5px;background:var(--gold);transition:transform .3s,opacity .3s}
+.burger span:nth-child(1){top:16px}.burger span:nth-child(2){top:22px}.burger span:nth-child(3){top:28px}
+.menu-open .burger span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.menu-open .burger span:nth-child(2){opacity:0}
+.menu-open .burger span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.menu{position:fixed;top:calc(var(--demo-h) + var(--hh));left:0;right:0;bottom:0;z-index:80;background:var(--ink);overflow-y:auto;overscroll-behavior:contain;
+  padding:34px var(--gut) 40px;display:none;flex-direction:column;gap:6px}
+.menu.open{display:flex}
+.mnav{display:flex;flex-direction:column}
+.mnav a{font:200 clamp(40px,12vw,64px)/1 var(--f-d);letter-spacing:.02em;padding:14px 0;border-bottom:1px solid rgba(201,178,110,.22);display:flex;justify-content:space-between;align-items:baseline}
+.mnav a small{font:500 13px/1 var(--f-d);letter-spacing:.2em;color:var(--gold)}
+.menu .info{margin-top:auto;padding-top:34px;color:var(--muted);font-size:16px}
+.menu .info b{display:block;color:var(--gold);font:500 13px/1 var(--f-d);letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px}
+@media (max-width:899px){
+  .hdr{grid-template-columns:1fr auto}
+  .hdr .mini{grid-column:1;grid-row:1;justify-self:start}
+  .nav,.hdr .cta{display:none}
+  .burger{display:block;grid-column:2;grid-row:1}
+}
+
+/* 3 · PEÇAS: cartela (cantos côncavos), botão, floreado */
+.cart,.cart>.in,.btn,.btn>span{
+  -webkit-mask:radial-gradient(circle var(--r) at 0 0,#0000 97%,#000) top left/51% 51% no-repeat,
+    radial-gradient(circle var(--r) at 100% 0,#0000 97%,#000) top right/51% 51% no-repeat,
+    radial-gradient(circle var(--r) at 0 100%,#0000 97%,#000) bottom left/51% 51% no-repeat,
+    radial-gradient(circle var(--r) at 100% 100%,#0000 97%,#000) bottom right/51% 51% no-repeat;
+  mask:radial-gradient(circle var(--r) at 0 0,#0000 97%,#000) top left/51% 51% no-repeat,
+    radial-gradient(circle var(--r) at 100% 0,#0000 97%,#000) top right/51% 51% no-repeat,
+    radial-gradient(circle var(--r) at 0 100%,#0000 97%,#000) bottom left/51% 51% no-repeat,
+    radial-gradient(circle var(--r) at 100% 100%,#0000 97%,#000) bottom right/51% 51% no-repeat}
+.cart{--r:22px;--cf:var(--ink);position:relative;display:block;padding:1.5px;background:linear-gradient(135deg,var(--gold2),var(--gold-d) 55%,var(--gold))}
+.cart>.in{display:block;position:relative;height:100%;background:var(--cf);overflow:hidden}
+.cart .in img{width:100%;height:100%;object-fit:cover;transition:transform 1.1s cubic-bezier(.2,.7,.2,1)}
+.cart:hover .in img{transform:scale(1.045)}
+.cart.ink{background:var(--ink);--cf:var(--paper)}
+.btn{--r:9px;display:inline-block;padding:1.5px;background:var(--gold);text-decoration:none;font:500 15px/1 var(--f-d);letter-spacing:.22em;text-transform:uppercase}
+.btn>span{display:block;padding:15px 26px 14px;background:var(--ink);color:var(--gold2);transition:background-color .3s,color .3s}
+.btn:hover>span,.btn:focus-visible>span{background:var(--gold);color:var(--ink)}
+.btn.solid>span{background:var(--gold);color:var(--ink)}
+.btn.solid:hover>span{background:var(--ink);color:var(--gold2)}
+.fl{position:absolute;left:50%;top:clamp(26px,4vw,54px);z-index:5;width:clamp(150px,19vw,250px);aspect-ratio:1000/134;transform:translateX(-50%);pointer-events:none}
+.fl img{width:100%;height:100%;object-fit:contain;clip-path:inset(0% 0% 0% 0%)}
+
+/* 4 · HERO (portas) */
+.stage{position:relative;height:100vh;height:100svh;min-height:540px;background:var(--ink);overflow:hidden}
+html:not(.pin) .stage{height:auto;overflow:visible}
+html.js:not(.ready) .doors{visibility:hidden}
+.doors{position:absolute;inset:0;z-index:3;pointer-events:none}
+html:not(.pin) .doors{position:relative;height:100vh;height:100svh;min-height:540px;inset:auto;overflow:hidden}
+.door{position:absolute;top:0;bottom:0;width:50%;overflow:hidden;background:var(--ink);pointer-events:auto;cursor:default}
+.door-l{left:0}.door-r{right:0}
+.door .ph{position:absolute;inset:0;clip-path:inset(0% 0% 0% 0%)}
+.door .ph img{width:100%;height:100%;object-fit:cover}
+.door-l .ph img{object-position:58% 50%}.door-r .ph img{object-position:52% 38%}
+.door .dim{position:absolute;inset:0;background:var(--ink);opacity:.42;transition:opacity .7s}
+.door .shade{position:absolute;inset:0;pointer-events:none}
+.door-l .shade{background:linear-gradient(to top,rgba(14,9,5,.9),transparent 42%),linear-gradient(90deg,rgba(14,9,5,.05),rgba(14,9,5,.72))}
+.door-r .shade{background:linear-gradient(to top,rgba(14,9,5,.9),transparent 42%),linear-gradient(270deg,rgba(14,9,5,.05),rgba(14,9,5,.72))}
+.doors[data-lit="l"] .door-l .dim,.doors[data-lit="r"] .door-r .dim{opacity:.05}
+.doors[data-lit="l"] .door-r .dim,.doors[data-lit="r"] .door-l .dim{opacity:.62}
+.seam{position:absolute;top:0;bottom:0;width:1px;z-index:4;background:linear-gradient(to bottom,transparent,var(--gold) 30%,var(--gold2) 56%,var(--gold) 80%,transparent);transform-origin:50% 50%}
+.door-l .seam{right:0}.door-r .seam{left:0}
+.logo-h{position:absolute;z-index:3;top:calc(50% + (var(--demo-h) + var(--hh))/2 - var(--lh)/2);width:var(--lw);height:var(--lh);pointer-events:none}
+.door-l .logo-h{right:calc(-1*(1 - var(--seam))*var(--lw))}
+.door-r .logo-h{left:calc(-1*var(--seam)*var(--lw))}
+.logo-h img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 22px rgba(0,0,0,.65))}
+.lab{position:absolute;bottom:clamp(86px,13svh,130px);z-index:3;max-width:calc(100% - 2*var(--gut))}
+.door-l .lab{left:var(--gut)}.door-r .lab{right:var(--gut);text-align:right}
+.lab b{display:block;font:200 clamp(30px,4.2vw,64px)/.95 var(--f-d);letter-spacing:.04em;text-transform:uppercase}
+.lab b em{font-style:normal;font-weight:600;color:var(--gold)}
+.lab span{display:block;margin-top:10px;font:500 13px/1.5 var(--f-d);letter-spacing:.2em;text-transform:uppercase;color:var(--gold2)}
+.hero-ui{position:absolute;inset:0;z-index:5;pointer-events:none}
+.chip{position:absolute;left:50%;top:calc(var(--demo-h) + var(--hh) + 16px);transform:translateX(-50%);display:flex;align-items:center;gap:10px;white-space:nowrap;
+  font:500 13px/1 var(--f-d);letter-spacing:.22em;text-transform:uppercase;color:var(--ivory);background:rgba(14,9,5,.72);border:1px solid var(--gold-d);padding:10px 16px 9px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+[data-open="kitchen"] .dot,[data-open="bar"] .dot{background:var(--ember);animation:pulse 2.2s ease-in-out infinite}
+[data-open="bar"] .dot{background:var(--gold)}
+@keyframes pulse{50%{box-shadow:0 0 0 7px rgba(194,59,43,0)}0%{box-shadow:0 0 0 0 rgba(194,59,43,.55)}}
+.tag{position:absolute;left:50%;top:calc(50% + (var(--demo-h) + var(--hh))/2 + var(--lh)/2 + 14px);transform:translateX(-50%);width:max-content;max-width:90vw;text-align:center;
+  font:italic 300 clamp(20px,2.1vw,30px)/1.2 var(--f-b);color:var(--ivory);text-shadow:0 2px 16px #000}
+.tag b{font-weight:500;color:var(--gold2)}
+.hint{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;font:500 12px/1 var(--f-d);letter-spacing:.3em;text-transform:uppercase;color:var(--gold2)}
+.hint::after{content:"";width:1px;height:34px;background:linear-gradient(var(--gold2),transparent);animation:hint 2.2s ease-in-out infinite;transform-origin:top}
+@keyframes hint{0%{transform:scaleY(0)}60%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+@media (max-width:899px){
+  .logo-h{top:calc(46% + (var(--demo-h) + var(--hh))/2 - var(--lh)/2)}
+  .tag{top:calc(46% + (var(--demo-h) + var(--hh))/2 + var(--lh)/2 + 10px);font-size:20px}
+  .lab b{font-size:30px}.lab span{font-size:11px;letter-spacing:.14em}
+  .chip{font-size:11px;padding:9px 12px 8px;letter-spacing:.16em}
+}
+
+/* 5 · HOJE (atrás das portas) */
+.back{position:absolute;inset:0;z-index:1;display:grid;place-items:center;padding:calc(var(--demo-h) + var(--hh) + 10px) var(--gut) 34px;
+  background:radial-gradient(ellipse 80% 70% at 50% 38%,#2B1C0D 0%,var(--ink) 68%)}
+html:not(.pin) .back{position:relative;min-height:100vh;min-height:100svh}
+.back-in{width:100%;max-width:1120px;text-align:center}
+.back-fl{width:clamp(150px,18vw,230px);margin:0 auto 14px;opacity:.9}
+.back .eyebrow{justify-content:center}
+.clock{font:100 clamp(92px,19vw,240px)/.86 var(--f-d);letter-spacing:.01em;margin-top:14px;font-variant-numeric:tabular-nums}
+.clock small{font:500 clamp(14px,1.4vw,20px)/1 var(--f-d);letter-spacing:.3em;color:var(--gold);margin-left:.5em;vertical-align:top;display:inline-block;margin-top:.9em}
+.status{font:italic 300 clamp(22px,2.7vw,38px)/1.25 var(--f-b);margin:18px auto 0;max-width:24em;min-height:2.5em}
+.status b{font-weight:500;color:var(--gold2)}
+.tl{display:grid;grid-template-columns:var(--lab,92px) 1fr;column-gap:14px;row-gap:10px;margin-top:clamp(20px,4svh,44px);text-align:left;align-items:center}
+.tl .lab2{font:500 14px/1 var(--f-d);letter-spacing:.22em;color:var(--gold)}
+.trk{position:relative;height:24px;background:rgba(201,178,110,.09);grid-column:2}
+.seg{position:absolute;top:0;bottom:0;left:calc(var(--a)*1%);width:calc((var(--b) - var(--a))*1%);background:linear-gradient(90deg,var(--gold-d),var(--gold) 40%,var(--gold2));transform-origin:left}
+.seg.k{background:linear-gradient(90deg,#8E2A1E,var(--ember) 45%,#DE6A55)}
+.ax{grid-column:2;position:relative;height:18px}
+.ax span{position:absolute;top:0;left:calc(var(--h)*1%);transform:translateX(-50%);font:500 12px/1 var(--f-d);letter-spacing:.12em;color:var(--muted)}
+.ax span:first-child{transform:none}.ax span:last-child{transform:translateX(-100%)}
+.plot{grid-column:2;grid-row:1/4;position:relative;z-index:2;cursor:crosshair;touch-action:pan-y}
+.mk{position:absolute;top:-20px;bottom:-4px;width:1px;left:calc(var(--p)*1%);pointer-events:none}
+.mk::before{content:"";position:absolute;inset:0;background:var(--ivory)}
+.mk em{position:absolute;top:-4px;left:0;transform:translate(-50%,-100%);white-space:nowrap;font:500 12px/1 var(--f-d);letter-spacing:.16em;text-transform:uppercase;color:var(--ink);background:var(--ivory);padding:6px 8px 5px;font-style:normal}
+.mk.l em{transform:translate(0,-100%)}.mk.r em{transform:translate(-100%,-100%)}
+.mk.probe{opacity:0;transition:opacity .25s}.plot.on .mk.probe{opacity:1}
+.mk.probe::before{background:var(--gold2)}.mk.probe em{background:var(--gold2)}
+.mk.now[hidden]{display:none}
+.mk.now::after{content:"";position:absolute;left:-4px;bottom:-4px;width:9px;height:9px;border-radius:50%;background:var(--ivory)}
+.probe-hint{grid-column:2;grid-row:4;margin-top:6px;font:500 12px/1.4 var(--f-d);letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.back-foot{margin-top:clamp(18px,3.5svh,34px);display:flex;justify-content:center;gap:14px 30px;flex-wrap:wrap;align-items:center;font-size:16px;color:var(--muted)}
+.back-foot a{color:var(--gold2)}
+@media (max-width:899px){
+  :root{--lab:68px}
+  .tl .lab2{font-size:12px;letter-spacing:.14em}
+  .ax span{font-size:11px;letter-spacing:.04em}
+  .ax span.odd{display:none}
+  .status{min-height:3.8em}
+  .back-foot{font-size:15px}
+}
+
+/* 6 · A MESA */
+.mesa{background:var(--wood)}
+.mesa-grid{display:grid;grid-template-columns:repeat(12,1fr);column-gap:24px;align-items:start}
+.mesa-txt{grid-column:1/6;position:relative;z-index:2;padding-top:clamp(0px,3vw,40px)}
+.mesa-txt .lead{margin-top:30px}
+.mesa-txt .note{margin-top:22px;color:var(--muted);font-size:15px;font-style:italic}
+.col{grid-column:6/13;display:grid;grid-template-columns:repeat(12,1fr);column-gap:24px;row-gap:26px}
+.fig{position:relative}
+.fig figcaption{margin-top:12px;font:500 13px/1.3 var(--f-d);letter-spacing:.22em;text-transform:uppercase;color:var(--gold2)}
+.fig .cart{aspect-ratio:var(--ar)}
+.f1{grid-column:1/9;--ar:1/1}
+.f2{grid-column:9/13;grid-row:1/3;--ar:3/4.1;margin-top:clamp(40px,9vw,140px)}
+.f3{grid-column:3/8;--ar:3/3.9}
+@media (max-width:899px){
+  .mesa-grid{display:block}
+  .col{margin-top:48px;column-gap:14px}
+  .f1{grid-column:1/13}.f2{grid-column:7/13;margin-top:0}.f3{grid-column:1/7;margin-top:0}
+}
+
+/* 7 · PRATOS DO MÊS */
+.pratos{background:var(--slate)}
+.pr-head{max-width:760px}
+.pr-head .lead{margin-top:28px}
+.pr-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);column-gap:clamp(30px,5vw,80px);margin-top:clamp(50px,7vw,100px);align-items:start}
+.pr-list{border-top:1px solid rgba(201,178,110,.28)}
+.pr-list li{border-bottom:1px solid rgba(201,178,110,.28)}
+.pr-list button{width:100%;display:grid;grid-template-columns:96px 1fr;align-items:baseline;gap:16px;text-align:left;padding:clamp(16px,2vw,26px) 4px;color:var(--muted);transition:color .35s,padding .35s}
+.pr-list .mo{font:500 14px/1 var(--f-d);letter-spacing:.2em;text-transform:uppercase}
+.pr-list .nm{font:200 clamp(28px,3.4vw,50px)/1.02 var(--f-d);text-transform:uppercase;letter-spacing:.015em}
+.pr-list button[aria-selected="true"]{color:var(--ivory);padding-left:18px}
+.pr-list button[aria-selected="true"] .mo{color:var(--ember)}
+.pr-list button[aria-selected="true"] .nm{color:var(--gold2);font-weight:400}
+.pr-list button:hover{color:var(--ivory)}
+.pr-stage{position:sticky;top:calc(var(--demo-h) + var(--hh) + 24px)}
+.pr-photo{--r:26px;aspect-ratio:4/3.3}
+.pr-photo .in img{position:absolute;inset:0;opacity:0;transform:scale(1.07);transition:opacity .9s,transform 1.6s cubic-bezier(.2,.7,.2,1)}
+.pr-photo .in img.on{opacity:1;transform:scale(1)}
+.pr-photo:hover .in img.on{transform:scale(1.03)}
+.pr-cap{margin-top:16px;font:italic 300 17px/1.4 var(--f-b);color:var(--muted);min-height:2.8em}
+.pr-cap b{font:500 13px/1 var(--f-d);letter-spacing:.2em;text-transform:uppercase;color:var(--gold2);font-style:normal;margin-right:8px}
+.pr-foot{margin-top:30px;display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;color:var(--muted);font-size:15px}
+@media (max-width:899px){
+  .pr-grid{display:flex;flex-direction:column;gap:30px}
+  .pr-stage{position:relative;top:auto;order:-1}
+  .pr-list button{grid-template-columns:70px 1fr;gap:10px}
+}
+
+/* 8 · BAR */
+.bar{background:var(--ink);overflow:hidden;padding-bottom:0}
+.bar-bg{position:absolute;inset:0;z-index:0}
+.bar-bg img{width:100%;height:100%;object-fit:cover;object-position:62% 40%}
+.bar-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ink) 4%,rgba(14,9,5,.74) 40%,rgba(14,9,5,.18) 100%),linear-gradient(to bottom,var(--ink),transparent 22%,transparent 70%,var(--ink))}
+.bar .wrap{position:relative;z-index:2}
+.bar-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);column-gap:40px;align-items:end;min-height:min(78svh,760px)}
+.bar-big{font:100 clamp(80px,15vw,230px)/.84 var(--f-d);letter-spacing:.005em;margin-top:26px;white-space:nowrap}
+.bar-big span{display:block}
+.bar-big .to{font-weight:600;color:var(--gold)}
+.bar .lead{margin-top:34px}
+.bar-pic{justify-self:end;width:min(100%,360px);margin-bottom:-60px;--r:26px}
+.bar-pic .cart{aspect-ratio:4/4.5;box-shadow:0 30px 60px -20px #000}
+.bar-pic figcaption{margin-top:12px;font:500 13px/1.3 var(--f-d);letter-spacing:.22em;text-transform:uppercase;color:var(--gold2);text-align:right}
+.mq{position:relative;z-index:2;margin-top:clamp(70px,9vw,130px);padding-block:20px;border-block:1px solid rgba(201,178,110,.3);overflow:hidden;white-space:nowrap}
+.mq-track{display:inline-flex;will-change:transform}
+.mq-track span{font:300 clamp(54px,8vw,120px)/1 var(--f-d);text-transform:uppercase;letter-spacing:.04em;color:transparent;-webkit-text-stroke:1px var(--gold);padding-right:.5em}
+.mq-track span i{display:inline-block;width:.14em;height:.14em;background:var(--gold);transform:rotate(45deg);margin:0 .55em .12em 0;vertical-align:middle}
+@media (max-width:899px){
+  .bar-grid{display:block;min-height:0}
+  .bar-pic{margin:44px 0 0 auto;width:min(66%,300px)}
+}
+
+/* 10 · VISITAR */
+.visit{background:var(--ink2)}
+.visit-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.95fr);column-gap:clamp(30px,6vw,100px);margin-top:clamp(40px,6vw,80px);align-items:start}
+.addr{font:200 clamp(34px,4.6vw,66px)/1.02 var(--f-d);text-transform:uppercase;letter-spacing:.01em}
+.addr b{display:block;font-weight:600;color:var(--gold)}
+.tel{display:inline-block;margin-top:26px;font:300 clamp(30px,3.4vw,46px)/1 var(--f-d);letter-spacing:.08em;text-decoration:none;border-bottom:1px solid var(--gold-d)}
+.tel small{display:block;font:500 12px/1 var(--f-d);letter-spacing:.24em;color:var(--gold);margin-bottom:10px;text-transform:uppercase}
+.hrs{margin-top:44px;border-top:1px solid rgba(201,178,110,.28)}
+.hrs div{display:flex;justify-content:space-between;gap:20px;padding:15px 0;border-bottom:1px solid rgba(201,178,110,.28);align-items:baseline}
+.hrs dt{font:500 14px/1 var(--f-d);letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.hrs dd{margin:0;font:300 clamp(20px,2vw,26px)/1.2 var(--f-d);letter-spacing:.06em;text-align:right}
+.hrs-note{margin-top:16px;font-size:15px;color:var(--muted)}
+.map-link{display:inline-block;margin-top:30px}
+.form{--r:26px;--cf:var(--wood)}
+.form .in{padding:clamp(24px,3.4vw,44px)}
+.form h3{font:200 clamp(30px,3vw,42px)/1 var(--f-d);text-transform:uppercase;letter-spacing:.03em}
+.form h3 b{font-weight:600;color:var(--gold)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px 16px;margin-top:26px}
+.fld{display:flex;flex-direction:column;gap:7px;min-width:0}
+.fld.w{grid-column:1/-1}
+.fld label,.fld .lb{font:500 12px/1 var(--f-d);letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.fld input,.fld select,.fld textarea{width:100%;font:300 18px/1.3 var(--f-b);color:var(--ivory);background:rgba(14,9,5,.55);border:0;border-bottom:1px solid var(--gold-d);border-radius:0;padding:11px 10px;color-scheme:dark}
+.fld textarea{resize:vertical;min-height:84px}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-bottom-color:var(--gold2);background:rgba(14,9,5,.8)}
+.seg-pick{display:flex;gap:8px;flex-wrap:wrap}
+.seg-pick label{cursor:pointer}
+.seg-pick input{position:absolute;opacity:0;pointer-events:none}
+.seg-pick span{display:block;padding:11px 16px 10px;border:1px solid var(--gold-d);font:500 13px/1 var(--f-d);letter-spacing:.18em;color:var(--ivory);text-transform:uppercase;transition:background-color .25s,color .25s}
+.seg-pick input:checked+span{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.seg-pick input:focus-visible+span{outline:2px solid var(--gold2);outline-offset:2px}
+.form .btn{margin-top:26px}
+.form-msg{margin-top:18px;min-height:2.4em;font:italic 300 17px/1.45 var(--f-b);color:var(--gold2)}
+@media (max-width:899px){.visit-grid{display:block}.form{margin-top:54px}.fgrid{grid-template-columns:1fr}}
+
+/* 11 · RODAPÉ */
+.foot{background:var(--ink);padding:70px var(--gut) 90px;text-align:center;position:relative;border-top:1px solid rgba(201,178,110,.22)}
+.foot .flogo{width:min(260px,64vw);margin:0 auto 26px}
+.foot p{max-width:46em;margin:0 auto;color:var(--muted);font-size:15px;line-height:1.65}
+.foot .demo-note{margin-top:22px;padding:18px 20px;border:1px dashed var(--gold-d);color:var(--gold2)}
+.foot .copy{margin-top:22px;font:500 12px/1.6 var(--f-d);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+/* crédito DD Digital */
+.foot .credito{margin:28px auto 0;font:italic 300 15px/1.4 var(--f-b);color:rgba(238,232,219,.5)}
+.credito a{color:var(--gold2);text-decoration:none;font-style:normal;font-weight:500;background:linear-gradient(var(--gold),var(--gold)) 0 100%/0 1px no-repeat;transition:color .2s,background-size .3s ease}
+.credito a:hover,.credito a:focus-visible{color:var(--ivory);background-size:100% 1px}
+.credito-emoji{display:inline-block;transform-origin:70% 70%;animation:piscar 6s ease-in-out infinite}
+@keyframes piscar{0%,86%,100%{transform:rotate(0) scale(1)}90%{transform:rotate(-14deg) scale(1.2)}94%{transform:rotate(10deg) scale(1.2)}97%{transform:rotate(0) scale(1)}}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .dot,.hint::after,.credito-emoji{animation:none}
+  .cart .in img,.pr-photo .in img{transition:none}
+}
+html.ready.fallback .door .ph{clip-path:none!important}
+</style>
+</head>
+<body>
+
+<!-- Faixa DEMO (permanente) -->
+<div class="demo" role="note"><i>DEMO</i><span class="long">Website de demonstração criado pela DD Digital para Acrópole · conteúdo ilustrativo</span><span class="short">Demonstração · Acrópole</span></div>
+<div class="seal" aria-hidden="true">Versão de demonstração</div>
+
+<header class="hdr" id="hdr">
+  <nav class="nav" aria-label="Principal">
+    <a href="#hoje" data-go="hoje">Hoje</a>
+    <a href="#mesa" data-go="mesa">A mesa</a>
+    <a href="#pratos" data-go="pratos">Pratos do mês</a>
+    <a href="#bar" data-go="bar">O bar</a>
+  </nav>
+  <a class="mini" href="#hoje" data-go="top" aria-label="Acrópole — início"><img src="img/acropole-logo.png" alt="Acrópole Restaurante & Gastrobar" width="1014" height="828"></a>
+  <a class="btn cta" href="#visitar" data-go="visitar"><span>Reservar</span></a>
+  <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+</header>
+
+<div class="menu" id="menu" aria-hidden="true">
+  <nav class="mnav" aria-label="Menu móvel">
+    <a href="#hoje" data-go="hoje">Hoje <small>01</small></a>
+    <a href="#mesa" data-go="mesa">A mesa <small>02</small></a>
+    <a href="#pratos" data-go="pratos">Pratos do mês <small>03</small></a>
+    <a href="#bar" data-go="bar">O bar <small>04</small></a>
+    <a href="#visitar" data-go="visitar">Visitar <small>05</small></a>
+  </nav>
+  <div class="info"><b>Figueira da Foz</b>Rua Bernardo Lopes, 76<br>Bar 10:00–24:00 · Cozinha 12:30–15:00 e 19:30–22:30</div>
+</div>
+
+<main>
+<!-- ================= HERO: as duas portas ================= -->
+<div class="stage" id="stage" data-open="closed">
+  <!-- 5 · HOJE: o que está atrás das portas -->
+  <section class="back" id="hoje" aria-labelledby="hoje-t">
+    <div class="back-in">
+      <img class="back-fl" src="img/flourish.png" alt="" width="1000" height="134">
+      <p class="eyebrow" id="hoje-t">Hoje em Figueira da Foz</p>
+      <p class="clock" id="clock" aria-label="Hora actual em Portugal">--:--<small>agora</small></p>
+      <p class="status" id="status" aria-live="polite">A abrir as portas…</p>
+
+      <div class="tl" id="tl">
+        <span class="lab2" style="grid-row:1">BAR</span>
+        <div class="trk" style="grid-row:1"><i class="seg" style="--a:0;--b:100"></i></div>
+        <span class="lab2" style="grid-row:2">COZINHA</span>
+        <div class="trk" style="grid-row:2"><i class="seg k" style="--a:17.857;--b:35.714"></i><i class="seg k" style="--a:67.857;--b:89.286"></i></div>
+        <div class="ax" style="grid-row:3" aria-hidden="true">
+          <span style="--h:0">10</span><span class="odd" style="--h:7.143">11</span><span style="--h:14.286">12</span><span class="odd" style="--h:21.429">13</span><span style="--h:28.571">14</span><span class="odd" style="--h:35.714">15</span><span style="--h:42.857">16</span><span class="odd" style="--h:50">17</span><span style="--h:57.143">18</span><span class="odd" style="--h:64.286">19</span><span style="--h:71.429">20</span><span class="odd" style="--h:78.571">21</span><span style="--h:85.714">22</span><span class="odd" style="--h:92.857">23</span><span style="--h:100">24</span>
+        </div>
+        <div class="plot" id="plot" aria-hidden="true">
+          <div class="mk now" id="mkNow" style="--p:50" hidden><em>Agora</em></div>
+          <div class="mk probe" id="mkProbe" style="--p:50"><em>--:--</em></div>
+        </div>
+        <p class="probe-hint">Toque ou passe o rato na linha do dia</p>
+      </div>
+
+      <div class="back-foot">
+        <span>Rua Bernardo Lopes, 76 · 3080-395 Figueira da Foz</span>
+        <span class="tbc">dias de funcionamento a confirmar</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · As portas (logótipo cortado pela costura) -->
+  <div class="doors" id="doors" data-lit="">
+    <div class="door door-l" id="doorL">
+      <div class="ph"><img src="img/hero-restaurante.jpg" alt="Tábua de carne maturada fatiada, cogumelos salteados e sal grosso" width="1003" height="1339"></div>
+      <div class="dim"></div><div class="shade"></div>
+      <div class="logo-h"><img src="img/acropole-logo.png" alt="Acrópole — Restaurante & Gastrobar" width="1014" height="828"></div>
+      <div class="lab"><b>Metade <em>restaurante</em></b><span>Cozinha 12:30–15:00<br>e 19:30–22:30</span></div>
+      <i class="seam"></i>
+    </div>
+    <div class="door door-r" id="doorR">
+      <div class="ph"><img src="img/hero-bar.jpg" alt="Prateleiras de garrafas iluminadas a âmbar atrás do balcão do bar" width="1400" height="928"></div>
+      <div class="dim"></div><div class="shade"></div>
+      <div class="logo-h"><img src="img/acropole-logo.png" alt="" width="1014" height="828"></div>
+      <div class="lab"><b>Metade <em>bar</em></b><span>Aberto<br>10:00–24:00</span></div>
+      <i class="seam"></i>
+    </div>
+    <div class="hero-ui">
+      <h1 class="sr">Acrópole — Restaurante & Gastrobar, Figueira da Foz</h1>
+      <p class="chip" id="chip"><span class="dot"></span><span id="chipTxt">Figueira da Foz</span></p>
+      <p class="hint">Abre as portas</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 6 · A MESA ================= -->
+<section class="sec mesa" id="mesa">
+  <span class="fl wood"><img src="img/flourish.png" alt="" width="1000" height="134"></span>
+  <div class="wrap mesa-grid">
+    <div class="mesa-txt" data-r>
+      <p class="eyebrow">Metade restaurante</p>
+      <h2 class="h2">Ao centro <b>da mesa</b></h2>
+      <p class="lead">Tábuas de carne, peixe e marisco, um tacho a fumegar no meio. A cozinha serve ao <em>almoço</em> e ao <em>jantar</em>, e a sala fica com o resto do dia.</p>
+      <p class="note">Fotografias de pratos da casa. Legendas ilustrativas, a confirmar com o cliente.</p>
+    </div>
+    <div class="col">
+      <figure class="fig f1" data-r><span class="cart"><span class="in"><img src="img/mesa-tacho.jpg" alt="Tacho de ferro com arroz de peixe e marisco, gambas e tomates ao lado" loading="lazy" width="940" height="938"></span></span><figcaption>Tacho de peixe e marisco</figcaption></figure>
+      <figure class="fig f2" data-r><span class="cart"><span class="in"><img src="img/mesa-polvo.jpg" alt="Polvo grelhado com batata e grelos, decorado com alecrim" loading="lazy" width="892" height="1143"></span></span><figcaption>Polvo</figcaption></figure>
+      <figure class="fig f3" data-r><span class="cart"><span class="in"><img src="img/mesa-camarao.jpg" alt="Camarão e lulas grelhados com legumes num prato cinzento" loading="lazy" width="940" height="1256"></span></span><figcaption>Marisco grelhado</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7 · PRATOS DO MÊS ================= -->
+<section class="sec pratos" id="pratos">
+  <span class="fl slate"><img src="img/flourish.png" alt="" width="1000" height="134"></span>
+  <div class="wrap">
+    <div class="pr-head" data-r>
+      <p class="eyebrow">Pratos do mês</p>
+      <h2 class="h2">Cada mês, <b>um prato</b></h2>
+      <p class="lead">Nas redes do restaurante, todos os meses traz um prato em destaque. Estas foram as edições de 2025.</p>
+    </div>
+    <div class="pr-grid" data-r>
+      <ol class="pr-list" role="tablist" aria-label="Pratos do mês" id="prList">
+        <li><button role="tab" aria-selected="true" data-img="mes-setembro.jpg" data-alt="Vazia fatiada com molho de queijo cheddar e bacon, batatas fritas e salada" data-mo="Setembro 2025" data-nm="Vazia com queijo cheddar"><span class="mo">Set 2025</span><span class="nm">Vazia com queijo cheddar</span></button></li>
+        <li><button role="tab" aria-selected="false" data-img="mes-agosto.jpg" data-alt="Fraldinha fatiada em tábua de madeira com ananás grelhado e salada" data-mo="Agosto 2025" data-nm="Fraldinha"><span class="mo">Ago 2025</span><span class="nm">Fraldinha</span></button></li>
+        <li><button role="tab" aria-selected="false" data-img="mes-julho.jpg" data-alt="Tábua de picanhas com entremeada, bife e salsicha grelhada" data-mo="Julho 2025" data-nm="Tábua de picanhas"><span class="mo">Jul 2025</span><span class="nm">Tábua de picanhas</span></button></li>
+        <li><button role="tab" aria-selected="false" data-img="mes-junho.jpg" data-alt="Bacalhau à Bulhão Pato com amêijoas numa travessa de barro" data-mo="Junho 2025" data-nm="Bacalhau à Bulhão Pato"><span class="mo">Jun 2025</span><span class="nm">Bacalhau à Bulhão Pato</span></button></li>
+        <li><button role="tab" aria-selected="false" data-img="mes-maio.jpg" data-alt="Maminha fatiada com ananás grelhado, arroz, feijão preto e salada" data-mo="Maio 2025" data-nm="Festival da maminha"><span class="mo">Mai 2025</span><span class="nm">Festival da maminha</span></button></li>
+      </ol>
+      <div class="pr-stage">
+        <div class="cart pr-photo"><div class="in" id="prPhotos"></div></div>
+        <p class="pr-cap" id="prCap"></p>
+      </div>
+    </div>
+    <div class="pr-foot" data-r>
+      <span class="tbc">carta atual e preços: a confirmar com o cliente</span>
+      <span>No restaurante há um QR para a carta completa.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 8 · BAR ================= -->
+<section class="sec bar" id="bar">
+  <span class="fl"><img src="img/flourish.png" alt="" width="1000" height="134"></span>
+  <div class="bar-bg" aria-hidden="true"><img src="img/bar-barman.jpg" alt="" loading="lazy" width="1600" height="1067"></div>
+  <div class="wrap">
+    <div class="bar-grid">
+      <div data-r>
+        <p class="eyebrow">Metade bar</p>
+        <p class="bar-big" aria-label="Das 10:00 às 24:00"><span>10:00</span><span class="to">24:00</span></p>
+        <p class="lead">O bar não tem pressa. Um copo ao balcão, uma conversa que se estica, a cozinha ali ao lado. Abre às <em>dez da manhã</em> e só fecha à <em>meia-noite</em>.</p>
+      </div>
+      <figure class="bar-pic" data-r>
+        <span class="cart"><span class="in"><img src="img/bar-cerveja.jpg" alt="Prato de grelhados com uma cerveja de pressão ao fundo e um quadro de giz com a palavra Bem-vindo" loading="lazy" width="939" height="1143"></span></span>
+        <figcaption>Bem-vindo</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="mq" aria-hidden="true">
+    <div class="mq-track" id="mqTrack">
+      <span>Bem-vindo<i></i>Restaurante &amp; Gastrobar<i></i></span><span>Bem-vindo<i></i>Restaurante &amp; Gastrobar<i></i></span><span>Bem-vindo<i></i>Restaurante &amp; Gastrobar<i></i></span><span>Bem-vindo<i></i>Restaurante &amp; Gastrobar<i></i></span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 10 · VISITAR ================= -->
+<section class="sec visit" id="visitar">
+  <span class="fl ink2"><img src="img/flourish.png" alt="" width="1000" height="134"></span>
+  <div class="wrap">
+    <p class="eyebrow" data-r>Visitar</p>
+    <div class="visit-grid">
+      <div data-r>
+        <p class="addr">Rua Bernardo Lopes, <b>n.º 76</b>3080-395 Figueira da Foz</p>
+        <a class="tel" href="tel:+351233047535"><small>Telefone</small>233 047 535</a>
+        <dl class="hrs">
+          <div><dt>Bar</dt><dd>10:00 — 24:00</dd></div>
+          <div><dt>Cozinha</dt><dd>12:30 — 15:00 · 19:30 — 22:30</dd></div>
+        </dl>
+        <p class="hrs-note"><span class="tbc">dias de funcionamento: a confirmar com o cliente</span></p>
+        <a class="btn map-link" href="https://www.google.com/maps/search/?api=1&amp;query=Rua+Bernardo+Lopes+76+3080-395+Figueira+da+Foz" target="_blank" rel="noopener"><span>Abrir no mapa</span></a>
+      </div>
+      <form class="cart form" id="form" data-r novalidate>
+        <div class="in">
+          <h3>Reservar <b>mesa</b></h3>
+          <div class="fgrid">
+            <div class="fld"><label for="f-n">Nome</label><input id="f-n" name="nome" type="text" autocomplete="name" placeholder="O seu nome"></div>
+            <div class="fld"><label for="f-t">Telemóvel</label><input id="f-t" name="tel" type="tel" autocomplete="tel" placeholder="9XX XXX XXX"></div>
+            <div class="fld"><label for="f-d">Data</label><input id="f-d" name="data" type="date"></div>
+            <div class="fld"><label for="f-h">Hora</label><select id="f-h" name="hora"><option>12:30</option><option>13:00</option><option>13:30</option><option>14:00</option><option>19:30</option><option>20:00</option><option>20:30</option><option>21:00</option><option>21:30</option></select></div>
+            <div class="fld"><label for="f-p">Pessoas</label><select id="f-p" name="pessoas"><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7+</option></select></div>
+            <div class="fld"><span class="lb" id="f-z">Preferência</span><div class="seg-pick" role="radiogroup" aria-labelledby="f-z"><label><input type="radio" name="zona" value="restaurante" checked><span>Restaurante</span></label><label><input type="radio" name="zona" value="bar"><span>Bar</span></label></div></div>
+            <div class="fld w"><label for="f-m">Pedido especial</label><textarea id="f-m" name="msg" placeholder="Alergias, ocasião, cadeira de bebé…"></textarea></div>
+          </div>
+          <button class="btn solid" type="submit"><span>Pedir reserva</span></button>
+          <p class="form-msg" id="formMsg" role="status"></p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ================= 11 · RODAPÉ ================= -->
+<footer class="foot">
+  <img class="flogo" src="img/acropole-logo.png" alt="Acrópole Restaurante & Gastrobar" loading="lazy" width="1014" height="828">
+  <p>Rua Bernardo Lopes, 76 · 3080-395 Figueira da Foz · 233 047 535</p>
+  <p class="demo-note">Esta é uma demonstração criada pela DD Digital para o Acrópole. Textos, legendas e formulário são ilustrativos e não vinculativos; nada é enviado. Horário, morada e telefone são os que o restaurante divulga. Dias de funcionamento, carta e preços ficam por confirmar com o cliente.</p>
+  <p class="copy">Fotografias de pratos e do espaço: cedidas pelo cliente (redes sociais do restaurante) · Fotografias do bar: Unsplash · © DD Digital</p>
+  <p class="credito">Spoiler: este website não se fez sozinho <span class="credito-emoji" aria-hidden="true">😉</span> <a href="https://dddigital.pt" target="_blank" rel="noopener">DD Digital</a>.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(s,c){return (c||document).querySelector(s)}, $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+var root=document.documentElement;
+var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var nopre=/[?&]nopre/.test(location.search);
+var hasGsap=!!(window.gsap&&window.ScrollTrigger);
+try{history.scrollRestoration='manual'}catch(e){}
+window.scrollTo(0,0);
+setTimeout(function(){ if(!root.classList.contains('ready')){root.classList.add('ready','fallback')} },4000);
+
+/* ---------- horário (Europe/Lisbon) ---------- */
+var BAR=[600,1440], KIT=[[750,900],[1170,1350]];
+function lisbonMin(){
+  var p=new Intl.DateTimeFormat('pt-PT',{timeZone:'Europe/Lisbon',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date());
+  var h=0,m=0; p.forEach(function(x){ if(x.type==='hour')h=parseInt(x.value,10)%24; if(x.type==='minute')m=parseInt(x.value,10) });
+  return h*60+m;
+}
+function fmt(min){ min=Math.max(0,Math.min(1440,Math.round(min))); var h=Math.floor(min/60),m=min%60; return (h<10?'0':'')+h+':'+(m<10?'0':'')+m }
+function state(min){
+  var i,k=null;
+  for(i=0;i<KIT.length;i++){ if(min>=KIT[i][0]&&min<KIT[i][1]){k=KIT[i];break} }
+  if(k) return {s:'kitchen',chip:'Cozinha aberta',txt:'A cozinha está <b>aberta</b> e serve até às '+fmt(k[1])+'.'};
+  if(min>=BAR[0]&&min<BAR[1]){
+    if(min<KIT[0][0]) return {s:'bar',chip:'Só bar',txt:'O bar está <b>aberto</b>. A cozinha abre às '+fmt(KIT[0][0])+'.'};
+    if(min<KIT[1][0]) return {s:'bar',chip:'Só bar',txt:'O bar está <b>aberto</b>. A cozinha volta às '+fmt(KIT[1][0])+'.'};
+    return {s:'bar',chip:'Só bar',txt:'O bar está <b>aberto</b> até às 24:00. A cozinha já fechou.'};
+  }
+  return {s:'closed',chip:'Fechado',txt:'Está <b>fechado</b>. O bar abre às 10:00.'};
+}
+var stageEl=$('#stage'), clockEl=$('#clock'), statusEl=$('#status'), chipTxt=$('#chipTxt'), mkNow=$('#mkNow');
+function tick(){
+  var min=lisbonMin(), st=state(min);
+  clockEl.innerHTML=fmt(min)+'<small>agora</small>';
+  statusEl.innerHTML=st.txt;
+  chipTxt.textContent='Agora · '+st.chip;
+  stageEl.setAttribute('data-open',st.s);
+  if(min>=BAR[0]&&min<BAR[1]){
+    var p=(min-BAR[0])/(BAR[1]-BAR[0])*100;
+    mkNow.hidden=false; mkNow.style.setProperty('--p',p.toFixed(2));
+    mkNow.className='mk now'+(p<14?' l':p>86?' r':'');
+    mkNow.firstChild.textContent='Agora '+fmt(min);
+  } else mkNow.hidden=true;
+}
+tick(); setInterval(tick,20000);
+
+/* sonda na linha do dia (rato ou toque) */
+(function(){
+  var plot=$('#plot'), probe=$('#mkProbe'), tl=$('#tl');
+  function at(e){
+    var r=plot.getBoundingClientRect(), x=(e.clientX-r.left)/r.width; x=Math.max(0,Math.min(1,x));
+    var min=BAR[0]+x*(BAR[1]-BAR[0]), st=state(min), p=x*100;
+    probe.style.setProperty('--p',p.toFixed(2));
+    probe.className='mk probe'+(p<14?' l':p>86?' r':'');
+    probe.firstChild.textContent=fmt(min)+' · '+st.chip;
+    plot.classList.add('on');
+  }
+  plot.style.pointerEvents='none';
+  tl.addEventListener('pointermove',function(e){ var r=plot.getBoundingClientRect(); if(e.clientY>r.top-30&&e.clientY<r.bottom+10) at(e); else plot.classList.remove('on') });
+  tl.addEventListener('pointerdown',function(e){ at(e) });
+  tl.addEventListener('pointerleave',function(){ plot.classList.remove('on') });
+})();
+
+/* ---------- portas: destaque (rato / toque / automático) ---------- */
+var doors=$('#doors'), lastHover=0;
+function lit(v){ doors.setAttribute('data-lit',v) }
+if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
+  doors.addEventListener('pointermove',function(e){ lastHover=Date.now(); lit(e.clientX<window.innerWidth/2?'l':'r') });
+  doors.addEventListener('pointerleave',function(){ lit('') });
+}
+doors.addEventListener('click',function(e){ if(e.pointerType==='touch'||e.pointerType===''){ lastHover=Date.now(); var d=e.target.closest('.door'); lit(d&&d.id==='doorL'?'l':'r') } });
+if(!reduce){
+  var alt=0;
+  setInterval(function(){ if(window.scrollY>40||Date.now()-lastHover<7000||document.hidden) return; alt=1-alt; lit(alt?'l':'r') },4200);
+}
+
+/* ---------- menu móvel ---------- */
+var burger=$('#burger'), menu=$('#menu'), isOpen=false, menuY=0;
+function setMenu(open){
+  if(open===isOpen) return; isOpen=open;
+  if(open){ menuY=window.scrollY; document.body.style.top=-menuY+'px'; document.body.classList.add('menu-open'); }
+  else{
+    document.body.classList.remove('menu-open'); document.body.style.top='';
+    root.style.scrollBehavior='auto'; window.scrollTo(0,menuY);
+    requestAnimationFrame(function(){ root.style.scrollBehavior='' });
+  }
+  burger.setAttribute('aria-expanded',open); burger.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');
+  menu.classList.toggle('open',open); menu.setAttribute('aria-hidden',!open);
+}
+burger.addEventListener('click',function(){ setMenu(!isOpen) });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') setMenu(false) });
+window.matchMedia('(min-width:900px)').addEventListener('change',function(e){ if(e.matches) setMenu(false) });
+
+/* ---------- navegação ---------- */
+var heroST=null;
+function go(id){
+  if(id==='top'){ window.scrollTo({top:0}); return }
+  if(id==='hoje'){ window.scrollTo({top: heroST?heroST.end:$('#hoje').getBoundingClientRect().top+window.scrollY}); return }
+  var el=document.getElementById(id); if(!el) return;
+  var off=parseFloat(getComputedStyle(root).getPropertyValue('--demo-h'))+parseFloat(getComputedStyle(root).getPropertyValue('--hh'));
+  window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-off+2});
+}
+$$('[data-go]').forEach(function(a){
+  a.addEventListener('click',function(e){
+    e.preventDefault(); var id=a.getAttribute('data-go');
+    if(isOpen){ setMenu(false); requestAnimationFrame(function(){ go(id) }) } else go(id);
+  });
+});
+
+/* ---------- pratos do mês ---------- */
+(function(){
+  var list=$('#prList'), box=$('#prPhotos'), cap=$('#prCap'), btns=$$('button',list), imgs=[], cur=0, auto=null, touched=false;
+  btns.forEach(function(b,i){
+    var im=new Image(); im.src='img/'+b.dataset.img; im.alt=b.dataset.alt; im.loading='lazy'; im.width=1003; im.height=805;
+    if(i===0) im.className='on'; box.appendChild(im); imgs.push(im);
+    b.addEventListener('click',function(){ touched=true; set(i) });
+    b.addEventListener('mouseenter',function(){ if(window.matchMedia('(hover:hover)').matches){ touched=true; set(i) } });
+    b.addEventListener('focus',function(){ set(i) });
+  });
+  function set(i){
+    cur=i; btns.forEach(function(b,j){ b.setAttribute('aria-selected',j===i) });
+    imgs.forEach(function(im,j){ im.classList.toggle('on',j===i) });
+    cap.innerHTML='<b>'+btns[i].dataset.mo+'</b>'+btns[i].dataset.nm+'. Edição partilhada pelo restaurante.';
+  }
+  set(0);
+  if(!reduce){ auto=setInterval(function(){ if(touched||document.hidden) return; var r=list.getBoundingClientRect(); if(r.top<innerHeight&&r.bottom>0) set((cur+1)%btns.length) },4600) }
+})();
+
+/* ---------- formulário (só demonstração) ---------- */
+$('#form').addEventListener('submit',function(e){
+  e.preventDefault();
+  $('#formMsg').textContent='Isto é uma demonstração: nada foi enviado e nenhum dado foi guardado. No site final, o pedido chegaria ao restaurante.';
+});
+
+/* ---------- GSAP: intro, portas, entradas, marquee ---------- */
+if(!hasGsap){ root.classList.add('ready','fallback'); return; }
+gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ignoreMobileResize:true});
+var hdr=$('#hdr');
+
+/* intro: o logótipo acende-se, a costura desenha-se e as fotos abrem a partir dela */
+var playIntro=!nopre&&!reduce;
+if(playIntro){
+  gsap.set('#doorL .ph',{clipPath:'inset(0% 0% 0% 100%)'});
+  gsap.set('#doorR .ph',{clipPath:'inset(0% 100% 0% 0%)'});
+  gsap.set('.logo-h',{opacity:0});
+  gsap.set('.seam',{scaleY:0});
+  gsap.set('.lab',{opacity:0,y:16});
+  gsap.set('.hero-ui',{opacity:0});
+}
+root.classList.add('ready');
+if(playIntro){
+  gsap.timeline({defaults:{ease:'power3.inOut'}})
+    .to('.logo-h',{opacity:1,duration:1,ease:'power2.out'},.1)
+    .to('.seam',{scaleY:1,duration:.9},.3)
+    .to('#doorL .ph, #doorR .ph',{clipPath:'inset(0% 0% 0% 0%)',duration:1.2},.9)
+    .to('.lab',{opacity:1,y:0,duration:.8,stagger:.12,ease:'power2.out'},1.7)
+    .to('.hero-ui',{opacity:1,duration:.8,ease:'power2.out'},1.9);
+}
+
+/* portas que se afastam (pin + scrub) */
+if(!reduce){
+  root.classList.add('pin');
+  var tl=gsap.timeline({defaults:{ease:'none'},scrollTrigger:{trigger:'#stage',start:'top top',end:'+=110%',pin:true,scrub:.6,anticipatePin:1,invalidateOnRefresh:true}});
+  tl.to('.hero-ui',{opacity:0,duration:.14},0)
+    .to('#doorL',{xPercent:-100,ease:'power2.inOut',duration:.85},.06)
+    .to('#doorR',{xPercent:100,ease:'power2.inOut',duration:.85},.06)
+    .fromTo('.back-in',{scale:.9,opacity:.2},{scale:1,opacity:1,duration:.8},.12)
+    .from('.seg',{scaleX:0,duration:.28,stagger:.07},.7);
+  heroST=tl.scrollTrigger;
+}
+
+/* cabeçalho sólido depois do hero (criado depois do pin) */
+ScrollTrigger.create({trigger:'#mesa',start:'top 80%',onEnter:function(){hdr.classList.add('solid')},onLeaveBack:function(){ if(!isOpen) hdr.classList.remove('solid') }});
+if(reduce){ hdr.classList.add('solid'); }
+
+/* entradas ao scroll */
+if(!reduce){
+  $$('[data-r]').forEach(function(el){
+    gsap.from(el,{y:46,opacity:0,duration:1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%',once:true}});
+  });
+  /* floreados: desenham-se do centro para fora */
+  $$('.fl img').forEach(function(im){
+    gsap.fromTo(im,{clipPath:'inset(0% 50% 0% 50%)'},{clipPath:'inset(0% 0% 0% 0%)',duration:1.4,ease:'power2.out',scrollTrigger:{trigger:im.parentNode,start:'top 92%',once:true}});
+  });
+  /* marquee com velocidade ligada ao scroll */
+  var mq=gsap.to('#mqTrack',{xPercent:-25,duration:26,ease:'none',repeat:-1});
+  ScrollTrigger.create({onUpdate:function(s){ mq.timeScale(1+Math.min(Math.abs(s.getVelocity())/260,7)) }});
+  gsap.ticker.add(function(){ var t=mq.timeScale(); if(t>1.01) mq.timeScale(t+(1-t)*.06) });
+}
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){ ScrollTrigger.refresh() });
+window.addEventListener('load',function(){ ScrollTrigger.refresh() });
+})();
+</script>
+</body>
+</html>
