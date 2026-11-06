@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<script>document.documentElement.className='js'</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Padel Zona A — Demonstração</title>
+<meta name="description" content="Demonstração do website do Padel Zona A: três campos de padel, zona social com bar, balneários e estacionamento junto à EN 109. Abertura em 2027.">
+<meta name="theme-color" content="#0A0C0E">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&family=Saira:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   PADEL ZONA A — demo DD Digital
+   CONCEITO: duas raquetes (ouro e prata) que se cruzam e formam o "A" de Zona A.
+   Hero = o símbolo real do logótipo onde uma bola faz rally entre as duas faces (os projetores
+   acendem à entrada; o brilho do metal segue o cursor / varre sozinho no telemóvel; clique = smash).
+   Noturno, preciso, metálico. Linguagem de forma: cantos chanfrados (como o wordmark),
+   rede de padel como divisória, furos das raquetes como textura, foto dentro de uma raquete.
+
+   HERDADO DE: Acrópole/Pregaria (preto + metal, tipografia condensada em caixa alta);
+               Simple (preloader, faixa DEMO base); Liliana (receita do menu mobile, setMenu).
+   NOVO: rally em canvas entre as faces do logótipo; esquema interativo do espaço (planta);
+         marcador 15·30·40·jogo com foto em forma de raquete; duas raquetes que se cruzam ao scroll
+         (cena sticky, vanilla JS); redes de padel como separadores; secção de abertura em ouro.
+   ===================================================================== */
+
+/* ---------- variáveis ---------- */
+:root{
+  --ink:#0A0C0E; --coal:#101316; --slate:#171B1F; --steel:#242A30;
+  --line:rgba(201,206,211,.16); --line-2:rgba(201,206,211,.32);
+  --gold:#D4B24E; --gold-hi:#F2DD8E; --gold-lo:#8F7326;
+  --silver:#C9CED3; --silver-lo:#8C9399;
+  --plat:#E8EAEC; --plat-2:#D3D7DB; --ball:#E4EC63;
+  --f-d:'Michroma',system-ui,sans-serif;
+  --f-b:'Saira',system-ui,sans-serif;
+  --demo:34px; --hd:72px; --top:calc(var(--demo) + var(--hd));
+  --pad:clamp(20px,5vw,72px);
+  --ease:cubic-bezier(.2,.7,.1,1);
+  --cut:24px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:var(--top);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--coal);color:var(--silver);font:400 17px/1.6 var(--f-b);font-stretch:100%;overflow-x:clip;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+h1,h2,h3,p,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+:focus-visible{outline:2px solid var(--gold-hi);outline-offset:3px}
+body.pre-on{overflow:hidden}
+body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- tipografia base ---------- */
+.d{font-family:var(--f-d);font-weight:400;letter-spacing:.16em;text-transform:uppercase}
+.big{font-family:var(--f-b);font-stretch:68%;font-weight:800;text-transform:uppercase;line-height:.88;letter-spacing:-.005em;color:#fff}
+.metal{background:linear-gradient(100deg,#8F7326 0%,#F2DD8E 20%,#D4B24E 38%,#8F7326 52%,#F7E7A6 72%,#B8962F 100%);background-size:240% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 7s linear infinite}
+.silver{background:linear-gradient(100deg,#8C9399 0%,#F4F6F8 22%,#C9CED3 40%,#7B828A 55%,#EEF1F3 75%,#A9AFB6 100%);background-size:240% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 9s linear infinite}
+@keyframes sheen{to{background-position:-240% 0}}
+.kick{display:flex;align-items:center;gap:12px;font:400 11px/1.4 var(--f-d);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.kick::before{content:"";width:34px;height:1px;background:currentColor}
+.tbc{display:inline-block;padding:1px 9px;border:1px dashed var(--gold);color:var(--gold-hi);font:400 12px/1.6 var(--f-b);letter-spacing:.04em;font-style:italic}
+.light .tbc{color:var(--gold-lo);border-color:var(--gold-lo)}
+
+/* ---------- botões chanfrados ---------- */
+.btn{--cut:14px;position:relative;display:inline-flex;align-items:center;gap:12px;padding:16px 28px;border:0;text-decoration:none;font:400 11px/1 var(--f-d);letter-spacing:.18em;text-transform:uppercase;color:var(--ink);background:linear-gradient(105deg,#B8962F,#F2DD8E 45%,#D4B24E 70%,#A98A2D);clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));transition:filter .3s,transform .3s var(--ease)}
+.btn:hover{filter:brightness(1.12)}
+.btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;transition:transform .3s var(--ease)}
+.btn:hover svg{transform:translateX(4px)}
+.btn--ghost{color:var(--silver);background:var(--line-2)}
+.btn--ghost::before{content:"";position:absolute;inset:1px;background:var(--coal);clip-path:inherit;z-index:0}
+.btn--ghost>*{position:relative;z-index:1}
+.btn--ghost:hover{filter:none;color:#fff;background:var(--gold)}
+
+/* ---------- faixa DEMO + selo ---------- */
+.demo{position:fixed;top:0;left:0;right:0;height:var(--demo);z-index:120;display:flex;align-items:center;justify-content:center;gap:14px;padding:0 12px;background:linear-gradient(90deg,#8F7326,#D4B24E 25%,#F2DD8E 50%,#D4B24E 75%,#8F7326);color:var(--ink);font:500 12px/1 var(--f-b);letter-spacing:.06em;white-space:nowrap;overflow:hidden}
+.demo b{padding:4px 9px;background:var(--ink);color:var(--gold-hi);font:400 10px/1 var(--f-d);letter-spacing:.2em}
+.demo .m{display:none}
+.seal{position:fixed;left:16px;bottom:16px;z-index:110;display:flex;align-items:center;gap:9px;padding:10px 16px;background:var(--ink);color:var(--gold-hi);border:1px solid var(--gold);font:400 9px/1 var(--f-d);letter-spacing:.2em;text-transform:uppercase}
+.seal i{width:7px;height:7px;border-radius:50%;background:var(--ball);box-shadow:0 0 10px var(--ball)}
+
+/* ---------- cabeçalho / menu (sem backdrop-filter: o menu mobile é position:fixed) ---------- */
+.hd{position:fixed;top:var(--demo);left:0;right:0;height:var(--hd);z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);background:linear-gradient(180deg,rgba(10,12,14,.85),rgba(10,12,14,0));transition:background .4s}
+.hd.solid{background:var(--ink);box-shadow:0 1px 0 var(--line)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;position:relative;z-index:3}
+.brand img{width:46px;height:46px;object-fit:contain}
+.brand span{display:flex;flex-direction:column;gap:3px;font:400 10px/1 var(--f-d);letter-spacing:.24em;text-transform:uppercase;color:var(--silver)}
+.brand span b{font-weight:400;color:var(--gold)}
+.nav{display:flex;align-items:center;gap:clamp(18px,2.6vw,38px)}
+.nav a{position:relative;text-decoration:none;font:400 10px/1 var(--f-d);letter-spacing:.2em;text-transform:uppercase;color:var(--silver);padding:10px 0;transition:color .3s}
+.nav a::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease)}
+.nav a:hover,.nav a[aria-current]{color:#fff}
+.nav a:hover::after,.nav a[aria-current]::after{transform:scaleX(1)}
+.nav .nav__cta{padding:13px 20px;color:var(--ink);background:linear-gradient(105deg,#B8962F,#F2DD8E 45%,#D4B24E);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
+.nav .nav__cta::after{display:none}
+.nav .nav__cta:hover{color:var(--ink);filter:brightness(1.1)}
+.nav__foot{display:none}
+.burger{display:none;position:relative;z-index:3;width:46px;height:46px;border:1px solid var(--line-2);background:transparent;padding:0}
+.burger i{position:absolute;left:11px;right:11px;top:22px;height:2px;background:var(--gold-hi);transition:transform .45s var(--ease)}
+.burger i:nth-child(1){transform:translateY(-4px) rotate(-14deg)}
+.burger i:nth-child(2){transform:translateY(4px) rotate(14deg)}
+.menu-open .burger i:nth-child(1){transform:rotate(45deg)}
+.menu-open .burger i:nth-child(2){transform:rotate(-45deg)}
+
+/* ---------- preloader: os projetores acendem ---------- */
+.pre{display:none;position:fixed;inset:0;z-index:200;background:var(--ink);place-content:center;justify-items:center;gap:22px;text-align:center;clip-path:inset(0 0 0 0);transition:clip-path .95s cubic-bezier(.7,0,.2,1)}
+.js .pre{display:grid}
+.pre.out{clip-path:inset(0 0 100% 0)}
+.pre__lamps{position:absolute;top:0;left:0;right:0;height:62%;display:flex;justify-content:space-around;padding:0 8%;pointer-events:none}
+.pre__lamps i{position:relative;display:block;width:min(22vw,150px);height:100%}
+.pre__lamps i::before{content:"";position:absolute;top:0;left:50%;width:56px;height:14px;margin-left:-28px;background:#2A3036;border-bottom:3px solid var(--silver-lo);opacity:1}
+.pre__lamps i::after{content:"";position:absolute;top:14px;left:-30%;right:-30%;bottom:0;background:linear-gradient(180deg,rgba(255,238,176,.55),rgba(255,238,176,0) 90%);clip-path:polygon(43% 0,57% 0,100% 100%,0 100%);opacity:0;animation:lamp 1s forwards}
+.pre__lamps i:nth-child(1)::after{animation-delay:.2s}
+.pre__lamps i:nth-child(2)::after{animation-delay:.55s}
+.pre__lamps i:nth-child(3)::after{animation-delay:.9s}
+@keyframes lamp{0%{opacity:0}12%{opacity:.9}22%{opacity:.1}34%{opacity:.8}46%{opacity:.25}70%{opacity:.95}100%{opacity:.85}}
+.pre__logo{width:min(34vw,170px);opacity:0;transform:translateY(14px);animation:preIn .8s 1.1s var(--ease) forwards}
+.pre__t{font:400 11px/1 var(--f-d);letter-spacing:.34em;text-transform:uppercase;color:var(--silver);opacity:0;animation:preIn .8s 1.4s var(--ease) forwards}
+.pre__t b{font-weight:400;color:var(--gold)}
+@keyframes preIn{to{opacity:1;transform:none}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100svh;padding:calc(var(--top) + clamp(18px,4vh,48px)) var(--pad) clamp(70px,10vh,120px);display:grid;grid-template-columns:1.04fr .96fr;gap:clamp(20px,3vw,60px);align-items:center;background:radial-gradient(120% 90% at 70% 30%,#1B2025 0%,var(--coal) 55%,var(--ink) 100%);overflow:clip;isolation:isolate}
+.floods{position:absolute;inset:0 0 35% 0;z-index:-1;pointer-events:none}
+.flood{position:absolute;top:-4%;width:36%;height:112%;background:linear-gradient(180deg,rgba(255,236,170,.26),rgba(255,236,170,0) 80%);clip-path:polygon(43% 0,57% 0,100% 100%,0 100%);opacity:0;transform-origin:50% 0}
+.flood:nth-child(1){left:-6%;transform:rotate(-9deg)}
+.flood:nth-child(2){left:30%}
+.flood:nth-child(3){right:-6%;transform:rotate(9deg)}
+.lit .flood{animation:flicker 1.4s forwards}
+.lit .flood:nth-child(2){animation-delay:.25s}
+.lit .flood:nth-child(3){animation-delay:.5s}
+@keyframes flicker{0%{opacity:0}10%{opacity:.9}18%{opacity:.15}30%{opacity:.8}40%{opacity:.3}60%{opacity:1}100%{opacity:.82}}
+.floor{position:absolute;left:50%;bottom:-8%;width:1800px;height:1100px;margin-left:-900px;z-index:-1;border:3px solid rgba(212,178,78,.38);transform:perspective(1200px) rotateX(62deg);transform-origin:50% 100%;pointer-events:none;
+  background:
+   linear-gradient(rgba(212,178,78,.6),rgba(212,178,78,.6)) 0 50%/100% 4px no-repeat,
+   linear-gradient(rgba(212,178,78,.42),rgba(212,178,78,.42)) 0 15%/100% 2px no-repeat,
+   linear-gradient(rgba(212,178,78,.42),rgba(212,178,78,.42)) 0 85%/100% 2px no-repeat,
+   linear-gradient(rgba(212,178,78,.42),rgba(212,178,78,.42)) 50% 15%/2px 70% no-repeat;
+  -webkit-mask-image:linear-gradient(to top,#000 30%,transparent 96%);mask-image:linear-gradient(to top,#000 30%,transparent 96%)}
+.hero__txt{position:relative;z-index:2}
+.hero h1{margin:22px 0 0;font-size:clamp(58px,8.6vw,138px)}
+.hero h1 .ln{display:block;overflow:hidden;padding-bottom:.06em}
+.hero h1 .ln>span{display:block}
+.hero__p{max-width:520px;margin-top:clamp(18px,3vh,30px);font-size:clamp(16px,1.25vw,19px);color:#B5BBC1}
+.hero__cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:clamp(24px,4vh,38px)}
+.facts{display:flex;flex-wrap:wrap;gap:10px 30px;margin-top:clamp(26px,5vh,52px);font:400 10px/1.4 var(--f-d);letter-spacing:.16em;text-transform:uppercase;color:var(--silver-lo)}
+.facts li{display:flex;align-items:center;gap:10px}
+.facts li::before{content:"";width:8px;height:8px;background:var(--gold);transform:rotate(45deg)}
+.hero__sym{position:relative;z-index:2;justify-self:center;width:min(100%,calc((100svh - var(--top)) * .9),680px)}
+.sym{position:relative;aspect-ratio:1/1;width:100%}
+.sym__shake{position:absolute;inset:0}
+.sym__tilt{position:absolute;inset:0;will-change:transform}
+.sym__tilt img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 30px 40px rgba(0,0,0,.55))}
+.sym__tilt .sym__shine{filter:brightness(2.3) contrast(.92) saturate(.9);-webkit-mask-image:radial-gradient(circle at var(--mx,62%) var(--my,22%),#000 0,rgba(0,0,0,.55) 14%,transparent 34%);mask-image:radial-gradient(circle at var(--mx,62%) var(--my,22%),#000 0,rgba(0,0,0,.55) 14%,transparent 34%)}
+.sym canvas{position:absolute;left:0;top:-12%;width:100%;height:112%;pointer-events:none}
+.sym__halo{position:absolute;left:8%;right:8%;top:6%;bottom:6%;background:radial-gradient(circle,rgba(212,178,78,.2),transparent 62%);filter:blur(10px);z-index:-1}
+.hud{display:flex;justify-content:center;align-items:center;gap:12px;white-space:nowrap;margin-top:8px;font:400 10px/1.3 var(--f-d);letter-spacing:.18em;text-transform:uppercase;color:var(--silver-lo)}
+.hud i{width:9px;height:9px;border-radius:50%;background:var(--ball);box-shadow:0 0 12px var(--ball)}
+.hud b{display:inline-block;min-width:2ch;font-weight:400;color:var(--ball)}
+.hud .t{display:none}
+.hx{opacity:1}
+.js .hx{opacity:0;transform:translateY(26px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.js .ready .hx{opacity:1;transform:none}
+.js .hero h1 .ln>span{transform:translateY(112%);transition:transform 1.1s var(--ease)}
+.js .ready .hero h1 .ln>span{transform:none}
+.js .hero__sym.hx{transform:scale(.92)}
+.js .ready .hero__sym.hx{transform:none}
+.hx[style*="--d"]{transition-delay:var(--d)}
+
+/* ---------- rede de padel (divisória) ---------- */
+.net{position:relative;height:44px;margin-top:-1px;pointer-events:none;
+  background:
+   linear-gradient(90deg,#8F7326,#F2DD8E 30%,#D4B24E 60%,#8F7326) top/100% 4px no-repeat,
+   repeating-linear-gradient(45deg,transparent 0 8px,rgba(201,206,211,.34) 8px 9px),
+   repeating-linear-gradient(-45deg,transparent 0 8px,rgba(201,206,211,.34) 8px 9px);
+  -webkit-mask-image:linear-gradient(#000 40%,transparent);mask-image:linear-gradient(#000 40%,transparent)}
+.net--light{background:
+   linear-gradient(90deg,#8F7326,#F2DD8E 30%,#D4B24E 60%,#8F7326) top/100% 4px no-repeat,
+   repeating-linear-gradient(45deg,transparent 0 8px,rgba(16,19,22,.28) 8px 9px),
+   repeating-linear-gradient(-45deg,transparent 0 8px,rgba(16,19,22,.28) 8px 9px)}
+.hero+.net{margin-top:-44px;position:relative;z-index:3;top:0}
+
+/* ---------- O clube: duas raquetes que se cruzam ---------- */
+.cross{position:relative;background:var(--coal)}
+.js .cross{height:330vh}
+.cross__stick{display:grid;grid-template-columns:1fr 1fr;gap:4vw;align-items:center;padding:clamp(60px,9vh,110px) var(--pad)}
+.js .cross__stick{position:sticky;top:var(--top);height:calc(100svh - var(--top));padding-top:0;padding-bottom:0}
+.cross h2{margin-top:18px;font-size:clamp(44px,6.2vw,104px)}
+.cross__steps{position:relative;margin-top:clamp(22px,4vh,40px)}
+.cstep{max-width:480px;padding-top:16px;border-top:1px solid var(--line-2)}
+.cstep .d{display:block;font-size:11px;color:var(--gold);margin-bottom:10px}
+.cstep h3{font:800 clamp(26px,2.6vw,38px)/1 var(--f-b);font-stretch:75%;text-transform:uppercase;color:#fff;margin-bottom:10px}
+.cstep p{color:#AEB4BA}
+.cross__steps .cstep+.cstep{margin-top:26px}
+.js .cross__steps{min-height:262px}
+.js .cstep{position:absolute;left:0;right:0;top:0;opacity:0;transform:translateY(22px);transition:opacity .6s var(--ease),transform .6s var(--ease);pointer-events:none}
+.js .cstep.on{opacity:1;transform:none;pointer-events:auto}
+.cross__steps .dots{display:none}
+.js .cross__steps .dots{display:flex;gap:8px;position:absolute;left:0;bottom:0}
+.dots i{width:30px;height:3px;background:var(--line-2);transition:background .4s,width .4s}
+.dots i.on{background:var(--gold);width:54px}
+.cross__vis{position:relative;aspect-ratio:460/560;width:100%;max-width:min(560px,calc((100svh - var(--top) - 30px) * .82));justify-self:center}
+.cross__vis svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.cross__vis .ring{fill:none;stroke:var(--gold);transform-origin:300px 330px}
+.orb{transform-origin:300px 330px;animation:orb 22s linear infinite}
+.orb:nth-of-type(2){animation-duration:30s;animation-direction:reverse}
+@keyframes orb{to{transform:rotate(360deg)}}
+
+/* ---------- O projeto: esquema do espaço ---------- */
+.proj{position:relative;padding:clamp(80px,12vh,150px) var(--pad);background:linear-gradient(180deg,var(--coal),var(--slate) 60%,var(--coal))}
+.proj__head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:24px 60px;margin-bottom:clamp(32px,6vh,64px)}
+.proj h2{margin-top:18px;font-size:clamp(44px,6.4vw,108px)}
+.proj__head p{max-width:420px;color:#AEB4BA}
+.proj__grid{display:grid;grid-template-columns:1.35fr .65fr;gap:clamp(24px,4vw,70px);align-items:start}
+.planbox{position:relative;border:1px solid var(--line);background:rgba(10,12,14,.5);padding:clamp(10px,2vw,26px)}
+.plan{display:block;width:100%;height:auto;font-family:var(--f-d);overflow:visible}
+.plan .site{fill:none;stroke:var(--silver-lo);stroke-opacity:.5;stroke-dasharray:6 8}
+.plan .road{fill:#171B1F;stroke:var(--line-2)}
+.plan .rd{stroke:var(--gold);stroke-opacity:.7;stroke-width:3;stroke-dasharray:24 20;animation:road 2.5s linear infinite}
+@keyframes road{to{stroke-dashoffset:-44}}
+.plan .far{fill:none;stroke:var(--silver-lo);stroke-opacity:.45;stroke-dasharray:5 7}
+.plan .lbl{fill:currentColor;font-size:17px;letter-spacing:.14em;text-transform:uppercase}
+.plan .lbl-s{fill:var(--silver-lo);font-size:15px;letter-spacing:.18em;text-transform:uppercase}
+.plan .num{fill:currentColor;fill-opacity:.55;font:800 88px var(--f-b);font-stretch:70%}
+.pg{--fo:.05;color:var(--silver-lo);cursor:pointer;transition:color .35s}
+.pg .bx{fill:currentColor;fill-opacity:var(--fo);stroke:currentColor;stroke-width:2;transition:fill-opacity .35s}
+.pg.on{--fo:.2;color:var(--gold-hi)}
+.pg.on .bx{filter:drop-shadow(0 0 14px rgba(242,221,142,.35))}
+.pg .dash{stroke-dasharray:8 7}
+.js .pg{opacity:0;transform:translateY(14px);transition:color .35s,opacity .8s var(--ease),transform .8s var(--ease)}
+.js .plan.in .pg{opacity:1;transform:none}
+.js .plan.in .pg:nth-of-type(2){transition-delay:.12s}
+.js .plan.in .pg:nth-of-type(3){transition-delay:.24s}
+.js .plan.in .pg:nth-of-type(4){transition-delay:.36s}
+.js .plan.in .pg:nth-of-type(5){transition-delay:.48s}
+.plan__cap{margin-top:12px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;font-size:13px;color:var(--silver-lo)}
+.plan__list{border-top:1px solid var(--line)}
+.plan__list button{display:grid;grid-template-columns:44px 1fr;gap:4px 8px;width:100%;text-align:left;padding:20px 0;background:none;border:0;border-bottom:1px solid var(--line);position:relative}
+.plan__list button::before{content:"";position:absolute;left:-18px;top:0;bottom:0;width:3px;background:var(--gold);transform:scaleY(0);transform-origin:top;transition:transform .45s var(--ease)}
+.plan__list .no{font:400 11px/1.9 var(--f-d);letter-spacing:.14em;color:var(--silver-lo);transition:color .3s}
+.plan__list .t{font:700 clamp(21px,1.8vw,27px)/1.1 var(--f-b);font-stretch:78%;text-transform:uppercase;color:#fff}
+.plan__list .t em{font-style:normal;margin-left:8px;font:400 10px/1 var(--f-d);letter-spacing:.14em;color:var(--gold)}
+.plan__list .ds{grid-column:2;display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--ease)}
+.plan__list .ds>span{overflow:hidden;color:#AEB4BA;font-size:15.5px;line-height:1.55}
+.plan__list .on .ds{grid-template-rows:1fr}
+.plan__list .on::before{transform:scaleY(1)}
+.plan__list .on .no{color:var(--gold)}
+.plan__list .ds>span>span{display:block;padding-top:8px}
+.phases{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.phases span{--cut:12px;padding:10px 16px;font:400 10px/1.4 var(--f-d);letter-spacing:.14em;text-transform:uppercase;color:var(--silver);border:1px solid var(--line-2)}
+.phases span:first-child{background:rgba(212,178,78,.12);border-color:var(--gold);color:var(--gold-hi)}
+.proj__loc{display:flex;gap:14px;align-items:flex-start;margin-top:clamp(28px,5vh,52px);padding:20px 22px;border:1px solid var(--line);background:rgba(255,255,255,.02);max-width:760px}
+.proj__loc svg{flex:none;width:26px;height:26px;fill:none;stroke:var(--gold);stroke-width:1.6;margin-top:2px}
+.proj__loc p{color:#AEB4BA}
+.proj__loc b{color:#fff;font-weight:600}
+
+/* ---------- Jogar: o marcador ---------- */
+.light{background:var(--plat);color:#3A4148}
+.play{position:relative;padding:clamp(80px,12vh,150px) var(--pad);overflow-x:clip}
+.play::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 20%,rgba(255,255,255,.9),transparent 45%);pointer-events:none}
+.play__grid{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(30px,5vw,90px);align-items:center}
+.play .kick{color:var(--gold-lo)}
+.play h2{margin:18px 0 8px;font-size:clamp(46px,6.8vw,112px);color:var(--ink)}
+.play__lede{max-width:480px;margin-bottom:clamp(20px,4vh,40px);color:#4A5159}
+.score{border-top:2px solid var(--ink)}
+.srow{display:grid;grid-template-columns:clamp(86px,10vw,150px) 1fr;align-items:center;width:100%;padding:clamp(14px,2.4vh,24px) 0;text-align:left;background:none;border:0;border-bottom:1px solid rgba(16,19,22,.22);position:relative;transition:padding .45s var(--ease)}
+.srow::before{content:"";position:absolute;left:0;top:0;bottom:0;width:0;background:var(--ink);z-index:0;transition:width .5s var(--ease)}
+.srow>*{position:relative;z-index:1}
+.srow__n{font:800 clamp(58px,7.2vw,118px)/.9 var(--f-b);font-stretch:62%;color:var(--ink);transition:color .4s,transform .5s var(--ease);padding-left:14px}
+.srow__n.w{font-size:clamp(40px,4.8vw,78px);letter-spacing:.01em}
+.srow__b b{display:block;font:700 clamp(21px,2vw,31px)/1.05 var(--f-b);font-stretch:78%;text-transform:uppercase;color:var(--ink);transition:color .4s}
+.srow__b i{display:grid;grid-template-rows:0fr;font-style:normal;transition:grid-template-rows .5s var(--ease)}
+.srow__b i span{overflow:hidden;font-size:15.5px;line-height:1.5;color:#B5BBC1}
+.srow__b i span span{display:block;padding:8px 24px 0 0}
+.srow.on::before{width:100%}
+.srow.on{padding-left:0}
+.srow.on .srow__n{color:var(--gold-hi)}
+.srow.on .srow__b b{color:#fff}
+.srow.on .srow__b i{grid-template-rows:1fr}
+.play__note{margin-top:20px;font-size:13px;color:#5A6169}
+.rkwrap{position:relative;justify-self:center;width:min(100%,370px);padding:20px 0}
+.rk{position:relative;display:flex;flex-direction:column;align-items:center;transform:rotate(-7deg);filter:drop-shadow(0 30px 34px rgba(16,19,22,.28))}
+.rk__head{width:100%;aspect-ratio:.84/1;padding:12px;border-radius:50% 50% 50% 50%/46% 46% 54% 54%;background:linear-gradient(135deg,#F2DD8E,#B8962F 45%,#8F7326 60%,#E9CF78)}
+.rk__face{position:relative;width:100%;height:100%;border-radius:inherit;overflow:hidden;background:var(--ink)}
+.rk__face img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.08);transition:opacity .7s var(--ease),transform 1.1s var(--ease)}
+.rk__face img.on{opacity:1;transform:none}
+.rk__face::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 4px 4px,rgba(10,12,14,.55) 2.6px,transparent 3.2px) 0 0/16px 14px,radial-gradient(circle at 12px 11px,rgba(10,12,14,.55) 2.6px,transparent 3.2px) 0 0/16px 14px;-webkit-mask-image:radial-gradient(ellipse at center,transparent 52%,#000 100%);mask-image:radial-gradient(ellipse at center,transparent 52%,#000 100%);pointer-events:none}
+.rk__neck{width:34%;aspect-ratio:2.83/1;margin-top:-3px;background:linear-gradient(135deg,#F2DD8E,#8F7326);clip-path:polygon(0 0,100% 0,64% 100%,36% 100%)}
+.rk__grip{width:11%;aspect-ratio:.367/1;margin-top:-2px;border-radius:6px 6px 14px 14px;background:repeating-linear-gradient(135deg,#D4B24E 0 5px,#8F7326 5px 8px)}
+.rk__ball{position:absolute;right:-6%;top:6%;width:13%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#F6FA9C,var(--ball) 45%,#9BA52A);box-shadow:0 8px 16px rgba(0,0,0,.3);animation:bob 3.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-14px)}}
+.js .rkwrap{opacity:0;transform:translateX(40px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.js .rkwrap.in{opacity:1;transform:none}
+
+/* ---------- Zona social ---------- */
+.soc{position:relative;padding:clamp(80px,12vh,150px) var(--pad);background:var(--coal);overflow-x:clip}
+.soc__grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(30px,5vw,90px);align-items:start}
+.soc__txt{position:sticky;top:calc(var(--top) + 30px)}
+.soc h2{margin:18px 0 22px;font-size:clamp(46px,6.2vw,104px)}
+.soc__txt p{max-width:460px;color:#AEB4BA}
+.soc__txt p+p{margin-top:14px}
+.soc__tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.soc__tags span{padding:9px 14px;border:1px solid var(--line-2);font:400 10px/1 var(--f-d);letter-spacing:.14em;text-transform:uppercase;color:var(--silver)}
+.soc__cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,2vw,28px)}
+.soc__col{display:grid;gap:clamp(12px,2vw,28px)}
+.soc__col:nth-child(2){margin-top:clamp(40px,8vw,120px)}
+.shot{--cut:34px;position:relative;margin:0;overflow:hidden;clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));background:var(--slate)}
+.shot img{width:100%;height:100%;object-fit:cover;filter:saturate(.92) contrast(1.04)}
+.shot::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(10,12,14,.65));pointer-events:none}
+.shot figcaption{position:absolute;left:18px;bottom:14px;z-index:1;font:400 9px/1.3 var(--f-d);letter-spacing:.18em;text-transform:uppercase;color:var(--silver)}
+.shot--t{aspect-ratio:4/5}.shot--s{aspect-ratio:1/1}
+.marq{margin-top:clamp(50px,9vh,110px);overflow:hidden;border-block:1px solid var(--line);padding:16px 0}
+.marq__t{display:flex;width:max-content;animation:marq 38s linear infinite}
+.marq span{flex:none;padding-right:34px;font:800 clamp(34px,5vw,72px)/1 var(--f-b);font-stretch:62%;text-transform:uppercase;color:transparent;-webkit-text-stroke:1px var(--silver-lo);letter-spacing:.02em}
+.marq span.g{color:var(--gold);-webkit-text-stroke:0}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* ---------- Abertura 2027 ---------- */
+.open{position:relative;padding:clamp(80px,12vh,150px) var(--pad);background:linear-gradient(120deg,#9A7C27 0%,#D4B24E 28%,#F2DD8E 50%,#D4B24E 72%,#9A7C27 100%);color:var(--ink);overflow:clip;isolation:isolate}
+.open::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 2px 2px,rgba(16,19,22,.18) 2.2px,transparent 2.8px) 0 0/22px 19px,radial-gradient(circle at 13px 11.5px,rgba(16,19,22,.18) 2.2px,transparent 2.8px) 0 0/22px 19px;-webkit-mask-image:linear-gradient(100deg,transparent 30%,#000);mask-image:linear-gradient(100deg,transparent 30%,#000)}
+.open__grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,90px);align-items:center}
+.open .kick{color:var(--ink)}
+.open__y{margin:10px 0 0;font:800 clamp(130px,23vw,380px)/.78 var(--f-b);font-stretch:62%;color:var(--ink);letter-spacing:-.02em}
+.open__y span{display:block;margin-top:.1em;font:400 clamp(11px,1.1vw,14px)/1.4 var(--f-d);letter-spacing:.3em;text-transform:uppercase}
+.open__p{max-width:440px;margin-top:clamp(22px,4vh,38px);color:#2A2415;font-weight:500}
+.tl{margin-top:30px;border-top:2px solid var(--ink)}
+.tl li{display:grid;grid-template-columns:118px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid rgba(16,19,22,.28);font-size:15.5px}
+.tl b{font:400 10px/1.9 var(--f-d);letter-spacing:.16em;text-transform:uppercase}
+.fcard{--cut:34px;position:relative;padding:clamp(26px,3.4vw,52px);background:var(--ink);color:var(--silver);clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.fcard h3{font:800 clamp(30px,3.2vw,48px)/.95 var(--f-b);font-stretch:70%;text-transform:uppercase;color:#fff}
+.fcard>p{margin:10px 0 24px;color:#AEB4BA;font-size:15.5px}
+.fld{display:block;margin-bottom:20px}
+.fld>span,.grp>span{display:block;margin-bottom:6px;font:400 10px/1.4 var(--f-d);letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.fld input[type=text],.fld input[type=email]{width:100%;padding:10px 0;border:0;border-bottom:1px solid var(--line-2);background:transparent;color:#fff;font:400 18px var(--f-b);border-radius:0}
+.fld input:focus{outline:0;border-bottom-color:var(--gold-hi)}
+.grp{margin-bottom:20px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;margin:0}
+.chip span{display:block;padding:10px 14px;border:1px solid var(--line-2);font-size:14.5px;color:var(--silver);transition:background .3s,color .3s,border-color .3s;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.chip input:checked+span{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:600}
+.chip input:focus-visible+span{outline:2px solid var(--gold-hi);outline-offset:2px}
+.fmsg{min-height:1.5em;margin-top:16px;font-size:14.5px;color:var(--gold-hi)}
+.fnote{margin-top:6px;font-size:12.5px;color:var(--silver-lo)}
+
+/* ---------- rodapé ---------- */
+.ft{position:relative;padding:clamp(70px,11vh,130px) var(--pad) 40px;background:var(--ink);overflow:clip}
+.ft__ghost{position:absolute;left:50%;bottom:-.17em;transform:translateX(-50%);font:800 clamp(140px,26vw,440px)/.8 var(--f-b);font-stretch:62%;text-transform:uppercase;color:transparent;-webkit-text-stroke:1px rgba(201,206,211,.06);white-space:nowrap;pointer-events:none}
+.ft__grid{position:relative;display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:clamp(26px,4vw,70px)}
+.ft__logo{width:min(100%,230px)}
+.ft h4{margin:0 0 14px;font:400 10px/1.4 var(--f-d);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.ft p,.ft li{font-size:15.5px;color:#AEB4BA}
+.ft li+li{margin-top:8px}
+.ft__demo{position:relative;margin-top:clamp(44px,8vh,90px);padding-top:22px;border-top:1px solid var(--line);font-size:13px;color:var(--silver-lo);max-width:900px}
+.ft__demo b{color:var(--gold-hi);font-weight:600}
+
+/* ---------- revelar ao scroll ---------- */
+.js .rv{opacity:0;transform:translateY(30px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.js .rv.in{opacity:1;transform:none}
+
+/* ---------- menu mobile e ajustes ---------- */
+@media (max-width:960px){
+  :root{--hd:60px}
+  .hd,.hd.solid{background:var(--ink);box-shadow:0 1px 0 var(--line)}
+  .burger{display:block}
+  .brand img{width:40px;height:40px}
+  .nav{position:fixed;left:0;right:0;top:var(--top);height:calc(100vh - var(--top));height:calc(100dvh - var(--top));z-index:2;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:0;padding:12px var(--pad) 30px;background:var(--ink);overflow-y:auto;overscroll-behavior:contain;opacity:0;visibility:hidden;transform:translateY(-10px);transition:opacity .35s,transform .45s var(--ease),visibility 0s .45s}
+  .menu-open .nav{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+  .nav a{display:flex;align-items:baseline;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);font:800 clamp(34px,10vw,52px)/1 var(--f-b);font-stretch:70%;letter-spacing:0;color:#fff}
+  .nav a::before{content:attr(data-n);font:400 10px/1 var(--f-d);letter-spacing:.14em;color:var(--gold)}
+  .nav a::after{display:none}
+  .nav .nav__cta{margin-top:26px;padding:20px 24px;justify-content:center;font:400 12px/1 var(--f-d);letter-spacing:.18em;border:0;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px))}
+  .nav .nav__cta::before{display:none}
+  .nav__foot{display:block;margin-top:auto;padding-top:26px;font:400 10px/1.8 var(--f-d);letter-spacing:.18em;text-transform:uppercase;color:var(--silver-lo)}
+  .nav__foot b{font-weight:400;color:var(--gold)}
+  .hero{grid-template-columns:1fr;gap:6px;padding-top:calc(var(--top) + 14px);padding-bottom:84px;min-height:0}
+  .hero__sym{order:-1;width:min(66vw,300px)}
+  .hero h1{font-size:clamp(54px,16.4vw,92px)}
+  .hud{font-size:9px;letter-spacing:.14em;margin:6px 0 18px}
+  .hud .h{display:none}.hud .t{display:inline}
+  .cross__stick{grid-template-columns:1fr;gap:0;align-content:start}
+  .js .cross__stick{padding-top:6px;display:flex;flex-direction:column}
+  .cross__vis{order:-1;width:min(58vw,calc(40svh * .82));flex:none}
+  .cross h2{font-size:clamp(34px,10.4vw,54px);margin-top:10px}
+  .cross .kick{display:none}
+  .cross__steps{margin-top:14px}
+  .js .cross__steps{min-height:200px}
+  .cstep h3{font-size:25px}
+  .proj__grid,.play__grid,.soc__grid,.open__grid,.ft__grid{grid-template-columns:1fr}
+  .play__grid .rkwrap{order:-1;width:min(62%,250px)}
+  .soc__txt{position:static}
+  .plan__list button::before{left:-12px}
+  .seal{display:none}
+  .demo .l{display:none}.demo .m{display:inline}
+  .ft__logo{width:180px}
+}
+@media (max-width:520px){
+  .btn{padding:16px 20px;font-size:10px;letter-spacing:.12em;gap:10px}
+  .plan .num{font-size:72px}
+  .demo{font-size:11px}
+  .phases span{font-size:9px}
+}
+@media (hover:none),(pointer:coarse){.hud .h{display:none}.hud .t{display:inline}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .hx,.js .rv,.js .rkwrap,.js .pg,.js .hero h1 .ln>span{opacity:1!important;transform:none!important}
+  .flood{opacity:.8!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ faixa de demonstração ============ -->
+<div class="demo" role="note"><b>DEMO</b><span class="l">Website de demonstração criado pela DD Digital para o Padel Zona A · conteúdo ilustrativo</span><span class="m">Demonstração · Padel Zona A</span></div>
+<div class="seal" role="note"><i></i>Versão de demonstração</div>
+
+<!-- ============ preloader ============ -->
+<div class="pre" id="pre" aria-hidden="true">
+  <div class="pre__lamps"><i></i><i></i><i></i></div>
+  <img class="pre__logo" src="img/logo-symbol.png" alt="">
+  <p class="pre__t">Padel <b>Zona A</b> · 2027</p>
+</div>
+
+<!-- ============ cabeçalho ============ -->
+<header class="hd" id="hd">
+  <a class="brand" href="#inicio" aria-label="Padel Zona A — início"><img src="img/logo-symbol.png" alt=""><span>Padel<b>Zona A</b></span></a>
+  <button class="burger" id="burger" aria-expanded="false" aria-controls="nav" aria-label="Abrir menu"><i></i><i></i></button>
+  <nav class="nav" id="nav" aria-label="Principal">
+    <a href="#clube" data-n="01">O clube</a>
+    <a href="#projeto" data-n="02">O projeto</a>
+    <a href="#jogar" data-n="03">Jogar</a>
+    <a href="#social" data-n="04">Zona social</a>
+    <a href="#abertura" class="nav__cta">Fica a par</a>
+    <p class="nav__foot">Abertura em <b>2027</b><br>Junto à EN 109</p>
+  </nav>
+</header>
+
+<main>
+<!-- ============ hero ============ -->
+<section class="hero" id="inicio">
+  <div class="floods" aria-hidden="true"><i class="flood"></i><i class="flood"></i><i class="flood"></i></div>
+  <div class="floor" aria-hidden="true"></div>
+
+  <div class="hero__txt">
+    <p class="kick hx">Abertura em 2027 · junto à EN 109</p>
+    <h1 class="big"><span class="ln"><span>Aqui o jogo</span></span><span class="ln"><span class="metal">avança.</span></span></h1>
+    <p class="hero__p hx" style="--d:.35s">Três campos de padel, uma zona social com bar e um clube pensado para que gerações se cruzem. O Padel Zona A está a nascer junto à EN 109.</p>
+    <div class="hero__cta hx" style="--d:.5s">
+      <a class="btn" href="#abertura">Fica a par da abertura <svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+      <a class="btn btn--ghost" href="#projeto"><span>Conhece o projeto</span></a>
+    </div>
+    <ul class="facts hx" style="--d:.65s"><li>3 campos de padel</li><li>Bar e zona social</li><li>Balneários e estacionamento</li></ul>
+  </div>
+
+  <div class="hero__sym hx" style="--d:.2s">
+    <div class="sym" id="sym">
+      <div class="sym__halo" aria-hidden="true"></div>
+      <div class="sym__shake" id="shake">
+        <div class="sym__tilt" id="tilt">
+          <img src="img/logo-symbol.png" alt="Símbolo do Padel Zona A: duas raquetes, uma dourada e uma prateada, cruzadas a formar um A">
+          <img class="sym__shine" src="img/logo-symbol.png" alt="" aria-hidden="true">
+          <canvas id="rally" aria-hidden="true"></canvas>
+        </div>
+      </div>
+    </div>
+    <p class="hud" aria-hidden="true"><i></i><span>Troca <b id="cnt">0</b></span><span class="h">· clica para um smash</span><span class="t">· toca no símbolo</span></p>
+  </div>
+</section>
+<div class="net" aria-hidden="true"></div>
+
+<!-- ============ o clube: as raquetes que se cruzam ============ -->
+<section class="cross" id="clube" aria-labelledby="clubeT">
+  <div class="cross__stick">
+    <div class="cross__txt">
+      <p class="kick">O clube</p>
+      <h2 class="big" id="clubeT">Mais do que campos, <span class="metal">um ponto de encontro.</span></h2>
+      <div class="cross__steps" id="csteps">
+        <article class="cstep on"><span class="d">01 / Gerações</span><h3>Todas as idades, o mesmo campo</h3><p>Pais e filhos, avós e netos, colegas de equipa e quem nunca pegou numa raquete. A ambição é criar um espaço onde se cruzem diferentes gerações.</p></article>
+        <article class="cstep"><span class="d">02 / Amizades</span><h3>Um jogo a quatro começa com um cumprimento</h3><p>E muitas vezes acaba numa conversa no bar. É assim que se criam novas amizades.</p></article>
+        <article class="cstep"><span class="d">03 / Comunidade</span><h3>Um clube é de quem o enche</h3><p>Fortalecer o espírito de comunidade é o objetivo. Aqui, a Zona A quer ser casa de quem por aqui se cruzar.</p></article>
+        <div class="dots" id="cdots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+      </div>
+    </div>
+    <div class="cross__vis" aria-hidden="true">
+      <svg viewBox="70 60 460 560" id="crossSvg">
+        <defs>
+          <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2DD8E"/><stop offset=".5" stop-color="#C9A744"/><stop offset="1" stop-color="#8F7326"/></linearGradient>
+          <linearGradient id="gSilver" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4F6F8"/><stop offset=".5" stop-color="#B2B8BE"/><stop offset="1" stop-color="#6F767E"/></linearGradient>
+          <radialGradient id="fGold" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#F2DD8E"/><stop offset="1" stop-color="#A98A2D"/></radialGradient>
+          <radialGradient id="fSilver" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#F4F6F8"/><stop offset="1" stop-color="#8C9399"/></radialGradient>
+          <pattern id="holes" width="15" height="13" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="3" fill="#0F1215"/><circle cx="11.5" cy="10.5" r="3" fill="#0F1215"/></pattern>
+          <pattern id="grip" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><rect width="9" height="9" fill="#D4B24E"/><rect width="4" height="9" fill="#8F7326"/></pattern>
+        </defs>
+        <g id="rings">
+          <circle class="ring" cx="300" cy="330" r="180" stroke-opacity=".55"/>
+          <circle class="ring" cx="300" cy="330" r="235" stroke-opacity=".35"/>
+          <circle class="ring" cx="300" cy="330" r="290" stroke-opacity=".2"/>
+        </g>
+        <g class="orb"><circle cx="300" cy="150" r="9" fill="#E4EC63"/></g>
+        <g class="orb"><circle cx="300" cy="95" r="7" fill="#C9CED3"/></g>
+        <g id="rkL"></g><g id="rkR"></g>
+        <path id="swoosh" d="M236 560 Q300 502 366 546" fill="none" stroke="#F2DD8E" stroke-width="8" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+      </svg>
+    </div>
+  </div>
+</section>
+<div class="net" aria-hidden="true"></div>
+
+<!-- ============ o projeto: esquema do espaço ============ -->
+<section class="proj" id="projeto" aria-labelledby="projT">
+  <div class="proj__head">
+    <div>
+      <p class="kick rv">O projeto</p>
+      <h2 class="big rv" id="projT">O que vai nascer <span class="metal">junto à EN 109</span></h2>
+    </div>
+    <p class="rv">Numa primeira fase: três campos de padel, uma zona social com bar, balneários e um parque de estacionamento. E um espaço complementar que ainda está em estudo.</p>
+  </div>
+
+  <div class="proj__grid">
+    <div>
+      <div class="planbox">
+        <svg class="plan" id="plan" viewBox="0 0 900 700" role="img" aria-labelledby="planT planD">
+          <title id="planT">Esquema ilustrativo do espaço</title>
+          <desc id="planD">Três campos de padel lado a lado, zona social com bar, balneários, espaço complementar em estudo e estacionamento junto à estrada EN 109.</desc>
+          <defs>
+            <g id="court">
+              <rect width="150" height="290" fill="currentColor" style="fill-opacity:var(--fo)" stroke="none"/>
+              <rect x="-7" y="-7" width="164" height="304" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.5"/>
+              <path d="M0 145H150M0 44H150M0 246H150M75 44V246" fill="none" stroke="currentColor" stroke-width="2" stroke-opacity=".85"/>
+              <path d="M0 145H150" stroke="currentColor" stroke-width="5" stroke-dasharray="3 5"/>
+            </g>
+          </defs>
+          <rect class="site" x="24" y="24" width="852" height="452"/>
+
+          <g class="pg" data-k="courts" style="--fo:.06">
+            <use href="#court" x="56" y="56"/><use href="#court" x="232" y="56"/><use href="#court" x="408" y="56"/>
+            <text class="num" x="131" y="226" text-anchor="middle">1</text>
+            <text class="num" x="307" y="226" text-anchor="middle">2</text>
+            <text class="num" x="483" y="226" text-anchor="middle">3</text>
+          </g>
+          <g class="pg" data-k="social">
+            <rect class="bx" x="600" y="56" width="244" height="124"/>
+            <text class="lbl" x="722" y="112" text-anchor="middle">Zona social</text>
+            <text class="lbl" x="722" y="140" text-anchor="middle">e bar</text>
+          </g>
+          <g class="pg" data-k="locker">
+            <rect class="bx" x="600" y="196" width="244" height="72"/>
+            <text class="lbl" x="722" y="239" text-anchor="middle">Balneários</text>
+          </g>
+          <g class="pg" data-k="extra">
+            <rect class="bx dash" x="600" y="284" width="244" height="62" fill-opacity="0"/>
+            <rect class="bx" x="600" y="284" width="244" height="62" style="fill-opacity:calc(var(--fo)*.6)" stroke="none"/>
+            <text class="lbl" x="722" y="311" text-anchor="middle" style="font-size:15px">Complementar</text>
+            <text class="lbl-s" x="722" y="333" text-anchor="middle" style="fill:currentColor;fill-opacity:.8;font-size:13px">em estudo</text>
+          </g>
+          <g class="pg" data-k="park">
+            <rect class="bx" x="56" y="376" width="788" height="76"/>
+            <path d="M70 414H830" stroke="currentColor" stroke-opacity=".6" stroke-width="56" stroke-dasharray="2 27" fill="none"/>
+            <text class="lbl" x="450" y="470" text-anchor="middle" style="fill-opacity:0">Estacionamento</text>
+          </g>
+
+          <!-- estrada -->
+          <rect class="road" x="0" y="506" width="900" height="70"/>
+          <path class="rd" d="M0 541H900" fill="none"/>
+          <text class="lbl-s" x="30" y="533" style="font-size:20px;fill:var(--silver)">EN 109</text>
+          <!-- do outro lado -->
+          <rect class="far" x="240" y="606" width="420" height="72"/>
+          <text class="lbl-s" x="450" y="637" text-anchor="middle">Antigo restaurante N’Gola</text>
+          <text class="lbl-s" x="450" y="659" text-anchor="middle" style="font-size:12px;fill-opacity:.7">em frente</text>
+        </svg>
+        <div class="plan__cap"><span>Esquema ilustrativo, sem escala.</span><span class="tbc">distribuição, dimensões e acessos a confirmar</span></div>
+      </div>
+      <div class="phases"><span>Primeira fase · campos, zona social, balneários, estacionamento</span><span>Em estudo · espaço complementar</span></div>
+    </div>
+
+    <ol class="plan__list" id="planList">
+      <li><button class="on" data-k="courts"><span class="no">01</span><span class="t">Três campos de padel</span><span class="ds"><span><span>Para jogar, treinar e competir. É o coração do clube, logo na primeira fase.</span></span></span></button></li>
+      <li><button data-k="social"><span class="no">02</span><span class="t">Zona social com bar</span><span class="ds"><span><span>O ponto de encontro antes, durante e depois do jogo.</span></span></span></button></li>
+      <li><button data-k="locker"><span class="no">03</span><span class="t">Balneários</span><span class="ds"><span><span>Para sair do campo e seguir com o dia.</span></span></span></button></li>
+      <li><button data-k="park"><span class="no">04</span><span class="t">Estacionamento</span><span class="ds"><span><span>Um parque de estacionamento no próprio espaço.</span></span></span></button></li>
+      <li><button data-k="extra"><span class="no">05</span><span class="t">Espaço complementar <em>EM ESTUDO</em></span><span class="ds"><span><span>As funcionalidades ainda estão a ser estudadas. Pode vir a incluir um ginásio.</span></span></span></button></li>
+    </ol>
+  </div>
+
+  <div class="proj__loc rv">
+    <svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.6"/></svg>
+    <p><b>Onde fica:</b> junto à EN 109, em frente ao antigo restaurante N’Gola. Morada completa e indicações: <span class="tbc">a confirmar com o cliente</span></p>
+  </div>
+</section>
+<div class="net" aria-hidden="true"></div>
+
+<!-- ============ jogar: o marcador ============ -->
+<section class="play light" id="jogar" aria-labelledby="playT">
+  <div class="play__grid">
+    <div>
+      <p class="kick rv">Jogar</p>
+      <h2 class="big rv" id="playT">O marcador</h2>
+      <p class="play__lede rv">No padel, a pontuação é a do ténis: 15, 30, 40 e jogo. A oferta do clube segue o mesmo caminho.</p>
+      <div class="score rv" id="score" role="tablist" aria-label="Oferta desportiva">
+        <button class="srow on" role="tab" aria-selected="true" data-i="0"><span class="srow__n">15</span><span class="srow__b"><b>Aluguer de campos</b><i><span><span>Reserva o teu campo e junta os teus parceiros. Modo de reserva, horários e preços: a confirmar com o cliente.</span></span></i></span></button>
+        <button class="srow" role="tab" aria-selected="false" data-i="1"><span class="srow__n">30</span><span class="srow__b"><b>Aulas de padel</b><i><span><span>Para quem está a começar e para quem quer evoluir. Equipa de treinadores e níveis: a confirmar com o cliente.</span></span></i></span></button>
+        <button class="srow" role="tab" aria-selected="false" data-i="2"><span class="srow__n">40</span><span class="srow__b"><b>Torneios</b><i><span><span>Competição com bom ambiente. O calendário será divulgado quando a abertura estiver mais próxima.</span></span></i></span></button>
+        <button class="srow" role="tab" aria-selected="false" data-i="3"><span class="srow__n w">Jogo</span><span class="srow__b"><b>Outras iniciativas</b><i><span><span>Há mais a caminho. Será anunciado oportunamente.</span></span></i></span></button>
+      </div>
+      <p class="play__note rv">Todas as informações práticas estão por confirmar com o cliente.</p>
+    </div>
+
+    <div class="rkwrap" aria-hidden="true">
+      <div class="rk">
+        <div class="rk__head"><div class="rk__face" id="rkFace">
+          <img class="on" src="img/courts-aerial-night.jpg" alt="Vista aérea de campos de padel iluminados à noite" loading="lazy">
+          <img src="img/serve-night.jpg" alt="Jogador a servir num campo de padel à noite" loading="lazy">
+          <img src="img/smash-indoor.jpg" alt="Jogador de padel em pleno salto" loading="lazy">
+          <img src="img/racket-ball-grey.jpg" alt="Raquete de padel e bola num piso cinzento" loading="lazy">
+        </div></div>
+        <div class="rk__neck"></div><div class="rk__grip"></div>
+        <i class="rk__ball"></i>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ zona social ============ -->
+<section class="soc" id="social" aria-labelledby="socT">
+  <div class="soc__grid">
+    <div class="soc__txt">
+      <p class="kick rv">Zona social</p>
+      <h2 class="big rv" id="socT">Depois do jogo, <span class="silver">o jogo continua.</span></h2>
+      <p class="rv">A zona social com bar é onde o clube acontece fora do campo: a conversa depois do último ponto, o reencontro, o primeiro café de quem chega mais cedo.</p>
+      <p class="rv">Com balneários e estacionamento à porta, a ideia é simples: chegar, jogar e ficar o tempo que apetecer.</p>
+      <div class="soc__tags rv"><span>Bar</span><span>Zona social</span><span>Balneários</span></div>
+    </div>
+    <div class="soc__cols">
+      <div class="soc__col" data-par="-.05">
+        <figure class="shot shot--t"><img src="img/bar-sunset.jpg" alt="Esplanada com bar ao pôr do sol e luz dourada" loading="lazy"><figcaption>Ilustrativa</figcaption></figure>
+        <figure class="shot shot--s"><img src="img/racket-orange.jpg" alt="Jogador a segurar uma raquete de padel laranja junto ao vidro" loading="lazy"><figcaption>Ilustrativa</figcaption></figure>
+      </div>
+      <div class="soc__col" data-par=".06">
+        <figure class="shot shot--s"><img src="img/bar-beer.jpg" alt="Um copo de cerveja sobre uma mesa vermelha numa esplanada" loading="lazy"><figcaption>Ilustrativa</figcaption></figure>
+        <figure class="shot shot--t"><img src="img/terrace-lowlight.jpg" alt="Banquetas altas num terraço com vidros e pouca luz" loading="lazy"><figcaption>Ilustrativa</figcaption></figure>
+      </div>
+    </div>
+  </div>
+  <div class="marq" aria-hidden="true"><div class="marq__t" id="marq"></div></div>
+</section>
+
+<!-- ============ abertura 2027 ============ -->
+<section class="open" id="abertura" aria-labelledby="openT">
+  <div class="open__grid">
+    <div>
+      <p class="kick rv">Abertura</p>
+      <h2 class="open__y rv" id="openT">2027<span>Data exata a anunciar</span></h2>
+      <p class="open__p rv">Ainda não há dia marcado, mas já podes fazer parte da primeira jogada. Deixa o teu contacto e sabes das novidades: aulas, torneios e inauguração.</p>
+      <ul class="tl rv">
+        <li><b>Agora</b><span>O projeto está a ser preparado junto à EN 109.</span></li>
+        <li><b>2027</b><span>Abertura do clube, com três campos, zona social, balneários e estacionamento.</span></li>
+        <li><b>Em estudo</b><span>Espaço complementar, que pode vir a incluir um ginásio.</span></li>
+      </ul>
+    </div>
+    <form class="fcard rv" id="form" novalidate>
+      <h3>Fica a par</h3>
+      <p>Diz-nos quem és e o que te interessa. Quando o clube abrir, és dos primeiros a saber.</p>
+      <label class="fld"><span>Nome</span><input type="text" name="nome" autocomplete="name" placeholder="O teu nome"></label>
+      <label class="fld"><span>Email</span><input type="email" name="email" autocomplete="email" placeholder="o.teu@email.pt"></label>
+      <div class="grp" role="group" aria-labelledby="gl1"><span id="gl1">Já jogas padel?</span>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="nivel" value="nunca" checked><span>Nunca joguei</span></label>
+          <label class="chip"><input type="radio" name="nivel" value="inicio"><span>Estou a começar</span></label>
+          <label class="chip"><input type="radio" name="nivel" value="regular"><span>Jogo regularmente</span></label>
+        </div>
+      </div>
+      <div class="grp" role="group" aria-labelledby="gl2"><span id="gl2">O que te interessa?</span>
+        <div class="chips">
+          <label class="chip"><input type="checkbox" name="int" value="campos"><span>Aluguer de campos</span></label>
+          <label class="chip"><input type="checkbox" name="int" value="aulas"><span>Aulas</span></label>
+          <label class="chip"><input type="checkbox" name="int" value="torneios"><span>Torneios</span></label>
+          <label class="chip"><input type="checkbox" name="int" value="gym"><span>Ginásio (em estudo)</span></label>
+        </div>
+      </div>
+      <button class="btn" type="submit">Quero saber mais <svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+      <p class="fmsg" id="fmsg" role="status" aria-live="polite"></p>
+      <p class="fnote">Formulário de demonstração: não envia nem guarda dados.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<!-- ============ rodapé ============ -->
+<footer class="ft" id="contacto">
+  <div class="ft__ghost" aria-hidden="true">Avança</div>
+  <div class="ft__grid">
+    <div><img class="ft__logo" src="img/logo-lockup.png" alt="Padel Zona A (Avança)" loading="lazy"></div>
+    <div>
+      <h4>Onde</h4>
+      <p>Junto à EN 109, em frente ao antigo restaurante N’Gola.</p>
+      <ul style="margin-top:12px"><li>Morada: <span class="tbc">a confirmar com o cliente</span></li><li>Como chegar: <span class="tbc">a confirmar com o cliente</span></li></ul>
+    </div>
+    <div>
+      <h4>Contactos</h4>
+      <ul><li>Telefone: <span class="tbc">a confirmar com o cliente</span></li><li>Email: <span class="tbc">a confirmar com o cliente</span></li><li>Horário: <span class="tbc">a confirmar com o cliente</span></li><li>Redes sociais: <span class="tbc">a confirmar com o cliente</span></li></ul>
+    </div>
+  </div>
+  <p class="ft__demo"><b>Website de demonstração</b> criado pela DD Digital para o Padel Zona A. Textos, esquema do espaço e informações práticas são ilustrativos e não vinculativos. O logótipo é o fornecido pelo cliente; as restantes fotografias são de banco de imagens gratuito (Unsplash) e não mostram o espaço final.</p>
+</footer>
+
+<script>
+/* =====================================================================
+   JS — organizado por funcionalidade (facilita a conversão futura)
+   ===================================================================== */
+var $=function(s,c){return (c||document).querySelector(s)};
+var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+var REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var clamp=function(v,a,b){return Math.min(b,Math.max(a,v))};
+var lerp=function(a,b,t){return a+(b-a)*t};
+if('scrollRestoration' in history)history.scrollRestoration='manual';
+window.scrollTo(0,0);
+
+/* ---------- preloader: os projetores acendem ---------- */
+(function(){
+  var pre=$('#pre'), body=document.body;
+  function ready(){body.classList.add('ready','lit')}
+  if(REDUCED||/nopre/.test(location.search)){pre.remove();ready();return}
+  body.classList.add('pre-on');
+  setTimeout(function(){pre.classList.add('out');setTimeout(ready,380)},2300);
+  setTimeout(function(){pre.remove();body.classList.remove('pre-on')},3400);
+})();
+
+/* ---------- cabeçalho / menu mobile ---------- */
+var burger=$('#burger'), nav=$('#nav'), hd=$('#hd'), menuY=0;
+function setMenu(o){
+  var was=document.body.classList.contains('menu-open'); if(o===was) return;
+  if(o){menuY=window.scrollY;document.body.style.top=-menuY+'px';document.documentElement.style.scrollBehavior='auto'}
+  document.body.classList.toggle('menu-open',o);
+  if(!o){document.body.style.top='';window.scrollTo(0,menuY);document.documentElement.style.scrollBehavior=''}
+  burger.setAttribute('aria-expanded',o);burger.setAttribute('aria-label',o?'Fechar menu':'Abrir menu')
+}
+window.addEventListener('resize',function(){if(window.innerWidth>960)setMenu(false)});
+burger.addEventListener('click',function(){setMenu(!document.body.classList.contains('menu-open'))});
+$$('a',nav).forEach(function(a){a.addEventListener('click',function(e){
+  if(!document.body.classList.contains('menu-open')) return;
+  var id=a.getAttribute('href'), t=id&&id.charAt(0)==='#'&&document.querySelector(id);
+  setMenu(false);
+  if(t){e.preventDefault();t.scrollIntoView()}
+})});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')setMenu(false)});
+// cabeçalho sólido ao fazer scroll + secção ativa
+var spy=['clube','projeto','jogar','social','abertura'].map(function(id){return {id:id,el:document.getElementById(id),a:$('.nav a[href="#'+id+'"]')}});
+function onHeader(){
+  hd.classList.toggle('solid',window.scrollY>40);
+  if(document.body.classList.contains('menu-open')) return;
+  var y=window.innerHeight*.4, cur=null;
+  spy.forEach(function(s){var r=s.el.getBoundingClientRect(); if(r.top<y&&r.bottom>y)cur=s});
+  spy.forEach(function(s){if(s.a){if(s===cur)s.a.setAttribute('aria-current','true');else s.a.removeAttribute('aria-current')}});
+}
+
+/* ---------- revelar ao scroll ---------- */
+var io='IntersectionObserver' in window ? new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px',threshold:.08}) : null;
+$$('.rv,#plan,.rkwrap').forEach(function(el){io?io.observe(el):el.classList.add('in')});
+
+/* ---------- hero: rally entre as duas faces do logótipo ---------- */
+(function(){
+  var hero=$('#inicio'), sym=$('#sym'), cv=$('#rally'), ctx=cv.getContext('2d'), cnt=$('#cnt'),
+      tilt=$('#tilt'), shake=$('#shake'), shine=$('.sym__shine');
+  var A={x:.272,y:.285}, B={x:.716,y:.272};            // centro das faces (fração do símbolo)
+  var Y0=.12, SPAN=1.12, W=0, H=0, vis=true;
+  var from=A, to=B, t=0, dur=1.5, flashA=0, flashB=0, count=0, smash=0, trail=[], last=0;
+  var ptr={x:0,y:0,on:false,t:0}, mx=62, my=22, tx=62, ty=22, near=0;
+  function size(){var r=cv.getBoundingClientRect(),d=Math.min(window.devicePixelRatio||1,2);W=r.width;H=r.height;cv.width=Math.round(W*d);cv.height=Math.round(H*d);ctx.setTransform(d,0,0,d,0,0)}
+  function P(f,y){return [f*W,(y+Y0)/SPAN*H]}
+  function ballAt(tt,arcK){
+    var e=tt<.5?2*tt*tt:1-Math.pow(-2*tt+2,2)/2; e=lerp(tt,e,.35);
+    var x=lerp(from.x,to.x,e), y=lerp(from.y,to.y,tt)-.34*arcK*4*tt*(1-tt);
+    return {x:x,y:y,z:1+.3*4*tt*(1-tt)};
+  }
+  function drawFace(f,a){
+    if(a<=.01) return; var p=P(f.x,f.y), r=W*.2, g=ctx.createRadialGradient(p[0],p[1],0,p[0],p[1],r);
+    g.addColorStop(0,'rgba(255,244,190,'+(.7*Math.min(a,1))+')');g.addColorStop(.5,'rgba(255,230,140,'+(.22*Math.min(a,1))+')');g.addColorStop(1,'rgba(255,230,140,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(p[0],p[1],r,0,7);ctx.fill();
+    ctx.strokeStyle='rgba(255,246,200,'+(.8*Math.min(a,1))+')';ctx.lineWidth=2;ctx.beginPath();ctx.arc(p[0],p[1],W*.07+ (1-Math.min(a,1))*W*.12,0,7);ctx.stroke();
+  }
+  function drawBall(b){
+    var p=P(b.x,b.y), r=W*.027*b.z;
+    ctx.save();ctx.shadowColor='rgba(228,236,99,.85)';ctx.shadowBlur=r*1.8;
+    var g=ctx.createRadialGradient(p[0]-r*.3,p[1]-r*.35,r*.1,p[0],p[1],r);g.addColorStop(0,'#F9FDB0');g.addColorStop(.5,'#E4EC63');g.addColorStop(1,'#9BA52A');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(p[0],p[1],r,0,7);ctx.fill();ctx.restore();
+    ctx.strokeStyle='rgba(255,255,255,.75)';ctx.lineWidth=Math.max(1,r*.12);ctx.beginPath();ctx.arc(p[0]-r*1.05,p[1],r*.95,-.7,.7);ctx.stroke();
+  }
+  function frame(now){
+    if(!vis){last=0;return}
+    var dt=last?Math.min((now-last)/1000,.05):0; last=now;
+    // ponteiro / piloto automático para o brilho do metal
+    if(ptr.on&&now-ptr.t<2500){var r=sym.getBoundingClientRect();tx=(ptr.x-r.left)/r.width*100;ty=(ptr.y-r.top)/r.height*100;
+      var cx=r.left+r.width/2,cy=r.top+r.height/2,d=Math.hypot(ptr.x-cx,ptr.y-cy)/(r.width*.9);near=clamp(1-d,0,1)}
+    else{var s=now/1000;tx=50+34*Math.sin(s*.55);ty=34+22*Math.sin(s*.83+1.2);near=0}
+    mx=lerp(mx,tx,.08);my=lerp(my,ty,.08);
+    shine.style.setProperty('--mx',mx+'%');shine.style.setProperty('--my',my+'%');
+    tilt.style.transform='perspective(1000px) rotateY('+((mx-50)/50*5).toFixed(2)+'deg) rotateX('+(-(my-40)/50*4).toFixed(2)+'deg)';
+    // rally
+    t+=dt/dur;
+    if(t>=1){
+      t-=1; if(to===B)flashB=smash>0?1.6:1;else flashA=smash>0?1.6:1;
+      count++;cnt.textContent=count;var tmp=from;from=to;to=tmp;
+      if(smash>0)smash--;
+      dur=(smash>0?.42:1.55)*(1-.38*near);
+    }
+    flashA=Math.max(0,flashA-dt*2.6);flashB=Math.max(0,flashB-dt*2.6);
+    var b=ballAt(t,smash>0?.45:1);
+    trail.push([b.x,b.y,now]);while(trail.length&&now-trail[0][2]>520)trail.shift();
+    ctx.clearRect(0,0,W,H);
+    drawFace(A,flashA);drawFace(B,flashB);
+    for(var i=1;i<trail.length;i++){var a=1-(now-trail[i][2])/520,p0=P(trail[i-1][0],trail[i-1][1]),p1=P(trail[i][0],trail[i][1]);
+      ctx.strokeStyle='rgba(242,221,142,'+(a*.8).toFixed(3)+')';ctx.lineWidth=W*.012*a+1;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p1[0],p1[1]);ctx.stroke()}
+    drawBall(b);
+    requestAnimationFrame(frame);
+  }
+  function still(){size();var b={x:.494,y:.0,z:1.3};ctx.clearRect(0,0,W,H);drawBall(b)}
+  size();window.addEventListener('resize',function(){size();if(REDUCED)still()});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(size);
+  hero.addEventListener('pointermove',function(e){ptr.x=e.clientX;ptr.y=e.clientY;ptr.on=true;ptr.t=performance.now()});
+  hero.addEventListener('pointerleave',function(){ptr.on=false});
+  sym.addEventListener('click',function(){
+    smash=3;dur=.42;flashA=flashB=1.6;
+    if(shake.animate&&!REDUCED)shake.animate([{transform:'translate(0,0)'},{transform:'translate(-6px,4px)'},{transform:'translate(5px,-3px)'},{transform:'translate(-3px,2px)'},{transform:'translate(0,0)'}],{duration:340,easing:'ease-out'});
+  });
+  if(REDUCED){still();return}
+  if('IntersectionObserver' in window){new IntersectionObserver(function(es){var v=es[0].isIntersecting;if(v&&!vis){vis=true;requestAnimationFrame(frame)}vis=v;if(v&&!last)requestAnimationFrame(frame)},{threshold:0}).observe(hero)}
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- o clube: as raquetes cruzam-se com o scroll ---------- */
+(function(){
+  var sec=$('#clube'), L=$('#rkL'), R=$('#rkR'), rings=$$('#rings .ring'), sw=$('#swoosh');
+  var steps=$$('.cstep',sec), dots=$$('#cdots i'), active=0;
+  function racket(face,grad){
+    return '<path d="M-26 -88 L-10 -30 L10 -30 L26 -88" fill="none" stroke="url(#'+grad+')" stroke-width="10" stroke-linejoin="round"/>'+
+      '<path d="M-9 -34 L9 -34 L17 168 L-17 168Z" fill="url(#gGold)"/>'+
+      '<rect x="-11" y="-14" width="22" height="86" rx="6" fill="url(#grip)"/>'+
+      '<ellipse cy="-152" rx="62" ry="76" fill="url(#'+grad+')"/>'+
+      '<ellipse cy="-152" rx="51" ry="65" fill="url(#'+face+')"/>'+
+      '<ellipse cy="-152" rx="51" ry="65" fill="url(#holes)"/>';
+  }
+  L.innerHTML=racket('fGold','gGold');R.innerHTML=racket('fSilver','gSilver');
+  var PX=300, PY=420;
+  function ease(x){return 1-Math.pow(1-x,3)}
+  function setP(p){
+    var th=lerp(80,24,ease(clamp(p/.62,0,1)));
+    L.setAttribute('transform','translate('+PX+' '+PY+') rotate('+(-th)+')');
+    R.setAttribute('transform','translate('+PX+' '+PY+') rotate('+th+')');
+    var rp=clamp((p-.55)/.45,0,1);
+    rings.forEach(function(r,i){var q=clamp(rp*1.4-i*.2,0,1);r.style.opacity=q;r.style.transform='scale('+lerp(.6,1,ease(q))+')'});
+    sw.setAttribute('stroke-dashoffset',1-clamp((p-.6)/.2,0,1));
+    var idx=p<.34?0:p<.67?1:2;
+    if(idx!==active){active=idx;steps.forEach(function(s,i){s.classList.toggle('on',i===idx)});dots.forEach(function(d,i){d.classList.toggle('on',i===idx)})}
+  }
+  function onScroll(){
+    var r=sec.getBoundingClientRect(), total=r.height-window.innerHeight;
+    setP(REDUCED?1:clamp(-r.top/Math.max(total,1),0,1));
+  }
+  window.__cross=onScroll; onScroll();
+})();
+
+/* ---------- o projeto: esquema interativo ---------- */
+(function(){
+  var groups=$$('#plan .pg'), btns=$$('#planList button');
+  function set(k){
+    groups.forEach(function(g){g.classList.toggle('on',g.getAttribute('data-k')===k)});
+    btns.forEach(function(b){b.classList.toggle('on',b.getAttribute('data-k')===k);b.setAttribute('aria-expanded',b.getAttribute('data-k')===k)});
+  }
+  btns.forEach(function(b){var k=b.getAttribute('data-k');b.addEventListener('mouseenter',function(){set(k)});b.addEventListener('focus',function(){set(k)});b.addEventListener('click',function(){set(k)})});
+  groups.forEach(function(g){var k=g.getAttribute('data-k');g.addEventListener('mouseenter',function(){set(k)});g.addEventListener('click',function(){set(k)})});
+  set('courts');
+})();
+
+/* ---------- jogar: marcador + foto na raquete ---------- */
+(function(){
+  var rows=$$('#score .srow'), imgs=$$('#rkFace img');
+  function set(i){rows.forEach(function(r,j){r.classList.toggle('on',i===j);r.setAttribute('aria-selected',i===j)});imgs.forEach(function(m,j){m.classList.toggle('on',i===j)})}
+  rows.forEach(function(r,i){r.addEventListener('mouseenter',function(){if(window.matchMedia('(hover:hover)').matches)set(i)});r.addEventListener('click',function(){set(i)});r.addEventListener('focus',function(){set(i)})});
+})();
+
+/* ---------- zona social: faixa + parallax das colunas ---------- */
+(function(){
+  var t=$('#marq'), words=['Avança','Zona A','Padel','Três campos','2027'], h='';
+  for(var i=0;i<2;i++)words.forEach(function(w,j){h+='<span class="'+(j%2?'g':'')+'">'+w+'</span><span class="g">·</span>'});
+  t.innerHTML=h+h;
+})();
+var cols=$$('[data-par]');
+function onPar(){
+  if(REDUCED||window.innerWidth<700) {cols.forEach(function(c){c.style.transform=''});return}
+  cols.forEach(function(c){var r=c.getBoundingClientRect(),off=(r.top+r.height/2-window.innerHeight/2);c.style.transform='translateY('+(off*parseFloat(c.getAttribute('data-par'))).toFixed(1)+'px)'});
+}
+
+/* ---------- formulário de demonstração ---------- */
+$('#form').addEventListener('submit',function(e){
+  e.preventDefault();
+  $('#fmsg').textContent='Isto é uma demonstração: nada foi enviado. No site final, o teu pedido chega diretamente ao clube.';
+});
+
+/* ---------- scroll global ---------- */
+var tick=false;
+function onScroll(){
+  if(tick) return; tick=true;
+  requestAnimationFrame(function(){tick=false;onHeader();window.__cross&&window.__cross();onPar()});
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+window.addEventListener('resize',onScroll);
+onHeader();onPar();
+</script>
+</body>
+</html>
