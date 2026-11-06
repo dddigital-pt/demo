@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<script>document.documentElement.className='js'</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NOIR Audio — Black Friday (demonstração)</title>
+<meta name="description" content="Landing page de demonstração para uma campanha de Black Friday em eletrónica de consumo: contagem decrescente real, ofertas em destaque e lista de acesso antecipado.">
+<meta name="theme-color" content="#050505">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23050505'/%3E%3Cpath d='M8 24V8h3l10 11V8h3v16h-3L11 13v11z' fill='%23D2FF3A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   LANDING 1 — NOIR Audio · BLACK FRIDAY (eletrónica de consumo)
+   CONCEITO: urgência. Fundo preto, verde-ácido "voltagem", tipografia larga e pesada.
+   Hero = título com "FRIDAY" em contorno que treme (glitch), selo-explosão que conta até -60%,
+   contagem decrescente real para a próxima Black Friday e lista de acesso antecipado.
+   Mecanismo de venda: escassez + prazo + preço cortado que "desce" ao entrar no ecrã.
+   Herdado de: faixa DEMO/selo (REGRAS A2). Novo: tudo o resto (landing de campanha, não é site de cliente).
+   ===================================================================== */
+
+/* ---------- variáveis ---------- */
+:root{
+  --ink:#050505; --coal:#0E0E0E; --card:#141414; --line:rgba(255,255,255,.13);
+  --volt:#D2FF3A; --volt-d:#9BC21A; --hot:#FF2E6E; --paper:#F1F1EA; --mute:#A6A6A0;
+  --f-d:'Unbounded',system-ui,sans-serif; --f-b:'Manrope',system-ui,sans-serif;
+  --demo:34px; --hd:64px; --pad:clamp(18px,5vw,72px);
+  --ease:cubic-bezier(.2,.7,.1,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--demo) + var(--hd));-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ink);color:#fff;font:400 17px/1.55 var(--f-b);overflow-x:clip;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3,p{margin:0}
+:focus-visible{outline:2px solid var(--volt);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- faixa DEMO + selo ---------- */
+.demo{position:fixed;top:0;left:0;right:0;height:var(--demo);z-index:120;display:flex;align-items:center;justify-content:center;gap:14px;padding:0 12px;background:var(--volt);color:var(--ink);font:700 12px/1 var(--f-b);letter-spacing:.03em;white-space:nowrap;overflow:hidden}
+.demo b{padding:4px 8px;background:var(--ink);color:var(--volt);font:700 10px/1 var(--f-d);letter-spacing:.14em}
+.demo .m{display:none}
+.demo a{margin-left:6px;padding:4px 10px;border:1.5px solid var(--ink);text-decoration:none;font-weight:800;border-radius:99px}
+.demo a:hover{background:var(--ink);color:var(--volt)}
+.seal{position:fixed;left:14px;bottom:14px;z-index:90;padding:9px 14px;background:var(--ink);color:var(--volt);border:1px solid var(--volt);font:700 9px/1 var(--f-d);letter-spacing:.14em;text-transform:uppercase}
+
+/* ---------- cabeçalho ---------- */
+.hd{position:fixed;top:var(--demo);left:0;right:0;height:var(--hd);z-index:100;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 var(--pad);background:var(--ink);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:baseline;gap:8px;text-decoration:none;font:900 22px/1 var(--f-d);letter-spacing:-.02em}
+.logo small{font:600 10px/1 var(--f-d);letter-spacing:.3em;color:var(--volt)}
+.hd__r{display:flex;align-items:center;gap:16px}
+.hd__cd{display:flex;align-items:center;gap:8px;font:600 11px/1 var(--f-d);letter-spacing:.06em;color:var(--mute);font-variant-numeric:tabular-nums}
+.hd__cd b{color:var(--volt);font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 24px;border:0;border-radius:99px;background:var(--volt);color:var(--ink);text-decoration:none;font:800 11px/1 var(--f-d);letter-spacing:.08em;text-transform:uppercase;transition:transform .3s var(--ease),box-shadow .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px -8px rgba(210,255,58,.55)}
+.btn--s{padding:12px 18px;font-size:10px}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100svh;padding:calc(var(--demo) + var(--hd) + clamp(24px,6vh,70px)) var(--pad) clamp(90px,14vh,150px);display:flex;align-items:center;overflow:clip;isolation:isolate}
+.hero__bg{position:absolute;inset:0;z-index:-2}
+.hero__bg img{position:absolute;right:-6%;top:50%;width:min(92vw,1300px);max-width:none;transform:translateY(-46%);opacity:.9;-webkit-mask-image:linear-gradient(90deg,transparent 4%,#000 42%);mask-image:linear-gradient(90deg,transparent 4%,#000 42%)}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(60% 60% at 82% 70%,rgba(210,255,58,.2),transparent 70%),radial-gradient(40% 50% at 10% 100%,rgba(255,46,110,.14),transparent 70%)}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(420px circle at var(--sx,70%) var(--sy,40%),rgba(210,255,58,.1),transparent 60%);opacity:0;transition:opacity .4s}
+.hero.hov::after{opacity:1}
+.scan{position:absolute;inset:0;z-index:-1;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+.hero__txt{position:relative;max-width:min(680px,100%)}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:9px 16px;border:1px solid var(--line);border-radius:99px;font:600 10px/1 var(--f-d);letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--hot);box-shadow:0 0 0 0 rgba(255,46,110,.7);animation:pulse 1.6s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 10px rgba(255,46,110,0)}100%{box-shadow:0 0 0 0 rgba(255,46,110,0)}}
+.hero h1{margin:22px 0 0;font:900 clamp(46px,8.6vw,136px)/.9 var(--f-d);letter-spacing:-.045em;text-transform:uppercase}
+.hero h1 span{display:block}
+.hero .l2{position:relative;color:transparent;-webkit-text-stroke:2px var(--volt);animation:glitchSkew 5s infinite}
+.hero .l2::before,.hero .l2::after{content:attr(data-t);position:absolute;left:0;top:0;width:100%;overflow:hidden;clip-path:inset(0 0 100% 0)}
+.hero .l2::before{color:var(--hot);-webkit-text-stroke:0;transform:translate(-4px,0);animation:glitchA 5s infinite}
+.hero .l2::after{color:var(--volt);-webkit-text-stroke:0;transform:translate(4px,0);animation:glitchB 5s infinite}
+@keyframes glitchA{0%,86%,100%{clip-path:inset(0 0 100% 0)}88%{clip-path:inset(12% 0 58% 0)}91%{clip-path:inset(60% 0 12% 0)}94%{clip-path:inset(30% 0 40% 0)}}
+@keyframes glitchB{0%,87%,100%{clip-path:inset(0 0 100% 0)}89%{clip-path:inset(52% 0 22% 0)}92%{clip-path:inset(8% 0 70% 0)}95%{clip-path:inset(40% 0 30% 0)}}
+@keyframes glitchSkew{0%,87%,100%{transform:none}90%{transform:skewX(-6deg)}93%{transform:skewX(4deg)}}
+.lead{max-width:520px;margin-top:22px;font-size:clamp(16px,1.3vw,19px);color:#C9C9C2}
+.cd{display:flex;gap:10px;margin-top:28px}
+.cd div{min-width:74px;padding:12px 8px 10px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:14px}
+.cd b{display:block;font:800 clamp(26px,3.4vw,40px)/1 var(--f-d);letter-spacing:-.04em;color:#fff;font-variant-numeric:tabular-nums}
+.cd span{display:block;margin-top:6px;font:600 9px/1 var(--f-d);letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.cd b.tk{animation:tick .5s var(--ease)}
+@keyframes tick{0%{transform:translateY(-35%);opacity:0;color:var(--volt)}100%{transform:none;opacity:1}}
+.cd__l{margin-top:26px;font:600 10px/1 var(--f-d);letter-spacing:.2em;text-transform:uppercase;color:var(--volt)}
+.notify{display:flex;gap:8px;margin-top:22px;max-width:520px;padding:6px;border:1px solid var(--line);border-radius:99px;background:rgba(14,14,14,.8)}
+.notify input{flex:1;min-width:0;padding:0 18px;border:0;background:transparent;font-size:16px;outline:0}
+.notify input::placeholder{color:#7C7C76}
+.notify:focus-within{border-color:var(--volt)}
+.fmsg{min-height:1.4em;margin-top:10px;font-size:13.5px;color:var(--volt)}
+.badge{position:absolute;right:clamp(14px,6vw,100px);bottom:clamp(110px,17vh,190px);width:clamp(150px,21vw,300px);aspect-ratio:1;display:grid;place-content:center;text-align:center;background:var(--volt);color:var(--ink);transform:rotate(-10deg);animation:wob 6s ease-in-out infinite;filter:drop-shadow(0 20px 40px rgba(0,0,0,.5))}
+.badge span{font:700 clamp(10px,1.2vw,14px)/1 var(--f-d);letter-spacing:.2em;text-transform:uppercase}
+.badge b{font:900 clamp(30px,5.1vw,74px)/1 var(--f-d);letter-spacing:-.06em}
+.badge em{margin-top:6px;font:700 clamp(8px,.9vw,11px)/1.3 var(--f-d);font-style:normal;letter-spacing:.1em;text-transform:uppercase}
+@keyframes wob{50%{transform:rotate(-5deg) scale(1.04)}}
+.band{position:absolute;left:-3%;right:-3%;bottom:0;height:54px;display:flex;align-items:center;overflow:hidden;background:var(--volt);color:var(--ink);transform:rotate(-1.4deg) translateY(10px);z-index:2}
+.band__t{display:flex;width:max-content;animation:marq 26s linear infinite}
+.band span{flex:none;padding-right:30px;font:800 13px/1 var(--f-d);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+@keyframes marq{to{transform:translateX(-50%)}}
+.js .hx{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--d,0s)}
+.js .go .hx{opacity:1;transform:none}
+
+/* ---------- ofertas ---------- */
+.sec{padding:clamp(70px,11vh,130px) var(--pad)}
+.sec__h{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:18px 40px;margin-bottom:clamp(28px,5vh,52px)}
+.eyebrow{font:600 10px/1 var(--f-d);letter-spacing:.2em;text-transform:uppercase;color:var(--volt)}
+.sec h2{margin-top:14px;font:900 clamp(34px,5.6vw,84px)/.95 var(--f-d);letter-spacing:-.04em;text-transform:uppercase}
+.sec__h p{max-width:360px;color:var(--mute)}
+.deals{display:grid;grid-template-columns:1.25fr 1fr 1fr;grid-auto-rows:auto;gap:18px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden;transition:transform .45s var(--ease),border-color .3s}
+.card:hover{transform:translateY(-6px);border-color:rgba(210,255,58,.6)}
+.card--big{grid-row:span 2}
+.card__img{position:relative;aspect-ratio:5/4;overflow:hidden;background:#000}
+.card--big .card__img{aspect-ratio:auto;flex:1;min-height:340px;background:#0b0b0b}
+.card--big .card__img img{position:absolute;left:50%;top:50%;width:230%;max-width:none;height:auto;transform:translate(-50%,-50%);-webkit-mask-image:radial-gradient(ellipse 50% 54% at 50% 50%,#000 35%,transparent 100%);mask-image:radial-gradient(ellipse 50% 54% at 50% 50%,#000 35%,transparent 100%)}
+.card--big:hover .card__img img{transform:translate(-50%,-50%) scale(1.05)}
+.card__img img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.card:hover .card__img img{transform:scale(1.06)}
+.card--light .card__img{background:#E9E9E4}
+.tag{position:absolute;left:14px;top:14px;padding:8px 12px;border-radius:99px;background:var(--volt);color:var(--ink);font:800 12px/1 var(--f-d);letter-spacing:-.02em}
+.card__b{padding:20px 22px 22px}
+.cat{font:600 9px/1 var(--f-d);letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+.card h3{margin-top:8px;font:800 clamp(18px,1.7vw,23px)/1.1 var(--f-d);letter-spacing:-.03em}
+.price{display:flex;align-items:baseline;gap:14px;margin-top:14px}
+.price s{position:relative;color:var(--mute);font:600 16px/1 var(--f-b);text-decoration:none}
+.price s::after{content:"";position:absolute;left:-3px;right:-3px;top:52%;height:2px;background:var(--hot);transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease) .3s}
+.card.in .price s::after{transform:scaleX(1)}
+.price strong{font:900 clamp(30px,3.2vw,44px)/1 var(--f-d);letter-spacing:-.05em;color:var(--volt);font-variant-numeric:tabular-nums}
+.price strong small{font:700 .5em/1 var(--f-d);letter-spacing:0;margin-left:3px}
+.stock{margin-top:16px;font:600 11px/1 var(--f-b);color:var(--mute)}
+.stock i{display:block;height:5px;margin-top:8px;border-radius:9px;background:#262626;overflow:hidden}
+.stock i::before{content:"";display:block;height:100%;width:var(--s);border-radius:9px;background:linear-gradient(90deg,var(--hot),#FF8A4D);transform:scaleX(0);transform-origin:left;transition:transform 1.3s var(--ease) .4s}
+.card.in .stock i::before{transform:scaleX(1)}
+.add{margin-top:18px;width:100%;padding:14px;border:1.5px solid var(--line);border-radius:99px;background:transparent;font:700 10px/1 var(--f-d);letter-spacing:.12em;text-transform:uppercase;transition:background .3s,color .3s,border-color .3s}
+.add:hover{background:var(--volt);color:var(--ink);border-color:var(--volt)}
+.card--vip{justify-content:space-between;padding:28px;background:var(--volt);color:var(--ink);border:0}
+.card--vip h3{font-size:clamp(24px,2.4vw,34px);letter-spacing:-.04em;text-transform:uppercase}
+.card--vip p{margin:12px 0 22px;font-weight:600}
+.card--vip .btn{background:var(--ink);color:var(--volt)}
+.card--vip svg{width:54px;height:54px;fill:none;stroke:var(--ink);stroke-width:2}
+.js .card.rv{opacity:0;transform:translateY(34px);transition:opacity .8s var(--ease),transform .8s var(--ease),border-color .3s}
+.js .card.rv.in{opacity:1;transform:none}
+.js .card.rv.in:hover{transform:translateY(-6px)}
+
+/* ---------- confiança + CTA final ---------- */
+.trust{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:0 var(--pad) clamp(50px,8vh,90px)}
+.trust div{display:flex;gap:16px;align-items:flex-start;padding:22px;border:1px solid var(--line);border-radius:18px}
+.trust svg{flex:none;width:30px;height:30px;fill:none;stroke:var(--volt);stroke-width:1.8}
+.trust b{display:block;font:700 12px/1.3 var(--f-d);letter-spacing:.04em;text-transform:uppercase}
+.trust p{margin-top:6px;font-size:14.5px;color:var(--mute)}
+.final{position:relative;padding:clamp(80px,14vh,170px) var(--pad);text-align:center;background:radial-gradient(60% 80% at 50% 100%,rgba(210,255,58,.18),transparent 70%),var(--coal);overflow:clip}
+.final h2{font:900 clamp(34px,7vw,110px)/.92 var(--f-d);letter-spacing:-.05em;text-transform:uppercase}
+.final h2 em{font-style:normal;color:var(--volt)}
+.final .cd{justify-content:center}
+.final .btn{margin-top:30px;padding:19px 34px;font-size:12px}
+.ft{padding:36px var(--pad) 80px;border-top:1px solid var(--line);font-size:13px;color:var(--mute)}
+.ft b{color:var(--volt);font-weight:700}
+
+/* ---------- barra fixa + toast ---------- */
+.sbar{position:fixed;left:50%;bottom:14px;z-index:95;display:flex;align-items:center;gap:16px;padding:8px 8px 8px 20px;background:rgba(14,14,14,.96);border:1px solid var(--volt);border-radius:99px;transform:translate(-50%,140%);transition:transform .5s var(--ease);box-shadow:0 14px 40px -10px rgba(0,0,0,.8)}
+.sbar.on{transform:translate(-50%,0)}
+.sbar span{font:700 11px/1 var(--f-d);letter-spacing:.04em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sbar span b{color:var(--volt);font-weight:700}
+.toast{position:fixed;left:50%;top:calc(var(--demo) + var(--hd) + 14px);z-index:130;max-width:calc(100% - 32px);padding:14px 20px;border-radius:14px;background:var(--paper);color:var(--ink);font-weight:700;font-size:14px;transform:translate(-50%,-30px);opacity:0;visibility:hidden;transition:transform .5s var(--ease),opacity .4s,visibility 0s .5s}
+.toast.on{transform:translate(-50%,0);opacity:1;visibility:visible;transition-delay:0s}
+
+/* ---------- responsivo ---------- */
+@media (max-width:980px){
+  .deals{grid-template-columns:1fr 1fr}
+  .card--big{grid-column:1/-1;grid-row:auto}
+  .card--big .card__img{aspect-ratio:16/10;flex:none;min-height:0}
+  .card--big .card__img img{position:static;transform:none;width:100%;height:100%;object-fit:cover;-webkit-mask-image:none;mask-image:none}
+  .card--big:hover .card__img img{transform:none}
+  .trust{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  :root{--hd:58px}
+  .demo .l{display:none}.demo .m{display:inline}
+  .hd__cd{display:none}
+  .seal{display:none}
+  .hero{padding-top:calc(var(--demo) + var(--hd) + 150px);padding-bottom:110px;align-items:flex-start}
+  .hero__bg img{right:-40%;top:calc(var(--demo) + var(--hd) + 10px);width:150vw;transform:none;opacity:.55;-webkit-mask-image:linear-gradient(180deg,#000 30%,transparent 78%);mask-image:linear-gradient(180deg,#000 30%,transparent 78%)}
+  .hero h1{font-size:clamp(44px,15vw,90px)}
+  .cd div{flex:1;min-width:0}
+  .badge{right:50%;margin-right:-70px;bottom:auto;top:calc(var(--demo) + var(--hd) + 8px);width:140px}
+  .notify{flex-direction:column;border-radius:22px;padding:8px}
+  .notify input{padding:12px 14px}
+  .deals{grid-template-columns:1fr}
+  .sbar{width:calc(100% - 20px);justify-content:space-between;gap:8px;padding-left:16px}
+  .sbar span{font-size:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .hx,.js .card.rv{opacity:1!important;transform:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="demo" role="note"><b>DEMO</b><span class="l">Landing page de demonstração criada pela DD Digital · marca, produtos e preços fictícios</span><span class="m">Demonstração · NOIR Audio</span><a href="../index.html">← Exemplos</a></div>
+<div class="seal" role="note">Versão de demonstração</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<header class="hd">
+  <a class="logo" href="#inicio" aria-label="NOIR Audio — início">NOIR<small>AUDIO</small></a>
+  <div class="hd__r">
+    <div class="hd__cd" aria-hidden="true"><span id="hdLabel">Começa em</span><b id="hdCd">--</b></div>
+    <a class="btn btn--s" href="#ofertas">Ver ofertas</a>
+  </div>
+</header>
+
+<main>
+<!-- ============ hero ============ -->
+<section class="hero" id="inicio">
+  <div class="hero__bg" aria-hidden="true"><img src="img/hero-fones-contorno.jpg" alt=""></div>
+  <div class="scan" aria-hidden="true"></div>
+
+  <div class="hero__txt">
+    <p class="pill hx"><i></i>Lista de acesso antecipado</p>
+    <h1 class="hx" style="--d:.1s"><span>Black</span><span class="l2" data-t="Friday">Friday</span></h1>
+    <p class="lead hx" style="--d:.2s">Auscultadores, earbuds e wearables ao preço mais baixo do ano. Entra na lista e recebe o aviso antes de abrir ao público.</p>
+    <p class="cd__l hx" style="--d:.3s" id="cdLabel">Começa em</p>
+    <div class="cd hx" style="--d:.3s" data-cd role="timer" aria-label="Contagem decrescente">
+      <div><b data-u="d">00</b><span>dias</span></div><div><b data-u="h">00</b><span>horas</span></div><div><b data-u="m">00</b><span>min</span></div><div><b data-u="s">00</b><span>seg</span></div>
+    </div>
+    <form class="notify hx" style="--d:.4s" id="notify" novalidate>
+      <label class="sr" for="email">Email</label>
+      <input id="email" type="email" placeholder="O teu melhor email" autocomplete="email">
+      <button class="btn" type="submit">Avisar-me</button>
+    </form>
+    <p class="fmsg" id="fmsg" role="status" aria-live="polite"></p>
+  </div>
+
+  <div class="badge" id="badge" aria-label="Até 60% de desconto"><span>até</span><b id="pct">-60%</b><em>em artigos<br>selecionados</em></div>
+
+  <div class="band" aria-hidden="true"><div class="band__t" id="band"></div></div>
+</section>
+
+<!-- ============ ofertas ============ -->
+<section class="sec" id="ofertas" aria-labelledby="ofT">
+  <div class="sec__h">
+    <div><p class="eyebrow">As ofertas</p><h2 id="ofT">Preços que<br>não voltam</h2></div>
+    <p>Uma seleção dos artigos mais procurados. Os preços descem quando a campanha abre e voltam ao normal quando acaba.</p>
+  </div>
+
+  <div class="deals">
+    <article class="card card--big rv" data-old="249" data-new="99">
+      <div class="card__img"><img src="img/fones-pretos.jpg" alt="Auscultadores sem fios pretos sobre uma superfície escura" loading="lazy"><span class="tag">-60%</span></div>
+      <div class="card__b">
+        <p class="cat">Auscultadores</p><h3>NOIR One ANC</h3>
+        <div class="price"><s>249 €</s><strong><span class="n">249</span><small>€</small></strong></div>
+        <div class="stock"><span>Stock limitado</span><i style="--s:24%"></i></div>
+        <button class="add" type="button">Adicionar ao carrinho</button>
+      </div>
+    </article>
+
+    <article class="card rv" data-old="129" data-new="59">
+      <div class="card__img"><img src="img/earbuds-neon.jpg" alt="Earbuds pretos junto ao estojo, com luz néon vermelha e azul" loading="lazy"><span class="tag">-54%</span></div>
+      <div class="card__b">
+        <p class="cat">Earbuds</p><h3>NOIR Buds</h3>
+        <div class="price"><s>129 €</s><strong><span class="n">129</span><small>€</small></strong></div>
+        <div class="stock"><span>Stock limitado</span><i style="--s:38%"></i></div>
+        <button class="add" type="button">Adicionar ao carrinho</button>
+      </div>
+    </article>
+
+    <article class="card card--light rv" data-old="189" data-new="99">
+      <div class="card__img"><img src="img/smartwatch.jpg" alt="Smartwatch com pulseira branca sobre fundo claro" loading="lazy"><span class="tag">-48%</span></div>
+      <div class="card__b">
+        <p class="cat">Wearables</p><h3>NOIR Watch</h3>
+        <div class="price"><s>189 €</s><strong><span class="n">189</span><small>€</small></strong></div>
+        <div class="stock"><span>Stock limitado</span><i style="--s:55%"></i></div>
+        <button class="add" type="button">Adicionar ao carrinho</button>
+      </div>
+    </article>
+
+    <article class="card card--light rv" data-old="99" data-new="49">
+      <div class="card__img"><img src="img/coluna.jpg" alt="Coluna portátil com grelha metálica junto a uma janela" loading="lazy"><span class="tag">-51%</span></div>
+      <div class="card__b">
+        <p class="cat">Colunas</p><h3>NOIR Boom</h3>
+        <div class="price"><s>99 €</s><strong><span class="n">99</span><small>€</small></strong></div>
+        <div class="stock"><span>Stock limitado</span><i style="--s:31%"></i></div>
+        <button class="add" type="button">Adicionar ao carrinho</button>
+      </div>
+    </article>
+
+    <article class="card card--vip rv">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
+      <div><h3>Entra antes de toda a gente</h3><p>Quem está na lista de acesso antecipado vê as ofertas primeiro.</p><a class="btn" href="#inicio">Entrar na lista</a></div>
+    </article>
+  </div>
+</section>
+
+<div class="trust">
+  <div><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg><span><b>MB WAY e Multibanco</b><p>Pagamento ao jeito de cá.</p></span></div>
+  <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg><span><b>Troca e devolução simples</b><p>Condições a definir pela loja.</p></span></div>
+  <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span><b>Apoio em português</b><p>Equipa à distância de uma mensagem.</p></span></div>
+</div>
+
+<!-- ============ final ============ -->
+<section class="final" aria-labelledby="fnT">
+  <h2 id="fnT">As melhores ofertas<br><em>não esperam</em></h2>
+  <p class="cd__l" id="cdLabel2" style="margin-top:30px">Começa em</p>
+  <div class="cd" data-cd role="timer" aria-label="Contagem decrescente">
+    <div><b data-u="d">00</b><span>dias</span></div><div><b data-u="h">00</b><span>horas</span></div><div><b data-u="m">00</b><span>min</span></div><div><b data-u="s">00</b><span>seg</span></div>
+  </div>
+  <a class="btn" href="#inicio">Quero o aviso de abertura</a>
+</section>
+</main>
+
+<footer class="ft">
+  <p><b>Landing page de demonstração</b> criada pela DD Digital. A marca NOIR Audio, os produtos, os preços, os descontos e as condições são fictícios e servem só de exemplo. Fotografias: Unsplash. O formulário não guarda nem envia dados. A contagem decrescente aponta para a próxima Black Friday (quarta sexta-feira de novembro).</p>
+</footer>
+
+<div class="sbar" id="sbar"><span><b id="sbLabel">Começa em</b> <b id="sbCd">--</b></span><a class="btn btn--s" href="#ofertas">Ver ofertas</a></div>
+
+<script>
+/* =====================================================================
+   JS — por funcionalidade (facilita a conversão futura)
+   ===================================================================== */
+var $=function(s,c){return (c||document).querySelector(s)};
+var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+var REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var pad=function(n){return (n<10?'0':'')+n};
+
+/* ---------- entrada do hero ---------- */
+requestAnimationFrame(function(){requestAnimationFrame(function(){document.body.classList.add('go')})});
+
+/* ---------- contagem decrescente real: próxima Black Friday ---------- */
+function blackFriday(y){var d=new Date(y,10,1),n=0;for(;;){if(d.getDay()===5&&++n===4)return d;d.setDate(d.getDate()+1)}}
+function campaign(){
+  var now=new Date(),y=now.getFullYear(),s=blackFriday(y),e=new Date(s.getFullYear(),s.getMonth(),s.getDate()+4); /* sexta a segunda (fim às 00:00 de terça) */
+  if(now<s) return {t:s,l:'Começa em'};
+  if(now<e) return {t:e,l:'Termina em'};
+  return {t:blackFriday(y+1),l:'Começa em'};
+}
+var cds=$$('[data-cd]'), last={};
+function tick(){
+  var c=campaign(), diff=Math.max(0,c.t-new Date()), sec=Math.floor(diff/1000);
+  var v={d:Math.floor(sec/86400),h:Math.floor(sec%86400/3600),m:Math.floor(sec%3600/60),s:sec%60};
+  cds.forEach(function(box){['d','h','m','s'].forEach(function(u){
+    var el=$('[data-u="'+u+'"]',box), t=pad(v[u]);
+    if(el.textContent!==t){el.textContent=t;if(!REDUCED&&u!=='d'){el.classList.remove('tk');void el.offsetWidth;el.classList.add('tk')}}
+  })});
+  ['cdLabel','cdLabel2','hdLabel','sbLabel'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=c.l});
+  var short=v.d+'d '+pad(v.h)+':'+pad(v.m)+':'+pad(v.s);
+  $('#hdCd').textContent=short;$('#sbCd').textContent=short;
+}
+tick();setInterval(tick,1000);
+
+/* ---------- selo-explosão (forma + contagem até -60%) ---------- */
+(function(){
+  var b=$('#badge'),pts=[],n=26;
+  for(var i=0;i<n*2;i++){var a=Math.PI*i/n-Math.PI/2,r=i%2?43:50;pts.push((50+r*Math.cos(a)).toFixed(2)+'% '+(50+r*Math.sin(a)).toFixed(2)+'%')}
+  b.style.clipPath='polygon('+pts.join(',')+')';
+  var el=$('#pct'),to=60;
+  if(REDUCED){el.textContent='-'+to+'%';return}
+  var t0=null;el.textContent='-0%';
+  function step(ts){if(!t0)t0=ts+450;var p=Math.min(Math.max((ts-t0)/1500,0),1),e=1-Math.pow(1-p,4);el.textContent='-'+Math.round(to*e)+'%';if(p<1)requestAnimationFrame(step)}
+  requestAnimationFrame(step);
+})();
+
+/* ---------- faixa em movimento ---------- */
+(function(){var w=['Black Friday','Até -60%','Stock limitado','MB WAY','Acesso antecipado'],h='';for(var i=0;i<2;i++)w.forEach(function(x){h+='<span>'+x+'</span><span>•</span>'});$('#band').innerHTML=h+h})();
+
+/* ---------- preço que desce ao entrar no ecrã ---------- */
+var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){
+  if(!e.isIntersecting) return; var c=e.target; c.classList.add('in'); io.unobserve(c);
+  var n=$('.n',c); if(!n) return; var a=+c.dataset.old,b=+c.dataset.new;
+  if(REDUCED){n.textContent=b;return}
+  var t0=null;(function f(ts){if(!t0)t0=ts+350;var p=Math.min(Math.max((ts-t0)/1200,0),1),k=1-Math.pow(1-p,3);n.textContent=Math.round(a+(b-a)*k);if(p<1)requestAnimationFrame(f)})(performance.now());
+})},{threshold:.2}):null;
+$$('.card').forEach(function(c){if(io)io.observe(c);else{c.classList.add('in');var n=$('.n',c);if(n)n.textContent=c.dataset.new}});
+
+/* ---------- barra fixa ao sair do hero ---------- */
+var sbar=$('#sbar'),hero=$('#inicio');
+function onScroll(){sbar.classList.toggle('on',hero.getBoundingClientRect().bottom<window.innerHeight*.35)}
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+/* ---------- luz que segue o rato (só com cursor) ---------- */
+if(window.matchMedia('(hover:hover) and (pointer:fine)').matches&&!REDUCED){
+  hero.addEventListener('pointermove',function(e){var r=hero.getBoundingClientRect();hero.style.setProperty('--sx',(e.clientX-r.left)+'px');hero.style.setProperty('--sy',(e.clientY-r.top)+'px');hero.classList.add('hov')});
+  hero.addEventListener('pointerleave',function(){hero.classList.remove('hov')});
+}
+
+/* ---------- formulário e carrinho (demonstração) ---------- */
+$('#notify').addEventListener('submit',function(e){e.preventDefault();$('#fmsg').textContent='Demonstração: não guardámos o email. No site final, ficavas na lista de acesso antecipado.'});
+var toast=$('#toast'),tt;
+$$('.add').forEach(function(b){b.addEventListener('click',function(){toast.textContent='Demonstração: nada foi adicionado ao carrinho.';toast.classList.add('on');clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove('on')},2400)})});
+</script>
+</body>
+</html>
