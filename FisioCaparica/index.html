@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FisioCaparica — Demonstração</title>
+<meta name="description" content="Demonstração de website para a FisioCaparica — fisioterapia, osteopatia, pilates clínico, drenagem linfática manual e massagem na Charneca de Caparica.">
+<meta name="theme-color" content="#1B2447">
+<link rel="icon" href="img/hero-poster.jpg">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Rethink+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* =========================================================================
+   FISIOCAPARICA — demo DD Digital
+   CONCEITO — Layout/hero: "Equilíbrio, pedra a pedra". O logótipo diz "equilíbrio · corpo · mente"
+   e a janela do corredor tem seixos empilhados desenhados no vidro: o gesto da marca é o equilíbrio
+   de pedras. O vídeo da clínica vive numa janela vertical encostada à margem direita e faz
+   parallax ao scroll (o vídeo desliza dentro da janela, a palavra gigante, o seixo e o texto
+   andam a velocidades diferentes). Mais abaixo, um cairn constrói-se ao scroll com os 4 passos do cuidado.
+   Sensação: calmo, claro, próximo. Movimento: assentar, equilibrar, deslizar.
+   HERDADO DE: Simple (galeria horizontal pinned, faixa/marquee ligada à velocidade do scroll),
+   Kátia Arnaut/Liliana (menu mobile com bloqueio de scroll, preloader), FisioCanal (só a área:
+   clínica de fisioterapia — nada do hero em coluna vertebral).
+   NOVO: janela de vídeo com parallax em camadas; cairn de pedras que cai e assenta com o scroll
+   e balança ao rato/velocidade; formas "seixo" orgânicas em todas as fotos; serviços como lista
+   expansível com imagem sticky.
+   ========================================================================= */
+
+/* ---------- variáveis ---------- */
+:root{
+  --white:#FBF8F4; --stone:#EFEAE2; --stone-2:#E2DBD0; --stone-3:#CFC6B8;
+  --cu:#C0712F; --cu-dk:#8E4F1B; --cu-lt:#EBBB93; --wood:#D9A25E;
+  --navy:#1B2447; --navy-2:#121933; --ink:#232A3F; --ink-soft:#5A6075;
+  --f-serif:'Young Serif','Georgia',serif;
+  --f-sans:'Rethink Sans',system-ui,sans-serif;
+  --bar:34px; --hd:68px; --top:calc(var(--bar) + var(--hd));
+  --wrap:1240px; --gut:clamp(20px,4vw,48px);
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --p1:56% 44% 48% 52% / 52% 46% 54% 48%;
+  --p2:46% 54% 56% 44% / 48% 56% 44% 52%;
+  --p3:52% 48% 44% 56% / 58% 42% 58% 42%;
+  --p4:44% 56% 52% 48% / 46% 52% 48% 54%;
+}
+@media (max-width:899px){ :root{ --hd:60px; } }
+
+/* ---------- base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--white);color:var(--ink);font:400 17px/1.65 var(--f-sans);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img,video,svg{display:block;max-width:100%}
+img{height:auto}
+a{color:inherit}
+h1,h2,h3,p,figure{margin:0}
+:focus-visible{outline:2px solid var(--cu);outline-offset:3px}
+.wrap{width:min(var(--wrap),100% - 2*var(--gut));margin-inline:auto}
+.wrap>*{min-width:0}
+.kicker{font:600 12px/1.4 var(--f-sans);letter-spacing:.2em;text-transform:uppercase;color:var(--cu-dk)}
+.h2{font:400 clamp(36px,5vw,70px)/1.05 var(--f-serif);letter-spacing:-.01em;color:var(--navy)}
+.h2 em{font-style:normal;color:var(--cu)}
+.lead{color:var(--ink-soft);max-width:520px}
+.tbc{display:inline-block;padding:1px 9px;border:1px dashed var(--cu);border-radius:999px;color:var(--cu-dk);font:500 .82em/1.6 var(--f-sans);background:rgba(192,113,47,.08)}
+
+/* ---------- botões ---------- */
+.btn{display:inline-flex;align-items:center;gap:12px;padding:16px 28px;background:var(--navy);color:var(--white);font:600 14px/1 var(--f-sans);text-decoration:none;border:2px solid var(--navy);border-radius:999px;cursor:pointer;position:relative;overflow:hidden;transition:color .4s var(--ease),border-color .4s}
+.btn::before{content:"";position:absolute;left:50%;top:100%;width:140%;aspect-ratio:1;border-radius:50%;background:var(--cu);transform:translate(-50%,0);transition:transform .6s var(--ease)}
+.btn:hover::before,.btn:focus-visible::before{transform:translate(-50%,-62%)}
+.btn>*{position:relative}
+.btn:hover,.btn:focus-visible{border-color:var(--cu)}
+.btn svg{width:18px;height:10px;transition:transform .4s var(--ease)}
+.btn:hover svg{transform:translateX(5px)}
+.btn.alt{background:transparent;color:var(--navy)}
+.btn.alt:hover{color:var(--white)}
+.btn.cu{background:var(--cu);border-color:var(--cu)}
+.btn.cu::before{background:var(--navy)}
+.btn.cu:hover{border-color:var(--navy)}
+
+/* ---------- faixa DEMO, selo, cabeçalho ---------- */
+.demo-bar{position:fixed;inset:0 0 auto 0;height:var(--bar);z-index:90;display:flex;align-items:center;justify-content:center;gap:12px;background:var(--navy);color:var(--cu-lt);font:500 12px/1.2 var(--f-sans);letter-spacing:.03em;padding:0 12px;text-align:center}
+.demo-bar b{background:var(--cu);color:#fff;padding:3px 9px;border-radius:999px;letter-spacing:.16em;font-weight:600;font-size:11px}
+.demo-bar .short{display:none}
+.seal{position:fixed;left:16px;bottom:16px;z-index:80;padding:9px 16px;border:2px solid var(--cu);background:rgba(251,248,244,.95);color:var(--cu-dk);font:600 12px/1 var(--f-sans);border-radius:999px;pointer-events:none}
+.hd{position:fixed;top:var(--bar);left:0;right:0;height:var(--hd);z-index:85;background:var(--white);border-bottom:1px solid var(--stone-2)}
+.hd .in{height:100%;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{text-decoration:none;display:flex;flex-direction:column;line-height:1}
+.brand b{font:600 23px/1 var(--f-sans);letter-spacing:.01em;color:var(--navy)}
+.brand b i{font-style:normal;color:var(--cu)}
+.brand span{font:500 10.5px/1 var(--f-sans);letter-spacing:.2em;color:var(--ink-soft);margin-top:6px}
+.nav{display:flex;align-items:center;gap:clamp(18px,2.6vw,38px)}
+.nav a:not(.btn){font:500 14px/1 var(--f-sans);text-decoration:none;padding:8px 0;position:relative}
+.nav a:not(.btn)::after{content:"";position:absolute;left:50%;bottom:-2px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--cu);transform:scale(0);transition:transform .4s var(--ease)}
+.nav a:not(.btn):hover::after{transform:scale(1)}
+.nav .btn{padding:12px 20px}
+.burger{display:none;width:44px;height:44px;background:none;border:0;cursor:pointer;position:relative}
+.burger i{position:absolute;left:10px;right:10px;height:2px;border-radius:2px;background:var(--navy);transition:transform .4s var(--ease),opacity .3s}
+.burger i:nth-child(1){top:15px}.burger i:nth-child(2){top:21px}.burger i:nth-child(3){top:27px}
+.menu-open .burger i:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.menu-open .burger i:nth-child(2){opacity:0}
+.menu-open .burger i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.mnav{display:none}
+@media (max-width:899px){
+  .nav{display:none}.burger{display:block}
+  .demo-bar .long{display:none}.demo-bar .short{display:inline}
+  .seal{display:none}
+  .brand b{font-size:20px}
+  /* menu mobile: painel fora do <header>, opaco, ocupa o ecrã abaixo da faixa + cabeçalho */
+  .mnav{position:fixed;top:var(--top);left:0;right:0;bottom:0;z-index:84;background:var(--white);padding:24px var(--gut) 40px;overflow-y:auto;overscroll-behavior:contain;flex-direction:column;visibility:hidden;opacity:0;transition:opacity .35s,visibility 0s .35s;display:flex}
+  .menu-open .mnav{visibility:visible;opacity:1;transition:opacity .35s}
+  .mnav a:not(.btn){font:400 clamp(32px,9.5vw,44px)/1.15 var(--f-serif);text-decoration:none;padding:12px 0;color:var(--navy);border-bottom:1px solid var(--stone-2)}
+  .mnav .btn{margin-top:26px;justify-content:center}
+  .mnav small{margin-top:auto;padding-top:26px;color:var(--ink-soft);font-size:14px}
+  body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+}
+
+/* ---------- preloader ---------- */
+.pre{display:none}
+.js .pre{position:fixed;inset:0;z-index:200;background:var(--navy);color:var(--white);display:grid;place-items:center;animation:preOut .6s 3.2s forwards}
+.pre .stones{position:relative;width:120px;height:130px;margin:0 auto 18px}
+.pre .stones i{position:absolute;left:50%;border-radius:var(--p1);opacity:0;transform:translate(-50%,-60px);animation:drop .7s var(--ease) forwards}
+.pre .stones i:nth-child(1){bottom:0;width:112px;height:38px;background:var(--stone-3);animation-delay:.1s}
+.pre .stones i:nth-child(2){bottom:34px;width:82px;height:34px;background:var(--wood);animation-delay:.4s;border-radius:var(--p2)}
+.pre .stones i:nth-child(3){bottom:64px;width:56px;height:30px;background:var(--cu);animation-delay:.7s;border-radius:var(--p3)}
+.pre .stones i:nth-child(4){bottom:92px;width:34px;height:26px;background:var(--white);animation-delay:1s;border-radius:var(--p4)}
+.pre b{display:block;text-align:center;font:600 clamp(26px,5vw,40px)/1 var(--f-sans)}
+.pre b i{font-style:normal;color:var(--cu-lt)}
+.pre span{display:block;text-align:center;margin-top:10px;font:500 12px/1 var(--f-sans);letter-spacing:.24em;color:rgba(251,248,244,.7)}
+.pre.gone{animation:none;opacity:0;visibility:hidden;transition:opacity .6s,visibility 0s .6s}
+@keyframes drop{to{opacity:1;transform:translate(-50%,0)}}
+@keyframes preOut{to{opacity:0;visibility:hidden}}
+
+/* ---------- HERO: janela com parallax ---------- */
+.hero{position:relative;min-height:100vh;min-height:100svh;padding-top:var(--top);overflow:clip;background:var(--white)}
+.hero-big{position:absolute;left:0;bottom:-3vh;z-index:0;font:400 clamp(120px,21vw,360px)/.8 var(--f-serif);letter-spacing:-.03em;color:transparent;-webkit-text-stroke:2px rgba(192,113,47,.2);white-space:nowrap;pointer-events:none;user-select:none}
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:center;min-height:calc(100svh - var(--top))}
+.hero-copy{padding:clamp(30px,6vh,70px) 0 clamp(60px,10vh,110px) max(var(--gut),calc((100vw - var(--wrap))/2));position:relative;z-index:2}
+.hero-copy .kicker{display:block;margin-bottom:22px}
+.hero h1{font:400 clamp(44px,5.9vw,92px)/1.02 var(--f-serif);letter-spacing:-.015em;color:var(--navy)}
+.hero h1 em{font-style:normal;color:var(--cu)}
+.hero h1 .nw{white-space:nowrap}
+.hero .sub{margin-top:26px;max-width:480px;font-size:clamp(17px,1.4vw,20px);color:var(--ink-soft)}
+.hero .cta{margin-top:34px;display:flex;flex-wrap:wrap;gap:14px}
+.hero .tel{margin-top:26px;font:500 14px/1.4 var(--f-sans);color:var(--ink-soft)}
+.hero .tel a{font:600 18px/1 var(--f-sans);color:var(--navy);text-decoration:none;margin-left:6px}
+.hero-win{position:relative;height:calc(100svh - var(--top));min-height:520px;margin-left:clamp(10px,3vw,50px)}
+.win{position:absolute;inset:0 0 0 0;overflow:hidden;border-radius:50% 0 0 50% / 38% 0 0 38%;background:var(--stone-2);isolation:isolate}
+.win img,.win video{position:absolute;left:0;top:-12%;width:100%;height:124%;object-fit:cover}
+.win video{opacity:0;transition:opacity .8s}
+.win.ready video{opacity:1}
+.win::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(27,36,71,.18),transparent 40%)}
+.orb{position:absolute;left:-9%;bottom:9%;width:clamp(150px,17vw,250px);aspect-ratio:1;border-radius:50%;overflow:hidden;border:6px solid var(--white);box-shadow:0 18px 50px rgba(27,36,71,.22);z-index:3}
+.orb img{width:100%;height:100%;object-fit:cover}
+.pebble-s{position:absolute;right:6%;top:10%;width:clamp(54px,5vw,84px);aspect-ratio:1.3;background:var(--cu);border-radius:var(--p3);z-index:3;box-shadow:0 10px 30px rgba(142,79,27,.35)}
+.pebble-s.b{right:auto;left:-3%;top:22%;width:clamp(30px,3vw,46px);background:var(--navy);border-radius:var(--p2)}
+@media (max-width:899px){
+  .hero{min-height:0;padding-top:var(--top)}
+  .hero-big{font-size:34vw;bottom:auto;top:calc(var(--top) + 40vh);-webkit-text-stroke-width:1.5px}
+  .hero-grid{display:flex;flex-direction:column-reverse;align-items:stretch;min-height:0}
+  .hero-win{height:min(54svh,480px);min-height:340px;margin:0}
+  .win{border-radius:0 0 50% 50% / 0 0 14% 14%}
+  .orb{left:auto;right:var(--gut);bottom:-34px;width:104px;border-width:4px}
+  .pebble-s,.pebble-s.b{display:none}
+  .hero-copy{padding:44px var(--gut) 56px}
+  .hero h1{font-size:clamp(38px,11vw,54px)}
+  .hero .sub{margin-top:18px}
+  .hero .cta{margin-top:24px}
+  .hero .btn{padding:14px 22px}
+}
+
+/* ---------- FAIXA de áreas (ligada à velocidade do scroll) ---------- */
+.band{background:var(--navy);color:var(--white);overflow:hidden;padding:20px 0;position:relative;z-index:2}
+.band .track{display:flex;width:max-content;will-change:transform}
+.band span{font:400 clamp(24px,3.2vw,42px)/1 var(--f-serif);padding:0 26px;white-space:nowrap;display:flex;align-items:center;gap:52px}
+.band span::after{content:"";width:16px;height:12px;border-radius:var(--p1);background:var(--cu);flex:none}
+
+/* ---------- SERVIÇOS ---------- */
+.sec{position:relative;padding:clamp(80px,12vw,170px) 0}
+.srv .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(30px,6vw,100px);align-items:start}
+.srv .head{margin-bottom:clamp(30px,5vw,56px)}
+.srv .head .lead{margin-top:18px}
+.acc{list-style:none;margin:0;padding:0;border-top:1px solid var(--stone-3)}
+.acc li{border-bottom:1px solid var(--stone-3)}
+.acc button{width:100%;display:grid;grid-template-columns:44px 1fr 40px;align-items:center;gap:6px;text-align:left;background:none;border:0;padding:22px 0;cursor:pointer;color:var(--navy);font:inherit}
+.acc .n{font:600 13px/1 var(--f-sans);color:var(--cu-dk);letter-spacing:.1em}
+.acc .t{font:400 clamp(28px,3.6vw,50px)/1.05 var(--f-serif);transition:transform .5s var(--ease),color .3s}
+.acc button:hover .t{transform:translateX(8px);color:var(--cu-dk)}
+.acc .pm{width:32px;height:32px;border-radius:50%;border:2px solid var(--stone-3);position:relative;transition:background .4s,border-color .4s,transform .5s var(--ease)}
+.acc .pm::before,.acc .pm::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:2px;margin:-1px 0 0 -6px;background:var(--navy);transition:transform .5s var(--ease),background .3s}
+.acc .pm::after{transform:rotate(90deg)}
+.acc li.open .pm{background:var(--cu);border-color:var(--cu);transform:rotate(180deg)}
+.acc li.open .pm::before,.acc li.open .pm::after{background:#fff}
+.acc li.open .pm::after{transform:rotate(0)}
+.acc .pn{display:grid;grid-template-rows:0fr;transition:grid-template-rows .6s var(--ease)}
+.acc li.open .pn{grid-template-rows:1fr}
+.acc .pn>div{overflow:hidden;padding-left:50px}
+.acc .pn p{color:var(--ink-soft);max-width:480px;padding-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 6px;padding:0;list-style:none}
+.chips li{border:none!important;padding:7px 14px;border-radius:999px;background:var(--stone);color:var(--navy);font:500 14px/1.2 var(--f-sans)}
+.acc .pn .more{padding-bottom:26px}
+.srv-img{position:sticky;top:calc(var(--top) + 28px)}
+.srv-img .ph{position:relative;aspect-ratio:4/5;border-radius:var(--p1);overflow:hidden;background:var(--stone-2);transition:border-radius 1.2s var(--ease)}
+.srv-img .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.08);transition:opacity .7s var(--ease),transform 1.2s var(--ease)}
+.srv-img .ph img.on{opacity:1;transform:none}
+.srv-img figcaption{margin-top:14px;font:500 13px/1.4 var(--f-sans);color:var(--ink-soft);text-align:center}
+.srv .note{margin-top:30px;font-size:14px;color:var(--ink-soft);max-width:520px;border-left:3px solid var(--cu);padding-left:14px}
+@media (max-width:899px){
+  .srv .wrap{grid-template-columns:1fr}
+  .srv-img{position:relative;top:0;order:-1;width:min(78%,340px);margin-inline:auto}
+}
+
+/* ---------- CAIRN: pedra a pedra ---------- */
+.cairn{background:var(--stone);height:460vh;padding:0}
+.cairn-pin{position:sticky;top:0;height:100vh;height:100svh;padding-top:var(--top);overflow:clip}
+.cairn-grid{height:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,5vw,80px);align-items:center;padding-block:24px}
+.cairn .kicker{display:block;margin-bottom:16px}
+.steps{position:relative;margin-top:30px;display:grid}
+.stp{grid-area:1/1;opacity:0;transform:translateY(24px);transition:opacity .6s var(--ease),transform .6s var(--ease);pointer-events:none}
+.stp.on{opacity:1;transform:none}
+.stp .n{font:600 13px/1 var(--f-sans);letter-spacing:.14em;color:var(--cu-dk)}
+.stp h3{font:400 clamp(34px,4.4vw,64px)/1.05 var(--f-serif);color:var(--navy);margin:10px 0 12px}
+.stp p{color:var(--ink-soft);max-width:420px}
+.dots{display:flex;gap:8px;margin-top:26px}
+.dots i{width:34px;height:8px;border-radius:999px;background:var(--stone-3);transition:background .4s,width .5s var(--ease)}
+.dots i.on{background:var(--cu);width:58px}
+.cairn .note{margin-top:22px;font-size:13.5px;color:var(--ink-soft)}
+.stage{position:relative;height:min(64svh,560px);display:flex;justify-content:center;align-items:flex-end}
+.ground{position:absolute;left:8%;right:8%;bottom:-8px;height:22px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(27,36,71,.22),transparent 70%)}
+.stone{position:absolute;left:50%;bottom:0;display:grid;place-items:center;color:#fff;font:600 clamp(15px,1.5vw,20px)/1 var(--f-sans);box-shadow:inset -10px -12px 24px rgba(0,0,0,.14),inset 8px 8px 18px rgba(255,255,255,.28),0 8px 18px rgba(27,36,71,.12);will-change:transform}
+.stone.s1{width:min(78%,370px);height:clamp(80px,12svh,128px);margin-left:calc(min(78%,370px) / -2);background:linear-gradient(160deg,#D9D1C4,#BFB5A5);border-radius:var(--p1);color:var(--navy)}
+.stone.s2{width:min(60%,280px);height:clamp(66px,10svh,108px);margin-left:calc(min(60%,280px) / -2);bottom:clamp(68px,10.4svh,116px);background:linear-gradient(160deg,#E4B574,#C98F46);border-radius:var(--p2)}
+.stone.s3{width:min(44%,206px);height:clamp(56px,8.4svh,90px);margin-left:calc(min(44%,206px) / -2);bottom:clamp(126px,19svh,208px);background:linear-gradient(160deg,#D4833F,#A85C20);border-radius:var(--p3)}
+.stone.s4{width:min(28%,128px);height:clamp(44px,6.6svh,70px);margin-left:calc(min(28%,128px) / -2);bottom:clamp(172px,26.6svh,288px);background:linear-gradient(160deg,#2C3862,#161D3B);border-radius:var(--p4)}
+.stone small{font:500 11px/1 var(--f-sans);letter-spacing:.1em;display:block;margin-top:4px;opacity:.85}
+@media (max-width:899px){
+  .cairn{height:420vh}
+  .cairn-grid{grid-template-columns:1fr;grid-template-rows:auto auto;align-content:start;gap:0;padding-top:20px}
+  .stage{order:-1;height:min(38svh,320px)}
+  .steps{margin-top:18px}
+  .stp h3{font-size:34px}
+  .cairn .kicker{margin-bottom:8px}
+  .cairn .h2{font-size:32px}
+  .dots{margin-top:14px}
+}
+
+/* ---------- A CLÍNICA (galeria horizontal) ---------- */
+.clinic{background:var(--navy-2);color:var(--white);overflow:hidden}
+.clinic .h2{color:var(--white)}
+.clinic .h2 em{color:var(--cu-lt)}
+.clinic .kicker{color:var(--cu-lt)}
+.clinic-pin{height:100vh;height:100svh;padding-top:var(--top);display:flex;flex-direction:column;justify-content:center}
+.clinic-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:clamp(20px,4vh,40px)}
+.clinic-head p{color:rgba(251,248,244,.72);max-width:420px;font-size:15px}
+.ctrack{display:flex;gap:clamp(16px,2vw,30px);padding-inline:max(var(--gut),calc((100vw - var(--wrap))/2));width:max-content;will-change:transform}
+.cf{flex:none;width:clamp(220px,22vw,320px)}
+.cf .ph{aspect-ratio:3/4;overflow:hidden;background:var(--navy);height:min(52svh,440px);width:auto;aspect-ratio:3/4;border-radius:var(--p1)}
+.cf:nth-child(2n) .ph{border-radius:var(--p2)}
+.cf:nth-child(3n) .ph{border-radius:var(--p3)}
+.cf:nth-child(4n) .ph{border-radius:var(--p4)}
+.cf:nth-child(2n){margin-top:clamp(14px,5svh,50px)}
+.cf img{width:100%;height:100%;object-fit:cover}
+.cf figcaption{margin-top:12px;font:500 14px/1.3 var(--f-sans);color:rgba(251,248,244,.8);padding-left:6px}
+.clinic-addr{margin-top:clamp(14px,3vh,30px);font-size:14px;color:rgba(251,248,244,.7)}
+.clinic-addr strong{color:var(--white);font-weight:600}
+@media (max-width:899px){
+  .clinic-pin{height:auto;padding:90px 0 60px;display:block}
+  .clinic-head{flex-direction:column;align-items:flex-start}
+  .ctrack{width:auto;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:14px;-webkit-overflow-scrolling:touch}
+  .cf{width:70vw;scroll-snap-align:center}
+  .cf .ph{height:auto;width:100%}
+  .cf:nth-child(2n){margin-top:0}
+}
+
+/* ---------- EQUIPA ---------- */
+.team .head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.7fr);gap:30px;align-items:end;margin-bottom:clamp(40px,6vw,80px)}
+.dir{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);gap:clamp(24px,5vw,80px);align-items:center;margin-bottom:clamp(60px,9vw,120px)}
+.dir .ph{width:min(100%,440px);aspect-ratio:1;border-radius:var(--p1);overflow:hidden;background:var(--stone-2);margin-inline:auto;position:relative}
+.dir .ph img{width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.dir h3{font:400 clamp(30px,3.6vw,50px)/1.05 var(--f-serif);color:var(--navy);margin:10px 0 14px}
+.dir p{color:var(--ink-soft);max-width:460px}
+.tgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(18px,2.6vw,40px) clamp(14px,2vw,30px)}
+.tm{text-align:center}
+.tm .ph{aspect-ratio:1;overflow:hidden;background:var(--stone-2);transition:transform .8s var(--ease),border-radius 1s var(--ease);border-radius:var(--p1)}
+.tm:nth-child(2n) .ph{border-radius:var(--p2)}
+.tm:nth-child(3n) .ph{border-radius:var(--p3)}
+.tm:nth-child(5n) .ph{border-radius:var(--p4)}
+.tm:nth-child(4n+2){margin-top:clamp(0px,3vw,44px)}
+.tm img{width:100%;height:100%;object-fit:cover;object-position:50% 22%;transition:transform 1s var(--ease)}
+.tm:hover .ph{transform:rotate(-3deg) scale(1.03)}
+.tm:hover img{transform:scale(1.06)}
+.tm b{display:block;margin-top:14px;font:600 16px/1.2 var(--f-sans);color:var(--navy)}
+.tm span{font-size:14px}
+@media (max-width:899px){
+  .team .head,.dir{grid-template-columns:1fr}
+  .tgrid{grid-template-columns:1fr 1fr}
+  .tm:nth-child(4n+2){margin-top:0}
+  .tm:nth-child(2n){margin-top:28px}
+}
+
+/* ---------- CONTACTO ---------- */
+.contact{background:var(--stone);overflow:hidden}
+.contact .wrap{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:clamp(36px,7vw,110px);align-items:start}
+.contact .lead{margin-top:20px}
+.callbig{display:inline-block;margin-top:30px;font:400 clamp(34px,5vw,64px)/1 var(--f-serif);color:var(--navy);text-decoration:none;border-bottom:3px solid var(--cu);padding-bottom:4px;transition:color .3s}
+.callbig:hover{color:var(--cu-dk)}
+.cdata{margin:36px 0 0;display:grid;gap:18px}
+.cdata dt{font:600 12px/1.4 var(--f-sans);letter-spacing:.16em;text-transform:uppercase;color:var(--cu-dk);margin-bottom:3px}
+.cdata dd{margin:0}
+.cdata a{color:var(--navy);font-weight:500}
+.form{display:grid;gap:22px;background:var(--white);padding:clamp(24px,3.4vw,44px);border-radius:var(--p1) / 6%;border-radius:36px 80px 36px 80px}
+.form h3{font:400 28px/1.1 var(--f-serif);color:var(--navy)}
+.fld{position:relative}
+.fld input,.fld select,.fld textarea{width:100%;background:var(--stone);border:2px solid transparent;color:var(--ink);font:400 17px/1.4 var(--f-sans);padding:24px 16px 8px;border-radius:16px;outline:none;transition:border-color .3s,background .3s}
+.fld select{appearance:none;-webkit-appearance:none;background:var(--stone) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%231B2447' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 16px center}
+.fld textarea{min-height:110px;resize:vertical}
+.fld label{position:absolute;left:18px;top:18px;font:400 16px/1 var(--f-sans);color:var(--ink-soft);pointer-events:none;transition:transform .3s var(--ease),font-size .3s,color .3s;transform-origin:left}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--cu);background:#fff}
+.fld input:focus+label,.fld input:not(:placeholder-shown)+label,.fld textarea:focus+label,.fld textarea:not(:placeholder-shown)+label,.fld.sel label{transform:translateY(-12px);font-size:12px;font-weight:600;color:var(--cu-dk)}
+.form .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form-msg{display:none;padding:14px 16px;border:2px dashed var(--cu);border-radius:16px;color:var(--cu-dk);font-size:15px}
+.form-msg.show{display:block}
+@media (max-width:899px){ .contact .wrap{grid-template-columns:1fr} .form .two{grid-template-columns:1fr} }
+
+/* ---------- RODAPÉ ---------- */
+.ft-foot{background:var(--navy);color:rgba(251,248,244,.75);padding:56px 0 90px;font-size:14px}
+.ft-foot .row{display:flex;flex-wrap:wrap;gap:30px 60px;justify-content:space-between;align-items:flex-start}
+.ft-foot .brand b{color:var(--white)}
+.ft-foot .brand b i{color:var(--cu-lt)}
+.ft-foot .brand span{color:rgba(251,248,244,.6)}
+.ft-foot nav{display:flex;gap:22px;flex-wrap:wrap}
+.ft-foot nav a{font:500 14px/1 var(--f-sans);text-decoration:none;color:var(--white)}
+.legal{margin-top:22px;font-size:13.5px;color:rgba(251,248,244,.7)}
+.demo-note{margin-top:30px;padding-top:24px;border-top:1px solid rgba(251,248,244,.2);max-width:900px;line-height:1.7}
+.demo-note b{color:var(--cu-lt);font-weight:600}
+@media (max-width:899px){ .ft-foot{padding-bottom:50px} }
+
+/* ---------- entradas ao scroll ---------- */
+.js .rv{opacity:0;transform:translateY(28px)}
+.rv.in{opacity:1;transform:none;transition:opacity 1s var(--ease),transform 1.1s var(--ease)}
+
+/* ---------- movimento reduzido ---------- */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .js .pre{display:none}
+  .js .rv{opacity:1;transform:none}
+  .cairn{height:auto;padding:80px 0}
+  .cairn-pin{position:relative;height:auto}
+  .stp{opacity:1;transform:none;grid-area:auto;margin-bottom:18px}
+  .steps{display:block}
+  .stone{position:relative;left:auto;margin:0 auto;bottom:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="pre" id="pre" aria-hidden="true">
+  <div>
+    <div class="stones"><i></i><i></i><i></i><i></i></div>
+    <b>Fisio<i>Caparica</i></b><span>equilíbrio · corpo · mente</span>
+  </div>
+</div>
+
+<div class="demo-bar" role="note"><b>DEMO</b>
+  <span class="long">Website de demonstração criado pela DD Digital para a FisioCaparica · conteúdo ilustrativo</span>
+  <span class="short">Demonstração · FisioCaparica</span></div>
+<div class="seal" aria-hidden="true">Versão de demonstração</div>
+
+<header class="hd" id="top">
+  <div class="wrap in">
+    <a class="brand" href="#hero" aria-label="FisioCaparica — início"><b>Fisio<i>Caparica</i></b><span>equilíbrio · corpo · mente</span></a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#servicos">Serviços</a><a href="#cuidado">Como cuidamos</a><a href="#clinica">A clínica</a><a href="#equipa">Equipa</a>
+      <a class="btn" href="#contacto"><span>Marcar consulta</span></a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="mnav"><i></i><i></i><i></i></button>
+  </div>
+</header>
+<nav class="mnav" id="mnav" aria-label="Menu">
+  <a href="#servicos">Serviços</a><a href="#cuidado">Como cuidamos</a><a href="#clinica">A clínica</a><a href="#equipa">Equipa</a><a href="#contacto">Contacto</a>
+  <a class="btn cu" href="tel:+351962987680"><span>Ligar 962 987 680</span></a>
+  <small>equilíbrio · corpo · mente</small>
+</nav>
+
+<main>
+
+<!-- ============ HERO · janela com parallax ============ -->
+<section class="hero" id="hero" aria-label="Início">
+  <div class="hero-big" id="heroBig" aria-hidden="true">equilíbrio</div>
+  <div class="hero-grid">
+    <div class="hero-copy" id="heroCopy">
+      <span class="kicker">Fisioterapia · Osteopatia · Pilates · Massagem</span>
+      <h1>Equilíbrio entre <em class="nw">corpo</em> e <em>mente</em></h1>
+      <p class="sub">Clínica de fisioterapia e osteopatia na Charneca de Caparica. Um cuidado atento, ajustado a cada pessoa.</p>
+      <div class="cta">
+        <a class="btn cu" href="#contacto"><span>Marcar consulta</span>
+          <svg viewBox="0 0 18 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M0 5h17M13 1l4 4-4 4"/></svg></a>
+        <a class="btn alt" href="#servicos"><span>Ver serviços</span></a>
+      </div>
+      <p class="tel">Ou ligue <a href="tel:+351962987680">962 987 680</a></p>
+    </div>
+    <div class="hero-win">
+      <div class="win" id="win">
+        <img src="img/hero-poster.jpg" alt="Receção da FisioCaparica, com o logótipo na parede branca do balcão" width="720" height="1280">
+        <video id="heroVideo" muted loop playsinline preload="auto" poster="img/hero-poster.jpg" aria-hidden="true" tabindex="-1">
+          <source src="img/hero-clinica.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="pebble-s" id="pb1" aria-hidden="true"></div>
+      <div class="pebble-s b" id="pb2" aria-hidden="true"></div>
+      <div class="orb" id="orb"><img src="img/massagem-acao.jpg" alt="Fisioterapeuta a fazer uma massagem às costas de um paciente numa sala acolhedora" width="628" height="806"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAIXA ============ -->
+<div class="band" aria-hidden="true">
+  <div class="track" id="bandTrack">
+    <span>Fisioterapia pós-cirúrgica</span><span>Fisioterapia ortopédica</span><span>Fisioterapia pélvica</span><span>Fisioterapia oncológica</span><span>Osteopatia</span><span>Pilates clínico</span><span>Drenagem linfática manual</span><span>Massagem</span>
+    <span>Fisioterapia pós-cirúrgica</span><span>Fisioterapia ortopédica</span><span>Fisioterapia pélvica</span><span>Fisioterapia oncológica</span><span>Osteopatia</span><span>Pilates clínico</span><span>Drenagem linfática manual</span><span>Massagem</span>
+  </div>
+</div>
+
+<!-- ============ SERVIÇOS ============ -->
+<section class="sec srv" id="servicos">
+  <div class="wrap">
+    <div>
+      <div class="head">
+        <span class="kicker rv">O que fazemos</span>
+        <h2 class="h2 rv" style="margin-top:14px">Cinco formas de <em>recuperar o equilíbrio</em></h2>
+        <p class="lead rv">Escolha uma área. A forma de trabalhar é sempre a mesma: ouvir, avaliar e só depois propor.</p>
+      </div>
+      <ul class="acc" id="acc">
+        <li class="open"><button aria-expanded="true"><span class="n">01</span><span class="t">Fisioterapia</span><span class="pm"></span></button>
+          <div class="pn"><div><p>Reabilitação orientada para o seu caso, do pós-operatório às queixas do dia a dia.</p>
+            <ul class="chips"><li>Pós-cirúrgica</li><li>Ortopédica</li><li>Pélvica</li><li>Oncológica</li></ul><div class="more"></div></div></div></li>
+        <li><button aria-expanded="false"><span class="n">02</span><span class="t">Osteopatia</span><span class="pm"></span></button>
+          <div class="pn"><div><p>Uma abordagem manual que olha para o corpo como um todo, e não só para o sítio onde dói.</p><div class="more"></div></div></div></li>
+        <li><button aria-expanded="false"><span class="n">03</span><span class="t">Pilates clínico</span><span class="pm"></span></button>
+          <div class="pn"><div><p>Exercício acompanhado, ajustado a cada pessoa e à fase em que se encontra.</p><div class="more"></div></div></div></li>
+        <li><button aria-expanded="false"><span class="n">04</span><span class="t">Drenagem linfática manual</span><span class="pm"></span></button>
+          <div class="pn"><div><p>Técnica manual suave, feita com ritmo e calma, conforme a indicação do profissional.</p><div class="more"></div></div></div></li>
+        <li><button aria-expanded="false"><span class="n">05</span><span class="t">Massagem</span><span class="pm"></span></button>
+          <div class="pn"><div><p>Um tempo para o corpo abrandar, num espaço calmo e acolhedor.</p><div class="more"></div></div></div></li>
+      </ul>
+      <p class="note rv">Texto ilustrativo. A indicação de cada tratamento depende sempre da avaliação por um profissional de saúde.</p>
+    </div>
+    <figure class="srv-img rv" style="margin:0">
+      <div class="ph" id="srvPh">
+        <img class="on" src="img/post-atm.jpg" alt="Fisioterapeuta a avaliar a mandíbula de um paciente deitado, com a pergunta «Problemas na ATM?»" loading="lazy">
+        <img src="img/clinica-maca-azul.jpg" alt="Sala de tratamento com maca azul e cadeira de massagem junto à janela" loading="lazy">
+        <img src="img/sala-tratamento.jpg" alt="Sala branca com três quadros na parede e uma maca" loading="lazy">
+        <img src="img/clinica-corredor.jpg" alt="Corredor claro com um vidro fosco decorado com uma flor de lótus" loading="lazy">
+        <img src="img/massagem-acao.jpg" alt="Fisioterapeuta a massajar as costas de um paciente, com velas e bambu ao fundo" loading="lazy">
+      </div>
+      <figcaption id="srvCap">Fotografia da clínica</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ CAIRN · como cuidamos ============ -->
+<section class="cairn" id="cuidado" aria-label="Como cuidamos">
+  <div class="cairn-pin">
+    <div class="wrap cairn-grid">
+      <div>
+        <span class="kicker">Como cuidamos</span>
+        <h2 class="h2" style="margin-top:12px">Equilíbrio, <em>pedra a pedra</em></h2>
+        <div class="steps" id="steps" aria-live="polite">
+          <div class="stp on"><span class="n">01</span><h3>Ouvimos</h3><p>Começamos por perceber a sua história, as queixas e o que quer voltar a fazer.</p></div>
+          <div class="stp"><span class="n">02</span><h3>Avaliamos</h3><p>Uma avaliação cuidada para perceber o que está por trás das queixas.</p></div>
+          <div class="stp"><span class="n">03</span><h3>Tratamos</h3><p>Um plano ajustado a si, com técnicas manuais, exercício ou ambos, conforme a avaliação.</p></div>
+          <div class="stp"><span class="n">04</span><h3>Acompanhamos</h3><p>Reavaliamos, ajustamos e damos-lhe ferramentas para manter o equilíbrio.</p></div>
+        </div>
+        <div class="dots" id="dots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+        <p class="note">Passos ilustrativos, a confirmar com o cliente.</p>
+      </div>
+      <div class="stage" id="stage" aria-hidden="true">
+        <div class="ground"></div>
+        <div class="stone s1" data-i="0">01</div>
+        <div class="stone s2" data-i="1">02</div>
+        <div class="stone s3" data-i="2">03</div>
+        <div class="stone s4" data-i="3">04</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ A CLÍNICA ============ -->
+<section class="clinic" id="clinica" aria-label="A clínica">
+  <div class="clinic-pin" id="clinicPin">
+    <div class="wrap clinic-head">
+      <div>
+        <span class="kicker">A clínica</span>
+        <h2 class="h2" style="margin-top:12px">Um espaço <em>claro e calmo</em></h2>
+      </div>
+      <p>Paredes brancas, luz suave e salas pensadas para a pessoa chegar, respirar e ser ouvida.</p>
+    </div>
+    <div class="ctrack" id="ctrack">
+      <figure class="cf"><div class="ph"><img src="img/clinica-rececao.jpg" alt="Balcão da receção com o logótipo da FisioCaparica" loading="lazy"></div><figcaption>Receção</figcaption></figure>
+      <figure class="cf"><div class="ph"><img src="img/clinica-corredor.jpg" alt="Corredor com vidro fosco decorado com uma flor de lótus" loading="lazy"></div><figcaption>Corredor</figcaption></figure>
+      <figure class="cf"><div class="ph"><img src="img/clinica-quarto.jpg" alt="Sala de massagem com maca, almofada e quadros na parede" loading="lazy"></div><figcaption>Sala de massagem</figcaption></figure>
+      <figure class="cf"><div class="ph"><img src="img/clinica-maca-azul.jpg" alt="Sala de tratamento com maca azul e cadeira de massagem" loading="lazy"></div><figcaption>Sala de tratamento</figcaption></figure>
+      <figure class="cf"><div class="ph"><img src="img/sala-tratamento.jpg" alt="Sala branca com três quadros de inspiração botânica" loading="lazy"></div><figcaption>Sala de consulta</figcaption></figure>
+      <figure class="cf"><div class="ph"><img src="img/clinica-sala.jpg" alt="Gabinete com secretária de madeira, cadeira e planta" loading="lazy"></div><figcaption>Gabinete</figcaption></figure>
+    </div>
+    <div class="wrap"><p class="clinic-addr"><strong>Rua Presidente Arriaga 15A</strong> · Charneca de Caparica, Setúbal · 2820-401</p></div>
+  </div>
+</section>
+
+<!-- ============ EQUIPA ============ -->
+<section class="sec team" id="equipa">
+  <div class="wrap">
+    <div class="head">
+      <h2 class="h2 rv">As pessoas que <em>cuidam de si</em></h2>
+      <p class="lead rv">Uma equipa de fisioterapeutas com formação e áreas de interesse diferentes, a trabalhar para o mesmo equilíbrio.</p>
+    </div>
+    <div class="dir">
+      <div class="ph rv"><img src="img/direcao.jpg" alt="Retrato da direção clínica, de braços cruzados, com a farda da clínica" loading="lazy"></div>
+      <div class="rv">
+        <span class="kicker">Direção clínica</span>
+        <h3>Quem lidera a equipa</h3>
+        <p>Apresentação da direção clínica, percurso e áreas de atuação. <span class="tbc">nome e texto a confirmar com o cliente</span></p>
+      </div>
+    </div>
+    <div class="tgrid">
+      <figure class="tm rv" style="margin:0"><div class="ph"><img src="img/equipa-1.jpg" alt="Fisioterapeuta de cabelo ondulado a sorrir" loading="lazy"></div><b>Fisioterapeuta</b><span class="tbc">nome a confirmar</span></figure>
+      <figure class="tm rv" style="margin:0"><div class="ph"><img src="img/equipa-2.jpg" alt="Fisioterapeuta de cabelo escuro e comprido, de farda" loading="lazy"></div><b>Fisioterapeuta</b><span class="tbc">nome a confirmar</span></figure>
+      <figure class="tm rv" style="margin:0"><div class="ph"><img src="img/equipa-3.jpg" alt="Fisioterapeuta de barba, com a farda da clínica" loading="lazy"></div><b>Fisioterapeuta</b><span class="tbc">nome a confirmar</span></figure>
+      <figure class="tm rv" style="margin:0"><div class="ph"><img src="img/equipa-4.jpg" alt="Fisioterapeuta de óculos, a sorrir" loading="lazy"></div><b>Fisioterapeuta</b><span class="tbc">nome a confirmar</span></figure>
+      <figure class="tm rv" style="margin:0"><div class="ph"><img src="img/equipa-5.jpg" alt="Fisioterapeuta jovem, de farda, com os braços cruzados" loading="lazy"></div><b>Fisioterapeuta</b><span class="tbc">nome a confirmar</span></figure>
+      <figure class="tm rv" style="margin:0"><div class="ph"><img src="img/equipa-6.jpg" alt="Profissional de cabelo ruivo a sorrir" loading="lazy"></div><b>Fisioterapeuta</b><span class="tbc">nome a confirmar</span></figure>
+      <figure class="tm rv" style="margin:0"><div class="ph"><img src="img/equipa-7.jpg" alt="Profissional de cabelo encaracolado e óculos, de bata branca" loading="lazy"></div><b>Fisioterapeuta</b><span class="tbc">nome a confirmar</span></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACTO ============ -->
+<section class="sec contact" id="contacto">
+  <div class="wrap">
+    <div>
+      <span class="kicker rv">Marcar consulta</span>
+      <h2 class="h2 rv" style="margin-top:14px">Vamos <em>começar?</em></h2>
+      <p class="lead rv">Ligue-nos ou deixe o seu pedido. Respondemos para combinar o melhor momento para a sua primeira consulta.</p>
+      <a class="callbig rv" href="tel:+351962987680">962 987 680</a>
+      <dl class="cdata rv">
+        <div><dt>Morada</dt><dd>Rua Presidente Arriaga 15A<br>Charneca de Caparica, Setúbal · 2820-401<br><a href="https://www.google.com/maps/search/?api=1&query=Rua+Presidente+Arriaga+15A+Charneca+de+Caparica+2820-401" target="_blank" rel="noopener">Abrir no mapa</a></dd></div>
+        <div><dt>Horário</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+        <div><dt>Email</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+        <div><dt>Instagram</dt><dd><span class="tbc">a confirmar com o cliente</span></dd></div>
+      </dl>
+    </div>
+    <form class="form rv" id="form" novalidate>
+      <h3>Pedido de contacto</h3>
+      <div class="two">
+        <div class="fld"><input id="f-nome" name="nome" placeholder=" " autocomplete="name"><label for="f-nome">Nome</label></div>
+        <div class="fld"><input id="f-tel" name="tel" placeholder=" " autocomplete="tel" inputmode="tel"><label for="f-tel">Telemóvel</label></div>
+      </div>
+      <div class="fld sel"><select id="f-area" name="area" aria-label="Área de interesse">
+        <option>Fisioterapia</option><option>Osteopatia</option><option>Pilates clínico</option><option>Drenagem linfática manual</option><option>Massagem</option><option>Ainda não sei</option></select>
+        <label for="f-area">Área de interesse</label></div>
+      <div class="fld"><textarea id="f-msg" name="msg" placeholder=" "></textarea><label for="f-msg">Mensagem (opcional)</label></div>
+      <button class="btn cu" type="submit"><span>Pedir contacto</span>
+        <svg viewBox="0 0 18 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M0 5h17M13 1l4 4-4 4"/></svg></button>
+      <p class="form-msg" id="formMsg" role="status">Isto é uma demonstração: nada foi enviado nem guardado. No site final, o pedido chegará diretamente à clínica.</p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer class="ft-foot">
+  <div class="wrap">
+    <div class="row">
+      <a class="brand" href="#hero"><b>Fisio<i>Caparica</i></b><span>equilíbrio · corpo · mente</span></a>
+      <nav aria-label="Rodapé"><a href="#servicos">Serviços</a><a href="#cuidado">Como cuidamos</a><a href="#clinica">A clínica</a><a href="#equipa">Equipa</a><a href="#contacto">Contacto</a></nav>
+    </div>
+    <p class="legal">ERS E178837 · NIPC 516000004 · Rua Presidente Arriaga 15A, Charneca de Caparica, Setúbal, 2820-401 · Tel. 962 987 680</p>
+    <p class="demo-note"><b>Website de demonstração criado pela DD Digital para a FisioCaparica.</b> Textos, descrição dos serviços e do processo são ilustrativos e não vinculativos; nomes da equipa, horário, email e redes sociais ficam por confirmar com o cliente. Nenhuma informação constitui promessa de resultados: a indicação de cada tratamento depende de avaliação por um profissional de saúde. Fotografias e vídeo: fornecidos pelo cliente. O formulário não envia dados.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+/* =========================================================================
+   JS — organizado por funcionalidade
+   ========================================================================= */
+(function(){
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const desktop=()=>matchMedia('(min-width:900px)').matches;
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+const hasGsap=!!(window.gsap&&window.ScrollTrigger);
+if(hasGsap) gsap.registerPlugin(ScrollTrigger);
+
+/* ---------- preloader ---------- */
+const pre=$('#pre'); const noPre=/[?&]nopre/.test(location.search); let started=false;
+function start(){ if(started) return; started=true; pre&&pre.classList.add('gone'); initScroll(); }
+if(!pre||noPre||reduce){ if(pre) pre.style.display='none'; window.addEventListener('load',start); if(document.readyState==='complete') start(); }
+else setTimeout(start,2000);
+
+/* ---------- menu mobile ---------- */
+const burger=$('#burger'); let menuY=0;
+function setMenu(open){
+  if(open===document.body.classList.contains('menu-open')) return;
+  const root=document.documentElement;
+  if(open){ menuY=window.scrollY; document.body.style.top=-menuY+'px'; document.body.classList.add('menu-open'); }
+  else { document.body.classList.remove('menu-open'); document.body.style.top=''; root.style.scrollBehavior='auto'; window.scrollTo(0,menuY); root.style.scrollBehavior=''; }
+  burger.setAttribute('aria-expanded',open); burger.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');
+}
+burger.addEventListener('click',()=>setMenu(!document.body.classList.contains('menu-open')));
+addEventListener('keydown',e=>{ if(e.key==='Escape') setMenu(false); });
+matchMedia('(min-width:900px)').addEventListener('change',e=>{ if(e.matches) setMenu(false); });
+$$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+  const id=a.getAttribute('href'); const t=id.length>1&&$(id); if(!t) return;
+  e.preventDefault(); const wasOpen=document.body.classList.contains('menu-open'); setMenu(false);
+  const go=()=>{ const hd=$('.hd').getBoundingClientRect().bottom;
+    const y=t.getBoundingClientRect().top+scrollY-hd+2; scrollTo({top:Math.max(0,y),behavior:reduce?'auto':'smooth'}); };
+  wasOpen?requestAnimationFrame(go):go();
+}));
+
+/* ---------- hero: vídeo (autoplay em loop, pausa fora do ecrã) ---------- */
+const vid=$('#heroVideo'), win=$('#win');
+function vidOk(){ win.classList.add('ready'); }
+vid.addEventListener('loadeddata',vidOk); if(vid.readyState>=2) vidOk();
+vid.addEventListener('error',()=>win.classList.remove('ready'));
+if(!reduce&&'IntersectionObserver' in window){
+  new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ const p=vid.play(); p&&p.catch(()=>{}); } else vid.pause(); }),{threshold:.05}).observe($('#hero'));
+} else { vid.removeAttribute('autoplay'); vid.pause(); }
+
+/* ---------- serviços: lista expansível + imagem sticky ---------- */
+const accItems=$$('#acc>li'), srvImgs=$$('#srvPh img'), srvCap=$('#srvCap');
+const caps=['Fotografia da clínica','Sala de tratamento','Espaço da clínica','Corredor da clínica','Sessão de massagem'];
+function openSrv(i){
+  accItems.forEach((li,k)=>{ li.classList.toggle('open',k===i); $('button',li).setAttribute('aria-expanded',k===i); });
+  srvImgs.forEach((im,k)=>im.classList.toggle('on',k===i)); srvCap.textContent=caps[i];
+}
+accItems.forEach((li,i)=>$('button',li).addEventListener('click',()=>openSrv(i)));
+
+/* ---------- formulário de demonstração ---------- */
+$('#form').addEventListener('submit',e=>{ e.preventDefault(); $('#formMsg').classList.add('show'); });
+
+/* ---------- init do scroll ---------- */
+function initScroll(){
+  if(!hasGsap||reduce){ $$('.rv').forEach(e=>e.classList.add('in')); return; }
+  const mm=gsap.matchMedia();
+
+  /* hero: parallax em camadas (vídeo desliza dentro da janela; palavra, seixos e texto a velocidades diferentes) */
+  const hs={trigger:'#hero',start:'top top',end:'bottom top',scrub:true};
+  gsap.fromTo('#win video, #win img',{yPercent:-7},{yPercent:7,ease:'none',scrollTrigger:hs});
+  gsap.to('#heroBig',{x:()=>-innerWidth*.22,ease:'none',scrollTrigger:hs});
+  gsap.to('#heroCopy',{y:-70,ease:'none',scrollTrigger:hs});
+  gsap.to('#orb',{y:-150,ease:'none',scrollTrigger:hs});
+  gsap.to('#pb1',{y:-210,x:30,rotate:40,ease:'none',scrollTrigger:hs});
+  gsap.to('#pb2',{y:-80,rotate:-60,ease:'none',scrollTrigger:hs});
+  gsap.to('#win',{scale:1.04,transformOrigin:'100% 50%',ease:'none',scrollTrigger:hs});
+  /* entrada do hero */
+  gsap.from('#heroCopy>*',{y:30,opacity:0,duration:1.1,ease:'power3.out',stagger:.1,delay:.1});
+  gsap.from('#win',{clipPath:'inset(0% 0% 0% 100%)',duration:1.4,ease:'power3.inOut'});
+  gsap.from(['#orb','#pb1','#pb2'],{scale:0,duration:1,ease:'back.out(1.6)',stagger:.12,delay:.9});
+
+  /* faixa: velocidade ligada ao scroll */
+  const tr=$('#bandTrack'); let bx=0, boost=0; const half=()=>tr.scrollWidth/2;
+  ScrollTrigger.create({trigger:'.band',start:'top bottom',end:'bottom top',onUpdate:s=>{ boost=gsap.utils.clamp(-14,14,s.getVelocity()/220); }});
+  gsap.ticker.add(()=>{ bx-= (.7+Math.abs(boost)); boost*=.92; if(-bx>=half()) bx+=half(); gsap.set(tr,{x:bx}); });
+
+  /* cairn: as pedras caem e assentam ao scroll; balançam ao rato e à velocidade */
+  const stones=$$('.stone'), stp=$$('.stp'), dots=$$('#dots i');
+  const stageH=()=>$('#stage').clientHeight+140;
+  const tl=gsap.timeline({scrollTrigger:{trigger:'#cuidado',start:'top top',end:'bottom bottom',scrub:.6}});
+  stones.forEach((s,i)=>{
+    const rot=[-5,4,-6,7][i];
+    gsap.set(s,{y:()=>-stageH(),opacity:0,rotation:rot*2.5});
+    tl.to(s,{opacity:1,duration:.05},i*1).to(s,{y:0,rotation:rot*.12,duration:.9,ease:'bounce.out'},i*1);
+  });
+  tl.to({},{duration:.4});
+  ScrollTrigger.create({trigger:'#cuidado',start:'top top',end:'bottom bottom',onUpdate:s=>{
+    const p=s.progress, idx=Math.min(3,Math.floor(p*4.2));
+    stp.forEach((e,k)=>e.classList.toggle('on',k===idx)); dots.forEach((d,k)=>d.classList.toggle('on',k===idx));
+  }});
+  const sway=stones.map((s,i)=>gsap.quickTo(s,'rotation',{duration:.9,ease:'elastic.out(1,.5)'}));
+  const base=[-.6,.8,-1,1.2]; let mx=0;
+  addEventListener('pointermove',e=>{ mx=(e.clientX/innerWidth-.5)*2; });
+  ScrollTrigger.create({trigger:'#cuidado',start:'top bottom',end:'bottom top',onUpdate:s=>{
+    const v=gsap.utils.clamp(-1,1,s.getVelocity()/3000);
+    stones.forEach((st,i)=>{ if(tl.progress()>=(i+1)/(stones.length+.4)) sway[i](base[i]+ (mx*1.4+v*5)*(i+1)*.35*(i%2?-1:1)); });
+  }});
+
+  /* galeria da clínica: horizontal pinned no desktop, deslizável no telemóvel */
+  mm.add('(min-width:900px)',()=>{
+    const track=$('#ctrack'); const dist=()=>Math.max(0,track.scrollWidth-innerWidth+60);
+    gsap.to(track,{x:()=>-dist(),ease:'none',scrollTrigger:{trigger:'#clinicPin',start:'top top',end:()=>'+='+dist(),pin:true,scrub:.6,invalidateOnRefresh:true,anticipatePin:1}});
+  });
+
+  /* equipa: os seixos assentam com uma ligeira rotação */
+  $$('.tm .ph').forEach((p,i)=>gsap.from(p,{rotation:i%2?-8:8,scale:.86,ease:'back.out(1.4)',duration:1.1,scrollTrigger:{trigger:p,start:'top 88%',once:true}}));
+
+  /* entradas */
+  $$('.rv').forEach(el=>ScrollTrigger.create({trigger:el,start:'top 90%',once:true,onEnter:()=>el.classList.add('in')}));
+  document.fonts&&document.fonts.ready.then(()=>ScrollTrigger.refresh());
+}
+})();
+</script>
+</body>
+</html>
