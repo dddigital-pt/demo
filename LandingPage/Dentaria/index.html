@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<script>document.documentElement.className='js'</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clínica Alva — Check-up de Natal (demonstração)</title>
+<meta name="description" content="Landing page de demonstração: campanha de Natal para uma clínica dentária, com calendário de advento para escolher o dia da consulta e marcação por WhatsApp.">
+<meta name="theme-color" content="#0E3B37">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230E3B37'/%3E%3Cpath d='M16 8c-3-2-8-1-8 5 0 4 2 5 2.500 9 .3 3 1.800 3 2.500 1 .6-2 1.300-4 3-4s2.400 2 3 4c.7 2 2.200 2 2.500-1 .5-4 2.500-5 2.500-9 0-6-5-7-8-5z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   LANDING DE CAMPANHA — CLÍNICA ALVA (clínica dentária) · NATAL
+   CONCEITO: um dente-enfeite pendurado no festão de luzes. Verde-pinheiro, gelo e vermelho de bastão de açúcar.
+   Hero = festão de lâmpadas a piscar (gerado em JS) e um DENTE-ENFEITE em SVG que baloiça; tocar/clicar
+   faz-o balançar com força e soltar faíscas. Sem fotografia: o objeto é o herói.
+   Mecanismo: CALENDÁRIO DE ADVENTO — o cliente escolhe o dia da consulta (1–23 dez; passado e fins de
+   semana bloqueados, a portinha vira ao escolher), o período, e a mensagem segue por WhatsApp (sem formulário).
+   Herdado: faixa DEMO/selo (REGRAS A2). Novo: tudo o resto.
+   ===================================================================== */
+
+/* ---------- variáveis ---------- */
+:root{
+  --pine:#0E3B37; --pine-2:#14504A; --pine-3:#0A2B28; --ice:#EDF5F3; --ice-2:#DCEBE7; --red:#D5322D; --red-d:#B22722;
+  --gold:#E8BE62; --ink:#0F2A27; --mute:#52706B;
+  --f-d:'Bricolage Grotesque',system-ui,sans-serif; --f-b:'Hanken Grotesk',system-ui,sans-serif;
+  --demo:34px; --hd:68px; --pad:clamp(20px,5vw,84px); --ease:cubic-bezier(.2,.7,.1,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--demo) + var(--hd));-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--pine);color:#fff;font:400 18px/1.6 var(--f-b);overflow-x:clip;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+h1,h2,h3,p{margin:0}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- faixa DEMO + selo ---------- */
+.demo{position:fixed;top:0;left:0;right:0;height:var(--demo);z-index:120;display:flex;align-items:center;justify-content:center;gap:12px;padding:0 12px;background:var(--red);color:#fff;font:600 12.5px/1 var(--f-b);white-space:nowrap;overflow:hidden}
+.demo b{padding:4px 8px;background:#fff;color:var(--red);font:700 10px/1 var(--f-b);letter-spacing:.2em}
+.demo .m{display:none}
+.demo a{margin-left:4px;padding:4px 11px;border:1.5px solid #fff;border-radius:99px;text-decoration:none;font-weight:600}
+.demo a:hover{background:#fff;color:var(--red)}
+.seal{position:fixed;left:14px;bottom:14px;z-index:90;padding:9px 15px;background:#fff;color:var(--red);border-radius:99px;font:700 10px/1 var(--f-b);letter-spacing:.16em;text-transform:uppercase;box-shadow:0 8px 20px -10px rgba(0,0,0,.5)}
+
+/* ---------- cabeçalho ---------- */
+.hd{position:fixed;top:var(--demo);left:0;right:0;height:var(--hd);z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);background:var(--pine);border-bottom:1px solid rgba(255,255,255,.1)}
+.logo{display:flex;align-items:center;gap:11px;text-decoration:none;font:700 22px/1 var(--f-d);letter-spacing:-.01em}
+.logo svg{width:24px;height:26px;fill:#fff}
+.logo small{display:block;margin-top:3px;font:500 9px/1 var(--f-b);letter-spacing:.28em;text-transform:uppercase;color:#9FC9C1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:17px 30px;border:0;border-radius:99px;background:var(--red);color:#fff;text-decoration:none;font:600 16px/1 var(--f-b);transition:transform .35s var(--ease),background .3s,box-shadow .3s}
+.btn:hover{transform:translateY(-2px);background:#E43D37;box-shadow:0 14px 28px -12px rgba(213,50,45,.7)}
+.btn--s{padding:12px 20px;font-size:14px}
+.btn svg{width:17px;height:17px;fill:currentColor}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100svh;display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,6vw,100px);align-items:center;padding:calc(var(--demo) + var(--hd) + 74px) var(--pad) clamp(50px,8vh,90px);background:radial-gradient(60% 70% at 78% 40%,var(--pine-2),var(--pine) 70%);overflow-x:clip}
+.gl{position:absolute;left:0;right:0;top:calc(var(--demo) + var(--hd));height:60px;overflow:hidden;pointer-events:none}
+.gl svg{display:block;width:100%;height:60px}
+.gl .w{fill:none;stroke:#07201D;stroke-width:2}
+.gl .b{animation:tw 2.4s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.4}50%{opacity:1}}
+.kick{display:inline-block;padding:7px 14px;border-radius:99px;background:rgba(255,255,255,.1);font:600 12px/1 var(--f-b);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.hero h1{margin:22px 0 0;font:800 clamp(46px,6.8vw,108px)/.95 var(--f-d);letter-spacing:-.035em}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero__p{max-width:500px;margin-top:24px;color:#CFE3DE;font-size:clamp(17px,1.4vw,20px)}
+.cta{margin-top:32px}
+.left{margin-top:18px;font-size:14px;color:#9FC9C1}
+.left b{color:#fff;font-weight:600}
+
+.hang{position:relative;align-self:start;justify-self:center;margin-top:-48px;width:clamp(190px,25vw,340px);display:flex;flex-direction:column;align-items:center}
+.swing{width:100%;display:flex;flex-direction:column;align-items:center;transform-origin:50% 0;animation:idle 5.5s ease-in-out infinite;cursor:pointer;-webkit-tap-highlight-color:transparent;background:none;border:0;padding:0}
+@keyframes idle{0%,100%{transform:rotate(-3.5deg)}50%{transform:rotate(3.5deg)}}
+.swing.hit{animation:hit 2.6s cubic-bezier(.25,.6,.3,1) 1}
+@keyframes hit{0%{transform:rotate(-16deg)}14%{transform:rotate(14deg)}28%{transform:rotate(-10deg)}42%{transform:rotate(7deg)}58%{transform:rotate(-4.5deg)}75%{transform:rotate(3deg)}100%{transform:rotate(-3.5deg)}}
+.thread{width:2px;height:clamp(70px,11vw,150px);background:linear-gradient(#cfe3de,#fff)}
+.tooth{width:100%;height:auto;overflow:visible;filter:drop-shadow(0 26px 30px rgba(0,0,0,.4))}
+.sp{position:absolute;left:50%;top:62%;width:14px;height:14px;background:var(--gold);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);pointer-events:none;animation:sp .95s ease-out forwards}
+@keyframes sp{from{transform:translate(-50%,-50%) scale(1);opacity:1}to{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(0);opacity:0}}
+.hint{margin-top:14px;font:500 12px/1 var(--f-b);letter-spacing:.16em;text-transform:uppercase;color:#9FC9C1}
+
+/* ---------- calendário ---------- */
+.adv{padding:clamp(70px,10vw,130px) var(--pad);background:var(--ice);color:var(--ink)}
+.adv__in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(30px,6vw,90px);align-items:start}
+.adv h2{font:800 clamp(36px,4.6vw,64px)/.98 var(--f-d);letter-spacing:-.03em;color:var(--pine)}
+.adv h2 em{font-style:normal;color:var(--red)}
+.adv .lead{margin-top:14px;color:var(--mute);max-width:440px}
+.inc{margin:26px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+.inc li{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:16px;background:#fff;font-weight:500}
+.inc svg{flex:none;width:26px;height:26px;fill:none;stroke:var(--red);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.inc small{display:block;font-weight:400;font-size:14px;color:var(--mute)}
+.fine{margin-top:16px;font-size:13px;color:var(--mute)}
+
+.cal h3{font:600 12px/1 var(--f-b);letter-spacing:.24em;text-transform:uppercase;color:var(--mute)}
+.doors{margin:16px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(6,1fr);gap:10px;perspective:900px}
+.door{position:relative;width:100%;aspect-ratio:1;padding:0;border:0;background:none;transform-style:preserve-3d;transition:transform .7s var(--ease)}
+.door span{position:absolute;inset:0;display:grid;place-items:center;border-radius:14px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.door .fr{background:var(--pine);color:#fff;font:700 clamp(20px,2.4vw,28px)/1 var(--f-d);box-shadow:inset 0 -5px 0 rgba(0,0,0,.2)}
+.doors li:nth-child(3n+2) .fr{background:var(--red)}
+.doors li:nth-child(3n) .fr{background:var(--pine-2)}
+.door .bk{transform:rotateY(180deg);background:#fff;box-shadow:inset 0 0 0 3px var(--gold)}
+.door .bk svg{width:56%;height:56%}
+.door:not(:disabled):hover{transform:translateY(-4px) rotateY(-14deg)}
+.door[aria-pressed="true"]{transform:rotateY(180deg)}
+.door:disabled{cursor:not-allowed}
+.doors li .door:disabled .fr{background:#C9DAD5;color:#8FA8A2;box-shadow:none}
+.doors li .door.xmas:disabled .fr{background:var(--gold);color:var(--pine)}
+.door .fr small{position:absolute;bottom:7px;left:0;right:0;text-align:center;font:600 8.5px/1 var(--f-b);letter-spacing:.1em;text-transform:uppercase;opacity:.75}
+.picked{min-height:2.8em;margin-top:18px;font:700 clamp(22px,2.2vw,28px)/1.2 var(--f-d);letter-spacing:-.015em;color:var(--pine)}
+.picked span{color:var(--mute);font:400 17px/1.4 var(--f-b);letter-spacing:0}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.chip{padding:13px 20px;border:1.5px solid rgba(14,59,55,.3);border-radius:99px;background:#fff;font:600 15px/1 var(--f-b);color:var(--pine);transition:background .25s,color .25s,border-color .25s}
+.chip:hover{border-color:var(--pine)}
+.chip[aria-pressed="true"]{background:var(--pine);border-color:var(--pine);color:#fff}
+.cal .btn{margin-top:24px}
+
+/* ---------- rodapé ---------- */
+.ft{padding:40px var(--pad) 90px;background:var(--pine-3);color:#8FB4AD;font-size:13.5px;line-height:1.65}
+.ft p{max-width:880px;margin:0 auto}
+.ft b{color:var(--gold);font-weight:500}
+
+/* ---------- reveals ---------- */
+.js .rv{opacity:0;transform:translateY(22px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.js .rv.in{opacity:1;transform:none}
+
+/* ---------- tablet / mobile ---------- */
+@media (max-width:1000px){.doors{grid-template-columns:repeat(6,1fr)}}
+@media (max-width:860px){
+  :root{--hd:62px}
+  .demo .d{display:none}.demo .m{display:inline}
+  .seal{display:none}
+  .hero{grid-template-columns:1fr;min-height:0;padding-top:calc(var(--demo) + var(--hd) + 60px)}
+  .hang{order:-1;width:clamp(150px,44vw,210px);margin-top:-34px}
+  .thread{height:46px}
+  .adv__in{grid-template-columns:1fr}
+  .doors{grid-template-columns:repeat(4,1fr);gap:9px}
+  .ft{padding-bottom:40px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .js .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="demo" role="note"><b>DEMO</b><span class="d">Landing de demonstração criada pela DD Digital para Clínica Alva · conteúdo ilustrativo</span><span class="m">Demonstração · Clínica Alva</span><a href="../index.html">← Exemplos</a></div>
+<div class="seal">Versão de demonstração</div>
+
+<header class="hd">
+  <a class="logo" href="#topo" aria-label="Clínica Alva — início">
+    <svg viewBox="0 0 24 26" aria-hidden="true"><path d="M12 3C9 .6 2 1 2 8c0 5 2.500 6.500 3 11 .3 4 2.300 4 3.200 1.200C9 17.500 9.800 15 12 15s3 2.500 3.800 5.200C16.700 23 18.700 23 19 19c.5-4.500 3-6 3-11 0-7-7-7.400-10-5z"/></svg>
+    <span>Clínica Alva<small>Medicina dentária</small></span>
+  </a>
+  <a class="btn btn--s" href="#marcar">Escolher o dia</a>
+</header>
+
+<main id="topo">
+  <!-- ================= HERO ================= -->
+  <section class="hero" aria-labelledby="h1">
+    <div class="gl" aria-hidden="true"><svg id="gl" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    <div>
+      <span class="kick">Natal · Check-up</span>
+      <h1 id="h1">Chega ao Natal de <em>sorriso</em> em dia.</h1>
+      <p class="hero__p">Marca o teu check-up de Natal antes de dia 23: avaliação e higiene oral na mesma visita, com um kit de escovagem de oferta.</p>
+      <div class="cta"><a class="btn" href="#marcar">Escolher o meu dia</a></div>
+      <p class="left"><b>Campanha até 23 de dezembro</b> · <span id="left">…</span></p>
+    </div>
+
+    <div class="hang">
+      <button class="swing" id="swing" type="button" aria-label="Dente-enfeite: toca para o fazer balançar">
+        <span class="thread" aria-hidden="true"></span>
+        <svg class="tooth" viewBox="0 0 220 250" aria-hidden="true">
+          <defs>
+            <linearGradient id="tg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".7" stop-color="#EAF3F1"/><stop offset="1" stop-color="#CFE3DE"/></linearGradient>
+          </defs>
+          <!-- tampa dourada e laço -->
+          <rect x="94" y="0" width="32" height="20" rx="5" fill="#E8BE62"/>
+          <rect x="88" y="16" width="44" height="9" rx="4.500" fill="#C99B3C"/>
+          <!-- dente -->
+          <path d="M110 40C80 14 24 24 26 82c2 44 24 62 30 108 4 34 22 46 30 22 8-30 14-52 24-52s16 22 24 52c8 24 26 12 30-22 6-46 28-64 30-108 2-58-54-68-84-42z" fill="url(#tg)"/>
+          <path d="M60 52c10-12 26-14 38-6" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".95"/>
+          <!-- faixa de bastão de açúcar -->
+          <path d="M30 118c24 10 56 14 80 14s56-4 80-14" fill="none" stroke="#D5322D" stroke-width="12" stroke-linecap="round" opacity=".92"/>
+          <path d="M58 124l-6 14M82 130l-6 14M106 132l-6 14M130 131l-6 14M154 128l-6 14M178 122l-6 14" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".85"/>
+          <!-- laço vermelho -->
+          <path d="M110 34c-14-16-38-14-38-2s26 12 38 2zm0 0c14-16 38-14 38-2s-26 12-38 2z" fill="#D5322D"/>
+          <circle cx="110" cy="34" r="7" fill="#B22722"/>
+          <!-- olhos e sorriso -->
+          <circle cx="86" cy="86" r="5.500" fill="#0E3B37"/><circle cx="134" cy="86" r="5.500" fill="#0E3B37"/>
+          <path d="M90 100c8 10 32 10 40 0" fill="none" stroke="#0E3B37" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="72" cy="98" r="7" fill="#F4A6A0" opacity=".6"/><circle cx="148" cy="98" r="7" fill="#F4A6A0" opacity=".6"/>
+        </svg>
+      </button>
+      <p class="hint" aria-hidden="true">Toca no dente</p>
+    </div>
+  </section>
+
+  <!-- ================= CALENDÁRIO DE ADVENTO ================= -->
+  <section class="adv" id="marcar" aria-labelledby="h2">
+    <div class="adv__in">
+      <div class="rv">
+        <h2 id="h2">O teu <em>check-up</em> de Natal.</h2>
+        <p class="lead">Escolhe a portinha do dia que te der mais jeito. Confirmamos a hora por mensagem.</p>
+        <ul class="inc">
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M16 16l5 5"/></svg><span>Avaliação<small>Consulta para ver como está a tua saúde oral.</small></span></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.200L19 10l-5.200 1.800L12 17l-1.800-5.200L5 10l5.200-1.800z"/><path d="M19 17l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><span>Higiene oral<small>Limpeza profissional, se for indicada na avaliação.</small></span></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="12" rx="2"/><path d="M12 9v12M3 13h18M12 9C9 9 7 7 8 5s4 0 4 4zm0 0c3 0 5-2 4-4s-4 0-4 4z"/></svg><span>Kit de oferta<small>Escova e pasta para levares para casa.</small></span></li>
+        </ul>
+        <p class="fine">Condições e disponibilidade ilustrativas, <b style="color:var(--red)">a confirmar com o cliente</b>. O plano de tratamento depende sempre da avaliação clínica.</p>
+      </div>
+
+      <div class="cal rv" style="transition-delay:.12s">
+        <h3 id="mes">Dezembro</h3>
+        <ol class="doors" id="doors" aria-labelledby="mes"></ol>
+        <p class="picked" id="picked" aria-live="polite">Escolhe um dia.</p>
+        <div class="chips" id="periodos" role="group" aria-label="Período do dia">
+          <button class="chip" type="button" data-p="de manhã" aria-pressed="true">Manhã</button>
+          <button class="chip" type="button" data-p="à tarde" aria-pressed="false">Tarde</button>
+          <button class="chip" type="button" data-p="ao fim da tarde" aria-pressed="false">Fim da tarde</button>
+        </div>
+        <a class="btn" id="wa" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 00-8.6 15L2 22l5.2-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.700.7.7-2.600-.2-.3A8 8 0 0112 4z"/></svg>
+          Marcar por WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="ft">
+  <p><b>Landing page de demonstração criada pela DD Digital.</b> Marca, condições, prazos e disponibilidade são ilustrativos e não vinculativos; contactos e morada <b>a confirmar com o cliente</b>. A necessidade de qualquer tratamento é determinada por um médico dentista após avaliação. Sem fotografias: ilustração própria.</p>
+</footer>
+
+<script>
+/* ---------- utilitários ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+/* ---------- campanha: ano e dias que faltam (23 de dezembro, rola para o ano seguinte) ---------- */
+const now=new Date(); let Y=now.getFullYear();
+if(now>new Date(Y,11,23,23,59,59)) Y++;
+(function left(){
+  const d=Math.ceil((new Date(Y,11,23,23,59,59)-now)/864e5);
+  $('#left').textContent = d<=1 ? 'último dia' : 'faltam '+d+' dias';
+})();
+
+/* ---------- festão de luzes ---------- */
+(function garland(){
+  const svg=$('#gl'); const cols=['#D5322D','#E8BE62','#FFFFFF','#6FD3C0'];
+  function build(){
+    const W=svg.parentNode.clientWidth||innerWidth; const n=Math.max(3,Math.round(W/170)); const sg=W/n;
+    let d='M0 6', b='';
+    for(let i=0;i<n;i++){
+      const x0=i*sg, x1=x0+sg; d+=' Q'+(x0+sg/2)+' 40 '+x1+' 6';
+      [.18,.5,.82].forEach((t,k)=>{
+        const x=x0+sg*t, y=(1-t)*(1-t)*6+2*t*(1-t)*40+t*t*6, c=cols[(i*3+k)%4];
+        b+='<g class="b" style="animation-delay:'+(((i*3+k)*.37)%2.4).toFixed(2)+'s"><rect x="'+(x-2.5)+'" y="'+(y-1)+'" width="5" height="6" rx="1" fill="#1B1B1B"/><path d="M'+(x-6)+' '+(y+5)+'h12c0 9-3 14-6 14s-6-5-6-14z" fill="'+c+'"/></g>';
+      });
+    }
+    svg.setAttribute('viewBox','0 0 '+W+' 60'); svg.innerHTML='<path class="w" d="'+d+'"/>'+b;
+  }
+  build(); let t; addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(build,120)});
+})();
+
+/* ---------- dente-enfeite: balançar + faíscas ---------- */
+(function tooth(){
+  const sw=$('#swing'), box=sw.parentNode;
+  sw.addEventListener('click',()=>{
+    sw.classList.remove('hit'); void sw.offsetWidth; if(!reduce) sw.classList.add('hit');
+    for(let i=0;i<12;i++){
+      const s=document.createElement('i'); s.className='sp';
+      const a=Math.random()*Math.PI*2, r=70+Math.random()*90;
+      s.style.setProperty('--dx',Math.cos(a)*r+'px'); s.style.setProperty('--dy',Math.sin(a)*r+'px');
+      s.style.animationDelay=(i*.025)+'s'; box.appendChild(s); setTimeout(()=>s.remove(),1300);
+    }
+  });
+  sw.addEventListener('animationend',e=>{if(e.animationName==='hit') sw.classList.remove('hit')});
+})();
+
+/* ---------- calendário de advento → WhatsApp ---------- */
+(function advent(){
+  const ol=$('#doors'), picked=$('#picked'), wa=$('#wa'), chips=$$('#periodos .chip');
+  const hoje=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  let day=null, per='de manhã';
+  const label=d=>{const s=new Date(Y,11,d).toLocaleDateString('pt-PT',{weekday:'long',day:'numeric',month:'long'});return s.charAt(0).toUpperCase()+s.slice(1)};
+  const tooth='<svg viewBox="0 0 24 26" aria-hidden="true"><path d="M12 3C9 .6 2 1 2 8c0 5 2.5 6.5 3 11 .3 4 2.3 4 3.2 1.2C9 17.5 9.8 15 12 15s3 2.5 3.8 5.2C16.7 23 18.7 23 19 19c.5-4.5 3-6 3-11 0-7-7-7.4-10-5z" fill="#fff" stroke="#0E3B37" stroke-width="1.5"/></svg>';
+  for(let d=1;d<=24;d++){
+    const dt=new Date(Y,11,d), wk=dt.getDay(), li=document.createElement('li');
+    const off = d===24 || wk===0 || wk===6 || dt<hoje;
+    const b=document.createElement('button'); b.type='button'; b.className='door'+(d===24?' xmas':''); b.disabled=off; b.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-label', d===24?'24 de dezembro, clínica fechada':label(d)+(off?', indisponível':''));
+    b.innerHTML='<span class="fr">'+d+(d===24?'<small>fechado</small>':'')+'</span><span class="bk">'+tooth+'</span>';
+    b.dataset.d=d; li.appendChild(b); ol.appendChild(li);
+  }
+  ol.addEventListener('click',e=>{
+    const b=e.target.closest('.door'); if(!b||b.disabled) return;
+    $$('.door',ol).forEach(x=>x.setAttribute('aria-pressed',x===b));
+    day=+b.dataset.d; draw();
+  });
+  chips.forEach(c=>c.addEventListener('click',()=>{chips.forEach(x=>x.setAttribute('aria-pressed',x===c));per=c.dataset.p;draw()}));
+  function draw(){
+    picked.innerHTML = day ? label(day)+' <span>· '+per+'</span>' : 'Escolhe um dia.';
+    const t='Olá! Gostava de marcar o Check-up de Natal na Clínica Alva'+(day?' para '+label(day).toLowerCase()+', '+per:'')+'.\n\nPodem confirmar a disponibilidade?';
+    wa.href='https://wa.me/?text='+encodeURIComponent(t);
+  }
+  draw();
+})();
+
+/* ---------- reveals ---------- */
+(function reveals(){
+  const els=$$('.rv');
+  if(!('IntersectionObserver' in window)){els.forEach(e=>e.classList.add('in'));return}
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+  els.forEach(e=>io.observe(e));
+})();
+</script>
+</body>
+</html>

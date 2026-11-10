@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<script>document.documentElement.className='js'</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mercearia da Estrela — Natal (demonstração)</title>
+<meta name="description" content="Landing page de demonstração para uma campanha de Natal em cabazes gourmet: assistente de presente por orçamento, cartão com mensagem e contagem decrescente para a Consoada.">
+<meta name="theme-color" content="#0D2B22">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230D2B22'/%3E%3Cpath d='M16 4l3.2 8.4 8.8.6-6.8 5.6 2.2 8.6L16 22.4 8.6 27.2l2.2-8.6L4 13l8.8-.6z' fill='%23D8B25E'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   LANDING 2 — MERCEARIA DA ESTRELA · NATAL (cabazes gourmet e presentes)
+   CONCEITO: o presente que se desembrulha. Verde-pinheiro, creme e ouro; serifa de alto contraste.
+   Hero = neve em canvas + retrato em ARCO com laço de presente e estrelas a cintilar,
+   contagem decrescente para a Consoada (24 de dezembro).
+   Mecanismo de venda: assistente "para quem + quanto queres gastar" que destaca o cabaz certo,
+   e cartão de oferta com a mensagem do cliente a escrever-se ao vivo.
+   Linguagem de forma: arcos, etiquetas de presente, festões (bordas recortadas em arcos).
+   Herdado de: faixa DEMO/selo (REGRAS A2). Novo: tudo o resto (landing de campanha, não é site de cliente).
+   ===================================================================== */
+
+/* ---------- variáveis ---------- */
+:root{
+  --pine:#0D2B22; --pine-2:#143A2E; --pine-3:#1C4A3B; --cream:#F7EFDF; --cream-2:#EFE3CB;
+  --gold:#D8B25E; --gold-d:#9C7A2C; --berry:#A32A2F; --ink:#10201B; --mute:#5C6B63;
+  --f-d:'Gloock',Georgia,serif; --f-b:'Karla',system-ui,sans-serif;
+  --demo:34px; --hd:68px; --pad:clamp(20px,5vw,80px);
+  --ease:cubic-bezier(.2,.7,.1,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--demo) + var(--hd));-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--pine);color:var(--cream);font:400 18px/1.6 var(--f-b);overflow-x:clip;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3,p{margin:0}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- faixa DEMO + selo ---------- */
+.demo{position:fixed;top:0;left:0;right:0;height:var(--demo);z-index:120;display:flex;align-items:center;justify-content:center;gap:14px;padding:0 12px;background:linear-gradient(90deg,#B8913F,#E8CB82,#B8913F);color:var(--pine);font:700 12.5px/1 var(--f-b);white-space:nowrap;overflow:hidden}
+.demo b{padding:4px 9px;background:var(--pine);color:var(--gold);font:700 10px/1 var(--f-b);letter-spacing:.2em}
+.demo .m{display:none}
+.demo a{margin-left:6px;padding:4px 11px;border:1.5px solid var(--pine);border-radius:99px;text-decoration:none;font-weight:700}
+.demo a:hover{background:var(--pine);color:var(--gold)}
+.seal{position:fixed;left:14px;bottom:14px;z-index:90;padding:9px 15px;background:var(--pine);color:var(--gold);border:1px solid var(--gold);border-radius:99px;font:700 10px/1 var(--f-b);letter-spacing:.16em;text-transform:uppercase}
+
+/* ---------- cabeçalho ---------- */
+.hd{position:fixed;top:var(--demo);left:0;right:0;height:var(--hd);z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);background:var(--pine);border-bottom:1px solid rgba(216,178,94,.22)}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;font:400 21px/1 var(--f-d);letter-spacing:.01em}
+.logo svg{width:24px;height:24px;fill:var(--gold)}
+.logo small{display:block;margin-top:3px;font:700 9px/1 var(--f-b);letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:16px 28px;border:0;border-radius:99px;background:var(--gold);color:var(--pine);text-decoration:none;font:700 14px/1 var(--f-b);letter-spacing:.08em;text-transform:uppercase;transition:transform .35s var(--ease),background .3s}
+.btn:hover{transform:translateY(-2px);background:#E8CB82}
+.btn--s{padding:12px 20px;font-size:12px}
+.btn--line{background:transparent;color:var(--cream);box-shadow:inset 0 0 0 1.5px rgba(247,239,223,.5)}
+.btn--line:hover{background:rgba(247,239,223,.1)}
+.btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100svh;display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,5vw,80px);align-items:center;padding:calc(var(--demo) + var(--hd) + clamp(20px,5vh,60px)) var(--pad) clamp(70px,10vh,110px);background:radial-gradient(90% 80% at 75% 40%,var(--pine-3),var(--pine) 65%);overflow:clip;isolation:isolate}
+#snow{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+.hero__t{position:relative}
+.kick{display:inline-flex;align-items:center;gap:12px;font:700 12px/1 var(--f-b);letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
+.kick::before,.kick::after{content:"";width:28px;height:1px;background:var(--gold)}
+.hero h1{margin:22px 0 0;font:400 clamp(46px,7.4vw,118px)/.98 var(--f-d);letter-spacing:-.015em}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero__p{max-width:500px;margin-top:22px;font-size:clamp(17px,1.4vw,21px);color:#D8DDD0}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.count{display:flex;align-items:flex-end;gap:clamp(14px,2.4vw,30px);margin-top:clamp(28px,5vh,52px);padding-top:22px;border-top:1px solid rgba(216,178,94,.3);max-width:520px}
+.count__l{flex:1 1 100%;margin-bottom:-6px;font:700 11px/1 var(--f-b);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.count{flex-wrap:wrap}
+.count div{text-align:left}
+.count b{display:block;font:400 clamp(40px,5vw,66px)/1 var(--f-d);color:var(--cream);font-variant-numeric:tabular-nums}
+.count span{display:block;margin-top:2px;font:500 12px/1 var(--f-b);letter-spacing:.14em;text-transform:uppercase;color:#A9B5AC}
+.hero__a{position:relative;justify-self:center;width:min(100%,470px);padding:30px 18px 0}
+.arch{position:relative;aspect-ratio:4/5;border-radius:999px 999px 26px 26px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(0,0,0,.7)}
+.arch img{width:100%;height:100%;object-fit:cover;object-position:62% 50%;transform:scale(1.12);transition:transform 2.4s var(--ease)}
+.go .arch img{transform:scale(1)}
+.arch__r{position:absolute;inset:14px 0 0;border:1.5px solid var(--gold);border-radius:999px 999px 34px 34px;pointer-events:none;opacity:.7}
+.hero__a::before{content:"";position:absolute;inset:14px 4px 0;border:1px solid rgba(216,178,94,.4);border-radius:999px 999px 38px 38px;pointer-events:none;transform:translate(10px,-10px);z-index:-1}
+.bow{position:absolute;left:50%;top:-6px;width:min(36%,170px);transform:translateX(-50%) rotate(-3deg);filter:drop-shadow(0 10px 14px rgba(0,0,0,.45));z-index:2}
+.star{position:absolute;width:22px;height:22px;fill:var(--gold);animation:twinkle 3.2s ease-in-out infinite;opacity:.9}
+.star:nth-of-type(1){left:2%;top:26%}
+.star:nth-of-type(2){right:0;top:12%;width:16px;height:16px;animation-delay:.8s}
+.star:nth-of-type(3){right:6%;bottom:18%;width:26px;height:26px;animation-delay:1.6s}
+@keyframes twinkle{0%,100%{transform:scale(.5) rotate(0);opacity:.3}50%{transform:scale(1.1) rotate(25deg);opacity:1}}
+.tagc{position:absolute;left:-6px;bottom:12%;z-index:3;padding:14px 22px 14px 34px;background:radial-gradient(circle at 17px 50%,var(--pine) 5px,transparent 6px),var(--cream);color:var(--pine);clip-path:polygon(24px 0,100% 0,100% 100%,24px 100%,0 50%);transform:rotate(-6deg);font:400 20px/1.1 var(--f-d)}
+.tagc small{display:block;font:700 10px/1 var(--f-b);letter-spacing:.2em;text-transform:uppercase;color:var(--berry);margin-bottom:5px}
+.js .hx{opacity:0;transform:translateY(26px);transition:opacity 1s var(--ease),transform 1s var(--ease);transition-delay:var(--d,0s)}
+.js .go .hx{opacity:1;transform:none}
+
+/* ---------- festão (borda recortada em arcos) ---------- */
+.fest{position:relative;background:var(--cream);color:var(--ink)}
+.fest::before{content:"";position:absolute;left:0;right:0;top:-1px;height:18px;background:radial-gradient(circle at 50% 0,var(--pine) 13px,transparent 14px) 0 0/30px 18px repeat-x}
+
+/* ---------- assistente de presente ---------- */
+.sec{padding:clamp(76px,12vh,140px) var(--pad)}
+.sec h2{font:400 clamp(34px,5vw,72px)/1.02 var(--f-d);letter-spacing:-.015em}
+.sec h2 em{font-style:normal;color:var(--berry)}
+.sec__lead{max-width:560px;margin-top:16px;color:var(--mute)}
+.wiz{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,4vw,60px);margin-top:clamp(28px,5vh,50px);align-items:end}
+.wiz__q{display:block;margin-bottom:14px;font:700 12px/1 var(--f-b);letter-spacing:.2em;text-transform:uppercase;color:var(--berry)}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{position:relative}
+.chip input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:pointer}
+.chip span{display:block;padding:13px 22px;border:1.5px solid rgba(16,32,27,.28);border-radius:99px;font-weight:700;font-size:16px;transition:background .3s,color .3s,border-color .3s}
+.chip input:checked+span{background:var(--pine);border-color:var(--pine);color:var(--cream)}
+.chip input:focus-visible+span{outline:2px solid var(--berry);outline-offset:3px}
+.slider{display:flex;align-items:center;gap:18px}
+.slider input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:6px;border-radius:9px;background:linear-gradient(90deg,var(--berry) var(--p,40%),rgba(16,32,27,.18) var(--p,40%));outline-offset:8px}
+.slider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:var(--cream);border:3px solid var(--berry);box-shadow:0 4px 12px rgba(0,0,0,.25);cursor:grab}
+.slider input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--cream);border:3px solid var(--berry);cursor:grab}
+.slider output{min-width:112px;padding:10px 16px 10px 30px;background:radial-gradient(circle at 15px 50%,var(--cream) 4.5px,transparent 5.5px),var(--berry);color:var(--cream);clip-path:polygon(20px 0,100% 0,100% 100%,20px 100%,0 50%);font:400 26px/1 var(--f-d);text-align:right;font-variant-numeric:tabular-nums}
+.verdict{margin-top:clamp(26px,4vh,40px);min-height:3.2em;font:400 clamp(22px,2.4vw,32px)/1.25 var(--f-d);max-width:900px}
+.verdict b{font-weight:400;color:var(--berry)}
+.cabazes{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2vw,28px);margin-top:clamp(20px,4vh,36px);align-items:stretch}
+.cab{position:relative;display:flex;flex-direction:column;background:#fff;border-radius:24px 24px 18px 18px;overflow:hidden;box-shadow:0 14px 40px -24px rgba(16,32,27,.55);transition:transform .6s var(--ease),opacity .5s,box-shadow .5s;opacity:.72;transform:scale(.96)}
+.cab.best{opacity:1;transform:translateY(-12px) scale(1.02);box-shadow:0 0 0 3px var(--gold),0 34px 60px -26px rgba(16,32,27,.7)}
+.cab__img{position:relative;aspect-ratio:4/3.4;overflow:hidden}
+.cab__img img{width:100%;height:100%;object-fit:cover}
+.cab__rb{position:absolute;left:14px;top:14px;padding:8px 14px;border-radius:99px;background:var(--berry);color:var(--cream);font:700 11px/1 var(--f-b);letter-spacing:.14em;text-transform:uppercase;opacity:0;transform:translateY(-8px);transition:opacity .4s,transform .4s var(--ease)}
+.cab.best .cab__rb{opacity:1;transform:none}
+.cab__b{display:flex;flex-direction:column;flex:1;padding:22px 24px 24px}
+.cab__top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.cab h3{font:400 clamp(24px,2.2vw,32px)/1.05 var(--f-d)}
+.price{flex:none;padding:8px 14px 8px 26px;background:radial-gradient(circle at 12px 50%,#fff 4px,transparent 5px),var(--pine);color:var(--gold);clip-path:polygon(18px 0,100% 0,100% 100%,18px 100%,0 50%);font:400 22px/1 var(--f-d);font-variant-numeric:tabular-nums}
+.cab ul{margin:16px 0 0;padding:0;list-style:none;color:var(--mute);font-size:16px}
+.cab li{display:flex;gap:10px;padding:5px 0;border-top:1px dotted rgba(16,32,27,.22)}
+.cab li::before{content:"✦";color:var(--gold-d);font-size:11px;line-height:2}
+.cab .btn{margin-top:auto;background:var(--pine);color:var(--cream)}
+.cab .btn:hover{background:var(--pine-3)}
+.cab ul+.btn{margin-top:22px}
+.note{margin-top:22px;font-size:14px;color:var(--mute)}
+
+/* ---------- cartão de oferta ---------- */
+.card-sec{background:var(--cream-2);color:var(--ink)}
+.cs{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,80px);align-items:center}
+.cs__ph{position:relative}
+.cs__ph img{width:100%;aspect-ratio:4/3.3;object-fit:cover;border-radius:26px 26px 26px 120px;box-shadow:0 30px 60px -30px rgba(16,32,27,.6)}
+.preview{position:absolute;right:-14px;bottom:-30px;width:min(64%,300px);padding:22px 20px 20px 36px;background:radial-gradient(circle at 18px 24px,var(--cream-2) 6px,transparent 7px),var(--cream);color:var(--pine);clip-path:polygon(0 0,100% 0,100% 100%,0 100%);border-radius:6px;box-shadow:0 20px 40px -14px rgba(0,0,0,.5);transform:rotate(4deg);transform-origin:20px 24px;animation:sway 5s ease-in-out infinite}
+@keyframes sway{50%{transform:rotate(1deg)}}
+.preview::before{content:"";position:absolute;left:18px;top:-62px;width:2px;height:90px;background:var(--berry);transform:rotate(-8deg);transform-origin:bottom}
+.preview small{display:block;font:700 10px/1 var(--f-b);letter-spacing:.22em;text-transform:uppercase;color:var(--berry)}
+.preview b{display:block;margin-top:6px;font:400 24px/1.1 var(--f-d);word-break:break-word}
+.preview p{margin-top:10px;font:400 17px/1.35 var(--f-d);color:#2c4a3e;word-break:break-word}
+.fld{display:block;margin-top:22px}
+.fld span{display:block;margin-bottom:8px;font:700 12px/1 var(--f-b);letter-spacing:.2em;text-transform:uppercase;color:var(--berry)}
+.fld input,.fld textarea{width:100%;padding:14px 0;border:0;border-bottom:1.5px solid rgba(16,32,27,.35);background:transparent;font-size:19px;border-radius:0;resize:none}
+.fld input:focus,.fld textarea:focus{outline:0;border-bottom-color:var(--berry)}
+.cnt{margin-top:6px;font-size:13px;color:var(--mute);text-align:right}
+.perks{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:26px;font-weight:700;font-size:15px}
+.perks li{display:flex;align-items:center;gap:8px;list-style:none}
+.perks{padding:0}
+.perks li::before{content:"";width:8px;height:8px;background:var(--berry);transform:rotate(45deg)}
+
+/* ---------- final ---------- */
+.final{position:relative;padding:clamp(80px,13vh,160px) var(--pad);text-align:center;background:linear-gradient(rgba(13,43,34,.82),rgba(13,43,34,.92)),url(img/mesa-velas.jpg) center/cover fixed;overflow:clip}
+.final h2{font:400 clamp(38px,6.6vw,100px)/1 var(--f-d);letter-spacing:-.02em}
+.final h2 em{font-style:normal;color:var(--gold)}
+.final .count{margin:34px auto 0;justify-content:center;border-top:0;padding-top:0;text-align:center}
+.final .count div{text-align:center}
+.final .btn{margin-top:34px;padding:20px 38px;font-size:15px}
+.tbc{display:inline-block;margin-top:22px;padding:3px 12px;border:1px dashed var(--gold);color:#E8CB82;font:italic 400 14px/1.6 var(--f-b)}
+.ft{padding:34px var(--pad) 80px;background:var(--ink);font-size:13.5px;color:#9AA89F}
+.ft b{color:var(--gold);font-weight:700}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;left:50%;top:calc(var(--demo) + var(--hd) + 14px);z-index:130;max-width:calc(100% - 32px);padding:14px 22px;border-radius:99px;background:var(--cream);color:var(--pine);font-weight:700;font-size:15px;transform:translate(-50%,-30px);opacity:0;visibility:hidden;transition:transform .5s var(--ease),opacity .4s,visibility 0s .5s;box-shadow:0 14px 30px -10px rgba(0,0,0,.5)}
+.toast.on{transform:translate(-50%,0);opacity:1;visibility:visible;transition-delay:0s}
+
+/* ---------- revelar ---------- */
+.js .rv{opacity:0;transform:translateY(32px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.js .rv.in{opacity:1;transform:none}
+
+/* ---------- responsivo ---------- */
+@media (max-width:960px){
+  .hero{grid-template-columns:1fr;gap:8px;min-height:0;padding-top:calc(var(--demo) + var(--hd) + 16px);padding-bottom:70px}
+  .hero__a{order:-1;width:min(66%,300px);padding-top:26px}
+  .wiz,.cs{grid-template-columns:1fr}
+  .cabazes{grid-template-columns:1fr}
+  .cab.best{transform:scale(1.015)}
+  .cs__ph{margin-bottom:40px}
+}
+@media (max-width:720px){
+  :root{--hd:60px}
+  .demo .l{display:none}.demo .m{display:inline}
+  .seal{display:none}
+  .logo{font-size:16px;white-space:nowrap;gap:9px}.logo small{font-size:8px}.logo svg{width:20px;height:20px}
+  .hd .btn--s{padding:11px 14px;font-size:11px;letter-spacing:.04em;white-space:nowrap}
+  .demo{gap:8px;padding:0 8px}
+  .hero h1{font-size:clamp(44px,13.4vw,84px)}
+  .count b{font-size:42px}
+  .final{background-attachment:scroll}
+  .slider output{min-width:96px;font-size:22px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .hx,.js .rv{opacity:1!important;transform:none!important}
+  .arch img{transform:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="demo" role="note"><b>DEMO</b><span class="l">Landing page de demonstração criada pela DD Digital · marca, produtos e preços fictícios</span><span class="m">Demo · Mercearia da Estrela</span><a href="../index.html">← Exemplos</a></div>
+<div class="seal" role="note">Versão de demonstração</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<header class="hd">
+  <a class="logo" href="#inicio" aria-label="Mercearia da Estrela — início">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2l3.6 9.4 10 .7-7.7 6.3 2.5 9.8L16 22.6 7.6 28.2l2.5-9.8L2.4 12.1l10-.7z"/></svg>
+    <span>Mercearia da Estrela<small>Natal</small></span>
+  </a>
+  <a class="btn btn--s" href="#presente">Escolher cabaz</a>
+</header>
+
+<main>
+<!-- ============ hero ============ -->
+<section class="hero" id="inicio">
+  <canvas id="snow" aria-hidden="true"></canvas>
+
+  <div class="hero__t">
+    <p class="kick hx">Cabazes de Natal</p>
+    <h1 class="hx" style="--d:.1s">O Natal cabe<br>num <em>cabaz.</em></h1>
+    <p class="hero__p hx" style="--d:.2s">Cabazes gourmet para oferecer ou para pôr na mesa da Consoada. Dizes-nos quanto queres gastar, nós dizemos qual é o ideal.</p>
+    <div class="cta hx" style="--d:.3s">
+      <a class="btn" href="#presente">Encontrar o meu cabaz <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+      <a class="btn btn--line" href="#cartao">Mensagem no cartão</a>
+    </div>
+    <div class="count hx" style="--d:.4s" data-cd role="timer" aria-label="Contagem decrescente para a Consoada">
+      <p class="count__l">Para a Consoada faltam</p>
+      <div><b data-u="d">00</b><span>dias</span></div>
+      <div><b data-u="h">00</b><span>horas</span></div>
+      <div><b data-u="m">00</b><span>min</span></div>
+    </div>
+  </div>
+
+  <div class="hero__a hx" style="--d:.15s">
+    <svg class="bow" viewBox="0 0 200 140" aria-hidden="true">
+      <path d="M100 78C70 30 22 10 12 38c-8 24 30 44 88 40z" fill="#A32A2F"/>
+      <path d="M100 78c30-48 78-68 88-40 8 24-30 44-88 40z" fill="#B8353A"/>
+      <path d="M100 78C74 52 40 40 30 52" fill="none" stroke="#7E1D22" stroke-width="3" stroke-linecap="round"/>
+      <path d="M100 78c26-26 60-38 70-26" fill="none" stroke="#8E2227" stroke-width="3" stroke-linecap="round"/>
+      <path d="M96 86 70 134l18-8 10 12 4-52zM104 86l26 48-18-8-10 12-4-52z" fill="#8E2227"/>
+      <rect x="84" y="62" width="32" height="30" rx="9" fill="#C23C41"/>
+    </svg>
+    <svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/></svg>
+    <svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/></svg>
+    <svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/></svg>
+    <div class="arch"><img src="img/presentes-verde.jpg" alt="Presentes embrulhados em papel kraft com fita vermelha e ramos de pinheiro sobre uma mesa de madeira"><i class="arch__r"></i></div>
+    <div class="tagc"><small>Encomendas</small>de Natal</div>
+  </div>
+</section>
+
+<!-- ============ assistente ============ -->
+<section class="sec fest" id="presente" aria-labelledby="pT">
+  <p class="kick rv" style="color:var(--berry)">O presente certo</p>
+  <h2 class="rv" id="pT" style="margin-top:16px">Para quem é<br>e <em>quanto queres gastar?</em></h2>
+
+  <div class="wiz rv">
+    <div role="group" aria-labelledby="q1">
+      <span class="wiz__q" id="q1">Para quem?</span>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="aud" value="familia" checked><span>Família</span></label>
+        <label class="chip"><input type="radio" name="aud" value="amigos"><span>Amigos</span></label>
+        <label class="chip"><input type="radio" name="aud" value="colegas"><span>Colegas</span></label>
+        <label class="chip"><input type="radio" name="aud" value="empresa"><span>Clientes e equipas</span></label>
+      </div>
+    </div>
+    <div>
+      <label class="wiz__q" for="budget">Orçamento</label>
+      <div class="slider"><input type="range" id="budget" min="25" max="150" step="5" value="70" aria-describedby="verdict"><output id="bOut" for="budget">70 €</output></div>
+    </div>
+  </div>
+
+  <p class="verdict" id="verdict" aria-live="polite"></p>
+
+  <div class="cabazes" id="cabazes">
+    <article class="cab" data-price="39" data-name="Cabaz Lareira">
+      <div class="cab__img"><img src="img/biscoitos.jpg" alt="Taça de bolachas de gengibre com luzes de Natal desfocadas ao fundo" loading="lazy"><span class="cab__rb">O ideal para ti</span></div>
+      <div class="cab__b">
+        <div class="cab__top"><h3>Cabaz Lareira</h3><span class="price">39 €</span></div>
+        <ul><li>Bolachas de gengibre</li><li>Chocolate quente</li><li>Frutos secos</li><li>Vela perfumada</li></ul>
+        <button class="btn" type="button">Encomendar</button>
+      </div>
+    </article>
+    <article class="cab" data-price="69" data-name="Cabaz Consoada">
+      <div class="cab__img"><img src="img/cabaz-presentes.jpg" alt="Cesto de verga com embrulhos dourados e de papel kraft junto a uma árvore de Natal" loading="lazy"><span class="cab__rb">O ideal para ti</span></div>
+      <div class="cab__b">
+        <div class="cab__top"><h3>Cabaz Consoada</h3><span class="price">69 €</span></div>
+        <ul><li>Bolo-rei</li><li>Vinho tinto*</li><li>Queijo curado</li><li>Compota e broa de mel</li></ul>
+        <button class="btn" type="button">Encomendar</button>
+      </div>
+    </article>
+    <article class="cab" data-price="129" data-name="Cabaz Grande Mesa">
+      <div class="cab__img"><img src="img/cabaz-arvore.jpg" alt="Cesto de piquenique de vime junto a uma árvore de Natal nevada" loading="lazy"><span class="cab__rb">O ideal para ti</span></div>
+      <div class="cab__b">
+        <div class="cab__top"><h3>Cabaz Grande Mesa</h3><span class="price">129 €</span></div>
+        <ul><li>Bolo-rei e chocolates</li><li>Vinho do Porto*</li><li>Queijo curado e enchidos</li><li>Azeite e frutos secos</li></ul>
+        <button class="btn" type="button">Encomendar</button>
+      </div>
+    </article>
+  </div>
+  <p class="note">* Produtos com álcool apenas para maiores de 18 anos. Conteúdos e preços fictícios, só para exemplo.</p>
+</section>
+
+<!-- ============ cartão ============ -->
+<section class="sec card-sec" id="cartao" aria-labelledby="cT">
+  <div class="cs">
+    <div class="cs__ph rv">
+      <img src="img/embrulhos-vermelhos.jpg" alt="Presentes embrulhados em papel vermelho, kraft e branco com laços e fitas" loading="lazy">
+      <div class="preview" aria-hidden="true"><small>Para</small><b id="pvTo">Maria</b><p id="pvMsg">Feliz Natal! Que a mesa nunca fique vazia.</p></div>
+    </div>
+    <div class="rv">
+      <p class="kick" style="color:var(--berry)">O toque pessoal</p>
+      <h2 id="cT" style="margin-top:16px">Cada cabaz leva<br>a tua <em>mensagem</em></h2>
+      <p class="sec__lead">Escreve umas palavras e vemos o cartão a ganhar forma. Embalagem de oferta incluída.</p>
+      <label class="fld"><span>Para</span><input id="inTo" type="text" maxlength="24" value="Maria" autocomplete="off"></label>
+      <label class="fld"><span>Mensagem</span><textarea id="inMsg" rows="3" maxlength="90">Feliz Natal! Que a mesa nunca fique vazia.</textarea></label>
+      <p class="cnt"><span id="cntN">0</span>/90</p>
+      <ul class="perks"><li>Embalagem de oferta</li><li>Cartão manuscrito</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ final ============ -->
+<section class="final" aria-labelledby="fT">
+  <p class="kick" style="justify-content:center">Consoada</p>
+  <h2 id="fT" style="margin-top:18px">A mesa está posta.<br><em>Falta o cabaz.</em></h2>
+  <div class="count" data-cd role="timer" aria-label="Contagem decrescente para a Consoada">
+    <div><b data-u="d">00</b><span>dias</span></div><div><b data-u="h">00</b><span>horas</span></div><div><b data-u="m">00</b><span>min</span></div><div><b data-u="s">00</b><span>seg</span></div>
+  </div>
+  <a class="btn" href="#presente">Escolher o meu cabaz</a>
+  <p><span class="tbc">Data limite de encomenda e entregas: a confirmar com o cliente</span></p>
+</section>
+</main>
+
+<footer class="ft">
+  <p><b>Landing page de demonstração</b> criada pela DD Digital. A marca Mercearia da Estrela, os cabazes, os preços e as condições são fictícios e servem só de exemplo. Fotografias: Unsplash. Os formulários não guardam nem enviam dados. A contagem decrescente aponta para as 20h00 de 24 de dezembro.</p>
+</footer>
+
+<script>
+/* =====================================================================
+   JS — por funcionalidade (facilita a conversão futura)
+   ===================================================================== */
+var $=function(s,c){return (c||document).querySelector(s)};
+var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+var REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var pad=function(n){return (n<10?'0':'')+n};
+requestAnimationFrame(function(){requestAnimationFrame(function(){document.body.classList.add('go')})});
+
+/* ---------- contagem decrescente: Consoada (24 dez, 20h00) ---------- */
+function consoada(){var n=new Date(),t=new Date(n.getFullYear(),11,24,20,0,0);if(n>t)t=new Date(n.getFullYear()+1,11,24,20,0,0);return t}
+var cds=$$('[data-cd]');
+function tick(){
+  var sec=Math.max(0,Math.floor((consoada()-new Date())/1000));
+  var v={d:Math.floor(sec/86400),h:Math.floor(sec%86400/3600),m:Math.floor(sec%3600/60),s:sec%60};
+  cds.forEach(function(box){['d','h','m','s'].forEach(function(u){var el=$('[data-u="'+u+'"]',box);if(el)el.textContent=pad(v[u])})});
+}
+tick();setInterval(tick,1000);
+
+/* ---------- neve em canvas ---------- */
+(function(){
+  var cv=$('#snow'),ctx=cv.getContext('2d'),hero=$('#inicio'),W=0,H=0,flakes=[],vis=true,wind=0,wt=0,last=0,N=0;
+  function size(){var r=hero.getBoundingClientRect(),d=Math.min(window.devicePixelRatio||1,2);W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);N=Math.round(Math.min(150,W/9));while(flakes.length<N)flakes.push(mk(true));flakes.length=N}
+  function mk(init){var r=Math.random();return{x:Math.random()*W,y:init?Math.random()*H:-10,r:.8+r*r*3.2,v:22+Math.random()*50,p:Math.random()*6.28,a:.3+Math.random()*.55}}
+  function frame(ts){
+    if(!vis){last=0;return}
+    var dt=last?Math.min((ts-last)/1000,.05):0;last=ts;
+    wind+=(wt-wind)*.03;ctx.clearRect(0,0,W,H);
+    flakes.forEach(function(f){
+      f.y+=f.v*dt*(.6+f.r*.25);f.p+=dt*.9;f.x+=(Math.sin(f.p)*14+wind*40)*dt*(.4+f.r*.2);
+      if(f.y>H+10||f.x<-20||f.x>W+20){var n=mk(false);f.x=Math.random()*W;f.y=-10;f.r=n.r;f.v=n.v;f.a=n.a}
+      ctx.fillStyle='rgba(255,255,255,'+f.a+')';ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,6.283);ctx.fill();
+    });
+    requestAnimationFrame(frame);
+  }
+  size();window.addEventListener('resize',size);
+  if(REDUCED){flakes.forEach(function(f){ctx.fillStyle='rgba(255,255,255,'+f.a+')';ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,6.283);ctx.fill()});return}
+  hero.addEventListener('pointermove',function(e){var r=hero.getBoundingClientRect();wt=((e.clientX-r.left)/r.width-.5)*2});
+  hero.addEventListener('pointerleave',function(){wt=0});
+  new IntersectionObserver(function(es){var v=es[0].isIntersecting;if(v&&!vis){vis=true;requestAnimationFrame(frame)}vis=v},{threshold:0}).observe(hero);
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- assistente: para quem + orçamento ---------- */
+(function(){
+  var cabs=$$('.cab'),range=$('#budget'),out=$('#bOut'),verdict=$('#verdict');
+  var phrase={familia:'Para a família, o que faz a mesa de Natal.',amigos:'Para os amigos, um mimo para partilhar à lareira.',colegas:'Para os colegas, um miminho simples e sem complicações.',empresa:'Para clientes e equipas, uma peça de qualidade com a vossa mensagem.'};
+  function aud(){return $('input[name="aud"]:checked').value}
+  function run(){
+    var b=+range.value,best=null;
+    cabs.forEach(function(c){var p=+c.dataset.price;if(p<=b&&(!best||p>+best.dataset.price))best=c});
+    var below=!best;if(!best)best=cabs[0];
+    cabs.forEach(function(c){c.classList.toggle('best',c===best)});
+    out.textContent=b+' €';range.style.setProperty('--p',((b-25)/125*100)+'%');
+    var txt=phrase[aud()]+' Com <b>'+b+' €</b>, a nossa sugestão é o <b>'+best.dataset.name+'</b>';
+    txt+=below?' (um pouco acima do orçamento, mas vale a pena).':'.';
+    if(aud()==='empresa')txt+=' Para várias unidades, pede orçamento.';
+    verdict.innerHTML=txt;
+  }
+  range.addEventListener('input',run);$$('input[name="aud"]').forEach(function(i){i.addEventListener('change',run)});run();
+})();
+
+/* ---------- cartão de oferta ao vivo ---------- */
+(function(){
+  var to=$('#inTo'),msg=$('#inMsg'),pt=$('#pvTo'),pm=$('#pvMsg'),n=$('#cntN');
+  function up(){pt.textContent=to.value.trim()||'…';pm.textContent=msg.value.trim()||'A tua mensagem aparece aqui.';n.textContent=msg.value.length}
+  to.addEventListener('input',up);msg.addEventListener('input',up);up();
+})();
+
+/* ---------- encomendar (demonstração) ---------- */
+var toast=$('#toast'),tt;
+$$('.cab .btn').forEach(function(b){b.addEventListener('click',function(){toast.textContent='Demonstração: nenhuma encomenda foi feita.';toast.classList.add('on');clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove('on')},2400)})});
+
+/* ---------- revelar ao scroll ---------- */
+var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px',threshold:.08}):null;
+$$('.rv').forEach(function(el){io?io.observe(el):el.classList.add('in')});
+</script>
+</body>
+</html>

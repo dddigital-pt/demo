@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<script>document.documentElement.className='js'</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FORJA — Janeiro (demonstração)</title>
+<meta name="description" content="Landing page de demonstração para uma campanha de Ano Novo num ginásio: jogo de repetições que desbloqueia a aula experimental, planos mensal/anual e formulário de reserva.">
+<meta name="theme-color" content="#FF4A10">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23FF4A10'/%3E%3Cpath d='M9 7h15v5H15v4h8v5h-8v4H9z' fill='%23111'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Schibsted+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   LANDING 3 — FORJA · JANEIRO (ginásio, campanha de Ano Novo)
+   CONCEITO: começar é fazer a primeira repetição. Claro e brutalista: osso, tinta e laranja,
+   caixas com contorno grosso e sombra dura, autocolantes inclinados, tipografia condensada gigante.
+   Hero = "ANO NOVO. TREINO NOVO." + contador de repetições: 10 cliques desbloqueiam a aula experimental
+   (confetti + código). Fotografia em duotone laranja. Contagem real para Janeiro.
+   Mecanismo de venda: gamificação que conduz ao formulário + comparador mensal/anual.
+   Linguagem de forma: retângulos com sombra dura, autocolantes circulares, faixas inclinadas.
+   Herdado de: faixa DEMO/selo (REGRAS A2). Novo: tudo o resto (landing de campanha, não é site de cliente).
+   ===================================================================== */
+
+/* ---------- variáveis ---------- */
+:root{
+  --bone:#F2EEE4; --sand:#E5DDCB; --ink:#111; --orange:#FF4A10; --orange-d:#D93A05; --white:#fff; --mute:#5E5A52;
+  --f-d:'Big Shoulders Display','Arial Narrow',sans-serif; --f-b:'Schibsted Grotesk',system-ui,sans-serif;
+  --demo:34px; --hd:64px; --pad:clamp(18px,5vw,72px);
+  --ease:cubic-bezier(.2,.7,.1,1); --bd:3px solid var(--ink);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--demo) + var(--hd));-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bone);color:var(--ink);font:400 17px/1.55 var(--f-b);overflow-x:clip;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3,p{margin:0}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.xl{font-family:var(--f-d);font-weight:900;text-transform:uppercase;line-height:.84;letter-spacing:-.005em}
+
+/* ---------- faixa DEMO + selo ---------- */
+.demo{position:fixed;top:0;left:0;right:0;height:var(--demo);z-index:120;display:flex;align-items:center;justify-content:center;gap:14px;padding:0 12px;background:var(--orange);color:var(--ink);font:700 12.5px/1 var(--f-b);white-space:nowrap;overflow:hidden;border-bottom:var(--bd)}
+.demo b{padding:4px 8px;background:var(--ink);color:var(--orange);font:800 11px/1 var(--f-d);letter-spacing:.2em}
+.demo .m{display:none}
+.demo a{margin-left:6px;padding:3px 10px;border:2px solid var(--ink);text-decoration:none;font-weight:800}
+.demo a:hover{background:var(--ink);color:var(--orange)}
+.seal{position:fixed;left:14px;bottom:14px;z-index:90;padding:9px 14px;background:var(--ink);color:var(--orange);border:2px solid var(--orange);font:800 11px/1 var(--f-d);letter-spacing:.18em;text-transform:uppercase}
+
+/* ---------- cabeçalho ---------- */
+.hd{position:fixed;top:var(--demo);left:0;right:0;height:var(--hd);z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);background:var(--bone);border-bottom:var(--bd)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font:900 34px/1 var(--f-d);letter-spacing:.02em}
+.logo i{display:block;width:14px;height:14px;background:var(--orange);border:3px solid var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:16px 26px;border:var(--bd);background:var(--orange);color:var(--ink);text-decoration:none;font:800 22px/1 var(--f-d);letter-spacing:.05em;text-transform:uppercase;box-shadow:5px 5px 0 var(--ink);transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--ink)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn--s{padding:10px 18px;font-size:19px;box-shadow:4px 4px 0 var(--ink)}
+.btn--ink{background:var(--ink);color:var(--bone);box-shadow:5px 5px 0 var(--orange)}
+.btn--ink:hover{box-shadow:8px 8px 0 var(--orange)}
+.btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:3}
+
+/* ---------- hero ---------- */
+.hero{position:relative;display:grid;grid-template-columns:1.12fr .88fr;gap:clamp(20px,4vw,64px);align-items:center;min-height:100svh;padding:calc(var(--demo) + var(--hd) + clamp(20px,4vh,48px)) var(--pad) clamp(70px,10vh,110px);overflow:clip}
+.hero h1{font-size:clamp(70px,min(10.2vw,19svh),180px)}
+.hero h1 span{display:block}
+.hero h1 mark{display:inline-block;padding:0 .08em;background:var(--orange);color:var(--ink);transform:rotate(-1.4deg);box-shadow:.05em .05em 0 var(--ink)}
+.hero__lead{max-width:470px;margin-top:18px;font-size:clamp(17px,1.4vw,20px);font-weight:500}
+.rep{display:flex;align-items:center;gap:clamp(16px,2.4vw,30px);margin-top:clamp(18px,3vh,30px);padding:18px 24px 18px 18px;max-width:560px;background:var(--white);border:var(--bd);box-shadow:8px 8px 0 var(--ink)}
+.ring{position:relative;flex:none;width:clamp(116px,12vw,148px);aspect-ratio:1;padding:0;border:0;border-radius:50%;background:transparent;transition:transform .12s var(--ease)}
+.ring:active{transform:scale(.93)}
+.ring.bump{animation:bump .3s var(--ease)}
+@keyframes bump{40%{transform:scale(1.1) rotate(-3deg)}}
+.ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:10}
+.ring .tr{stroke:var(--sand)}
+.ring .pg{stroke:var(--orange);stroke-linecap:butt;stroke-dasharray:289;stroke-dashoffset:289;transition:stroke-dashoffset .35s var(--ease)}
+.ring__n{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ring__n b{font:900 clamp(52px,5.4vw,70px)/.8 var(--f-d);font-variant-numeric:tabular-nums}
+.ring__n small{margin-top:6px;font:800 14px/1 var(--f-d);letter-spacing:.2em;text-transform:uppercase;color:var(--orange-d)}
+.rep__t b{display:block;font:900 clamp(26px,2.6vw,34px)/.95 var(--f-d);text-transform:uppercase}
+.rep__t p{margin-top:8px;font-size:15.5px;color:var(--mute)}
+.rep__t a{font-weight:700}
+.rep.done{background:var(--orange)}
+.rep.done .ring .tr{stroke:rgba(17,17,17,.2)}
+.rep.done .ring .pg{stroke:var(--ink)}
+.rep.done .ring__n small{color:var(--ink)}
+.rep.done .rep__t p{color:var(--ink)}
+.code{display:none;margin-top:10px;padding:8px 12px;border:2px dashed var(--ink);font:800 20px/1 var(--f-d);letter-spacing:.14em;background:rgba(255,255,255,.55)}
+.rep.done .code{display:inline-block}
+.hero__ph{position:relative;justify-self:center;width:min(100%,560px)}
+.duo{position:relative;aspect-ratio:4/5;background:var(--orange);border:var(--bd);box-shadow:12px 12px 0 var(--ink);overflow:hidden;isolation:isolate}
+.duo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:68% 50%;filter:grayscale(1) contrast(1.2) brightness(1.02);mix-blend-mode:multiply}
+.duo--c img{object-position:50% 50%}
+.stk{position:absolute;left:-34px;bottom:-40px;width:clamp(120px,14vw,170px);animation:spin 16s linear infinite;filter:drop-shadow(5px 5px 0 var(--ink))}
+@keyframes spin{to{transform:rotate(360deg)}}
+.stk text{font:800 21px var(--f-d);letter-spacing:.1em;text-transform:uppercase}
+.chipd{position:absolute;right:-10px;top:-18px;padding:10px 16px;background:var(--ink);color:var(--bone);font:800 20px/1 var(--f-d);letter-spacing:.06em;text-transform:uppercase;transform:rotate(3deg)}
+.chipd b{color:var(--orange);font-weight:900}
+.js .hx{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease),transform .8s var(--ease);transition-delay:var(--d,0s)}
+.js .go .hx{opacity:1;transform:none}
+
+/* ---------- faixa ---------- */
+.bandw{overflow-x:clip;padding:18px 0;margin-top:-18px;position:relative;z-index:2}
+.band{background:var(--ink);color:var(--orange);border-block:var(--bd);overflow:hidden;transform:rotate(-1.2deg);margin:0 -2%}
+.band__t{display:flex;width:max-content;padding:12px 0;animation:marq 30s linear infinite}
+.band span{flex:none;padding-right:34px;font:900 clamp(26px,3.4vw,44px)/1 var(--f-d);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.band span.o{color:var(--bone)}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* ---------- secções ---------- */
+.sec{padding:clamp(70px,11vh,130px) var(--pad)}
+.eyebrow{display:inline-block;padding:6px 12px;background:var(--ink);color:var(--orange);font:800 17px/1 var(--f-d);letter-spacing:.18em;text-transform:uppercase}
+.sec h2{margin-top:16px;font-size:clamp(52px,8vw,128px)}
+.sec h2 em{font-style:normal;color:var(--orange)}
+.sec__lead{max-width:520px;margin-top:18px;font-weight:500;color:var(--mute)}
+
+/* planos */
+.sw{display:inline-flex;margin-top:26px;border:var(--bd);background:var(--white);box-shadow:5px 5px 0 var(--ink)}
+.sw label{position:relative;cursor:pointer}
+.sw input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.sw span{display:block;padding:12px 24px;font:800 22px/1 var(--f-d);letter-spacing:.06em;text-transform:uppercase;transition:background .25s,color .25s}
+.sw input:checked+span{background:var(--ink);color:var(--orange)}
+.sw input:focus-visible+span{outline:3px solid var(--orange);outline-offset:-6px}
+.sw small{font:700 14px/1 var(--f-b);margin-left:6px;color:var(--orange-d)}
+.sw input:checked+span small{color:var(--bone)}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2.4vw,34px);margin-top:34px;align-items:stretch}
+.plan{position:relative;display:flex;flex-direction:column;padding:28px 26px 26px;background:var(--white);border:var(--bd);box-shadow:8px 8px 0 var(--ink);transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
+.plan:hover{transform:translate(-3px,-3px);box-shadow:12px 12px 0 var(--ink)}
+.plan--hot{background:var(--orange)}
+.plan h3{font:900 clamp(38px,3.6vw,52px)/.9 var(--f-d);text-transform:uppercase}
+.plan__p{display:flex;align-items:flex-end;gap:8px;margin-top:18px}
+.plan__p b{font:900 clamp(78px,8vw,112px)/.78 var(--f-d);font-variant-numeric:tabular-nums}
+.plan__p span{padding-bottom:8px;font:700 15px/1.2 var(--f-b)}
+.plan__s{min-height:1.4em;margin-top:10px;font:700 14px/1.3 var(--f-b);color:var(--orange-d)}
+.plan--hot .plan__s{color:var(--ink)}
+.plan ul{margin:18px 0 24px;padding:0;list-style:none;border-top:2px solid var(--ink)}
+.plan li{display:flex;gap:10px;padding:9px 0;border-bottom:1.5px dashed rgba(17,17,17,.3);font-weight:500}
+.plan li::before{content:"";flex:none;width:12px;height:12px;margin-top:6px;background:var(--ink)}
+.plan .btn{margin-top:auto}
+.plan--hot .btn{background:var(--ink);color:var(--orange);box-shadow:5px 5px 0 var(--white)}
+.stk2{position:absolute;right:-12px;top:-20px;padding:8px 14px;background:var(--ink);color:var(--orange);font:900 19px/1 var(--f-d);letter-spacing:.08em;text-transform:uppercase;transform:rotate(4deg)}
+.free{display:inline-block;margin-top:26px;padding:10px 16px;background:var(--orange);border:var(--bd);font:800 20px/1 var(--f-d);letter-spacing:.06em;text-transform:uppercase;transform:rotate(-1.4deg)}
+
+/* o que vais encontrar */
+.find{background:var(--sand);border-block:var(--bd)}
+.tiles{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:auto auto;gap:clamp(14px,2vw,28px);margin-top:34px}
+.tile{position:relative;margin:0;border:var(--bd);background:var(--ink);box-shadow:8px 8px 0 var(--ink);overflow:hidden}
+.tile img{width:100%;height:100%;min-height:260px;object-fit:cover;filter:grayscale(1) contrast(1.12);transition:filter .5s,transform 1.2s var(--ease)}
+.tile:hover img{filter:none;transform:scale(1.05)}
+.tile--a{grid-row:span 2}
+.tile--a img{min-height:480px}
+.tile figcaption{position:absolute;left:0;bottom:0;max-width:86%;padding:12px 16px 12px;background:var(--orange);border-top:var(--bd);border-right:var(--bd)}
+.tile figcaption b{display:block;font:900 clamp(26px,2.4vw,34px)/.95 var(--f-d);text-transform:uppercase}
+.tile figcaption span{display:block;margin-top:4px;font-size:14.5px;font-weight:500}
+@media (hover:none){.tile img{filter:none}}
+
+/* faq */
+.faq{max-width:900px;margin-top:34px;border-top:var(--bd)}
+.faq details{border-bottom:var(--bd);background:transparent}
+.faq summary{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 4px;list-style:none;cursor:pointer;font:900 clamp(26px,2.8vw,38px)/1 var(--f-d);text-transform:uppercase}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary i{position:relative;flex:none;width:34px;height:34px;border:var(--bd);background:var(--white);transition:background .25s,transform .35s var(--ease)}
+.faq summary i::before,.faq summary i::after{content:"";position:absolute;left:6px;right:6px;top:50%;height:3px;margin-top:-1.5px;background:var(--ink);transition:transform .3s var(--ease)}
+.faq summary i::after{transform:rotate(90deg)}
+.faq details[open] summary i{background:var(--orange);transform:rotate(180deg)}
+.faq details[open] summary i::after{transform:rotate(0)}
+.faq details p{padding:0 56px 22px 4px;max-width:720px;font-weight:500;color:var(--mute)}
+.tbc{display:inline-block;padding:1px 9px;border:1.5px dashed var(--ink);background:rgba(255,74,16,.18);font:italic 500 14px/1.6 var(--f-b);color:var(--ink)}
+
+/* formulário */
+.join{background:var(--orange);border-top:var(--bd);overflow:clip}
+.join__g{display:grid;grid-template-columns:.95fr 1.05fr;gap:clamp(24px,5vw,80px);align-items:center}
+.join h2{font-size:clamp(56px,8.4vw,136px);margin-top:0}
+.join h2 em{color:var(--white);font-style:normal;-webkit-text-stroke:0}
+.join p.l{max-width:440px;margin-top:20px;font-weight:600;font-size:19px}
+.cdj{display:inline-block;margin-top:22px;padding:12px 18px;background:var(--ink);color:var(--bone);font:800 24px/1 var(--f-d);letter-spacing:.06em;text-transform:uppercase;transform:rotate(-1.4deg)}
+.cdj b{color:var(--orange);font-weight:900;font-variant-numeric:tabular-nums}
+.form{padding:clamp(22px,3vw,40px);background:var(--bone);border:var(--bd);box-shadow:12px 12px 0 var(--ink)}
+.fld{display:block;margin-bottom:20px}
+.fld>span,.grp>span{display:block;margin-bottom:8px;font:800 18px/1 var(--f-d);letter-spacing:.14em;text-transform:uppercase}
+.fld input,.fld select{width:100%;padding:14px 14px;border:var(--bd);background:var(--white);font-size:17px;border-radius:0;appearance:none;-webkit-appearance:none}
+.fld select{background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='3'%3E%3Cpath d='M5 9l7 7 7-7'/%3E%3C/svg%3E") right 14px center/18px no-repeat}
+.fld input:focus,.fld select:focus{outline:0;box-shadow:5px 5px 0 var(--orange)}
+.grp{margin-bottom:22px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{position:relative}
+.chip input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:pointer}
+.chip span{display:block;padding:11px 16px;border:var(--bd);background:var(--white);font-weight:700;font-size:15.5px;transition:background .2s}
+.chip input:checked+span{background:var(--ink);color:var(--orange)}
+.chip input:focus-visible+span{outline:3px solid var(--orange);outline-offset:2px}
+.cp{display:none;margin:0 0 18px;padding:10px 14px;border:2px dashed var(--ink);background:rgba(255,74,16,.18);font-weight:700;font-size:15px}
+.cp.on{display:block}
+.fmsg{min-height:1.4em;margin-top:14px;font-weight:700;font-size:15px}
+.fnote{margin-top:4px;font-size:13px;color:var(--mute)}
+.ft{padding:34px var(--pad) 80px;background:var(--ink);color:#B9B4A8;font-size:13.5px}
+.ft b{color:var(--orange)}
+
+/* ---------- confetti + toast ---------- */
+#cf{position:fixed;inset:0;width:100%;height:100%;z-index:140;pointer-events:none}
+.js .rv{opacity:0;transform:translateY(34px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.js .rv.in{opacity:1;transform:none}
+
+/* ---------- responsivo ---------- */
+@media (max-width:980px){
+  .hero{grid-template-columns:1fr;min-height:0;padding-bottom:70px}
+  .hero__ph{width:min(100%,460px);margin-top:20px}
+  .plans{grid-template-columns:1fr}
+  .tiles{grid-template-columns:1fr}
+  .tile--a{grid-row:auto}.tile--a img{min-height:320px}
+  .join__g{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  :root{--hd:58px}
+  .demo .l{display:none}.demo .m{display:inline}
+  .seal{display:none}
+  .logo{font-size:30px}
+  .hero{padding-top:calc(var(--demo) + var(--hd) + 18px)}
+  .hero h1{font-size:clamp(66px,22vw,130px)}
+  .rep{padding:14px;gap:14px}
+  .stk{left:-8px;bottom:-30px;width:112px}
+  .chipd{right:-4px;font-size:17px}
+  .faq details p{padding-right:8px}
+  .sw span{padding:11px 16px;font-size:19px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .hx,.js .rv{opacity:1!important;transform:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="demo" role="note"><b>DEMO</b><span class="l">Landing page de demonstração criada pela DD Digital · marca, planos e preços fictícios</span><span class="m">Demonstração · FORJA</span><a href="../index.html">← Exemplos</a></div>
+<div class="seal" role="note">Versão de demonstração</div>
+<canvas id="cf" aria-hidden="true"></canvas>
+
+<header class="hd">
+  <a class="logo" href="#inicio" aria-label="FORJA — início"><i></i>FORJA</a>
+  <a class="btn btn--s" href="#inscricao">Aula grátis</a>
+</header>
+
+<main>
+<!-- ============ hero ============ -->
+<section class="hero" id="inicio">
+  <div>
+    <h1 class="xl hx"><span>Ano novo.</span><span>Treino</span><span><mark>novo.</mark></span></h1>
+    <p class="hero__lead hx" style="--d:.15s">Janeiro é o mês de começar. Faz 10 repetições aqui e desbloqueia a tua primeira aula.</p>
+
+    <div class="rep hx" id="rep" style="--d:.3s">
+      <button class="ring" id="ring" type="button" aria-label="Fazer uma repetição">
+        <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="tr" cx="50" cy="50" r="46"/><circle class="pg" id="pg" cx="50" cy="50" r="46"/></svg>
+        <span class="ring__n"><b id="repN">0</b><small>de 10</small></span>
+      </button>
+      <div class="rep__t" aria-live="polite">
+        <b id="repT">Clica no círculo</b>
+        <p id="repP">Cada clique é uma repetição. Sim, a sério.</p>
+        <span class="code" id="code">FORJA-JANEIRO</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero__ph hx" style="--d:.2s">
+    <div class="duo"><img src="img/mulher-barra.jpg" alt="Mulher a levantar uma barra com pesos num ginásio"></div>
+    <span class="chipd" id="chipd">Janeiro em <b>--</b></span>
+    <svg class="stk" viewBox="0 0 200 200" aria-hidden="true">
+      <defs><path id="cp" d="M100,100 m-70,0 a70,70 0 1,1 140,0 a70,70 0 1,1 -140,0"/></defs>
+      <circle cx="100" cy="100" r="98" fill="#111"/>
+      <text fill="#FF4A10"><textPath href="#cp">1.ª aula experimental · no ano novo ·</textPath></text>
+      <text x="100" y="116" text-anchor="middle" fill="#F2EEE4" style="font-size:54px;font-weight:900;letter-spacing:.02em">GRÁTIS</text>
+    </svg>
+  </div>
+</section>
+
+<div class="bandw"><div class="band" aria-hidden="true"><div class="band__t" id="band"></div></div></div>
+
+<!-- ============ planos ============ -->
+<section class="sec" id="planos" aria-labelledby="plT">
+  <p class="eyebrow rv">Planos</p>
+  <h2 class="xl rv" id="plT">Escolhe o teu<br><em>ritmo.</em></h2>
+  <p class="sec__lead rv">Três planos, sem complicações. Muda de plano quando quiseres, condições a confirmar com o ginásio.</p>
+
+  <div class="sw rv" role="radiogroup" aria-label="Periodicidade">
+    <label><input type="radio" name="per" value="m" checked><span>Mensal</span></label>
+    <label><input type="radio" name="per" value="a"><span>Anual <small>poupa</small></span></label>
+  </div>
+  <p><span class="free rv">Em janeiro, a inscrição é grátis</span></p>
+
+  <div class="plans" id="plans">
+    <article class="plan rv" data-m="25" data-a="21" data-n="Livre">
+      <h3 class="xl">Livre</h3>
+      <div class="plan__p"><b>25</b><span>€ / mês</span></div>
+      <p class="plan__s"></p>
+      <ul><li>Acesso à sala de treino</li><li>Balneários</li><li>Receção e apoio</li></ul>
+      <a class="btn" href="#inscricao" data-plan="Livre">Quero este</a>
+    </article>
+    <article class="plan plan--hot rv" data-m="39" data-a="32" data-n="Treino">
+      <span class="stk2">Mais escolhido</span>
+      <h3 class="xl">Treino</h3>
+      <div class="plan__p"><b>39</b><span>€ / mês</span></div>
+      <p class="plan__s"></p>
+      <ul><li>Tudo o que está no Livre</li><li>Aulas de grupo</li><li>Plano de treino inicial</li></ul>
+      <a class="btn" href="#inscricao" data-plan="Treino">Quero este</a>
+    </article>
+    <article class="plan rv" data-m="69" data-a="59" data-n="Acompanhado">
+      <h3 class="xl">Acompanhado</h3>
+      <div class="plan__p"><b>69</b><span>€ / mês</span></div>
+      <p class="plan__s"></p>
+      <ul><li>Tudo o que está no Treino</li><li>Sessões com treinador</li><li>Acompanhamento ao longo do mês</li></ul>
+      <a class="btn" href="#inscricao" data-plan="Acompanhado">Quero este</a>
+    </article>
+  </div>
+</section>
+
+<!-- ============ o que vais encontrar ============ -->
+<section class="sec find" aria-labelledby="fdT">
+  <p class="eyebrow rv">O espaço</p>
+  <h2 class="xl rv" id="fdT">Para quem nunca treinou.<br><em>E para quem nunca parou.</em></h2>
+  <div class="tiles">
+    <figure class="tile tile--a rv"><img src="img/consulta.jpg" alt="Treinadora e treinador a conversar sobre o plano de treino sentados num ginásio" loading="lazy"><figcaption><b>Começa com uma conversa</b><span>Falamos dos teus objetivos antes de pegares num peso.</span></figcaption></figure>
+    <figure class="tile rv"><img src="img/aula-grupo.jpg" alt="Grupo de mulheres a fazer exercício com halteres numa sala ampla com janelas grandes" loading="lazy"><figcaption><b>Aulas de grupo</b><span>Mais fácil com companhia.</span></figcaption></figure>
+    <figure class="tile rv"><img src="img/cordas.jpg" alt="Duas pessoas a treinar com cordas de batalha num ginásio" loading="lazy"><figcaption><b>Treino funcional</b><span>Força e fôlego em movimento.</span></figcaption></figure>
+  </div>
+</section>
+
+<!-- ============ faq ============ -->
+<section class="sec" aria-labelledby="fqT">
+  <p class="eyebrow rv">Perguntas</p>
+  <h2 class="xl rv" id="fqT" style="font-size:clamp(46px,6.4vw,100px)">Antes de começares</h2>
+  <div class="faq rv">
+    <details open><summary>Nunca treinei. Posso começar? <i></i></summary><p>Sim. A aula experimental serve para conheceres o espaço e falares com a equipa, ao teu ritmo. Se tiveres alguma condição de saúde, fala primeiro com o teu médico: a adequação de cada exercício depende sempre de avaliação por um profissional.</p></details>
+    <details><summary>O que levo para a aula experimental? <i></i></summary><p>Roupa confortável, calçado desportivo e uma garrafa de água. O resto combinamos na reserva. <span class="tbc">detalhes a confirmar com o ginásio</span></p></details>
+    <details><summary>Como funciona a inscrição? <i></i></summary><p>Reservas a aula, vens experimentar e, se gostares, escolhes o plano. Fidelização, seguro e outras condições: <span class="tbc">a confirmar com o ginásio</span></p></details>
+  </div>
+</section>
+
+<!-- ============ inscrição ============ -->
+<section class="sec join" id="inscricao" aria-labelledby="jnT">
+  <div class="join__g">
+    <div>
+      <h2 class="xl rv" id="jnT">A primeira<br>repetição<br><em>é a reserva.</em></h2>
+      <p class="l rv">Deixa os teus dados e escolhemos contigo o melhor dia para a aula experimental.</p>
+      <p class="rv"><span class="cdj" id="cdj">Janeiro em <b>--</b></span></p>
+    </div>
+    <form class="form rv" id="form" novalidate>
+      <p class="cp" id="cp">Código FORJA-JANEIRO aplicado. Boa, fizeste as 10 repetições.</p>
+      <label class="fld"><span>Nome</span><input type="text" name="nome" autocomplete="name" placeholder="O teu nome"></label>
+      <label class="fld"><span>Email</span><input type="email" name="email" autocomplete="email" placeholder="o.teu@email.pt"></label>
+      <label class="fld"><span>Plano</span><select name="plano" id="planSel"><option>Ainda não sei</option><option>Livre</option><option>Treino</option><option>Acompanhado</option></select></label>
+      <div class="grp" role="group" aria-labelledby="hg"><span id="hg">Melhor horário</span>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="h" checked><span>Manhã</span></label>
+          <label class="chip"><input type="radio" name="h"><span>Hora de almoço</span></label>
+          <label class="chip"><input type="radio" name="h"><span>Fim do dia</span></label>
+        </div>
+      </div>
+      <button class="btn btn--ink" type="submit">Reservar a minha aula <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+      <p class="fmsg" id="fmsg" role="status" aria-live="polite"></p>
+      <p class="fnote">Formulário de demonstração: não envia nem guarda dados.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer class="ft">
+  <p><b>Landing page de demonstração</b> criada pela DD Digital. A marca FORJA, os planos, os preços e as condições são fictícios e servem só de exemplo. Fotografias: Unsplash. Informação geral, que não substitui a avaliação por um profissional de saúde ou de exercício. A contagem aponta para Janeiro (começa a 1 de janeiro e termina a 1 de fevereiro).</p>
+</footer>
+
+<script>
+/* =====================================================================
+   JS — por funcionalidade (facilita a conversão futura)
+   ===================================================================== */
+var $=function(s,c){return (c||document).querySelector(s)};
+var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+var REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+requestAnimationFrame(function(){requestAnimationFrame(function(){document.body.classList.add('go')})});
+
+/* ---------- contagem real para Janeiro ---------- */
+function janeiro(){var n=new Date(),y=n.getFullYear(),s=new Date(y,0,1),e=new Date(y,1,1);
+  if(n<s)return{t:s,l:'Janeiro em'};if(n<e)return{t:e,l:'Fim de janeiro em'};return{t:new Date(y+1,0,1),l:'Janeiro em'}}
+function tick(){
+  var c=janeiro(),ms=Math.max(0,c.t-new Date()),d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5);
+  var txt=c.l+' <b>'+d+' dias '+h+' h</b>';
+  $('#chipd').innerHTML=txt;$('#cdj').innerHTML=txt;
+}
+tick();setInterval(tick,60000);
+
+/* ---------- faixa ---------- */
+(function(){var w=['Ano novo','Treino novo','1.ª aula grátis','Janeiro'],h='';for(var i=0;i<2;i++)w.forEach(function(x,j){h+='<span class="'+(j%2?'o':'')+'">'+x+'</span><span>✱</span>'});$('#band').innerHTML=h+h})();
+
+/* ---------- jogo das repetições ---------- */
+(function(){
+  var N=0,MAX=10,C=289,ring=$('#ring'),pg=$('#pg'),num=$('#repN'),t=$('#repT'),p=$('#repP'),box=$('#rep');
+  var msgs=['Boa! Mais uma.','Isso aí.','Já aquecemos.','A meio caminho em breve.','Não pares agora.','Já passaste a metade.','Falta pouco.','Quase lá.','Última!'];
+  function set(){num.textContent=N;pg.style.strokeDashoffset=C*(1-N/MAX)}
+  ring.addEventListener('click',function(){
+    if(N>=MAX){reset();return}
+    N++;set();ring.classList.remove('bump');void ring.offsetWidth;ring.classList.add('bump');
+    if(navigator.vibrate)try{navigator.vibrate(12)}catch(e){}
+    if(N<MAX){t.textContent=N+' '+(N===1?'repetição':'repetições');p.textContent=msgs[N-1]}
+    else{box.classList.add('done');t.textContent='Desbloqueado!';p.innerHTML='A tua 1.ª aula experimental é grátis. <a href="#inscricao">Reservar agora</a>. Clica no círculo para repetir.';confetti();var cp=$('#cp');cp.classList.add('on')}
+  });
+  function reset(){N=0;set();box.classList.remove('done');t.textContent='Clica no círculo';p.textContent='Cada clique é uma repetição. Sim, a sério.';$('#cp').classList.remove('on')}
+  set();
+})();
+
+/* ---------- confetti ---------- */
+function confetti(){
+  if(REDUCED) return;
+  var cv=$('#cf'),ctx=cv.getContext('2d'),d=Math.min(window.devicePixelRatio||1,2),W=cv.width=innerWidth*d,H=cv.height=innerHeight*d,cols=['#FF4A10','#111','#F2EEE4','#FF4A10','#FFB199'],ps=[],i;
+  var r=$('#ring').getBoundingClientRect(),ox=(r.left+r.width/2)*d,oy=(r.top+r.height/2)*d;
+  for(i=0;i<150;i++){var a=Math.random()*6.283,s=(6+Math.random()*13)*d;ps.push({x:ox,y:oy,vx:Math.cos(a)*s,vy:Math.sin(a)*s-6*d,w:(7+Math.random()*9)*d,h:(4+Math.random()*6)*d,r:Math.random()*6.28,vr:(Math.random()-.5)*.4,c:cols[i%cols.length]})}
+  var t0=performance.now();
+  (function f(ts){var life=ts-t0;ctx.clearRect(0,0,W,H);
+    ps.forEach(function(q){q.vy+=.55*d;q.vx*=.985;q.x+=q.vx;q.y+=q.vy;q.r+=q.vr;ctx.save();ctx.translate(q.x,q.y);ctx.rotate(q.r);ctx.fillStyle=q.c;ctx.globalAlpha=Math.max(0,1-life/2600);ctx.fillRect(-q.w/2,-q.h/2,q.w,q.h);ctx.restore()});
+    if(life<2700)requestAnimationFrame(f);else ctx.clearRect(0,0,W,H)})(t0);
+}
+
+/* ---------- planos: mensal / anual ---------- */
+(function(){
+  var plans=$$('.plan'),radios=$$('input[name="per"]');
+  function run(){
+    var a=$('input[name="per"]:checked').value==='a';
+    plans.forEach(function(pl){
+      var m=+pl.dataset.m,v=a?+pl.dataset.a:m,b=$('.plan__p b',pl),from=+b.textContent,t0=null;
+      if(REDUCED)b.textContent=v;else(function f(ts){if(!t0)t0=ts;var k=Math.min((ts-t0)/380,1);b.textContent=Math.round(from+(v-from)*k);if(k<1)requestAnimationFrame(f)})(performance.now());
+      $('.plan__p span',pl).textContent=a?'€ / mês, pago por ano':'€ / mês';
+      $('.plan__s',pl).textContent=a?'Poupas '+((m-v)*12)+' € por ano':'';
+    });
+  }
+  radios.forEach(function(r){r.addEventListener('change',run)});run();
+  $$('[data-plan]').forEach(function(a){a.addEventListener('click',function(){var s=$('#planSel');for(var i=0;i<s.options.length;i++)if(s.options[i].text===a.dataset.plan)s.selectedIndex=i})});
+})();
+
+/* ---------- formulário (demonstração) ---------- */
+$('#form').addEventListener('submit',function(e){e.preventDefault();$('#fmsg').textContent='Demonstração: nada foi enviado. No site final, a equipa contactava-te para marcar a aula.'});
+
+/* ---------- revelar ao scroll ---------- */
+var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px',threshold:.08}):null;
+$$('.rv').forEach(function(el){io?io.observe(el):el.classList.add('in')});
+</script>
+</body>
+</html>

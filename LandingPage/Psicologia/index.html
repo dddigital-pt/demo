@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<script>document.documentElement.className='js'</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Casa Calma — Natal com espaço para falar (demonstração)</title>
+<meta name="description" content="Landing page de demonstração: campanha de Natal para um consultório de psicologia, com primeira conversa de acolhimento e sessão-presente, marcação por WhatsApp.">
+<meta name="theme-color" content="#121B1A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23121B1A'/%3E%3Cpath d='M16 5c4 5 6 8 6 12a6 6 0 01-12 0c0-4 2-7 6-12z' fill='%23F0B467'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   LANDING DE CAMPANHA — CASA CALMA (psicologia) · NATAL
+   CONCEITO: uma vela acesa e uma respiração. Noite verde-musgo, âmbar de vela e creme; serifa itálica suave.
+   Hero = fotografia da vela num CÍRCULO que respira (inspira 4 s / expira 6 s) com halos de luz e a
+   legenda "Inspira / Expira". Sem pressa, sem urgência agressiva.
+   Mecanismo: "O que pesa mais este ano?" (escolhas múltiplas, resposta gentil) + duas formas de começar
+   (para mim / para oferecer) → marcação por WhatsApp com mensagem preparada, sem formulário nem servidor.
+   Herdado: faixa DEMO/selo (REGRAS A2). Novo: tudo o resto.
+   ===================================================================== */
+
+/* ---------- variáveis ---------- */
+:root{
+  --night:#121B1A; --night-2:#1A2826; --night-3:#233633; --amber:#F0B467; --amber-d:#C98A3C; --cream:#F2E9DA;
+  --sage:#9FB5A8; --mute:#A9B7AF;
+  --f-d:'Instrument Serif',Georgia,serif; --f-b:'Figtree',system-ui,sans-serif;
+  --demo:34px; --hd:68px; --pad:clamp(20px,5vw,84px); --ease:cubic-bezier(.2,.7,.1,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--demo) + var(--hd));-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--night);color:var(--cream);font:400 18px/1.65 var(--f-b);overflow-x:clip;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+h1,h2,h3,p{margin:0}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- faixa DEMO + selo ---------- */
+.demo{position:fixed;top:0;left:0;right:0;height:var(--demo);z-index:120;display:flex;align-items:center;justify-content:center;gap:12px;padding:0 12px;background:var(--amber);color:var(--night);font:500 12.5px/1 var(--f-b);white-space:nowrap;overflow:hidden}
+.demo b{padding:4px 8px;background:var(--night);color:var(--amber);font:600 10px/1 var(--f-b);letter-spacing:.2em}
+.demo .m{display:none}
+.demo a{margin-left:4px;padding:4px 11px;border:1px solid var(--night);border-radius:99px;text-decoration:none;font-weight:600}
+.demo a:hover{background:var(--night);color:var(--amber)}
+.seal{position:fixed;left:14px;bottom:14px;z-index:90;padding:9px 15px;background:var(--night-2);color:var(--amber);border:1px solid rgba(240,180,103,.4);border-radius:99px;font:600 10px/1 var(--f-b);letter-spacing:.16em;text-transform:uppercase}
+
+/* ---------- cabeçalho ---------- */
+.hd{position:fixed;top:var(--demo);left:0;right:0;height:var(--hd);z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);background:var(--night);border-bottom:1px solid rgba(242,233,218,.1)}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;font:400 26px/1 var(--f-d)}
+.logo svg{width:20px;height:24px;fill:var(--amber)}
+.logo small{display:block;margin-top:4px;font:500 9px/1 var(--f-b);letter-spacing:.3em;text-transform:uppercase;color:var(--sage)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:17px 30px;border:0;border-radius:99px;background:var(--amber);color:var(--night);text-decoration:none;font:600 15px/1 var(--f-b);transition:transform .35s var(--ease),background .3s,box-shadow .3s}
+.btn:hover{transform:translateY(-2px);background:#F6C987;box-shadow:0 12px 30px -10px rgba(240,180,103,.55)}
+.btn--s{padding:12px 20px;font-size:14px}
+.btn--line{background:transparent;color:var(--cream);box-shadow:inset 0 0 0 1px rgba(242,233,218,.4)}
+.btn--line:hover{background:rgba(242,233,218,.08);box-shadow:inset 0 0 0 1px var(--cream)}
+.btn svg{width:17px;height:17px;fill:currentColor}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100svh;display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,6vw,100px);align-items:center;padding:calc(var(--demo) + var(--hd) + clamp(20px,4vh,50px)) var(--pad) clamp(50px,8vh,90px);background:radial-gradient(70% 70% at 78% 45%,rgba(240,180,103,.14),transparent 70%),var(--night);overflow-x:clip}
+.kick{font:500 13px/1 var(--f-b);letter-spacing:.24em;text-transform:uppercase;color:var(--amber)}
+.hero h1{margin:22px 0 0;font:400 clamp(50px,7.4vw,118px)/.96 var(--f-d);letter-spacing:-.02em}
+.hero h1 em{color:var(--amber)}
+.hero__p{max-width:480px;margin-top:24px;color:#D2D8D0;font-size:clamp(17px,1.4vw,20px)}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+
+.orbw{position:relative;justify-self:center;width:min(100%,440px);aspect-ratio:1}
+.orb{position:absolute;inset:9%;border-radius:50%;overflow:hidden;box-shadow:0 0 90px 10px rgba(240,180,103,.28)}
+.orb img{width:100%;height:100%;object-fit:cover}
+.breathe{position:absolute;inset:0;animation:breathe 10s ease-in-out infinite}
+.breathe::before,.breathe::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid rgba(240,180,103,.5)}
+.breathe::after{inset:-7%;border-color:rgba(240,180,103,.25)}
+@keyframes breathe{0%{transform:scale(.86)}40%{transform:scale(1)}100%{transform:scale(.86)}}
+.orb{animation:breatheimg 10s ease-in-out infinite}
+@keyframes breatheimg{0%{transform:scale(.94)}40%{transform:scale(1)}100%{transform:scale(.94)}}
+.orbw{margin-bottom:34px}
+.say{position:absolute;left:0;right:0;bottom:-40px;text-align:center;font:italic 400 28px/1 var(--f-d);color:var(--amber);height:30px}
+.say span{position:absolute;left:0;right:0;opacity:0}
+.say .in{animation:sIn 10s ease-in-out infinite}
+.say .out{animation:sOut 10s ease-in-out infinite}
+@keyframes sIn{0%{opacity:0}6%,34%{opacity:1}40%,100%{opacity:0}}
+@keyframes sOut{0%,40%{opacity:0}46%,94%{opacity:1}100%{opacity:0}}
+
+/* ---------- escolher ---------- */
+.pick{padding:clamp(70px,10vw,130px) var(--pad);background:var(--cream);color:#1D2926}
+.pick__in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(30px,6vw,90px);align-items:center}
+.ph{position:relative;border-radius:260px 260px 20px 20px;overflow:hidden;aspect-ratio:3/4;background:var(--night-3)}
+.ph img{width:100%;height:100%;object-fit:cover}
+.pick h2{font:400 clamp(38px,4.8vw,68px)/1 var(--f-d);letter-spacing:-.015em}
+.pick h2 em{color:#9A6320}
+.pick .lead{margin-top:12px;color:#4C5C57;max-width:520px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.chip{padding:13px 20px;border:1px solid rgba(29,41,38,.28);border-radius:99px;background:transparent;font:500 16px/1 var(--f-b);transition:background .25s,color .25s,border-color .25s}
+.chip:hover{border-color:#1D2926}
+.chip[aria-pressed="true"]{background:#1D2926;border-color:#1D2926;color:var(--cream)}
+.soft{min-height:3.3em;margin-top:18px;font:italic 400 24px/1.25 var(--f-d);color:#7B4E14;transition:opacity .35s}
+.soft.f{opacity:0}
+
+.ways{margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.way{text-align:left;padding:20px 20px 22px;border:1px solid rgba(29,41,38,.22);border-radius:20px;background:#fff8ea;transition:background .3s,border-color .3s,transform .35s var(--ease)}
+.way:hover{transform:translateY(-3px)}
+.way b{display:block;font:400 26px/1.05 var(--f-d)}
+.way span{display:block;margin-top:8px;font-size:15px;line-height:1.45;color:#4C5C57}
+.way[aria-pressed="true"]{background:#1D2926;border-color:#1D2926;color:var(--cream)}
+.way[aria-pressed="true"] span{color:#C6D1CB}
+.way em{display:inline-block;margin-top:10px;font:600 11px/1.4 var(--f-b);letter-spacing:.14em;text-transform:uppercase;font-style:normal;color:#9A6320}
+.way[aria-pressed="true"] em{color:var(--amber)}
+.go{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:26px}
+.go small{font-size:13.5px;color:#5C6B66;max-width:300px;line-height:1.45}
+.pick .btn{background:#1D2926;color:var(--cream)}
+.pick .btn:hover{background:#2C403B;box-shadow:none}
+
+/* ---------- rodapé ---------- */
+.ft{padding:44px var(--pad) 90px;background:var(--night);color:#9FB0A8;font-size:13.5px;line-height:1.65}
+.ft div{max-width:880px;margin:0 auto}
+.ft p+p{margin-top:10px}
+.ft b{color:var(--amber);font-weight:500}
+.crise{padding:16px 20px;border:1px solid rgba(240,180,103,.35);border-radius:14px;color:var(--cream)}
+
+/* ---------- reveals ---------- */
+.js .rv{opacity:0;transform:translateY(22px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.js .rv.in{opacity:1;transform:none}
+
+/* ---------- mobile ---------- */
+@media (max-width:860px){
+  :root{--hd:62px}
+  .demo .d{display:none}.demo .m{display:inline}
+  .seal{display:none}
+  .logo{font-size:23px}
+  .hero{grid-template-columns:1fr;min-height:0;padding-top:calc(var(--demo) + var(--hd) + 28px)}
+  .orbw{width:min(80%,340px);margin:14px 0 18px}
+  .pick__in{grid-template-columns:1fr}
+  .ph{max-width:340px;aspect-ratio:4/4.4;border-radius:200px 200px 20px 20px}
+  .ways{grid-template-columns:1fr}
+  .ft{padding-bottom:40px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .say .in{opacity:1}
+  .js .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="demo" role="note"><b>DEMO</b><span class="d">Landing de demonstração criada pela DD Digital para Casa Calma · conteúdo ilustrativo</span><span class="m">Demonstração · Casa Calma</span><a href="../index.html">← Exemplos</a></div>
+<div class="seal">Versão de demonstração</div>
+
+<header class="hd">
+  <a class="logo" href="#topo" aria-label="Casa Calma — início">
+    <svg viewBox="0 0 20 24" aria-hidden="true"><path d="M10 0c6 7 9 11 9 16a9 9 0 01-18 0C1 11 4 7 10 0z"/></svg>
+    <span>Casa Calma<small>Psicologia</small></span>
+  </a>
+  <a class="btn btn--s" href="#comecar">Marcar conversa</a>
+</header>
+
+<main id="topo">
+  <!-- ================= HERO ================= -->
+  <section class="hero" aria-labelledby="h1">
+    <div>
+      <span class="kick">Natal · Casa Calma</span>
+      <h1 id="h1">O Natal também pode <em>pesar.</em></h1>
+      <p class="hero__p">Entre a pressa, as saudades e as expectativas, nem toda a gente chega a dezembro com vontade de festa. Aqui há espaço para falar disso, sem pressa.</p>
+      <div class="cta">
+        <a class="btn" href="#comecar">Começar uma conversa</a>
+      </div>
+    </div>
+    <div class="orbw">
+      <div class="breathe" aria-hidden="true"></div>
+      <div class="orb"><img src="img/vela-luzes.jpg" alt="Vela acesa rodeada de luzes de Natal desfocadas" width="1100" height="1650"></div>
+      <p class="say" aria-hidden="true"><span class="in">inspira…</span><span class="out">expira…</span></p>
+    </div>
+  </section>
+
+  <!-- ================= ESCOLHER ================= -->
+  <section class="pick" id="comecar" aria-labelledby="h2">
+    <div class="pick__in">
+      <div class="ph rv"><img src="img/cha-vela.jpg" alt="Chávena e vela acesa junto a uma janela, em luz quente" width="1100" height="1650" loading="lazy"></div>
+      <div class="rv" style="transition-delay:.12s">
+        <h2 id="h2">O que pesa mais <em>este ano?</em></h2>
+        <p class="lead">Escolhe o que ressoa. Não precisas de saber o que dizer: a mensagem segue já escrita.</p>
+        <div class="chips" id="pesos" role="group" aria-label="O que pesa mais neste Natal">
+          <button class="chip" type="button" aria-pressed="false">Cansaço</button>
+          <button class="chip" type="button" aria-pressed="false">Saudades de quem já não está</button>
+          <button class="chip" type="button" aria-pressed="false">Tensão em família</button>
+          <button class="chip" type="button" aria-pressed="false">Solidão</button>
+          <button class="chip" type="button" aria-pressed="false">Ansiedade com o fim do ano</button>
+          <button class="chip" type="button" aria-pressed="false">O balanço do ano</button>
+        </div>
+        <p class="soft" id="soft" aria-live="polite">Se nada disto for exatamente o teu caso, também está bem.</p>
+
+        <div class="ways" role="group" aria-label="Forma de começar">
+          <button class="way" type="button" data-w="mim" aria-pressed="true"><b>Para mim</b><span>Primeira conversa de acolhimento, para perceber o que precisas e como te podemos acompanhar.</span><em>Condição de Natal · valor a confirmar</em></button>
+          <button class="way" type="button" data-w="oferta" aria-pressed="false"><b>Para oferecer</b><span>Uma sessão-presente: um vale para alguém marcar quando se sentir pronto ou pronta.</span><em>Cartão incluído · valor a confirmar</em></button>
+        </div>
+
+        <div class="go">
+          <a class="btn" id="wa" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 00-8.6 15L2 22l5.2-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.7.7.7-2.6-.2-.3A8 8 0 0112 4z"/></svg>
+            Enviar por WhatsApp
+          </a>
+          <small>Abre o WhatsApp com a mensagem escrita. Só falta carregares em enviar.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="ft">
+  <div>
+    <p class="crise"><b>Se estás em sofrimento agora:</b> a linha SNS 24 (808 24 24 24) está disponível todos os dias. Em risco imediato, liga 112. Esta página não substitui acompanhamento profissional.</p>
+    <p><b>Landing page de demonstração criada pela DD Digital.</b> Marca, condições, valores e prazos são ilustrativos e não vinculativos; contactos e morada <b>a confirmar com o cliente</b>. A psicologia não promete resultados: cada pessoa tem o seu ritmo e a adequação do acompanhamento é avaliada em consulta. Fotografias: Unsplash.</p>
+  </div>
+</footer>
+
+<script>
+/* ---------- utilitários ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+
+/* ---------- escolher: pesos + forma de começar → WhatsApp ---------- */
+(function pick(){
+  const chips=$$('#pesos .chip'), ways=$$('.way'), soft=$('#soft'), wa=$('#wa');
+  let way='mim';
+  const reply=[
+    'Não tens de resolver tudo antes do dia 25.',
+    'Sentir a falta de alguém também é uma forma de amar.',
+    'Podes estar em família e precisar de espaço só para ti.',
+    'Estar só não é falhar: e pedir companhia também não.',
+    'Dezembro traz muita pressa. Há quem precise de a abrandar.',
+    'Fazer balanço não obriga a chegar a conclusões já.'
+  ];
+  const def='Se nada disto for exatamente o teu caso, também está bem.';
+  function chosen(){return chips.filter(c=>c.getAttribute('aria-pressed')==='true')}
+  function draw(last){
+    const sel=chosen();
+    if(last!=null){
+      soft.classList.add('f');
+      setTimeout(()=>{soft.textContent=sel.length?reply[last]:def;soft.classList.remove('f')},180);
+    }
+    const lista=sel.map(c=>c.textContent.toLowerCase());
+    let t;
+    if(way==='mim'){
+      t='Olá! Gostava de marcar uma primeira conversa de acolhimento na Casa Calma.'+(lista.length?'\n\nEste Natal tem pesado por: '+lista.join(', ')+'.':'')+'\n\nPodem dizer-me que horários têm disponíveis?';
+    }else{
+      t='Olá! Gostava de oferecer uma sessão-presente da Casa Calma a alguém especial.'+'\n\nPodem explicar-me como funciona o vale e o cartão?';
+    }
+    wa.href='https://wa.me/?text='+encodeURIComponent(t);
+  }
+  chips.forEach((c,i)=>c.addEventListener('click',()=>{
+    c.setAttribute('aria-pressed',c.getAttribute('aria-pressed')!=='true');
+    draw(i);
+  }));
+  ways.forEach(b=>b.addEventListener('click',()=>{
+    way=b.dataset.w; ways.forEach(x=>x.setAttribute('aria-pressed',x===b)); draw(null);
+  }));
+  draw(null);
+})();
+
+/* ---------- reveals ---------- */
+(function reveals(){
+  const els=$$('.rv');
+  if(!('IntersectionObserver' in window)){els.forEach(e=>e.classList.add('in'));return}
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+  els.forEach(e=>io.observe(e));
+})();
+</script>
+</body>
+</html>
