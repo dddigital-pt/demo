@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cantinho da Marta — Doces e bolos por encomenda</title>
+<style>
+/* Conceito: biolink genérico "de prateleira" (estilo Linktree). Coluna central, botões todos iguais, sem animações.
+   Serve de termo de comparação com os biolinks personalizados da DD Digital. */
+:root {
+  --bg: #fde4e1;
+  --texto: #3b1f23;
+  --suave: #8a5b60;
+  --botao: #e8657a;
+  --botao-hover: #d4506a;
+  --botao-claro: #ffffff;
+}
+* { box-sizing: border-box; margin: 0; }
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--texto);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 48px 20px 32px;
+}
+main { width: 100%; max-width: 480px; text-align: center; }
+
+/* perfil */
+.avatar {
+  width: 96px; height: 96px; border-radius: 50%;
+  background: var(--botao); margin: 0 auto 14px;
+  display: grid; place-items: center;
+  font-size: 2.2rem; color: #fff; font-weight: 600;
+}
+h1 { font-size: 1.25rem; }
+.bio { color: var(--suave); font-size: .95rem; margin: 6px 0 28px; }
+
+/* links */
+.links { display: flex; flex-direction: column; gap: 12px; }
+.links a {
+  display: block; padding: 15px 18px;
+  background: var(--botao); border-radius: 999px;
+  color: #fff; text-decoration: none; font-weight: 600;
+}
+.links a:hover { background: var(--botao-hover); }
+.links a.claro { background: var(--botao-claro); color: var(--texto); }
+.links a.claro:hover { background: #f3f3f3; }
+</style>
+</head>
+<body>
+<main>
+  <!-- perfil -->
+  <div class="avatar" aria-hidden="true">M</div>
+  <h1>Cantinho da Marta</h1>
+  <p class="bio">Doces e bolos por encomenda 🍰 Feitos com carinho em Setúbal</p>
+
+  <!-- links -->
+  <nav class="links" aria-label="Links">
+    <a href="#">Fazer encomenda</a>
+    <a href="#">Ver catálogo de bolos</a>
+    <a href="#" class="claro">Instagram</a>
+    <a href="#" class="claro">Onde estamos</a>
+  </nav>
+</main>
+</body>
+</html>

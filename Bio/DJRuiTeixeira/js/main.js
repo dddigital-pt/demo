@@ -5,7 +5,7 @@
    2. Cria as barras do equalizador.
    3. Faz os discos de vinil rodarem (33 ou 45 rpm), com arranque e
       travagem suaves como num gira-discos a sério.
-   4. Deixa "agarrar" o disco do topo e fazer scratch.
+   4. Deixa "agarrar" o disco do topo e fazer scratch (com som, que se pode desligar).
    ===================================================================== */
 (function () {
   'use strict';
@@ -114,6 +114,80 @@
   var idPonteiro = null;
   var ultimoAngulo = 0;
 
+  /* ---------- Som do scratch (gerado no browser, não há ficheiros de áudio) ----------
+     Um ruído + um tom que sobem de volume e de "agudo" quanto mais depressa se roda o disco.
+     Só toca enquanto a pessoa está a mexer no disco. */
+  var somLigado = true;
+  var audio = null;
+
+  function prepararAudio() {
+    if (!somLigado) return null;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    try {
+      if (!audio) {
+        var ctx = new AC();
+        var n = ctx.sampleRate * 2;
+        var buf = ctx.createBuffer(1, n, ctx.sampleRate);
+        var dados = buf.getChannelData(0);
+        for (var k = 0; k < n; k++) dados[k] = Math.random() * 2 - 1;
+
+        var ruido = ctx.createBufferSource();
+        ruido.buffer = buf; ruido.loop = true;
+        var filtroRuido = ctx.createBiquadFilter();
+        filtroRuido.type = 'bandpass'; filtroRuido.Q.value = 0.9; filtroRuido.frequency.value = 2000;
+        var gRuido = ctx.createGain(); gRuido.gain.value = 0.55;
+
+        var osc = ctx.createOscillator();
+        osc.type = 'sawtooth'; osc.frequency.value = 90;
+        var filtroTom = ctx.createBiquadFilter();
+        filtroTom.type = 'lowpass'; filtroTom.frequency.value = 1500;
+        var gTom = ctx.createGain(); gTom.gain.value = 0.5;
+
+        var mestre = ctx.createGain(); mestre.gain.value = 0;
+        ruido.connect(filtroRuido); filtroRuido.connect(gRuido); gRuido.connect(mestre);
+        osc.connect(filtroTom); filtroTom.connect(gTom); gTom.connect(mestre);
+        mestre.connect(ctx.destination);
+        ruido.start(); osc.start();
+        audio = { ctx: ctx, mestre: mestre, filtroRuido: filtroRuido, osc: osc };
+      }
+      if (audio.ctx.state === 'suspended') audio.ctx.resume();   // tem de acontecer num toque/clique
+    } catch (_) { audio = null; }
+    return audio;
+  }
+
+  // v = velocidade do disco em graus por segundo (sempre positiva)
+  function tocarSom(v) {
+    if (!audio) return;
+    var t = audio.ctx.currentTime;
+    var f = Math.min(v / 700, 1);
+    audio.mestre.gain.setTargetAtTime(f * 0.22, t, 0.02);
+    audio.osc.frequency.setTargetAtTime(60 + v * 0.45, t, 0.03);
+    audio.filtroRuido.frequency.setTargetAtTime(1200 + v * 3, t, 0.03);
+  }
+
+  var btnSom = document.getElementById('btnSom');
+  btnSom.addEventListener('click', function () {
+    somLigado = !somLigado;
+    btnSom.setAttribute('aria-pressed', somLigado ? 'true' : 'false');
+    if (!somLigado) tocarSom(0);
+  });
+
+  // Mede a velocidade a que se roda o disco, enquanto está agarrado
+  var grausDesdeUltimo = 0;
+  var tempoUltimo = 0;
+  var velocidadeMao = 0;
+  function medirMao(agora) {
+    if (!aArrastar) { tocarSom(0); return; }
+    var dt = Math.max((agora - tempoUltimo) / 1000, 0.001);
+    var instantanea = grausDesdeUltimo / dt;
+    velocidadeMao += (instantanea - velocidadeMao) * 0.35;   // suaviza
+    grausDesdeUltimo = 0;
+    tempoUltimo = agora;
+    tocarSom(velocidadeMao);
+    requestAnimationFrame(medirMao);
+  }
+
   function anguloDoPonteiro(e) {
     var r = discoHero.getBoundingClientRect();
     return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180 / Math.PI;
@@ -127,6 +201,9 @@
     aArrastar = true;
     discoHero.classList.add('a-agarrar');
     document.body.classList.add('ja-agarrou');
+    prepararAudio();
+    grausDesdeUltimo = 0; velocidadeMao = 0; tempoUltimo = performance.now();
+    requestAnimationFrame(medirMao);
     acordar();
   });
 
@@ -137,6 +214,7 @@
     if (delta > 180) delta -= 360;       // passou do -180 para o 180 (ou ao contrário)
     if (delta < -180) delta += 360;
     hero.angulo += delta;
+    grausDesdeUltimo += Math.abs(delta);
     ultimoAngulo = a;
     desenhar(hero);
   });

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>DJ Rui Teixeira — House, Deep House, Minimal e Techno</title>
-<meta name="description" content="DJ Rui Teixeira: House Music, Deep House, Minimal e Techno. +16 anos de experiência, vinyl lover e vinyl collector. Ouve os sets e fala comigo.">
+<meta name="description" content="DJ Rui Teixeira: House Music, Deep House, Minimal e Techno. Vinyl lover e vinyl collector. Ouve os sets e fala comigo.">
 <meta name="theme-color" content="#040b07">
 
 <!-- Ícones do separador e do ecrã inicial -->
@@ -17,7 +17,7 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
 <meta property="og:title" content="DJ Rui Teixeira — House, Deep House, Minimal e Techno">
-<meta property="og:description" content="+16 anos de experiência. Vinyl lover, vinyl collector. Ouve os sets e fala comigo.">
+<meta property="og:description" content="Vinyl lover, vinyl collector. Ouve os sets e fala comigo.">
 <meta property="og:url" content="https://bio.dddigital.pt/djruiteixeira/">
 <link rel="canonical" href="https://bio.dddigital.pt/djruiteixeira/">
 <meta property="og:image" content="https://bio.dddigital.pt/djruiteixeira/img/og.jpg">
@@ -63,6 +63,9 @@
 
     <div class="deck" id="deck">
       <span class="dica" id="dica">↻ arrasta o disco</span>
+      <button class="som" id="btnSom" type="button" aria-pressed="true" aria-label="Som do scratch">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path class="som__on" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/><path class="som__off" d="m16 9 5 6m0-6-5 6"/></svg>
+      </button>
 
       <div class="deck__prato"></div>
 
@@ -102,8 +105,6 @@
     </div>
 
     <h1 class="nome"><span class="nome__dj">DJ</span> Rui<br>Teixeira</h1>
-
-    <p class="exp"><strong>+16</strong> anos de experiência</p>
 
     <div class="eq" id="eq" aria-hidden="true"></div>
 
@@ -177,32 +178,23 @@
   </nav>
 
   <!-- ===================================================================
-       BLOCO "PEDE JÁ O TEU BIOLINK" — o mesmo em todos os biolinks DD Digital.
-       Só mudam as cores (variáveis --cta-*) e o "utm_campaign" (nome do cliente),
-       que serve para sabermos de que biolink veio o pedido.
-       Modelo completo em ../BLOCO-PEDE-O-TEU-BIOLINK.md
+       RODAPÉ + BLOCO "PEDE JÁ O TEU BIOLINK" (igual em todos os biolinks DD Digital).
+       Só mudam as cores (variáveis --cta-*) e o "utm_campaign" (nome do cliente), que serve
+       para sabermos de que biolink veio o pedido. Precisa de img/dd-logo.webp.
+       Modelo completo em Biolinks/BLOCO-PEDE-O-TEU-BIOLINK.md
        =================================================================== -->
-  <aside class="ddcta" aria-label="DD Digital">
-    <a class="ddcta__a" href="https://dddigital.pt/?utm_source=biolink&amp;utm_medium=cta&amp;utm_campaign=djruiteixeira#contacto" target="_blank" rel="noopener">
-      <svg class="ddcta__selo" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
-        <defs><path id="ddcta-circulo" d="M60 60 m-47 0 a47 47 0 1 1 94 0 a47 47 0 1 1 -94 0"/></defs>
-        <g class="ddcta__texto"><text><textPath href="#ddcta-circulo" startOffset="0">PEDE JÁ O TEU BIOLINK • PEDE JÁ O TEU BIOLINK •</textPath></text></g>
-        <circle cx="60" cy="60" r="27" fill="#0f2d24"/>
-        <text x="60" y="68.5" text-anchor="middle" class="ddcta__dd">DD</text>
-      </svg>
-      <span class="ddcta__txt">
-        <strong>Este biolink podia ser teu.</strong>
-        <span>Feito à medida, com a tua cara.<b>Pede já o teu <i aria-hidden="true">→</i></b></span>
-      </span>
-    </a>
-  </aside>
-
-  <!-- ===== RODAPÉ ===== -->
   <footer class="rodape">
     <p class="credito">
       Spoiler: este biolink não se fez sozinho <span class="credito-emoji" aria-hidden="true">😉</span>
       <a href="https://dddigital.pt" target="_blank" rel="noopener">DD Digital</a>.
     </p>
+    <a class="pede" href="https://dddigital.pt/?utm_source=biolink&amp;utm_medium=cta&amp;utm_campaign=djruiteixeira#contacto" target="_blank" rel="noopener">
+      <img src="img/dd-logo.webp" width="200" height="200" alt="DD Digital" loading="lazy" decoding="async">
+      <span class="pede__txt">
+        <span>Design totalmente personalizado à tua marca</span>
+        <b>Pede já o teu biolink <i aria-hidden="true">→</i></b>
+      </span>
+    </a>
     <p class="direitos">© <span id="ano">2026</span> DJ Rui Teixeira</p>
   </footer>
 
