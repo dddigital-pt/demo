@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DJ Rui Teixeira — House, Deep House, Minimal e Techno</title>
+<meta name="description" content="DJ Rui Teixeira: House Music, Deep House, Minimal e Techno. +16 anos de experiência, vinyl lover e vinyl collector. Ouve os sets e fala comigo.">
+<meta name="theme-color" content="#040b07">
+
+<!-- Ícones do separador e do ecrã inicial -->
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="img/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+
+<!-- Pré-visualização ao partilhar o link (WhatsApp, Instagram, iMessage...) -->
+<!-- O endereço tem de ser completo. Quando o domínio do biolink estiver definido, atualizar og:url, canonical e og:image. -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_PT">
+<meta property="og:title" content="DJ Rui Teixeira — House, Deep House, Minimal e Techno">
+<meta property="og:description" content="+16 anos de experiência. Vinyl lover, vinyl collector. Ouve os sets e fala comigo.">
+<meta property="og:url" content="https://bio.dddigital.pt/djruiteixeira/">
+<link rel="canonical" href="https://bio.dddigital.pt/djruiteixeira/">
+<meta property="og:image" content="https://bio.dddigital.pt/djruiteixeira/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:alt" content="DJ Rui Teixeira — disco de vinil a rodar">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preload" href="fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===================================================================
+     FUNDO: a mesa de mistura vista de cima.
+     Dois discos de vinil enormes, a rodar, "espreitam" pelos cantos.
+     (É só decoração: fica escondido dos leitores de ecrã.)
+     =================================================================== -->
+<div class="mesa" aria-hidden="true">
+  <div class="disco disco--a">
+    <div class="vinil">
+      <span class="vinil__gira" data-gira="0.45">
+        <span class="vinil__etiqueta"><span class="et-topo">Rui Teixeira</span><span class="et-baixo">33⅓ rpm</span></span>
+      </span>
+      <span class="vinil__brilho"></span>
+    </div>
+  </div>
+  <div class="disco disco--b">
+    <div class="vinil">
+      <span class="vinil__gira" data-gira="0.45">
+        <span class="vinil__etiqueta"><span class="et-topo">House · Techno</span><span class="et-baixo">Side B</span></span>
+      </span>
+      <span class="vinil__brilho"></span>
+    </div>
+  </div>
+</div>
+
+<main class="consola">
+
+  <!-- ===== CABEÇALHO: o prato de vinil com a foto ===== -->
+  <header class="hero">
+
+    <div class="deck" id="deck">
+      <span class="dica" id="dica">↻ arrasta o disco</span>
+
+      <div class="deck__prato"></div>
+
+      <!-- O disco. Arrasta-se com o dedo ou com o rato (scratch). -->
+      <div class="vinil deck__disco" id="discoHero" title="Arrasta para fazer scratch">
+        <span class="vinil__gira" data-gira="1" data-hero>
+          <span class="vinil__etiqueta vinil__etiqueta--hero"></span>
+        </span>
+        <span class="vinil__brilho"></span>
+        <!-- FOTO: substituir o ficheiro img/perfil.webp (quadrada, 600×600), mantendo o nome -->
+        <img class="deck__foto" src="img/perfil.webp" width="600" height="600" alt="DJ Rui Teixeira" decoding="async" fetchpriority="high">
+      </div>
+
+      <!-- O braço do gira-discos: poisa no disco quando está a tocar -->
+      <svg class="braco" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <g class="braco__g">
+          <g transform="rotate(16.9 90 10)">
+            <rect x="87.6" y="-5" width="4.8" height="9" rx="1.6" fill="#cdd8d1"/>
+            <line x1="90" y1="3" x2="90" y2="72" stroke="#e6efe9" stroke-width="1.9" stroke-linecap="round"/>
+            <rect x="86.9" y="69" width="6.2" height="10" rx="1.2" fill="#0b130f" stroke="#2bea7e" stroke-width=".7"/>
+            <circle cx="90" cy="79" r=".9" fill="#2bea7e"/>
+          </g>
+        </g>
+        <circle cx="90" cy="10" r="7.5" fill="#101a15" stroke="rgba(255,255,255,.28)" stroke-width=".8"/>
+        <circle cx="90" cy="10" r="3" fill="#cfe9da"/>
+      </svg>
+
+      <!-- Comandos: 33 · tocar/parar · 45 -->
+      <div class="mando" role="group" aria-label="Comandos do gira-discos">
+        <button class="mando__rpm" type="button" data-rpm="33.333" aria-pressed="true">33</button>
+        <button class="mando__tocar" id="btnTocar" type="button" aria-pressed="false" aria-label="Disco a tocar">
+          <svg class="i-play" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" fill="currentColor"/></svg>
+          <svg class="i-pausa" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="6" y="5" width="4.2" height="14" rx="1.2" fill="currentColor"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.2" fill="currentColor"/></svg>
+        </button>
+        <button class="mando__rpm" type="button" data-rpm="45" aria-pressed="false">45</button>
+      </div>
+    </div>
+
+    <h1 class="nome"><span class="nome__dj">DJ</span> Rui<br>Teixeira</h1>
+
+    <p class="exp"><strong>+16</strong> anos de experiência</p>
+
+    <div class="eq" id="eq" aria-hidden="true"></div>
+
+    <ul class="estilos" aria-label="Estilos de música">
+      <li>House Music</li>
+      <li>Deep House</li>
+      <li>Minimal</li>
+      <li>Techno</li>
+    </ul>
+
+    <ul class="selos">
+      <li class="selo"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#05140c"/><circle cx="12" cy="12" r="3.6" fill="#2bea7e"/><circle cx="12" cy="12" r="1" fill="#05140c"/></svg>Vinyl lover</li>
+      <li class="selo"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#05140c"/><circle cx="12" cy="12" r="3.6" fill="#2bea7e"/><circle cx="12" cy="12" r="1" fill="#05140c"/></svg>Vinyl collector</li>
+    </ul>
+  </header>
+
+  <!-- ===================================================================
+       ===== LINKS: editar aqui =====
+       Um botão = um bloco igual aos outros. Para trocar um link, mudar o href.
+       =================================================================== -->
+  <nav class="links" aria-label="Ligações">
+
+    <!-- Ação principal -->
+    <a class="principal" style="--i:0" href="https://wa.me/351937055571?text=Ol%C3%A1%20Rui!%20Vi%20o%20teu%20biolink%20e%20gostava%20de%20falar%20contigo." target="_blank" rel="noopener">
+      <span class="principal__icone"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+      <span class="principal__txt"><strong>Booking &amp; contacto</strong><small>Fala comigo no WhatsApp</small></span>
+      <svg class="principal__seta" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+
+    <h2 class="legenda"><span>Ouvir</span></h2>
+
+    <a class="canal" style="--i:1" href="https://www.youtube.com/watch?v=3IsF3mL6FzI" target="_blank" rel="noopener">
+      <span class="capa">
+        <span class="capa__vinil"></span>
+        <img src="img/video-1.webp" width="240" height="240" alt="" loading="lazy" decoding="async">
+      </span>
+      <span class="canal__txt"><small>Vídeo no YouTube</small><strong>Two Turntables and one Mixer – I</strong></span>
+      <span class="vu" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+    </a>
+
+    <a class="canal" style="--i:2" href="https://youtu.be/SgTkVROXC-M?si=CNUfQXUyJ-AITzWN" target="_blank" rel="noopener">
+      <span class="capa">
+        <span class="capa__vinil"></span>
+        <img src="img/video-2.webp" width="240" height="240" alt="" loading="lazy" decoding="async">
+      </span>
+      <span class="canal__txt"><small>Vídeo no YouTube</small><strong>Live Streaming</strong></span>
+      <span class="vu" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+    </a>
+
+    <a class="canal" style="--i:3" href="https://www.mixcloud.com/DjTeixeira/" target="_blank" rel="noopener">
+      <span class="capa">
+        <span class="capa__vinil"></span>
+        <span class="capa__icone"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></span>
+      </span>
+      <span class="canal__txt"><small>Mixes</small><strong>Mixcloud</strong></span>
+      <span class="vu" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+    </a>
+
+    <h2 class="legenda"><span>Seguir</span></h2>
+
+    <div class="redes">
+      <a class="rede" style="--i:4" href="https://www.instagram.com/djrui.teixeira/" target="_blank" rel="noopener">
+        <span class="rede__icone"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></span>
+        <span class="rede__txt"><strong>Instagram</strong><small>@djrui.teixeira</small></span>
+      </a>
+      <a class="rede" style="--i:5" href="https://www.facebook.com/DjRuiTeixeira" target="_blank" rel="noopener">
+        <span class="rede__icone"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></span>
+        <span class="rede__txt"><strong>Facebook</strong><small>DjRuiTeixeira</small></span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ===================================================================
+       BLOCO "PEDE JÁ O TEU BIOLINK" — o mesmo em todos os biolinks DD Digital.
+       Só mudam as cores (variáveis --cta-*) e o "utm_campaign" (nome do cliente),
+       que serve para sabermos de que biolink veio o pedido.
+       Modelo completo em ../BLOCO-PEDE-O-TEU-BIOLINK.md
+       =================================================================== -->
+  <aside class="ddcta" aria-label="DD Digital">
+    <a class="ddcta__a" href="https://dddigital.pt/?utm_source=biolink&amp;utm_medium=cta&amp;utm_campaign=djruiteixeira#contacto" target="_blank" rel="noopener">
+      <svg class="ddcta__selo" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+        <defs><path id="ddcta-circulo" d="M60 60 m-47 0 a47 47 0 1 1 94 0 a47 47 0 1 1 -94 0"/></defs>
+        <g class="ddcta__texto"><text><textPath href="#ddcta-circulo" startOffset="0">PEDE JÁ O TEU BIOLINK • PEDE JÁ O TEU BIOLINK •</textPath></text></g>
+        <circle cx="60" cy="60" r="27" fill="#0f2d24"/>
+        <text x="60" y="68.5" text-anchor="middle" class="ddcta__dd">DD</text>
+      </svg>
+      <span class="ddcta__txt">
+        <strong>Este biolink podia ser teu.</strong>
+        <span>Feito à medida, com a tua cara.<b>Pede já o teu <i aria-hidden="true">→</i></b></span>
+      </span>
+    </a>
+  </aside>
+
+  <!-- ===== RODAPÉ ===== -->
+  <footer class="rodape">
+    <p class="credito">
+      Spoiler: este biolink não se fez sozinho <span class="credito-emoji" aria-hidden="true">😉</span>
+      <a href="https://dddigital.pt" target="_blank" rel="noopener">DD Digital</a>.
+    </p>
+    <p class="direitos">© <span id="ano">2026</span> DJ Rui Teixeira</p>
+  </footer>
+
+</main>
+
+<script src="js/main.js"></script>
+</body>
+</html>
