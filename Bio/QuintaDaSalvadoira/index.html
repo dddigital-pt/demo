@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quinta da Salvadoira — Biolink (demonstração)</title>
+<meta name="description" content="Demonstração de biolink para a Quinta da Salvadoira — Casa Celeiro, um refúgio na natureza para toda a família. Conteúdo ilustrativo.">
+<meta name="theme-color" content="#3F3B30">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_PT">
+<meta property="og:title" content="Quinta da Salvadoira — Biolink (demonstração)">
+<meta property="og:description" content="Casa Celeiro, um refúgio na natureza para toda a família. Demonstração de biolink criada pela DD Digital.">
+<link rel="icon" href="img/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="img/favicon.png">
+<script>document.documentElement.classList.add('js');</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,500;1,500;1,600&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   NOTAS DA DEMO — Quinta da Salvadoira (biolink)
+   Conceito: a página é uma folha de papel de desenho. O logótipo (um esboço a traço) desenha-se
+   sozinho: primeiro a casa, depois o nome "escrito à mão" da esquerda para a direita. Os links são
+   "bilhetes" de papel com cantos desenhados à mão; em baixo, uma paisagem de traço (colinas, pinheiros,
+   um celeiro pequeno que repete o da quinta, sol) desenha-se quando chega ao ecrã. Folhas a cair, devagar.
+   Sensação: sereno, artesanal, acolhedor. Toca na casa para a ver desenhar-se outra vez.
+   Herdado de: Biolinks DJ Rui Teixeira (bloco "Pede já o teu biolink" + crédito, só cores trocadas) e
+   de Damn Curls Bio (faixa DEMO + selo + nota). Novo: tudo o resto (papel, traço, desenho animado).
+   Fontes: Cormorant Infant (títulos, itálico), Karla (corpo). Paleta tirada do logótipo: tinta oliva
+   #3F3B30 sobre papel #F6F3EC; salva e barro só como acentos.
+   (Armadilhas técnicas: ver ARMADILHAS.md na pasta Demo/)
+   ===================================================================== */
+
+/* ===== variáveis ===== */
+:root {
+  --papel: #F6F3EC;
+  --papel-2: #FBF9F4;
+  --mesa: #E6E0D2;
+  --tinta: #3F3B30;
+  --tinta-suave: #6A6455;
+  --salva: #8E9A78;
+  --salva-escura: #5B6748;
+  --barro: #A8683C;
+  --barro-escuro: #8A5530;
+
+  --font-titulo: "Cormorant Infant", Georgia, serif;
+  --font-corpo: "Karla", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --bar: 36px;
+  --grao: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.12 0 0 0 0 .12 0 0 0 0 .1 0 0 0 0 .055 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* bloco "Pede já o teu biolink" (versão para fundo claro) */
+  --cta-fundo: rgba(255, 255, 255, .72);
+  --cta-fundo-hover: #fff;
+  --cta-texto: var(--tinta);
+  --cta-destaque: var(--barro-escuro);
+  --cta-linha: rgba(63, 59, 48, .22);
+}
+
+/* ===== base ===== */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; min-height: 100vh;
+  font-family: var(--font-corpo); font-size: 16px; line-height: 1.45;
+  color: var(--tinta); background: var(--papel);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, p, ul { margin: 0; padding: 0; }
+a { color: inherit; }
+img { display: block; max-width: 100%; height: auto; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ===== faixa DEMO + selo (aviso de demonstração) ===== */
+.demo-bar {
+  position: sticky; top: 0; z-index: 45;
+  min-height: calc(var(--bar) + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) 14px 0;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: var(--tinta); color: var(--papel); text-align: center;
+  font-size: 13px; white-space: nowrap; overflow: hidden;
+}
+.demo-bar b { flex: none; background: var(--barro); color: #fff; padding: 2px 9px; border-radius: 99px; font-size: 11px; letter-spacing: .12em; }
+.demo-bar span { overflow: hidden; text-overflow: ellipsis; }
+.demo-bar .s { display: none; }
+.demo-chip {
+  position: fixed; right: 14px; bottom: 14px; z-index: 50;
+  display: flex; align-items: center; gap: 8px;
+  background: var(--tinta); color: var(--papel); font-size: 12px; font-weight: 500;
+  padding: 8px 14px; border-radius: 99px; box-shadow: 0 6px 24px rgba(63, 59, 48, .3);
+}
+.demo-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--salva); animation: pulso 1.8s infinite; }
+@keyframes pulso { 50% { opacity: .3; } }
+@media (max-width: 640px) {
+  .demo-bar .l { display: none; } .demo-bar .s { display: inline; }
+  .demo-chip { display: none; }
+}
+
+/* ===== fundo: folhas que caem (decoração) ===== */
+.chuva { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.folha {
+  position: absolute; top: 0; left: var(--x);
+  width: var(--s); height: var(--s);
+  background: var(--c, var(--salva)); opacity: .38;
+  border-radius: 0 100% 0 100%;
+  animation: cair var(--t) var(--d) linear infinite;
+  will-change: transform;
+}
+@keyframes cair {
+  0%   { transform: translate3d(0, -14vh, 0) rotate(0); }
+  25%  { transform: translate3d(var(--dx), 22vh, 0) rotate(90deg); }
+  50%  { transform: translate3d(calc(var(--dx) * -.5), 50vh, 0) rotate(200deg); }
+  75%  { transform: translate3d(var(--dx), 80vh, 0) rotate(280deg); }
+  100% { transform: translate3d(0, 114vh, 0) rotate(360deg); }
+}
+
+/* ===== a folha de papel ===== */
+.pagina {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 460px; margin: 0 auto;
+  padding: 26px 22px calc(34px + env(safe-area-inset-bottom, 0px));
+  background: var(--papel) var(--grao);
+  overflow-x: clip;
+}
+@media (min-width: 720px) {
+  body { background: var(--mesa); }
+  .pagina {
+    margin: 32px auto 90px; padding: 44px 34px 40px;
+    border-radius: 3px; box-shadow: 0 1px 2px rgba(63, 59, 48, .18), 0 24px 50px -18px rgba(63, 59, 48, .35);
+    overflow-x: visible;
+  }
+  /* fita-cola nos cantos (só em ecrã grande) */
+  .pagina::before, .pagina::after {
+    content: ""; position: absolute; top: -12px; width: 92px; height: 26px;
+    background: rgba(168, 104, 60, .22); border-left: 1px dashed rgba(63, 59, 48, .18); border-right: 1px dashed rgba(63, 59, 48, .18);
+  }
+  .pagina::before { left: -22px; transform: rotate(-32deg); }
+  .pagina::after { right: -22px; transform: rotate(32deg); }
+}
+
+/* ===== cabeçalho: o desenho do logótipo ===== */
+.hero { text-align: center; }
+.logo { position: relative; width: min(84%, 330px); margin: 0 auto; font-size: 0; }
+.logo img { width: 100%; height: auto; }
+.logo__nome { margin-top: 6px; }
+
+/* a "caneta": a máscara desliza e vai revelando o traço (estado final = tudo visível, sem JS e com movimento reduzido) */
+.logo__casa, .logo__nome {
+  -webkit-mask-image: linear-gradient(var(--ang, 100deg), #000 40%, transparent 46%);
+          mask-image: linear-gradient(var(--ang, 100deg), #000 40%, transparent 46%);
+  -webkit-mask-size: 300% 100%; mask-size: 300% 100%;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: 0 0; mask-position: 0 0;
+}
+.logo__casa { animation: caneta 1.35s .15s cubic-bezier(.55, .05, .3, 1) backwards; }
+.logo__nome { --ang: 90deg; animation: caneta 1s 1.2s cubic-bezier(.4, .1, .3, 1) backwards; }
+@keyframes caneta {
+  from { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+}
+
+.redesenhar {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 8px 12px; min-height: 36px;
+  font: 500 .78rem/1 var(--font-corpo); color: var(--tinta-suave);
+  background: none; border: 0; border-radius: 99px; cursor: pointer;
+  animation: surgir .6s 2.2s var(--ease) backwards;
+}
+.redesenhar svg { transition: transform .5s var(--ease); }
+.redesenhar:active svg { transform: rotate(-200deg); }
+.redesenhar:focus-visible { outline: 2px solid var(--barro); outline-offset: 2px; }
+
+.lema { margin-top: 14px; animation: surgir .8s 1.9s var(--ease) backwards; }
+.lema__nome {
+  position: relative; display: inline-block;
+  font-family: var(--font-titulo); font-style: italic; font-weight: 600;
+  font-size: clamp(2.1rem, 9.5vw, 2.7rem); line-height: 1.05; letter-spacing: -.01em;
+}
+.lema__nome svg { display: block; width: 104%; height: 9px; margin: 3px -2% 0; overflow: visible; }
+.lema__nome path { fill: none; stroke: var(--barro); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; animation: desenhar .9s 2.2s ease-out backwards; }
+.lema__txt { display: block; max-width: 20em; margin: 12px auto 0; font-family: var(--font-titulo); font-size: 1.22rem; line-height: 1.3; color: var(--tinta-suave); }
+
+@keyframes surgir { from { opacity: 0; transform: translateY(10px); } }
+@keyframes desenhar { from { stroke-dashoffset: 1; } }
+
+/* ===== links ===== */
+.links { margin-top: 26px; display: flex; flex-direction: column; gap: 14px; }
+.legenda {
+  display: flex; align-items: center; gap: 12px; margin-top: 8px;
+  font: 700 .72rem/1 var(--font-corpo); letter-spacing: .2em; text-transform: uppercase; color: var(--salva-escura);
+  animation: surgir .6s 1.6s var(--ease) backwards;
+}
+.legenda:first-child { margin-top: 0; }
+.legenda::before, .legenda::after { content: ""; flex: 1; height: 5px; background: no-repeat center / 100% 5px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 5' preserveAspectRatio='none'%3E%3Cpath d='M0 2.8C14 .6 26 4.6 42 2.6S78 .8 100 2.4' fill='none' stroke='%238E9A78' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); }
+
+/* "bilhete" de papel com cantos desenhados à mão */
+.bilhete {
+  --r: 20px 28px 22px 30px / 28px 20px 30px 22px;
+  position: relative; display: grid; grid-template-columns: 46px 1fr 22px; align-items: center; gap: 14px;
+  min-height: 72px; padding: 12px 18px 12px 14px;
+  text-decoration: none; color: var(--tinta);
+  background: var(--papel-2) var(--grao); border: 1.6px solid var(--tinta); border-radius: var(--r);
+  box-shadow: 3px 4px 0 rgba(63, 59, 48, .2);
+  animation: subir .7s calc(1.5s + var(--i, 0) * .12s) var(--ease) backwards;
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease), background-color .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.bilhete::before {   /* segundo traço de lápis, ligeiramente fora do sítio */
+  content: ""; position: absolute; inset: -4px 0 -3px -3px; z-index: -1;
+  border: 1px solid rgba(63, 59, 48, .32); border-radius: var(--r); transform: rotate(-.5deg);
+  pointer-events: none;
+}
+.bilhete:nth-of-type(2n) { --r: 28px 20px 30px 22px / 22px 30px 20px 28px; }
+.bilhete:nth-of-type(2n)::before { transform: rotate(.5deg); inset: -3px -3px -4px 0; }
+.bilhete:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 rgba(63, 59, 48, .2); }
+.bilhete:focus-visible { outline: 3px solid var(--barro); outline-offset: 5px; }
+@media (hover: hover) and (pointer: fine) {
+  .bilhete:hover { transform: translate(-1px, -2px) rotate(-.3deg); box-shadow: 5px 7px 0 rgba(63, 59, 48, .22); }
+  .bilhete:hover .bilhete__seta { transform: translateX(4px); }
+}
+.bilhete__icone {
+  display: grid; place-items: center; width: 46px; height: 46px;
+  border: 1.4px solid currentColor; border-radius: 52% 48% 55% 45% / 48% 54% 46% 52%;
+}
+.bilhete__txt { min-width: 0; line-height: 1.2; }
+.bilhete__txt small { display: block; margin-bottom: 3px; font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-suave); }
+.bilhete__txt strong { display: block; font-family: var(--font-titulo); font-size: 1.28rem; font-weight: 600; font-style: italic; line-height: 1.1; }
+.bilhete__seta { transition: transform .25s var(--ease); }
+
+/* o principal: tinta cheia, papel por cima */
+.bilhete--principal { min-height: 84px; background: var(--tinta); color: var(--papel); box-shadow: 4px 5px 0 var(--barro); }
+.bilhete--principal::before { border-color: var(--tinta); opacity: .55; }
+.bilhete--principal .bilhete__txt small { color: #D6CFBC; }
+.bilhete--principal .bilhete__txt strong { font-size: 1.5rem; }
+.bilhete--principal:active { box-shadow: 1px 1px 0 var(--barro); }
+@media (hover: hover) and (pointer: fine) { .bilhete--principal:hover { box-shadow: 6px 8px 0 var(--barro); } }
+.bilhete--principal:focus-visible { outline-color: var(--salva-escura); }
+
+@keyframes subir { from { opacity: 0; transform: translateY(16px) rotate(-.6deg); } }
+
+/* ===== a paisagem que se desenha ===== */
+.cena { margin: 34px -6px 0; }
+.cena svg { display: block; width: 100%; height: auto; overflow: visible; }
+.cena path, .cena circle { fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; animation: desenhar 1.5s var(--d, 0s) ease-in-out backwards; }
+.cena .c-salva { stroke: var(--salva-escura); }
+.cena .c-tinta { stroke: var(--tinta); }
+.cena .c-barro { stroke: var(--barro); }
+.cena .c-fraco { stroke: var(--tinta); opacity: .45; }
+.js .cena:not(.on) * { animation-play-state: paused; }
+
+/* ===== rodapé ===== */
+.rodape { margin-top: 30px; text-align: center; }
+.f-demo { padding: 12px 14px; border: 1.2px dashed rgba(63, 59, 48, .4); border-radius: 14px 18px 14px 20px / 18px 14px 20px 14px; background: rgba(255, 255, 255, .5); font-size: .78rem; line-height: 1.5; color: var(--tinta-suave); text-align: left; }
+.f-demo b { color: var(--tinta); }
+
+/* crédito obrigatório DD Digital */
+.credito { margin-top: 18px; font-size: .72rem; color: var(--tinta-suave); }
+.credito a {
+  color: var(--salva-escura); text-decoration: none; font-weight: 700;
+  background: linear-gradient(var(--barro), var(--barro)) 0 100% / 0 1px no-repeat;
+  transition: color .2s, background-size .3s ease;
+}
+.credito a:hover, .credito a:focus-visible { color: var(--tinta); background-size: 100% 1px; }
+.credito-emoji { display: inline-block; transform-origin: 70% 70%; animation: piscar 6s ease-in-out infinite; }
+@keyframes piscar {
+  0%, 86%, 100% { transform: rotate(0) scale(1); }
+  90% { transform: rotate(-14deg) scale(1.2); }
+  94% { transform: rotate(10deg) scale(1.2); }
+  97% { transform: rotate(0) scale(1); }
+}
+
+/* =====================================================================
+   "PEDE JÁ O TEU BIOLINK" (DD Digital) — igual em todos os biolinks
+   Fica por baixo do crédito, como parte da assinatura e não como mais um link.
+   Para o adaptar a outro biolink, mudar só estas variáveis (ou defini-las no :root):
+     --cta-fundo  --cta-texto  --cta-destaque  --cta-linha
+   ===================================================================== */
+.pede {
+  display: inline-flex; align-items: center; gap: 12px;
+  max-width: 100%;
+  margin-top: 14px; padding: 8px 18px 8px 8px;
+  border-radius: 999px;
+  text-align: left; text-decoration: none;
+  color: var(--cta-texto, var(--tinta));
+  background: var(--cta-fundo, rgba(4, 11, 7, .72));
+  border: 1px solid var(--cta-linha, rgba(150, 255, 195, .24));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color .25s, background .25s;
+}
+.pede img { flex: none; width: 40px; height: 40px; border-radius: 50%; background: #fdfdfd; object-fit: cover; }
+.pede__txt { min-width: 0; line-height: 1.3; }
+.pede__txt > span { display: block; font-size: .7rem; opacity: .75; }
+.pede b { display: block; margin-top: 1px; font-size: .82rem; font-weight: 700; color: var(--cta-destaque, var(--barro-escuro)); }
+.pede b i { display: inline-block; font-style: normal; transition: transform .2s var(--ease); }
+.pede:hover, .pede:focus-visible { border-color: var(--cta-destaque, var(--barro-escuro)); background: var(--cta-fundo-hover, rgba(10, 26, 18, .9)); }
+.pede:hover b i { transform: translateX(4px); }
+.pede:focus-visible { outline: 2px solid var(--tinta); outline-offset: 3px; }
+
+.direitos { margin-top: 16px; font-size: .72rem; color: var(--tinta-suave); }
+
+/* ===== atalhos de teste e movimento reduzido ===== */
+.rapido *, .rapido *::before { animation-duration: .01s !important; animation-delay: 0s !important; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .chuva, .redesenhar { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Aviso de demonstração (faixa fixa + selo + nota no rodapé) ===== -->
+<div class="demo-bar"><b>DEMO</b><span class="l">Biolink de demonstração criado pela DD Digital para a Quinta da Salvadoira · conteúdo ilustrativo</span><span class="s">Demonstração · Quinta da Salvadoira</span></div>
+
+<!-- Fundo: folhas a cair (só decoração) -->
+<div class="chuva" aria-hidden="true">
+  <i class="folha" style="--x:8%;  --s:11px; --t:19s; --d:-3s;  --dx:30px"></i>
+  <i class="folha" style="--x:27%; --s:15px; --t:24s; --d:-14s; --dx:-36px; --c:var(--barro); opacity:.26"></i>
+  <i class="folha" style="--x:46%; --s:10px; --t:21s; --d:-8s;  --dx:26px"></i>
+  <i class="folha" style="--x:66%; --s:14px; --t:26s; --d:-19s; --dx:-30px"></i>
+  <i class="folha" style="--x:84%; --s:12px; --t:20s; --d:-11s; --dx:34px; --c:var(--barro); opacity:.26"></i>
+  <i class="folha" style="--x:94%; --s:9px;  --t:23s; --d:-5s;  --dx:-24px"></i>
+</div>
+
+<main class="pagina" id="topo">
+
+  <!-- ===== CABEÇALHO: o logótipo desenha-se sozinho ===== -->
+  <header class="hero">
+    <h1 class="logo" id="logo">
+      <span class="sr">Quinta da Salvadoira</span>
+      <!-- Logótipo fornecido pelo cliente, dividido em dois desenhos (casa + nome) para se animar por partes -->
+      <img class="logo__casa" src="img/casa.webp" width="1000" height="682" alt="" fetchpriority="high" decoding="async">
+      <img class="logo__nome" src="img/nome.webp" width="1000" height="210" alt="" decoding="async">
+    </h1>
+
+    <button class="redesenhar" id="redesenhar" type="button">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+      ver desenhar outra vez
+    </button>
+
+    <p class="lema">
+      <span class="lema__nome">Casa Celeiro<svg viewBox="0 0 200 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 6C20 1 35 9 55 5S90 2 110 6 160 9 198 3"/></svg></span><span class="sr">, </span>
+      <span class="lema__txt">um refúgio na natureza para toda a família</span>
+    </p>
+  </header>
+
+  <!-- ===================================================================
+       ===== LINKS: editar aqui =====
+       Um botão = um bloco igual aos outros. Para trocar um link, mudar o href.
+       =================================================================== -->
+  <nav class="links" aria-label="Ligações">
+
+    <h2 class="legenda">Reservar</h2>
+
+    <!-- Ação principal -->
+    <a class="bilhete bilhete--principal" style="--i:0" href="https://www.airbnb.com/rooms/1165902464585009713" target="_blank" rel="noopener">
+      <span class="bilhete__icone"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></span>
+      <span class="bilhete__txt"><small>no Airbnb</small><strong>Reservar a Casa Celeiro</strong></span>
+      <svg class="bilhete__seta" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+
+    <a class="bilhete" style="--i:1" href="https://www.booking.com/hotel/pt/quinta-da-salvadora.pt-pt.html" target="_blank" rel="noopener">
+      <span class="bilhete__icone"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19V6M3 15h18v4M21 15v-3a3 3 0 0 0-3-3h-7v6"/><circle cx="7" cy="11.5" r="1.8"/></svg></span>
+      <span class="bilhete__txt"><small>no Booking.com</small><strong>Ver disponibilidade</strong></span>
+      <svg class="bilhete__seta" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+
+    <h2 class="legenda">Acompanhar</h2>
+
+    <a class="bilhete" style="--i:2" href="https://www.facebook.com/people/quinta-da-salvadoira" target="_blank" rel="noopener">
+      <span class="bilhete__icone"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></span>
+      <span class="bilhete__txt"><small>no Facebook</small><strong>Quinta da Salvadoira</strong></span>
+      <svg class="bilhete__seta" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </nav>
+
+  <!-- ===== A paisagem: desenha-se quando chega ao ecrã (colinas, pinheiros, o celeiro pequeno, sol) ===== -->
+  <div class="cena" id="cena" aria-hidden="true">
+    <svg viewBox="0 0 400 140" focusable="false">
+      <!-- sol -->
+      <path class="c-barro" pathLength="1" style="--d:.1s" d="M348 20C356 20 360 27 360 33S355 45 348 45C340 45 336 39 336 32S341 20 349 20"/>
+      <path class="c-barro" pathLength="1" style="--d:.5s" d="M348 6v8"/>
+      <path class="c-barro" pathLength="1" style="--d:.55s" d="M373 32h-8"/>
+      <path class="c-barro" pathLength="1" style="--d:.6s" d="M323 32h8"/>
+      <path class="c-barro" pathLength="1" style="--d:.65s" d="M330 14l5 5"/>
+      <path class="c-barro" pathLength="1" style="--d:.7s" d="M366 14l-5 5"/>
+      <path class="c-barro" pathLength="1" style="--d:.75s" d="M330 50l5-5"/>
+      <path class="c-barro" pathLength="1" style="--d:.8s" d="M366 50l-5-5"/>
+      <!-- colinas -->
+      <path class="c-salva" pathLength="1" style="--d:.2s" d="M-5 96C40 78 90 74 140 88S220 108 270 90 350 64 405 80"/>
+      <path class="c-fraco" pathLength="1" style="--d:.5s" d="M-5 120C50 104 110 108 165 116S270 128 330 112 385 104 405 108"/>
+      <!-- pinheiros e árvores -->
+      <path class="c-salva" pathLength="1" style="--d:.9s" d="M30 87V80M22 80L30 64 38 80zM25 70L30 58 35 70"/>
+      <path class="c-salva" pathLength="1" style="--d:1.05s" d="M66 80V68M66 68C54 68 50 55 58 50 60 42 72 42 75 50 82 54 78 68 66 68"/>
+      <path class="c-salva" pathLength="1" style="--d:1.2s" d="M95 80V74M89 74L95 60 101 74z"/>
+      <!-- o celeiro pequeno (repete o da quinta) -->
+      <path class="c-tinta" pathLength="1" style="--d:1.35s" d="M180 100V89L192 81 204 89V100M190 100V93h6v7M176 100h32"/>
+      <path class="c-salva" pathLength="1" style="--d:1.6s" d="M249 96V86M249 86C240 86 237 76 243 72 245 65 254 65 256 72 262 76 258 86 249 86"/>
+      <path class="c-salva" pathLength="1" style="--d:1.75s" d="M311 77V69M303 69L311 51 319 69zM306 59L311 46 316 59"/>
+      <!-- ervas -->
+      <path class="c-fraco" pathLength="1" style="--d:1.9s" d="M120 113l-2-6M120 113l2-7M124 113l3-5M232 124l-2-6M232 124l2-7M236 124l3-5M52 108l-2-6M52 108l2-7"/>
+    </svg>
+  </div>
+
+  <!-- ===================================================================
+       RODAPÉ + BLOCO "PEDE JÁ O TEU BIOLINK" (igual em todos os biolinks DD Digital).
+       Só mudam as cores (variáveis --cta-*) e o "utm_campaign" (nome do cliente), que serve
+       para sabermos de que biolink veio o pedido. Precisa de img/dd-logo.webp.
+       Modelo completo em Biolinks/BLOCO-PEDE-O-TEU-BIOLINK.md
+       =================================================================== -->
+  <footer class="rodape">
+    <p class="f-demo"><b>Biolink de demonstração.</b> Criado pela DD Digital como proposta de design. Os textos são ilustrativos e não vinculativos; os três botões abrem as páginas indicadas pelo cliente (Airbnb, Booking.com e Facebook). Logótipo fornecido pelo cliente. Não inclui fotografias: no biolink final entram fotos reais da Casa Celeiro. Nada nesta página recolhe dados.</p>
+    <p class="credito">
+      Spoiler: este biolink não se fez sozinho <span class="credito-emoji" aria-hidden="true">😉</span>
+      <a href="https://dddigital.pt" target="_blank" rel="noopener">DD Digital</a>.
+    </p>
+    <a class="pede" href="https://dddigital.pt/?utm_source=biolink&amp;utm_medium=cta&amp;utm_campaign=quintadasalvadoira#contacto" target="_blank" rel="noopener">
+      <img src="img/dd-logo.webp" width="200" height="200" alt="DD Digital" loading="lazy" decoding="async">
+      <span class="pede__txt">
+        <span>Design totalmente personalizado à tua marca</span>
+        <b>Pede já o teu biolink <i aria-hidden="true">→</i></b>
+      </span>
+    </a>
+    <p class="direitos">© <span id="ano">2026</span> Quinta da Salvadoira</p>
+  </footer>
+
+</main>
+
+<div class="demo-chip"><i></i>Versão de demonstração · DD Digital</div>
+
+<script>
+/* ---------- atalho para apresentações e testes: ?nopre salta as animações de entrada ---------- */
+if (/[?&]nopre\b/.test(location.search)) document.documentElement.classList.add('rapido');
+
+/* ---------- ano no rodapé ---------- */
+document.getElementById('ano').textContent = new Date().getFullYear();
+
+/* ---------- paisagem: só começa a desenhar quando chega ao ecrã ---------- */
+const cena = document.getElementById('cena');
+if ('IntersectionObserver' in window) {
+  new IntersectionObserver((entradas, obs) => {
+    if (entradas.some(e => e.isIntersecting)) { cena.classList.add('on'); obs.disconnect(); }
+  }, { threshold: .25 }).observe(cena);
+} else {
+  cena.classList.add('on');
+}
+
+/* ---------- desenhar outra vez (botão e toque no logótipo) ---------- */
+function redesenhar() {
+  /* tira a animação, força o browser a "ver" o estado sem ela e devolve-a: recomeça do zero */
+  const els = document.querySelectorAll('.hero *:not(.redesenhar):not(.redesenhar *), .cena *');
+  els.forEach(el => { el.style.animation = 'none'; });
+  void document.body.offsetWidth;
+  els.forEach(el => { el.style.animation = ''; });
+}
+document.getElementById('redesenhar').addEventListener('click', redesenhar);
+document.getElementById('logo').addEventListener('click', redesenhar);
+</script>
+</body>
+</html>
