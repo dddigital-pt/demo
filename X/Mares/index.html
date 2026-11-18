@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Marés — Demonstração</title>
+<meta name="description" content="Demonstração de website criada pela DD Digital para um hotel boutique fictício à beira-mar. Conteúdo ilustrativo.">
+<meta name="theme-color" content="#0F3B44">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%230F3B44'/%3E%3Ccircle cx='32' cy='28' r='9' fill='%23E8A25B'/%3E%3Cpath d='M10 42q7-6 11 0t11 0 11 0 11 0' fill='none' stroke='%23FAF6EE' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..500;1,9..144,300..500&family=Figtree:wght@300..600&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+/* =====================================================================
+   MARÉS — hotel boutique à beira-mar (marca FICTÍCIA, demo DD Digital)
+   CONCEITO: "O dia em Marés". O hero é um dia inteiro num slider: 5 fotografias
+   reais (aurora, manhã, tarde, pôr do sol, noite) fundem-se umas nas outras,
+   um sol/lua percorre o arco e o relógio acompanha. Corre sozinho ao abrir e
+   passa para as mãos do visitante (arrastar, teclado, toque).
+   Sensação: luminoso, lento, generoso. Formas: arcos, círculos, pílulas, ondas.
+   Herdado de: faixa DEMO (base), menu mobile (setMenu), painéis que se expandem
+   (ideia do accordion da Mascotes Sortudas, aqui na horizontal), formulário demo.
+   Novo: relógio + sol no arco ligados às fotos, selo circular de texto, lista de
+   experiências com pré-visualização em arco que segue o cursor.
+   Fontes: Fraunces variável (títulos leves, itálico) + Figtree (corpo).
+   ===================================================================== */
+
+/* ---------- variáveis ---------- */
+:root{
+  --concha:#FAF6EE; --areia:#EFE6D8; --duna:#DCCDB6; --mar:#0F3B44; --mar2:#0A2C34; --teal:#2F7C80;
+  --sol:#E8A25B; --sol2:#F4C58B; --coral:#D9805F; --tinta:#16282B;
+  --dem:34px; --hd:68px;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --ease:cubic-bezier(.2,.7,.1,1);
+  --wrap:min(1280px,100% - 48px);
+}
+@media (max-width:640px){ :root{ --dem:28px; --hd:60px; --wrap:calc(100% - 36px);} }
+
+/* ---------- base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--concha);color:var(--tinta);font-family:var(--sans);font-weight:400;font-size:1.0625rem;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:clip}
+body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+h1,h2,h3,p,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+em{font-style:italic}
+:focus-visible{outline:2px solid var(--coral);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{width:var(--wrap);margin-inline:auto}
+.kick{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--teal)}
+.disp{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 144;letter-spacing:-.025em}
+.disp em{font-weight:300;color:var(--coral)}
+
+/* ---------- 0. faixa DEMO + selo ---------- */
+.demo{position:fixed;top:0;left:0;right:0;z-index:80;height:var(--dem);display:flex;align-items:center;justify-content:center;gap:12px;padding:0 14px;background:var(--mar2);color:var(--sol2);font-size:.74rem;letter-spacing:.03em;border-bottom:1px solid rgba(244,197,139,.3)}
+.demo b{background:var(--sol);color:var(--mar2);font-weight:700;letter-spacing:.16em;padding:2px 9px;font-size:.66rem;border-radius:99px}
+.demo .s{display:none}
+@media (max-width:760px){ .demo .l{display:none} .demo .s{display:inline} }
+.selo{position:fixed;right:18px;bottom:18px;z-index:70;background:var(--mar2);color:var(--sol2);border:1px solid rgba(244,197,139,.45);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;padding:9px 15px;font-weight:600;border-radius:99px}
+@media (max-width:760px){ .selo{display:none} }
+
+/* ---------- 1. cabeçalho + menu mobile ---------- */
+.hd{position:fixed;top:var(--dem);left:0;right:0;z-index:60;height:var(--hd);display:flex;align-items:center;color:var(--concha);transition:background .4s var(--ease),color .4s var(--ease)}
+.hd.solid{background:var(--concha);color:var(--mar);box-shadow:0 1px 0 rgba(15,59,68,.12)}
+.hd .in{width:var(--wrap);margin-inline:auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--serif);font-weight:400;font-size:1.9rem;line-height:1;text-decoration:none;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;font-variation-settings:"opsz" 144}
+.logo svg{width:30px;height:30px;flex:none}
+.nav{display:flex;gap:32px;align-items:center}
+.nav a{text-decoration:none;font-size:.9rem;font-weight:500;position:relative;padding:6px 0;white-space:nowrap}
+.nav a:not(.pill)::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:2px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
+.nav a:not(.pill):hover::after{transform:scaleX(1)}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:11px 22px!important;border:1.5px solid currentColor;border-radius:99px;font-weight:600;transition:background .35s,color .35s,border-color .35s}
+.pill:hover{background:var(--sol);border-color:var(--sol);color:var(--mar2)}
+.burger{display:none;width:46px;height:46px;border:0;background:none;color:inherit;cursor:pointer;position:relative;margin-right:-10px}
+.burger span{position:absolute;left:12px;right:12px;height:2px;border-radius:2px;background:currentColor;transition:transform .45s var(--ease),opacity .2s}
+.burger span:nth-child(1){top:16px}.burger span:nth-child(2){top:22px;right:18px}.burger span:nth-child(3){top:28px}
+.menu-open .burger span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.menu-open .burger span:nth-child(2){opacity:0}
+.menu-open .burger span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.menu{display:none}
+@media (max-width:900px){
+  .nav{display:none}
+  .burger{display:block}
+  .menu-open .hd{background:var(--mar);color:var(--concha);box-shadow:none}
+  .menu{display:flex;flex-direction:column;justify-content:space-between;position:fixed;z-index:55;left:0;right:0;top:calc(var(--dem) + var(--hd));bottom:0;background:var(--mar);color:var(--concha);padding:30px 24px calc(30px + env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain;visibility:hidden;opacity:0;transition:opacity .3s,visibility 0s .3s}
+  .menu.open{visibility:visible;opacity:1;transition:opacity .3s}
+  .menu li{border-top:1px solid rgba(250,246,238,.16)}
+  .menu li:last-child{border-bottom:1px solid rgba(250,246,238,.16)}
+  .menu li a{display:flex;justify-content:space-between;align-items:center;text-decoration:none;font-family:var(--serif);font-weight:300;font-size:clamp(2.2rem,10vw,3.2rem);line-height:1.15;padding:13px 0;font-variation-settings:"opsz" 144}
+  .menu li a::after{content:"→";font-family:var(--sans);font-size:1.1rem;color:var(--sol2)}
+  .menu p{font-size:.84rem;color:var(--sol2);margin-top:24px}
+}
+
+/* ---------- 2. hero: o dia em Marés ---------- */
+.hero{position:relative;height:100vh;height:100svh;min-height:640px;color:var(--concha);overflow:hidden;isolation:isolate;background:var(--mar2)}
+.sky{position:absolute;inset:0}
+.sky img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;will-change:opacity,transform}
+.sky img:nth-child(2){opacity:1}
+.hero::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(6,28,34,.78),rgba(6,28,34,.1) 52%,rgba(6,28,34,.42))}
+.tint{position:absolute;inset:0;z-index:1;pointer-events:none;mix-blend-mode:soft-light;background:var(--tint,transparent)}
+.arc{position:absolute;z-index:2;left:0;right:0;bottom:30%;aspect-ratio:1000/300;pointer-events:none}
+.arc svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.arc path{fill:none;stroke:rgba(250,246,238,.45);stroke-width:1.2;stroke-dasharray:3 9;vector-effect:non-scaling-stroke;stroke-linecap:round}
+.orb{position:absolute;width:clamp(46px,5vw,72px);aspect-ratio:1;margin:calc(clamp(46px,5vw,72px)/-2) 0 0 calc(clamp(46px,5vw,72px)/-2);border-radius:50%;left:50%;top:50%;will-change:left,top}
+.orb i{position:absolute;inset:0;border-radius:50%}
+.orb .su{background:radial-gradient(circle at 36% 34%,#fff6dc,#f6c27a 55%,#e8884a);box-shadow:0 0 0 10px rgba(255,214,150,.18),0 0 70px 24px rgba(255,190,110,.5)}
+.orb .lu{background:radial-gradient(circle at 36% 34%,#ffffff,#e9e6dc 60%,#b9bdc4);box-shadow:0 0 0 8px rgba(255,255,255,.1),0 0 60px 18px rgba(200,215,255,.35);opacity:0}
+.hero-in{position:relative;z-index:3;height:100%;width:var(--wrap);margin-inline:auto;display:flex;flex-direction:column;justify-content:space-between;padding:calc(var(--dem) + var(--hd) + 26px) 0 clamp(26px,5vh,56px)}
+@media (min-width:761px){ .hero-in{padding-bottom:clamp(64px,9vh,84px)} }
+.clock{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.clock .t{font-family:var(--serif);font-weight:300;font-size:clamp(3.4rem,9.5vw,9rem);line-height:.9;letter-spacing:-.04em;font-variant-numeric:tabular-nums lining-nums;font-variation-settings:"opsz" 144}
+.clock .t sup{font-size:.28em;letter-spacing:.1em;vertical-align:top;margin-left:.3em;color:var(--sol2);font-family:var(--sans);font-weight:600;position:relative;top:.6em}
+.clock .cap{text-align:right;max-width:26ch;padding-top:10px;transition:opacity .5s}
+.clock .cap b{display:block;font:600 .76rem var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--sol2);margin-bottom:8px}
+.clock .cap span{font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(1.15rem,1.7vw,1.5rem);line-height:1.25;display:block}
+.clock .cap.sw{opacity:0}
+.hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(3rem,8.4vw,8.8rem);line-height:.92;letter-spacing:-.03em;font-variation-settings:"opsz" 144;max-width:12ch}
+.hero h1 .ln{display:block;overflow:hidden;padding-bottom:.1em}
+.hero h1 .ln>span{display:block}
+.hero h1 em{color:var(--sol2)}
+.dial{margin-top:clamp(20px,3.5vh,38px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:30px;align-items:end}
+.dial .lab{display:flex;justify-content:space-between;margin-top:12px;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+.dial .lab button{background:none;border:0;color:rgba(250,246,238,.7);cursor:pointer;font:inherit;letter-spacing:inherit;text-transform:inherit;padding:8px 0;min-width:44px;transition:color .3s}
+.dial .lab button.on{color:var(--sol2)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:36px;background:transparent;cursor:grab;display:block;margin:0;touch-action:none}
+input[type=range]:active{cursor:grabbing}
+input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:3px;background:linear-gradient(90deg,var(--sol2) var(--p,25%),rgba(250,246,238,.3) var(--p,25%))}
+input[type=range]::-moz-range-track{height:3px;border-radius:3px;background:rgba(250,246,238,.3)}
+input[type=range]::-moz-range-progress{height:3px;background:var(--sol2)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;margin-top:-13.5px;background:radial-gradient(circle at 36% 34%,#fff6dc,#f6c27a 60%,#e8884a);border:0;box-shadow:0 0 0 7px rgba(255,214,150,.25),0 4px 18px rgba(0,0,0,.35)}
+input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 36% 34%,#fff6dc,#f6c27a 60%,#e8884a);border:0;box-shadow:0 0 0 7px rgba(255,214,150,.25)}
+input[type=range]:focus-visible{outline:0}
+input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px var(--mar2),0 0 0 6px var(--sol2)}
+.btn{display:inline-flex;align-items:center;gap:12px;padding:16px 28px;border-radius:99px;font:600 .92rem/1 var(--sans);text-decoration:none;border:1.5px solid currentColor;cursor:pointer;background:none;color:inherit;transition:background .35s,color .35s,border-color .35s;white-space:nowrap}
+.btn.fill{background:var(--sol);border-color:var(--sol);color:var(--mar2)}
+.btn.fill:hover{background:var(--concha);border-color:var(--concha)}
+.btn i{font-style:normal;transition:transform .4s var(--ease)}
+.btn:hover i{transform:translateX(4px)}
+@media (max-width:760px){
+  .dial{grid-template-columns:minmax(0,1fr)}
+  .dial .btn{justify-self:start}
+  .clock .cap{max-width:17ch}
+  .dial .lab{font-size:.62rem;letter-spacing:.08em}
+  .arc{bottom:50%}
+}
+
+/* ondas de separação (dentro da secção, sem fundo próprio) */
+.wave{display:block;width:100%;height:clamp(34px,5vw,70px);position:absolute;left:0;bottom:-1px}
+.wave path{fill:var(--concha)}
+
+/* ---------- 3. a casa ---------- */
+.casa{position:relative;padding:clamp(80px,10vw,150px) 0 clamp(80px,10vw,140px)}
+.casa .grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1fr);gap:clamp(34px,7vw,120px);align-items:center}
+.arch{position:relative;aspect-ratio:3/4.1;border-radius:999px 999px 18px 18px;overflow:hidden;background:var(--duna)}
+.arch img{position:absolute;left:0;top:-7%;width:100%;height:114%;object-fit:cover}
+.badge{position:absolute;z-index:2;right:-4%;bottom:7%;width:clamp(104px,12vw,150px);aspect-ratio:1;border-radius:50%;background:var(--sol);color:var(--mar2);display:grid;place-items:center}
+.badge svg{position:absolute;inset:0;width:100%;height:100%;animation:spin 26s linear infinite}
+.badge text{font:600 9px var(--sans);letter-spacing:.12em;text-transform:uppercase;fill:var(--mar2)}
+.badge b{font-family:var(--serif);font-weight:400;font-size:1.9rem;font-style:italic}
+@keyframes spin{to{transform:rotate(360deg)}}
+.casa h2{font-size:clamp(2.6rem,6vw,5.6rem);line-height:.96;margin:14px 0 26px}
+.casa p.l{font-size:clamp(1.1rem,1.5vw,1.3rem);max-width:42ch;color:#355055}
+.casa .tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.casa .tags span{padding:9px 18px;border-radius:99px;border:1.5px solid rgba(15,59,68,.28);font-size:.88rem;font-weight:500}
+@media (max-width:900px){ .casa .grid{grid-template-columns:minmax(0,1fr)} .arch{max-width:420px;margin-inline:auto;width:100%} .badge{right:2%} }
+@media (prefers-reduced-motion:reduce){ .badge svg{animation:none} }
+
+/* ---------- 4. quartos: painéis que se abrem ---------- */
+.qua{background:var(--mar);color:var(--concha);padding:clamp(80px,10vw,140px) 0 clamp(90px,11vw,150px);position:relative}
+.qua .kick{color:var(--sol2)}
+.qua h2{font-size:clamp(2.6rem,6vw,5.6rem);line-height:.96;margin:14px 0 clamp(34px,5vw,60px);max-width:14ch}
+.qua h2 em{color:var(--sol2)}
+.pnl{display:flex;gap:14px;height:clamp(460px,72vh,680px)}
+.pn{position:relative;flex:1;min-width:0;border-radius:999px 999px 22px 22px;overflow:hidden;cursor:pointer;transition:flex .9s var(--ease);background:var(--mar2);text-align:left;color:inherit}
+.pn.on{flex:3.4}
+.pn img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.12);transition:transform 1.4s var(--ease),filter .8s}
+.pn.on img{transform:scale(1)}
+.pn:not(.on) img{filter:saturate(.7) brightness(.78)}
+.pn::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(6,28,34,.85),rgba(6,28,34,0) 55%)}
+.pn .tx{position:absolute;z-index:2;left:clamp(18px,3vw,36px);right:clamp(18px,3vw,36px);bottom:clamp(20px,3vw,36px)}
+.pn h3{font-family:var(--serif);font-weight:300;font-size:clamp(1.6rem,3vw,2.8rem);line-height:1;font-variation-settings:"opsz" 144;white-space:nowrap}
+.pn p{max-width:34ch;margin-top:12px;font-size:1rem;color:#d7e4e2;opacity:0;max-height:0;transform:translateY(12px);transition:opacity .6s .15s,transform .7s .15s var(--ease),max-height .7s}
+.pn.on p{opacity:1;max-height:140px;transform:none}
+.pn small{display:block;margin-top:14px;font:600 .72rem var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--sol2);opacity:0;transition:opacity .6s .2s}
+.pn.on small{opacity:1}
+.pn:focus-visible{outline:3px solid var(--sol2);outline-offset:3px}
+@media (max-width:760px){
+  .pnl{flex-direction:column;height:min(640px,82svh);gap:10px}
+  .pn{border-radius:90px 90px 18px 18px;flex:.5}
+  .pn.on{flex:4}
+  .pn:not(.on){border-radius:999px}
+  .pn .tx{left:20px;right:20px;bottom:50%;transform:translateY(50%)}
+  .pn.on .tx{bottom:22px;transform:none}
+}
+
+/* ---------- 5. experiências ---------- */
+.exp{padding:clamp(80px,10vw,150px) 0;background:var(--concha);position:relative}
+.exp h2{font-size:clamp(2.6rem,6vw,5.6rem);line-height:.96;margin:14px 0 clamp(30px,4vw,56px)}
+.xl{border-top:1.5px solid rgba(15,59,68,.2)}
+.xl li{border-bottom:1.5px solid rgba(15,59,68,.2)}
+.xl a{display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:18px;padding:clamp(18px,2.4vw,30px) 4px;text-decoration:none;transition:padding .5s var(--ease),color .3s}
+.xl .n{font-size:.78rem;font-weight:600;letter-spacing:.14em;color:var(--teal)}
+.xl h3{font-family:var(--serif);font-weight:300;font-size:clamp(1.9rem,4.6vw,4.4rem);line-height:1;letter-spacing:-.02em;font-variation-settings:"opsz" 144;transition:transform .6s var(--ease)}
+.xl .th{display:none;width:68px;aspect-ratio:3/4;border-radius:99px 99px 8px 8px;object-fit:cover}
+.xl .ar{font-size:1.6rem;color:var(--coral);transition:transform .5s var(--ease)}
+@media (hover:hover) and (pointer:fine){
+  .xl a:hover h3{transform:translateX(18px);color:var(--coral);font-style:italic}
+  .xl a:hover .ar{transform:translateX(8px) rotate(-45deg)}
+}
+@media (max-width:760px){ .xl a{grid-template-columns:minmax(0,1fr) auto} .xl .n{display:none} .xl .th{display:block} .xl .ar{display:none} }
+.pv{position:fixed;z-index:50;left:0;top:0;width:clamp(200px,22vw,300px);aspect-ratio:3/4;border-radius:999px 999px 18px 18px;overflow:hidden;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.85);transition:opacity .35s,transform .5s var(--ease);box-shadow:0 30px 60px -20px rgba(6,28,34,.5)}
+.pv.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.pv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s}
+.pv img.on{opacity:1}
+@media (hover:none),(pointer:coarse){ .pv{display:none} }
+
+/* ---------- 6. reservar ---------- */
+.res{background:var(--areia);padding:clamp(80px,10vw,140px) 0 clamp(110px,12vw,170px);position:relative}
+.res .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(34px,7vw,110px);align-items:start}
+.res h2{font-size:clamp(2.6rem,6vw,5.6rem);line-height:.96;margin:14px 0 22px}
+.res .l{max-width:38ch;color:#355055}
+.ph-list{margin-top:34px;border-top:1.5px solid rgba(15,59,68,.2)}
+.ph-list li{display:flex;justify-content:space-between;gap:18px;padding:14px 0;border-bottom:1.5px solid rgba(15,59,68,.2);font-size:.96rem}
+.ph-list li span:first-child{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:600;padding-top:3px}
+.conf{font-style:italic;color:#6b7c7e;background:repeating-linear-gradient(135deg,transparent 0 6px,rgba(232,162,91,.2) 6px 7px);padding:0 6px}
+.card{background:var(--concha);border-radius:34px;padding:clamp(24px,3.4vw,44px);box-shadow:0 40px 80px -40px rgba(15,59,68,.4)}
+.card h3{font-family:var(--serif);font-weight:300;font-size:1.9rem;line-height:1.1;margin-bottom:22px;font-variation-settings:"opsz" 144}
+.f{margin-bottom:20px}
+.f>label,.f>.lab{display:block;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--teal);margin-bottom:9px}
+.f input[type=date],.f input[type=text],.f input[type=email]{width:100%;font:400 1rem var(--sans);color:var(--tinta);background:var(--areia);border:1.5px solid transparent;border-radius:14px;padding:13px 15px}
+.f input:focus{outline:0;border-color:var(--teal)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.two>div,.res .grid>*{min-width:0}
+.f input[type=date]{min-width:0;-webkit-appearance:none;appearance:none;min-height:50px}
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chip{font:500 .9rem var(--sans);padding:10px 17px;border:1.5px solid rgba(15,59,68,.3);border-radius:99px;background:none;cursor:pointer;color:inherit;transition:background .3s,color .3s,border-color .3s}
+.chip[aria-pressed=true]{background:var(--mar);color:var(--concha);border-color:var(--mar)}
+.step{display:inline-flex;align-items:center;gap:6px;background:var(--areia);border-radius:99px;padding:4px}
+.step button{width:42px;height:42px;border-radius:50%;border:0;background:var(--concha);font:600 1.3rem var(--sans);cursor:pointer;color:var(--mar)}
+.step output{min-width:78px;text-align:center;font-weight:600}
+.card .btn{background:var(--mar);color:var(--concha);border-color:var(--mar);width:100%;justify-content:center;margin-top:6px}
+.card .btn:hover{background:var(--sol);border-color:var(--sol);color:var(--mar2)}
+.thanks{display:none;margin-top:16px;padding:16px 18px;border-radius:16px;background:rgba(232,162,91,.22);font-size:.95rem}
+.thanks.show{display:block}
+@media (max-width:900px){ .res .grid{grid-template-columns:minmax(0,1fr)} }
+
+/* ---------- 7. rodapé ---------- */
+.ft{background:var(--mar2);color:#bfd0cf;padding:60px 0 calc(40px + env(safe-area-inset-bottom));font-size:.88rem}
+.ft .top{display:flex;justify-content:space-between;gap:28px;flex-wrap:wrap;align-items:center;padding-bottom:30px;border-bottom:1px solid rgba(250,246,238,.14)}
+.ft .logo{font-size:2.6rem;color:var(--concha)}
+.ft .logo svg{width:44px;height:44px}
+.ft .links{display:flex;gap:26px;flex-wrap:wrap}
+.ft .links a{text-decoration:none;font-weight:500}
+.ft .links a:hover{color:var(--sol2)}
+.ft .note{margin-top:28px;max-width:80ch;line-height:1.7;color:#93a9a8}
+.ft .note b{color:var(--sol2);font-weight:600}
+
+/* ---------- reveals ---------- */
+.js .rv{opacity:0;transform:translateY(34px)}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} .js .rv{opacity:1;transform:none} }
+</style>
+</head>
+<body>
+
+<!-- ===== faixa DEMO + selo (obrigatórios, permanentes) ===== -->
+<div class="demo" role="note"><b>DEMO</b><span class="l">Website de demonstração criado pela DD Digital para Marés · marca fictícia · conteúdo ilustrativo</span><span class="s">Demonstração · Marés (fictícia)</span></div>
+<div class="selo" aria-hidden="true">Versão de demonstração</div>
+
+<!-- ===== cabeçalho ===== -->
+<header class="hd" id="hd">
+  <div class="in">
+    <a class="logo" href="#topo" aria-label="Marés — início">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="26" r="10" fill="#E8A25B"/><path d="M6 42q8-7 13 0t13 0 13 0 13 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M12 52q7-5 11 0t11 0 11 0 7 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".6"/></svg>
+      Marés</a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#casa">A casa</a><a href="#quartos">Quartos</a><a href="#experiencias">Experiências</a><a class="pill" href="#reservar">Reservar</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="menu" id="menu" aria-hidden="true">
+  <ol>
+    <li><a href="#casa">A casa</a></li>
+    <li><a href="#quartos">Quartos</a></li>
+    <li><a href="#experiencias">Experiências</a></li>
+    <li><a href="#reservar">Reservar</a></li>
+  </ol>
+  <p>Marés · hotel boutique à beira-mar<br>Marca fictícia · demonstração DD Digital</p>
+</div>
+
+<main>
+<!-- ===== 1. HERO: o dia em Marés ===== -->
+<section class="hero" id="topo" aria-label="O dia em Marés">
+  <div class="sky" id="sky" aria-hidden="true">
+    <img src="img/aurora-dunas.jpg" alt="" style="object-position:50% 42%">
+    <img src="img/manha-mar.jpg" alt="" style="object-position:50% 55%">
+    <img src="img/tarde-piscina.jpg" alt="" style="object-position:50% 58%">
+    <img src="img/sol-poente.jpg" alt="" style="object-position:50% 50%">
+    <img src="img/noite-terraco.jpg" alt="" style="object-position:50% 50%">
+  </div>
+  <div class="tint" id="tint" aria-hidden="true"></div>
+  <div class="arc" id="arc" aria-hidden="true">
+    <svg viewBox="0 0 1000 300" preserveAspectRatio="none"><path d="M40 285 Q500 -130 960 285"/></svg>
+    <div class="orb" id="orb"><i class="su"></i><i class="lu"></i></div>
+  </div>
+  <div class="hero-in">
+    <div class="clock">
+      <div class="t" id="clk" aria-live="off">08:00</div>
+      <div class="cap" id="cap" aria-live="polite"><b>Manhã</b><span>Mergulho cedo e pequeno-almoço no terraço.</span></div>
+    </div>
+    <div>
+      <h1><span class="ln"><span>Um dia inteiro</span></span><span class="ln"><span>à <em>beira-mar</em>.</span></span></h1>
+      <div class="dial">
+        <div>
+          <input id="range" type="range" min="0" max="1000" value="250" aria-label="Hora do dia: arraste para ver o hotel da aurora à noite">
+          <div class="lab" id="labs">
+            <button type="button" data-i="0">Aurora</button><button type="button" data-i="1">Manhã</button><button type="button" data-i="2">Tarde</button><button type="button" data-i="3">Pôr do sol</button><button type="button" data-i="4">Noite</button>
+          </div>
+        </div>
+        <a class="btn fill" href="#reservar">Pedir disponibilidade <i>→</i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 2. A casa ===== -->
+<section class="casa" id="casa" aria-labelledby="casaT">
+  <div class="wrap grid">
+    <div class="arch-wrap" style="position:relative">
+      <div class="arch"><img src="img/piscina-persiana.jpg" alt="Piscina vista através de persianas de madeira, com o mar ao fundo" loading="lazy" width="1300" height="1950"></div>
+      <div class="badge" aria-hidden="true">
+        <svg viewBox="0 0 100 100"><defs><path id="circ" d="M50 50 m-38 0 a38 38 0 1 1 76 0 a38 38 0 1 1 -76 0"/></defs><text><textPath href="#circ" textLength="232" lengthAdjust="spacing">Marés · hotel boutique · beira-mar ·</textPath></text></svg>
+        <b>M</b>
+      </div>
+    </div>
+    <div>
+      <p class="kick">A casa</p>
+      <h2 class="disp" id="casaT">Pouco barulho.<br><em>Muita</em> luz.</h2>
+      <p class="l">Um hotel pequeno, de linhas simples, entre dunas e mar. Quartos de linho e madeira, uma piscina virada ao horizonte e dias sem pressa, que acabam quando o sol decide.</p>
+      <div class="tags"><span>Piscina</span><span>Terraço</span><span>Pequeno-almoço</span><span>Dunas à porta</span></div>
+    </div>
+  </div>
+  <svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true" style="bottom:-1px"><path style="fill:var(--mar)" d="M0 80V40C240 0 480 0 720 40s480 40 720 0v40z"/></svg>
+</section>
+
+<!-- ===== 3. Quartos ===== -->
+<section class="qua" id="quartos" aria-labelledby="quaT">
+  <div class="wrap">
+    <p class="kick">Quartos</p>
+    <h2 class="disp" id="quaT">Adormecer com o <em>som</em> do mar</h2>
+    <div class="pnl" id="pnl">
+      <div class="pn on" role="button" tabindex="0" aria-expanded="true"><img src="img/quarto.jpg" alt="Quarto com cama de lençóis brancos e luz suave" loading="lazy"><div class="tx"><h3>Quarto Duna</h3><p>Lençóis de linho, luz suave ao fim do dia e o som do mar ao fundo.</p><small>Tarifa a confirmar com o cliente</small></div></div>
+      <div class="pn" role="button" tabindex="0" aria-expanded="false"><img src="img/linho-sombras.jpg" alt="Cama de linho branco com listas de sol das persianas" loading="lazy"><div class="tx"><h3>Suite Maré</h3><p>As persianas de madeira desenham listas de sol na cama durante a manhã.</p><small>Tarifa a confirmar com o cliente</small></div></div>
+      <div class="pn" role="button" tabindex="0" aria-expanded="false"><img src="img/terraco-mar.jpg" alt="Terraço branco com candeeiro redondo e o mar ao fundo" loading="lazy"><div class="tx"><h3>Casa do Terraço</h3><p>Um terraço só seu, com mesa para o pequeno-almoço e vista aberta para o mar.</p><small>Tarifa a confirmar com o cliente</small></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 4. Experiências ===== -->
+<section class="exp" id="experiencias" aria-labelledby="expT">
+  <div class="wrap">
+    <p class="kick">Experiências</p>
+    <h2 class="disp" id="expT">Dias que não<br>pedem <em>agenda</em></h2>
+    <ul class="xl" id="xl">
+      <li><a href="#reservar" data-i="0"><span class="n">01</span><h3>Pequeno-almoço no terraço</h3><img class="th" src="img/pequeno-almoco.jpg" alt="" loading="lazy"><span class="ar" aria-hidden="true">→</span></a></li>
+      <li><a href="#reservar" data-i="1"><span class="n">02</span><h3>Passeio pelas dunas</h3><img class="th" src="img/aereo-dunas.jpg" alt="" loading="lazy"><span class="ar" aria-hidden="true">→</span></a></li>
+      <li><a href="#reservar" data-i="2"><span class="n">03</span><h3>A hora dourada</h3><img class="th" src="img/sol-poente.jpg" alt="" loading="lazy"><span class="ar" aria-hidden="true">→</span></a></li>
+      <li><a href="#reservar" data-i="3"><span class="n">04</span><h3>Linho e silêncio</h3><img class="th" src="img/linho.jpg" alt="" loading="lazy"><span class="ar" aria-hidden="true">→</span></a></li>
+    </ul>
+  </div>
+  <div class="pv" id="pv" aria-hidden="true">
+    <img src="img/pequeno-almoco.jpg" alt="" class="on"><img src="img/aereo-dunas.jpg" alt=""><img src="img/sol-poente.jpg" alt=""><img src="img/linho.jpg" alt="">
+  </div>
+</section>
+
+<!-- ===== 5. Reservar ===== -->
+<section class="res" id="reservar" aria-labelledby="resT">
+  <div class="wrap grid">
+    <div>
+      <p class="kick">Reservar</p>
+      <h2 class="disp" id="resT">Guarde-nos<br>um <em>dia</em></h2>
+      <p class="l">Diga-nos quando quer vir e quantos são. A resposta chega com as opções e a tarifa para essas datas.</p>
+      <ul class="ph-list">
+        <li><span>Morada</span><span class="conf">a confirmar com o cliente</span></li>
+        <li><span>Telefone</span><span class="conf">a confirmar com o cliente</span></li>
+        <li><span>Email</span><span class="conf">a confirmar com o cliente</span></li>
+        <li><span>Check-in / out</span><span class="conf">a confirmar com o cliente</span></li>
+      </ul>
+    </div>
+    <form class="card" id="form" novalidate>
+      <h3>Pedido de disponibilidade</h3>
+      <div class="two f"><div><label for="d1" style="display:block;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--teal);margin-bottom:9px">Chegada</label><input id="d1" type="date"></div><div><label for="d2" style="display:block;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--teal);margin-bottom:9px">Partida</label><input id="d2" type="date"></div></div>
+      <div class="f"><span class="lab" id="hosL">Hóspedes</span>
+        <div class="step" role="group" aria-labelledby="hosL"><button type="button" id="mn" aria-label="Menos um hóspede">−</button><output id="hos">2 pessoas</output><button type="button" id="mx" aria-label="Mais um hóspede">+</button></div>
+      </div>
+      <div class="f" role="group" aria-labelledby="quL"><span class="lab" id="quL">O que procura?</span>
+        <div class="chips">
+          <button type="button" class="chip" aria-pressed="true">Escapadinha</button>
+          <button type="button" class="chip" aria-pressed="false">Semana inteira</button>
+          <button type="button" class="chip" aria-pressed="false">Só um dia de piscina</button>
+        </div>
+      </div>
+      <div class="f"><label for="mail">Email</label><input id="mail" type="email" autocomplete="email"></div>
+      <button class="btn" type="submit">Pedir disponibilidade <i>→</i></button>
+      <p class="thanks" id="thanks" role="status">Isto é uma demonstração: o formulário não envia nada nem guarda dados. No website final, o pedido chegaria à receção do hotel.</p>
+    </form>
+  </div>
+  <svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path style="fill:var(--mar2)" d="M0 80V36c240 40 480 40 720 0s480-40 720 0v44z"/></svg>
+</section>
+</main>
+
+<!-- ===== rodapé ===== -->
+<footer class="ft">
+  <div class="wrap">
+    <div class="top">
+      <a class="logo" href="#topo" aria-label="Marés — topo">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="26" r="10" fill="#E8A25B"/><path d="M6 42q8-7 13 0t13 0 13 0 13 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M12 52q7-5 11 0t11 0 11 0 7 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".6"/></svg>
+        Marés</a>
+      <nav class="links" aria-label="Rodapé"><a href="#casa">A casa</a><a href="#quartos">Quartos</a><a href="#experiencias">Experiências</a><a href="#reservar">Reservar</a></nav>
+    </div>
+    <p class="note"><b>Demonstração.</b> Website criado pela DD Digital para uma marca fictícia (Marés). Nomes, textos, quartos e experiências são ilustrativos e não vinculativos; qualquer semelhança com marcas reais é coincidência. Fotografias: Unsplash. Dados de contacto e tarifas a confirmar com o cliente.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(s,c){return (c||document).querySelector(s)}, $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+var html=document.documentElement, body=document.body;
+var quick=/nopre/.test(location.search);
+var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+
+/* ---------- cabeçalho: sólido depois do hero ---------- */
+var hd=$('#hd');
+function onScroll(){ hd.classList.toggle('solid', window.scrollY>window.innerHeight*.7 || body.classList.contains('menu-open')); }
+window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+
+/* ---------- menu mobile (receita A7/A8) ---------- */
+var burger=$('#burger'), menu=$('#menu'), menuOpen=false, menuY=0;
+function setMenu(on,thenGo){
+  if(on===menuOpen) return; menuOpen=on;
+  if(on){ menuY=window.scrollY; body.style.top=(-menuY)+'px'; body.classList.add('menu-open'); }
+  else { body.classList.remove('menu-open'); body.style.top=''; html.style.scrollBehavior='auto'; window.scrollTo(0,menuY); html.style.scrollBehavior=''; }
+  menu.classList.toggle('open',on); menu.setAttribute('aria-hidden',on?'false':'true');
+  burger.setAttribute('aria-expanded',on?'true':'false'); burger.setAttribute('aria-label',on?'Fechar menu':'Abrir menu');
+  onScroll();
+  if(!on && thenGo){ var el=$(thenGo); if(el) el.scrollIntoView(); }
+}
+burger.addEventListener('click',function(){ setMenu(!menuOpen); });
+$$('#menu a').forEach(function(a){ a.addEventListener('click',function(e){ e.preventDefault(); setMenu(false,a.getAttribute('href')); }); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') setMenu(false); });
+window.matchMedia('(min-width:901px)').addEventListener('change',function(m){ if(m.matches) setMenu(false); });
+
+/* ---------- hero: o dia em Marés ---------- */
+var imgs=$$('#sky img'), range=$('#range'), clk=$('#clk'), cap=$('#cap'), orb=$('#orb'), tint=$('#tint'), labs=$$('#labs button');
+var PERIODS=[
+  {n:'Aurora',    s:'Dunas e silêncio, antes de toda a gente.'},
+  {n:'Manhã',     s:'Mergulho cedo e pequeno-almoço no terraço.'},
+  {n:'Tarde',     s:'Piscina sem relógio e o mar a fazer companhia.'},
+  {n:'Pôr do sol',s:'A hora dourada tem lugar marcado.'},
+  {n:'Noite',     s:'Jantar com o mar por perto e a casa a acender-se.'}
+];
+var TINTS=[[255,190,170,.30],[255,255,255,0],[20,90,120,.18],[235,120,55,.34],[8,16,48,.55]];
+var curIdx=-1, T=0;
+function lerp(a,b,t){return a+(b-a)*t}
+function render(t){
+  T=t;
+  /* fotos: fusão entre vizinhas */
+  var f=t*4;
+  imgs.forEach(function(im,i){
+    var o=Math.max(0,1-Math.abs(f-i));
+    im.style.opacity=o.toFixed(3);
+    im.style.transform='scale('+(1+0.04*(1-o))+')';
+  });
+  /* relógio 06:00 → 22:00 */
+  var h=6+t*16, hh=Math.floor(h), mm=Math.floor((h-hh)*60);
+  clk.textContent=(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;
+  /* sol e lua no arco (curva de Bézier quadrática do SVG) */
+  var u=t, x=(1-u)*(1-u)*40+2*(1-u)*u*500+u*u*960, y=(1-u)*(1-u)*285+2*(1-u)*u*(-130)+u*u*285;
+  orb.style.left=(x/10)+'%'; orb.style.top=(y/3)+'%';
+  var moon=Math.min(1,Math.max(0,(t-.78)/.14));
+  orb.children[0].style.opacity=(1-moon).toFixed(2); orb.children[1].style.opacity=moon.toFixed(2);
+  /* tonalidade geral */
+  var k=Math.min(3,Math.floor(f)), r=f-k, A=TINTS[k], B=TINTS[Math.min(4,k+1)];
+  tint.style.setProperty('--tint','rgba('+Math.round(lerp(A[0],B[0],r))+','+Math.round(lerp(A[1],B[1],r))+','+Math.round(lerp(A[2],B[2],r))+','+lerp(A[3],B[3],r).toFixed(2)+')');
+  /* legenda do período mais próximo */
+  var idx=Math.round(f);
+  if(idx!==curIdx){
+    curIdx=idx;
+    labs.forEach(function(b,i){ b.classList.toggle('on',i===idx); });
+    cap.classList.add('sw');
+    setTimeout(function(){ cap.innerHTML='<b>'+PERIODS[idx].n+'</b><span>'+PERIODS[idx].s+'</span>'; cap.classList.remove('sw'); }, curIdx<0?0:220);
+  }
+  range.style.setProperty('--p',(t*100)+'%');
+}
+var auto=null;
+function stopAuto(){ if(auto){ cancelAnimationFrame(auto); auto=null; } }
+function tweenTo(target,ms,done){
+  stopAuto();
+  var from=T, t0=performance.now();
+  (function step(now){
+    var k=Math.min(1,(now-t0)/ms), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    var v=lerp(from,target,e); range.value=Math.round(v*1000); render(v);
+    if(k<1) auto=requestAnimationFrame(step); else { auto=null; if(done) done(); }
+  })(t0);
+}
+range.addEventListener('input',function(){ stopAuto(); render(range.value/1000); });
+range.addEventListener('pointerdown',stopAuto);
+labs.forEach(function(b){ b.addEventListener('click',function(){ tweenTo(+b.dataset.i/4,900); }); });
+render(.25);
+cap.innerHTML='<b>'+PERIODS[1].n+'</b><span>'+PERIODS[1].s+'</span>';
+if(!quick && !reduce){
+  /* ao abrir, o dia corre sozinho: aurora → pôr do sol */
+  range.value=0; render(0);
+  setTimeout(function(){ if(!auto) tweenTo(.74,10500); },1300);
+}
+
+/* ---------- quartos: painéis ---------- */
+var pns=$$('.pn');
+function openPn(p){ pns.forEach(function(x){ var on=x===p; x.classList.toggle('on',on); x.setAttribute('aria-expanded',on?'true':'false'); }); }
+pns.forEach(function(p){
+  p.addEventListener('click',function(){ openPn(p); });
+  p.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openPn(p); } });
+  p.addEventListener('mouseenter',function(){ if(window.matchMedia('(hover:hover) and (pointer:fine) and (min-width:761px)').matches) openPn(p); });
+});
+
+/* ---------- formulário (demonstração), chips, hóspedes ---------- */
+$$('#form .chip').forEach(function(c){ c.addEventListener('click',function(){ $$('#form .chip').forEach(function(o){ o.setAttribute('aria-pressed',o===c?'true':'false'); }); }); });
+var hosN=2, hosO=$('#hos');
+function setHos(n){ hosN=Math.max(1,Math.min(8,n)); hosO.textContent=hosN+(hosN===1?' pessoa':' pessoas'); }
+$('#mn').addEventListener('click',function(){ setHos(hosN-1); }); $('#mx').addEventListener('click',function(){ setHos(hosN+1); });
+$('#form').addEventListener('submit',function(e){ e.preventDefault(); $('#thanks').classList.add('show'); });
+
+/* ---------- experiências: pré-visualização em arco que segue o cursor (só rato) ---------- */
+var pv=$('#pv');
+if(window.matchMedia('(hover:hover) and (pointer:fine)').matches && window.gsap){
+  var pvImgs=$$('img',pv), xTo=gsap.quickTo(pv,'left',{duration:.55,ease:'power3'}), yTo=gsap.quickTo(pv,'top',{duration:.55,ease:'power3'});
+  pv.style.left='0px'; pv.style.top='0px';
+  $$('#xl a').forEach(function(a){
+    a.addEventListener('mouseenter',function(){ pvImgs.forEach(function(m,i){ m.classList.toggle('on',i===+a.dataset.i); }); pv.classList.add('show'); });
+    a.addEventListener('mouseleave',function(){ pv.classList.remove('show'); });
+    a.addEventListener('mousemove',function(e){ xTo(e.clientX+60); yTo(e.clientY); });
+  });
+}
+
+/* ---------- GSAP: entradas ---------- */
+if(!window.gsap || !window.ScrollTrigger || reduce){ return; }
+gsap.registerPlugin(ScrollTrigger);
+gsap.set('.hero h1 .ln>span',{yPercent:110});
+gsap.set(['.clock','.dial'],{opacity:0,y:26});
+var tl=gsap.timeline({defaults:{ease:'power3.out'}});
+if(quick) tl.timeScale(8);
+tl.to('.clock',{opacity:1,y:0,duration:1},.2).to('.hero h1 .ln>span',{yPercent:0,duration:1.2,stagger:.14},.5).to('.dial',{opacity:1,y:0,duration:1},1.1);
+
+/* arco da casa: a foto desliza dentro da moldura */
+gsap.fromTo('.arch img',{yPercent:-5},{yPercent:5,ease:'none',scrollTrigger:{trigger:'.arch',start:'top bottom',end:'bottom top',scrub:true}});
+gsap.from('.arch',{clipPath:'inset(30% 30% 30% 30% round 999px)',duration:1.4,ease:'power3.out',scrollTrigger:{trigger:'.arch',start:'top 85%',once:true}});
+
+/* reveals */
+$$('.casa .grid > div:last-child > *, .qua .wrap > *, .exp .wrap > *:not(ul), .xl li, .res .grid > *').forEach(function(el){ el.classList.add('rv'); });
+ScrollTrigger.batch('.rv',{start:'top 90%',once:true,onEnter:function(b){ gsap.to(b,{opacity:1,y:0,duration:1.1,stagger:.1,ease:'power3.out'}); }});
+
+window.addEventListener('load',function(){ ScrollTrigger.refresh(); });
+})();
+</script>
+</body>
+</html>
