@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dra Mariana Dias — Biolink · Demonstração</title>
+<meta name="description" content="Demonstração de biolink para a Dra Mariana Dias, médica dentista e especialista em cirurgia oral, diretora clínica da Climest (Estarreja). Criado pela DD Digital.">
+<meta name="theme-color" content="#2E2420">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,300;0,7..72,400;0,7..72,700;1,7..72,300;1,7..72,400&family=Epilogue:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');if(/[?&]nopre/.test(location.search))document.documentElement.classList.add('nopre');if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('rm')</script>
+<style>
+/* =====================================================================
+   NOTAS DA DEMO — Biolink · Dra Mariana Dias (diretora da Climest, Estarreja)
+   Conceito de layout e hero: o X de QUATRO DENTES do logótipo da Climest junta-se
+   no centro e depois ABRE-SE: cada dente vai prender-se a um canto da fotografia,
+   como os cantos de papel de um álbum, e a foto revela-se pelo vazio do X.
+   Tocar na foto repete o gesto. Mais abaixo, "Esclarece as tuas dúvidas" abre o X
+   outra vez, agora como escolha do assunto (4 dentes = 4 botões) que prepara a
+   mensagem de WhatsApp.
+   Herdado de: dentes vetorizados do logótipo (Climest), paleta e cantos "de dente"
+   (3 redondos + 1 quase reto), faixa DEMO + selo, `?nopre` e movimento reduzido,
+   escolha que monta a mensagem de WhatsApp (David Pita / A'Kay), bloco "Pede já" (A9).
+   Novo: dentes como cantos de álbum (fotografia emoldurada pelo logótipo, em vez de
+   cortina); fundo pêssego com X gigante apagado; botões de tinta com etiqueta laranja
+   (mantém a estrutura do biolink atual da Dra: foto, nome, 3 redes, 4 botões escuros);
+   painel em que o X é a própria botoneira.
+   Fontes: Literata (nome e títulos, serifa quente com opsz; linha fina + linha grossa
+   como o wordmark da Climest) + Epilogue (corpo e etiquetas em caixa alta).
+   Paleta (da demo Climest): laranja #EB7536, laranja escuro #B94E17, creme #FBF3EA,
+   pêssego #F6D6BE / #EEBE9B, tinta #2E2420, cacau #4B382E.
+   ===================================================================== */
+
+/* ===== variáveis ===== */
+:root {
+  --laranja: #EB7536;
+  --laranja-esc: #B94E17;
+  --creme: #FBF3EA;
+  --creme-2: #F4E6D6;
+  --pessego: #F6D6BE;
+  --pessego-2: #EEBE9B;
+  --papel: #FFFBF6;
+  --tinta: #2E2420;
+  --cacau: #4B382E;
+  --texto-2: #6A5A50;
+  --f-tit: "Literata", Georgia, serif;
+  --f-corpo: "Epilogue", system-ui, sans-serif;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --r-dente: 24px 24px 24px 7px;
+  --barra: 36px;
+  --col: 480px;
+  --g: 20px;
+  --t0: 1.55s; /* atraso do texto: espera pela abertura dos dentes */
+  /* bloco "Pede já o teu biolink" (versão clara) */
+  --cta-fundo: rgba(255, 251, 246, .78);
+  --cta-fundo-hover: #fff;
+  --cta-texto: var(--tinta);
+  --cta-destaque: var(--laranja-esc);
+  --cta-linha: rgba(46, 36, 32, .2);
+}
+.nopre, .rm { --t0: .05s; }
+
+/* ===== base ===== */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; min-height: 100vh; min-height: 100dvh; padding: calc(var(--barra) + 26px) 0 0; background: var(--creme); color: var(--tinta); font-family: var(--f-corpo); font-size: 1rem; line-height: 1.55; overflow-x: clip; -webkit-font-smoothing: antialiased; position: relative; }
+body::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 760px; z-index: -2; background: radial-gradient(90% 100% at 50% 0, var(--pessego) 0, rgba(246, 214, 190, 0) 78%); }
+img, svg { max-width: 100%; }
+img { display: block; height: auto; }
+a { color: inherit; }
+button { font: inherit; color: inherit; cursor: pointer; }
+h1, p, ul, li, figure { margin: 0; }
+ul { padding: 0; list-style: none; }
+:focus-visible { outline: 3px solid var(--laranja-esc); outline-offset: 3px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.tbc { display: inline-block; padding: 0 9px; border: 1.5px dashed currentColor; border-radius: 99px; font-size: .7rem; font-weight: 600; opacity: .85; white-space: nowrap; }
+
+/* ===== faixa DEMO + selo ===== */
+.demo-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 130; height: var(--barra); display: flex; align-items: center; gap: 12px; padding: 0 var(--g); background: var(--tinta); color: var(--creme); font-size: .74rem; font-weight: 500; }
+.demo-bar b { flex: none; background: var(--laranja); color: var(--tinta); padding: 2px 9px; font-weight: 800; font-size: .66rem; letter-spacing: .16em; border-radius: 3px; }
+.demo-bar span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.demo-bar .l { display: none; }
+.demo-chip { display: none; position: fixed; right: 14px; bottom: 14px; z-index: 110; align-items: center; gap: 8px; padding: 8px 14px; background: var(--tinta); border: 1.5px solid var(--laranja); border-radius: 99px; color: var(--creme); font-size: .72rem; font-weight: 600; box-shadow: 0 6px 20px rgba(46, 36, 32, .3); }
+.demo-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--laranja); animation: pulso 2.4s ease-in-out infinite; }
+@keyframes pulso { 50% { opacity: .3; } }
+
+/* ===== fundo: X gigante apagado ===== */
+.fundo { position: absolute; z-index: -1; top: calc(var(--barra) - 60px); left: 50%; width: min(150vw, 1000px); aspect-ratio: 1; transform: translateX(-50%); fill: var(--pessego); opacity: .55; pointer-events: none; }
+
+/* ===== coluna ===== */
+.pagina { width: 100%; max-width: var(--col); margin: 0 auto; padding: 0 var(--g); display: flex; flex-direction: column; align-items: center; text-align: center; }
+
+/* ===== hero: os dentes abrem-se e prendem a foto ===== */
+.topo { width: 100%; display: flex; flex-direction: column; align-items: center; }
+.foto { --lado: min(72vw, 300px); position: relative; display: block; width: var(--lado); aspect-ratio: 1; margin: 10px 0 0; padding: 0; border: 0; background: none; -webkit-tap-highlight-color: transparent; }
+.foto__img { position: absolute; inset: 0; filter: drop-shadow(0 16px 20px rgba(75, 56, 46, .32)); }
+.foto__papel { display: block; width: 100%; height: 100%; padding: 8px; background: var(--papel); border-radius: 34px 34px 34px 9px; animation: fotoIn 1.05s var(--ease) .78s backwards; }
+.foto__papel img { width: 100%; height: 100%; object-fit: cover; border-radius: 27px 27px 27px 3px; }
+.foto__dentes { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; overflow: visible; pointer-events: none; filter: drop-shadow(0 3px 5px rgba(120, 50, 10, .38)); }
+.foto__dentes g { fill: var(--laranja); transform-box: view-box; transform: translate(var(--fx), var(--fy)) scale(.44); animation: dente 1.9s linear backwards; }
+.foto__dentes .tl { transform-origin: 0 0; --fx: -15px; --fy: -15px; --ox: -190px; --oy: -190px; }
+.foto__dentes .tr { transform-origin: 401px 0; --fx: 15px; --fy: -15px; --ox: 190px; --oy: -190px; animation-delay: .06s; }
+.foto__dentes .br { transform-origin: 401px 401px; --fx: 15px; --fy: 15px; --ox: 190px; --oy: 190px; animation-delay: .12s; }
+.foto__dentes .bl { transform-origin: 0 401px; --fx: -15px; --fy: 15px; --ox: -190px; --oy: 190px; animation-delay: .18s; }
+/* 0–30 % os dentes chegam e fecham o X · 30–46 % pausa · 46–100 % abrem-se para os cantos */
+@keyframes dente {
+  0%   { opacity: 0; transform: translate(var(--ox), var(--oy)) scale(.55); animation-timing-function: cubic-bezier(.2, .7, .2, 1); }
+  30%  { opacity: 1; transform: translate(0, 0) scale(1); }
+  46%  { transform: translate(0, 0) scale(1); animation-timing-function: cubic-bezier(.3, 1.45, .5, 1); }
+  100% { opacity: 1; transform: translate(var(--fx), var(--fy)) scale(.44); }
+}
+@keyframes fotoIn {
+  from { clip-path: inset(49.5% 49.5% 49.5% 49.5% round 40px); }
+  to   { clip-path: inset(0% 0% 0% 0% round 34px); }
+}
+.re .foto__papel, .re .foto__dentes g { animation: none !important; }
+.nopre .foto__papel, .nopre .foto__dentes g, .rm .foto__papel, .rm .foto__dentes g { animation: none; }
+
+/* ===== nome e cargo ===== */
+.sobe { animation: sobe .9s var(--ease) calc(var(--t0) + var(--i, 0) * .09s) backwards; }
+@keyframes sobe { from { opacity: 0; transform: translateY(18px); } }
+.nome { margin-top: 30px; font-family: var(--f-tit); font-weight: 300; font-size: clamp(2.35rem, 11.4vw, 3.3rem); line-height: 1.02; letter-spacing: -.02em; font-optical-sizing: auto; }
+.nome b { font-weight: 700; font-style: italic; color: var(--laranja-esc); }
+.cargo { margin-top: 14px; max-width: 24em; font-size: .74rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; color: var(--cacau); text-wrap: balance; }
+.clinica { margin-top: 10px; font-family: var(--f-tit); font-style: italic; font-weight: 300; font-size: 1rem; color: var(--texto-2); }
+
+/* ===== redes ===== */
+.redes { margin-top: 24px; display: flex; gap: 14px; justify-content: center; }
+.redes a { width: 52px; height: 52px; display: grid; place-items: center; border: 2px solid var(--laranja); border-radius: 19px 19px 19px 5px; color: var(--tinta); text-decoration: none; background: rgba(255, 251, 246, .5); transition: background .3s var(--ease), transform .3s var(--ease), color .3s; }
+.redes a:hover { background: var(--laranja); transform: translateY(-3px); }
+.redes a:active { transform: scale(.94); }
+.redes svg { width: 24px; height: 24px; }
+
+/* ===== botões ===== */
+.links { width: 100%; margin-top: 30px; display: grid; gap: 14px; }
+.links > li { display: block; position: relative; z-index: 0; }
+.lk { position: relative; width: 100%; min-height: 72px; display: flex; align-items: center; gap: 14px; padding: 10px 16px 10px 10px; border: 0; border-radius: var(--r-dente); background: var(--tinta); color: var(--creme); text-align: left; text-decoration: none; box-shadow: 0 10px 22px -12px rgba(46, 36, 32, .65); transition: transform .35s var(--ease), background .35s var(--ease), color .35s var(--ease), box-shadow .35s var(--ease); -webkit-tap-highlight-color: transparent; }
+.lk::after { content: ""; position: absolute; inset: 5px -5px -5px 5px; z-index: -1; border: 1.5px solid var(--laranja); border-radius: var(--r-dente); transition: transform .35s var(--ease); }
+.lk:hover, .lk:focus-visible { transform: translateY(-3px); background: var(--cacau); }
+.lk:hover::after { transform: translate(2px, 2px); }
+.lk:active { transform: scale(.985); }
+.lk__ico { flex: none; width: 52px; height: 52px; display: grid; place-items: center; border-radius: 17px 17px 17px 5px; background: var(--laranja); color: var(--tinta); }
+.lk__ico svg { width: 26px; height: 26px; }
+.lk__t { flex: 1; min-width: 0; display: block; }
+.lk__t b { display: block; font-family: var(--f-tit); font-weight: 400; font-size: 1.1rem; line-height: 1.2; letter-spacing: -.005em; }
+.lk__t small { display: block; margin-top: 3px; font-size: .74rem; line-height: 1.35; opacity: .74; }
+.lk__seta { flex: none; font-size: 1.2rem; color: var(--laranja); transition: transform .35s var(--ease); }
+.lk:hover .lk__seta { transform: translateX(4px); }
+/* botão principal */
+.lk--main { min-height: 86px; background: var(--laranja); color: var(--tinta); box-shadow: 0 14px 26px -12px rgba(185, 78, 23, .75); }
+.lk--main::after { border-color: var(--tinta); }
+.lk--main:hover, .lk--main:focus-visible { background: #F08447; }
+.lk--main .lk__ico { background: var(--tinta); color: var(--laranja); }
+.lk--main .lk__t b { font-weight: 700; font-size: 1.2rem; }
+.lk--main .lk__t small { opacity: .82; }
+.lk--main .lk__seta { color: var(--tinta); }
+.lk--main .lk__ico svg { animation: bate 2.8s ease-in-out infinite; }
+@keyframes bate { 0%, 86%, 100% { transform: none; } 91% { transform: rotate(-9deg) scale(1.08); } 96% { transform: rotate(7deg) scale(1.08); } }
+/* botão que abre o painel */
+button.lk { font: inherit; }
+button.lk .lk__seta { transition: transform .45s var(--ease); }
+button.lk[aria-expanded="true"] .lk__seta { transform: rotate(90deg); }
+button.lk[aria-expanded="true"] { background: var(--cacau); }
+
+/* ===== painel das dúvidas: o X é a botoneira ===== */
+.painel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .6s var(--ease); }
+.painel.on { grid-template-rows: 1fr; }
+.painel > div { min-height: 0; overflow: hidden; }
+.painel__in { margin: 14px 0 4px; padding: 20px 14px 18px; background: var(--papel); border: 1.5px solid var(--pessego-2); border-radius: var(--r-dente); text-align: center; opacity: 0; transform: translateY(-10px); transition: opacity .4s ease, transform .5s var(--ease); }
+.painel.on .painel__in { opacity: 1; transform: none; transition-delay: .12s; }
+.painel__q { font-family: var(--f-tit); font-weight: 300; font-size: 1.35rem; line-height: 1.15; }
+.painel__q b { font-weight: 700; font-style: italic; color: var(--laranja-esc); }
+.painel__d { margin-top: 6px; font-size: .78rem; color: var(--texto-2); }
+.x { --lado: min(100%, 268px); width: var(--lado); margin: 16px auto 0; display: grid; grid-template-columns: 1fr 1fr; padding: 8px; }
+.dn { position: relative; aspect-ratio: 1; padding: 0; border: 0; background: none; -webkit-tap-highlight-color: transparent; }
+.dn svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; fill: var(--laranja); transition: transform .5s cubic-bezier(.3, 1.4, .5, 1), fill .3s; }
+.dn.tl svg { --dx: 7px; --dy: 7px; } .dn.tr svg { --dx: -7px; --dy: 7px; } .dn.br svg { --dx: -7px; --dy: -7px; } .dn.bl svg { --dx: 7px; --dy: -7px; }
+.dn span { position: absolute; transform: translate(-50%, -50%); font-size: .74rem; font-weight: 700; letter-spacing: .01em; color: var(--tinta); pointer-events: none; transition: color .3s; }
+.dn.tl span { left: 34%; top: 41%; } .dn.tr span { left: 66%; top: 41%; } .dn.br span { left: 66%; top: 59%; } .dn.bl span { left: 34%; top: 59%; }
+.dn:hover svg { fill: #F08447; }
+.dn[aria-pressed="true"] svg { fill: var(--tinta); transform: translate(var(--dx), var(--dy)); }
+.dn[aria-pressed="true"] span { color: var(--creme); }
+.dn:focus-visible { outline: none; }
+.dn:focus-visible svg { filter: drop-shadow(0 0 0 var(--tinta)) drop-shadow(0 0 3px var(--laranja-esc)); stroke: var(--tinta); stroke-width: 3px; }
+.bolha { margin: 12px auto 0; max-width: 21em; padding: 12px 16px; background: var(--creme-2); border-radius: 18px 18px 18px 5px; font-size: .86rem; line-height: 1.45; color: var(--cacau); min-height: 3.6em; display: grid; place-items: center; }
+.bolha.vazia { font-style: italic; opacity: .75; }
+.bolha.troca { animation: troca .45s var(--ease); }
+@keyframes troca { from { opacity: 0; transform: translateY(6px); } }
+.enviar { margin-top: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 12px 26px; border-radius: 26px 26px 26px 6px; background: var(--laranja); color: var(--tinta); font-weight: 700; font-size: .95rem; text-decoration: none; transition: background .3s, transform .3s var(--ease); }
+.enviar:hover { background: var(--tinta); color: var(--creme); transform: translateY(-2px); }
+.enviar svg { width: 20px; height: 20px; }
+.painel__112 { margin-top: 12px; font-size: .7rem; color: var(--texto-2); }
+
+/* ===== rodapé ===== */
+.rodape { width: 100%; margin-top: 44px; padding: 26px 0 calc(34px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(46, 36, 32, .14); display: flex; flex-direction: column; align-items: center; text-align: center; }
+.credito { font-size: .8rem; color: var(--texto-2); }
+.credito a { color: var(--tinta); font-weight: 600; text-decoration-color: var(--laranja); text-underline-offset: 3px; }
+.nota { margin-top: 20px; max-width: 34em; font-size: .7rem; line-height: 1.55; color: var(--texto-2); }
+.nota b { color: var(--tinta); }
+.nota + .nota { margin-top: 8px; }
+.direitos { margin-top: 16px; font-size: .72rem; color: var(--texto-2); }
+
+/* =====================================================================
+   "PEDE JÁ O TEU BIOLINK" (DD Digital) — igual em todos os biolinks
+   Fica por baixo do crédito, como parte da assinatura e não como mais um link.
+   Variáveis: --cta-fundo  --cta-fundo-hover  --cta-texto  --cta-destaque  --cta-linha
+   ===================================================================== */
+.pede {
+  display: inline-flex; align-items: center; gap: 12px;
+  max-width: 100%;
+  margin-top: 14px; padding: 8px 18px 8px 8px;
+  border-radius: 999px;
+  text-align: left; text-decoration: none;
+  color: var(--cta-texto, var(--tinta));
+  background: var(--cta-fundo, rgba(4, 11, 7, .72));
+  border: 1px solid var(--cta-linha, rgba(150, 255, 195, .24));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color .25s, background .25s;
+}
+.pede img { flex: none; width: 40px; height: 40px; border-radius: 50%; background: #fdfdfd; object-fit: cover; }
+.pede__txt { min-width: 0; line-height: 1.3; }
+.pede__txt > span { display: block; font-size: .7rem; opacity: .75; }
+.pede b { display: block; margin-top: 1px; font-size: .82rem; font-weight: 700; color: var(--cta-destaque, var(--laranja-esc)); }
+.pede b i { display: inline-block; font-style: normal; transition: transform .2s var(--ease); }
+.pede:hover, .pede:focus-visible { border-color: var(--cta-destaque, var(--laranja-esc)); background: var(--cta-fundo-hover, rgba(10, 26, 18, .9)); }
+.pede:hover b i { transform: translateX(4px); }
+.pede:focus-visible { outline: 2px solid var(--tinta); outline-offset: 3px; }
+
+/* ===== aviso de link de exemplo ===== */
+.toast { position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom)); z-index: 140; width: min(92vw, 400px); padding: 12px 18px; border-radius: 18px 18px 18px 5px; background: var(--tinta); color: var(--creme); font-size: .82rem; line-height: 1.4; text-align: center; box-shadow: 0 14px 30px rgba(46, 36, 32, .4); opacity: 0; transform: translate(-50%, 16px); pointer-events: none; transition: opacity .35s ease, transform .45s var(--ease); }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+/* ===== ecrãs maiores ===== */
+@media (min-width: 640px) {
+  .demo-bar .l { display: block; }
+  .demo-bar .s { display: none; }
+  .demo-chip { display: flex; }
+  body { padding-top: calc(var(--barra) + 44px); }
+  .foto { --lado: 320px; }
+}
+@media (max-width: 639px) { .demo-bar .l { display: none; } .demo-bar .s { display: block; } }
+@media (hover: none) { .lk:hover { transform: none; } .redes a:hover { transform: none; background: rgba(255, 251, 246, .5); } }
+
+/* ===== movimento reduzido ===== */
+@media (prefers-reduced-motion: reduce) {
+  .sobe, .lk--main .lk__ico svg, .demo-chip i { animation: none; }
+  .painel, .painel__in, .toast { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== definições SVG: os 4 dentes do logótipo da Climest (vetorizados do logótipo real) ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <path id="d-tl" d="M136.8 196.9C135.1 196.6 132.8 196.1 132.3 195.8C132.0 195.7 131.3 195.4 130.9 195.3C129.2 194.9 125.1 192.8 123.9 191.8C123.7 191.7 123.1 191.3 122.5 191.0C121.9 190.7 120.8 190.1 120.0 189.5C119.2 189.0 118.1 188.3 117.6 188.0C117.0 187.7 116.2 187.1 115.8 186.8C115.3 186.4 113.8 185.3 112.5 184.4C110.0 182.8 106.8 180.3 105.4 179.0C104.9 178.6 103.7 177.6 102.6 176.8C101.5 176.0 100.3 174.9 99.8 174.3C99.4 173.8 98.7 173.2 98.3 172.9C97.6 172.4 89.4 164.3 88.3 163.0C88.0 162.6 87.0 161.6 86.1 160.9C85.1 160.0 84.4 159.2 84.0 158.5C83.5 157.7 82.7 156.9 81.0 155.3C79.8 154.2 78.5 152.9 78.2 152.5C77.3 151.3 76.3 150.2 75.1 148.8C74.4 148.1 73.1 146.7 72.1 145.6C70.9 144.4 70.0 143.5 69.5 143.2C69.1 143.0 68.4 142.5 67.9 142.0C67.4 141.5 66.8 141.2 66.3 141.0C65.9 140.9 64.8 140.5 63.8 140.1C62.9 139.6 61.4 139.0 60.5 138.7C59.6 138.3 58.4 137.8 57.9 137.5C57.3 137.2 56.4 136.8 56.0 136.7C55.5 136.5 53.9 135.7 52.4 135.0C50.9 134.3 48.6 133.2 47.2 132.5C45.7 131.8 44.3 131.1 43.9 130.8C43.5 130.5 43.1 130.3 43.0 130.3C43.0 130.3 42.0 129.8 40.9 129.1C39.9 128.4 38.4 127.6 37.8 127.3C37.0 127.0 36.3 126.6 35.8 126.1C35.4 125.7 34.2 124.8 33.2 124.2C32.1 123.5 30.8 122.7 30.4 122.3C29.9 121.8 29.1 121.3 28.8 121.0C28.4 120.7 28.0 120.4 27.8 120.2C27.7 120.1 27.3 119.8 26.9 119.5C26.6 119.3 25.3 118.2 24.1 117.1C23.0 116.0 21.7 114.9 21.2 114.6C20.6 114.2 20.1 113.6 19.6 112.8C19.2 112.2 18.5 111.4 18.1 111.1C17.4 110.6 15.2 107.6 14.5 106.3C14.3 105.9 13.8 105.1 13.3 104.4C12.4 103.1 11.2 100.0 10.7 97.7C10.3 96.0 10.3 88.6 10.6 86.7C10.9 85.0 12.8 79.9 13.8 78.3C15.6 75.0 16.1 74.4 18.0 72.4C19.1 71.3 20.1 70.2 20.3 69.9C20.5 69.6 21.2 69.0 21.7 68.6C23.2 67.7 24.1 66.9 25.5 65.6C27.2 64.0 28.0 63.4 29.3 62.8C29.9 62.5 30.7 62.1 31.0 61.8C31.8 61.0 32.8 60.3 34.3 59.6C35.0 59.2 35.9 58.6 36.4 58.2C36.8 57.8 37.8 57.2 38.5 56.8C39.2 56.4 40.2 55.7 40.7 55.4C43.5 53.5 51.2 46.5 51.9 45.1C52.2 44.7 53.1 43.5 54.0 42.4C54.9 41.3 55.8 40.2 56.0 39.8C56.2 39.5 56.4 39.1 56.6 39.0C56.8 38.9 57.2 38.3 57.5 37.8C57.8 37.3 58.3 36.6 58.6 36.2C58.9 35.9 59.7 34.6 60.4 33.5C61.1 32.4 62.0 31.1 62.2 30.8C62.5 30.4 63.0 29.6 63.3 29.1C64.2 27.5 65.5 25.6 66.4 24.7C66.9 24.2 67.6 23.3 68.0 22.7C68.5 22.1 69.3 21.2 69.8 20.8C70.4 20.3 71.6 19.1 72.5 18.2C74.2 16.2 75.0 15.6 76.7 14.8C77.3 14.5 78.1 14.1 78.4 13.8C79.7 13.0 83.3 11.7 85.5 11.3C90.7 10.4 98.2 10.9 100.0 12.2C100.2 12.3 100.8 12.6 101.3 12.8C102.3 13.2 105.1 14.7 106.7 15.8C107.9 16.6 108.5 17.1 111.0 19.4C111.9 20.2 113.3 21.5 114.1 22.2C114.9 23.0 115.7 23.9 115.9 24.3C116.2 24.7 116.8 25.4 117.4 25.9C118.4 26.7 119.0 27.5 120.5 30.0C120.8 30.4 121.3 31.1 121.7 31.6C122.1 32.1 122.8 33.0 123.2 33.7C123.6 34.4 124.2 35.4 124.5 35.8C124.7 36.2 125.2 36.9 125.5 37.4C125.7 37.8 126.2 38.5 126.5 38.9C127.1 39.6 129.0 42.8 130.3 45.2C130.6 45.7 131.1 46.6 131.4 47.0C131.7 47.5 132.2 48.4 132.4 49.1C132.8 50.2 135.0 54.6 135.4 55.2C135.6 55.4 136.5 57.5 137.8 60.6C138.0 61.1 138.6 62.4 139.1 63.4C139.6 64.4 140.2 65.8 140.4 66.5C141.2 68.7 142.2 69.8 147.1 74.3C148.1 75.2 149.3 76.2 149.7 76.5C150.1 76.9 151.4 78.1 152.5 79.2C153.7 80.4 155.1 81.7 155.6 82.1C156.1 82.6 158.3 84.6 160.4 86.7C162.5 88.8 164.5 90.7 164.9 91.0C165.3 91.2 166.0 92.0 166.6 92.6C167.1 93.2 168.1 94.3 168.7 95.0C169.4 95.7 170.2 96.6 170.6 97.0C171.0 97.4 172.0 98.6 172.9 99.5C173.9 100.5 175.1 101.9 175.8 102.7C176.4 103.5 177.5 104.8 178.2 105.6C178.9 106.4 179.9 107.8 180.5 108.7C181.1 109.6 181.8 110.6 182.2 110.9C182.5 111.2 183.1 111.9 183.4 112.4C184.0 113.3 185.1 114.8 186.7 116.9C187.3 117.6 188.3 119.2 188.8 120.2C189.0 120.6 189.7 121.8 190.4 122.8C191.1 123.9 191.9 125.2 192.1 125.8C192.4 126.3 192.6 126.8 192.7 126.9C192.9 127.2 195.2 133.1 195.5 134.3C196.3 137.3 196.4 141.4 195.7 142.8C193.7 146.6 189.5 148.9 185.3 148.3C182.1 147.9 177.6 146.0 175.3 144.1C174.9 143.8 174.1 143.2 173.5 142.9C172.9 142.6 172.1 142.1 171.8 141.7C170.6 140.7 169.3 139.7 168.2 139.0C166.2 137.5 164.7 136.3 164.2 135.7C163.9 135.3 163.1 134.6 162.5 134.1C160.1 132.4 158.2 130.9 156.5 129.3C155.5 128.4 154.3 127.4 153.8 127.0C153.2 126.7 152.5 126.1 152.3 125.8C152.0 125.6 151.0 124.9 150.2 124.3C149.3 123.7 148.4 123.1 148.1 122.8C146.8 121.6 139.6 117.9 137.1 117.1C129.6 114.7 124.8 115.3 120.2 119.1C117.2 121.6 116.2 122.9 115.7 125.1C115.6 125.5 115.3 126.4 115.1 127.0C114.3 129.1 115.0 134.5 116.6 138.4C116.8 139.0 117.2 140.1 117.6 140.9C117.9 141.7 118.4 142.6 118.6 142.8C118.8 143.1 119.3 143.8 119.7 144.6C120.3 145.8 121.2 147.2 123.1 149.8C123.6 150.5 124.2 151.4 124.4 151.8C125.1 152.9 126.3 154.4 127.4 155.6C127.9 156.2 128.6 157.1 128.9 157.5C129.2 158.0 129.8 158.7 130.3 159.1C131.3 159.9 131.6 160.2 132.1 161.2C132.3 161.6 132.9 162.4 133.3 162.9C133.7 163.4 134.5 164.3 135.0 164.9C135.5 165.5 136.2 166.4 136.5 166.7C136.8 167.1 137.5 167.9 137.9 168.6C138.4 169.2 139.0 170.0 139.2 170.4C139.5 170.8 140.2 171.8 140.7 172.7C141.3 173.7 142.0 174.7 142.3 175.1C143.0 175.8 144.0 177.7 144.5 179.1C144.7 179.5 145.1 180.7 145.6 181.7C146.5 183.9 146.9 185.9 146.8 188.6C146.7 194.1 142.2 197.8 136.8 196.9Z"/>
+    <path id="d-tr" d="M261.1 196.9C257.4 196.3 253.9 192.6 253.5 188.8C253.2 186.8 253.6 184.3 254.5 182.4C256.4 178.1 257.6 175.7 258.4 175.0C258.8 174.6 259.5 173.7 259.8 173.1C260.1 172.4 260.9 171.3 261.9 170.3C262.8 169.3 263.7 168.2 263.9 167.8C264.5 166.9 265.2 166.0 266.7 164.4C267.3 163.8 268.2 162.6 268.8 161.8C269.4 161.0 270.3 159.9 270.8 159.4C271.2 158.8 271.8 158.1 272.1 157.7C272.4 157.3 273.3 156.1 274.2 155.1C275.1 154.0 276.0 152.8 276.3 152.3C276.6 151.8 277.5 150.6 278.4 149.5C279.6 148.1 280.3 147.1 280.9 145.8C281.5 144.7 282.2 143.5 282.5 143.0C283.3 142.0 284.7 138.5 285.2 136.5C285.4 135.7 285.6 135.0 285.7 134.8C286.3 133.7 286.5 128.4 285.9 127.1C285.8 126.8 285.6 126.1 285.4 125.5C284.7 122.6 281.2 118.3 278.7 117.1C278.1 116.9 277.0 116.4 276.4 116.1C274.0 115.0 268.9 115.2 265.8 116.6C265.3 116.8 264.5 117.1 263.9 117.2C262.4 117.7 260.8 118.3 260.1 118.8C259.7 119.1 259.2 119.4 258.8 119.5C258.2 119.8 256.2 120.8 255.2 121.5C254.8 121.8 254.0 122.3 253.5 122.6C252.9 122.9 252.1 123.4 251.8 123.8C251.4 124.1 250.6 124.8 250.0 125.3C249.3 125.9 248.4 126.6 247.9 126.9C245.7 128.3 244.9 128.9 244.1 129.7C243.6 130.1 243.1 130.5 242.8 130.7C242.6 130.8 241.5 131.8 240.4 132.8C239.2 133.9 237.9 135.0 237.4 135.3C236.8 135.6 236.2 136.0 236.0 136.2C235.8 136.4 235.2 136.8 234.8 137.0C234.4 137.3 233.4 138.1 232.7 138.8C227.0 143.9 219.1 147.5 213.6 147.5C209.8 147.5 208.4 146.9 206.1 143.9C204.2 141.6 204.4 137.0 206.6 131.8C206.9 130.9 207.4 129.7 207.7 128.9C208.0 128.2 208.4 127.3 208.6 126.9C208.9 126.6 209.4 125.7 209.6 125.1C209.9 124.4 210.6 123.2 211.2 122.4C211.7 121.6 212.3 120.7 212.4 120.3C212.6 120.0 213.3 118.9 214.1 117.9C214.8 116.9 215.7 115.6 216.1 115.0C217.3 112.9 218.3 111.6 219.0 111.1C219.4 110.8 219.8 110.4 220.1 109.8C220.3 109.3 221.2 108.0 222.1 107.0C223.0 105.9 224.0 104.7 224.3 104.3C225.4 102.9 226.8 101.2 227.1 101.0C227.2 101.0 228.0 100.1 228.9 99.2C233.1 94.7 234.4 93.3 236.4 91.4C238.8 88.9 242.0 85.8 242.8 85.3C243.0 85.1 244.5 83.7 246.1 82.1C247.6 80.6 249.5 78.9 250.1 78.4C250.8 77.9 251.6 77.1 251.9 76.7C252.5 75.9 254.2 74.3 257.5 71.6C259.4 69.9 259.8 69.3 261.2 65.7C261.7 64.4 262.3 63.2 262.4 63.0C262.5 62.7 262.8 62.0 263.1 61.3C263.6 59.6 266.2 54.2 266.9 53.1C267.2 52.6 267.7 51.7 267.9 51.2C268.5 49.8 269.8 47.2 270.2 46.6C270.4 46.4 270.9 45.3 271.3 44.3C272.2 42.5 273.9 39.6 274.7 38.8C274.9 38.5 275.4 37.8 275.6 37.2C276.7 35.2 281.3 28.3 282.7 26.8C283.1 26.4 283.7 25.7 284.1 25.2C284.9 24.1 287.3 21.7 289.2 20.1C290.0 19.4 291.4 18.1 292.2 17.3C293.6 15.9 294.2 15.5 296.0 14.8C296.5 14.6 297.2 14.3 297.5 14.1C300.9 12.0 303.9 11.1 308.1 10.9C311.7 10.7 315.0 11.0 317.0 11.7C321.8 13.4 325.1 15.0 326.8 16.5C331.3 20.3 333.4 22.5 334.2 24.1C334.4 24.4 335.2 25.3 336.0 26.3C336.8 27.2 337.9 28.5 338.3 29.2C338.8 29.9 339.4 30.7 339.7 31.0C340.1 31.3 340.7 32.2 341.1 33.0C341.5 33.8 342.3 35.1 342.9 35.8C343.4 36.5 344.0 37.4 344.2 37.8C344.4 38.1 344.8 38.7 345.1 39.1C345.3 39.4 345.9 40.2 346.2 40.8C347.0 41.9 348.7 44.3 349.6 45.6C350.3 46.4 353.6 49.8 355.9 52.0C357.3 53.3 358.9 54.5 359.6 54.9C359.9 55.0 360.5 55.5 361.0 55.9C362.2 56.8 364.4 58.4 365.2 58.7C365.8 59.1 368.3 60.8 369.6 61.8C370.0 62.2 371.0 62.7 371.7 63.1C372.5 63.5 373.4 64.1 373.9 64.5C375.1 65.6 378.3 68.2 378.9 68.6C380.2 69.4 382.5 71.5 383.9 73.3C384.4 73.9 385.3 75.0 385.8 75.7C386.4 76.3 387.1 77.3 387.3 77.8C387.6 78.3 388.1 79.1 388.3 79.4C388.9 80.2 389.2 81.2 390.2 85.4C391.2 89.8 391.3 94.5 390.5 97.6C389.9 100.2 388.0 104.3 386.7 106.1C386.3 106.7 385.4 107.9 384.9 108.8C383.2 111.4 377.9 116.6 374.4 119.2C373.7 119.8 372.7 120.6 372.2 121.0C371.7 121.5 371.1 121.9 370.8 122.1C369.8 122.6 366.9 124.6 366.0 125.3C365.6 125.8 364.6 126.4 363.9 126.8C363.2 127.2 362.1 127.9 361.4 128.3C360.1 129.2 358.3 130.2 357.3 130.5C356.9 130.6 356.4 130.9 356.2 131.1C355.9 131.3 354.8 132.0 353.8 132.5C352.8 133.0 351.4 133.7 350.8 134.0C350.1 134.4 348.8 135.0 347.9 135.4C347.0 135.9 345.3 136.7 344.2 137.3C343.0 138.0 341.8 138.6 341.4 138.7C335.6 140.5 331.9 142.7 329.9 145.4C329.2 146.2 327.7 147.9 326.6 149.0C325.4 150.1 324.2 151.4 323.9 151.9C323.6 152.3 322.8 153.2 322.1 153.9C321.3 154.6 320.1 155.9 319.3 156.8C318.6 157.8 317.6 158.7 317.1 159.0C316.7 159.3 316.1 159.9 315.8 160.3C315.5 160.7 313.8 162.5 311.9 164.4C310.0 166.2 308.3 168.1 308.0 168.5C307.7 168.9 307.1 169.6 306.6 170.0C305.1 171.0 303.0 173.0 302.3 173.8C302.0 174.2 301.5 174.7 301.2 174.9C300.8 175.1 299.7 176.0 298.7 177.0C297.6 178.0 295.9 179.3 294.8 180.0C293.8 180.7 292.7 181.6 292.3 181.9C292.0 182.3 291.2 182.9 290.6 183.3C287.6 185.3 286.6 186.1 286.3 186.3C286.1 186.5 285.5 186.9 284.9 187.4C281.9 189.4 280.3 190.4 278.8 191.1C278.0 191.5 276.9 192.2 276.4 192.5C274.7 193.8 268.5 196.2 265.7 196.7C264.0 196.9 262.0 197.0 261.1 196.9Z"/>
+    <path id="d-br" d="M306.8 391.6C303.5 391.2 301.2 390.5 297.4 388.4C293.7 386.4 292.7 385.7 292.0 384.7C291.6 384.2 291.0 383.6 290.5 383.4C289.6 382.8 284.2 377.4 283.4 376.2C283.1 375.8 282.8 375.3 282.6 375.2C282.4 375.0 281.9 374.3 281.4 373.6C280.9 372.8 279.7 371.2 278.6 369.8C277.5 368.4 276.4 366.9 276.0 366.2C275.2 364.4 274.1 362.6 273.2 361.4C272.7 360.9 272.1 359.9 271.7 359.2C271.4 358.5 270.9 357.6 270.7 357.2C270.2 356.5 268.3 352.7 268.1 352.0C268.0 351.8 267.7 351.1 267.3 350.5C266.9 349.9 266.4 348.7 266.1 347.9C265.8 347.1 265.3 346.1 265.0 345.5C264.7 345.0 264.3 344.2 264.1 343.8C263.9 343.3 263.5 342.4 263.2 341.7C262.9 341.0 262.6 340.4 262.5 340.3C262.4 340.2 262.0 339.1 261.5 337.9C259.2 332.7 259.2 332.7 251.7 326.4C251.0 325.9 248.7 323.7 246.5 321.5C244.3 319.3 240.8 315.9 238.7 313.9C233.9 309.3 233.3 308.7 232.0 307.2C231.4 306.6 230.4 305.6 229.8 305.1C229.2 304.5 228.4 303.6 227.9 303.0C227.5 302.4 226.8 301.5 226.3 301.1C225.9 300.6 224.8 299.3 223.9 298.2C222.9 297.0 221.8 295.7 221.4 295.2C221.0 294.7 220.4 293.8 220.0 293.2C219.7 292.7 219.3 292.2 219.2 292.1C219.1 292.0 218.7 291.5 218.3 291.0C217.9 290.4 217.0 289.2 216.3 288.2C215.5 287.3 214.7 286.2 214.5 285.8C214.0 284.9 212.3 282.1 210.2 278.8C208.4 275.8 208.4 275.7 207.2 272.9C205.2 268.2 204.5 264.4 205.1 261.6C205.9 257.7 207.6 255.8 211.3 254.8C214.8 253.7 219.3 254.4 222.7 256.5C225.9 258.5 227.6 259.6 228.2 260.2C228.5 260.6 229.0 261.0 229.4 261.2C230.4 261.7 232.9 263.4 233.9 264.3C235.8 265.9 236.3 266.3 237.0 266.8C237.4 267.1 237.9 267.5 238.2 267.7C238.9 268.5 241.0 270.2 242.4 271.2C243.1 271.6 243.9 272.3 244.2 272.7C244.8 273.5 246.5 274.9 248.8 276.5C249.6 277.1 250.5 277.8 250.7 278.0C250.9 278.1 251.7 278.7 252.5 279.2C253.3 279.7 254.1 280.3 254.2 280.4C255.3 281.1 258.5 283.2 258.6 283.2C258.7 283.2 259.2 283.5 259.8 283.8C260.3 284.2 261.0 284.5 261.2 284.6C261.4 284.7 262.3 285.0 263.1 285.3C268.0 287.4 273.6 287.6 277.6 285.7C283.2 283.0 286.4 278.2 286.4 272.5C286.4 268.7 285.5 265.9 282.6 260.1C281.4 257.6 280.8 256.6 279.3 254.5C279.0 254.0 278.4 253.2 278.0 252.5C277.4 251.5 276.6 250.5 274.2 247.6C273.7 247.0 273.1 246.2 272.9 245.9C272.7 245.6 272.1 244.8 271.5 244.2C270.0 242.5 268.7 240.7 268.3 240.0C268.1 239.7 267.5 239.0 267.0 238.4C266.5 237.9 265.8 237.1 265.5 236.7C265.3 236.3 264.6 235.5 264.2 234.9C263.7 234.4 263.1 233.6 262.9 233.3C261.7 231.4 258.9 227.3 258.4 226.6C258.0 226.2 257.6 225.6 257.5 225.3C253.9 218.1 253.3 213.9 255.3 209.7C256.6 207.0 259.1 205.6 262.3 205.6C264.3 205.6 268.5 206.6 270.5 207.5C270.9 207.7 272.2 208.2 273.2 208.7C276.7 210.1 278.9 211.3 280.2 212.3C281.0 212.9 282.3 213.8 283.1 214.2C283.9 214.7 284.8 215.3 285.1 215.4C285.4 215.6 286.6 216.5 287.9 217.4C289.1 218.4 290.4 219.3 290.8 219.5C291.1 219.8 291.8 220.4 292.2 220.9C292.7 221.5 293.5 222.2 294.5 222.7C295.3 223.2 296.5 224.2 297.3 224.9C298.1 225.7 299.1 226.5 299.4 226.7C300.8 227.8 302.3 229.1 304.4 231.2C305.6 232.4 307.4 234.2 308.4 235.1C309.3 236.0 310.5 237.2 310.9 237.7C311.4 238.2 312.2 239.0 312.7 239.5C314.0 240.7 319.7 246.7 320.4 247.6C320.8 248.1 321.9 249.2 322.9 250.2C323.9 251.3 325.1 252.5 325.5 253.1C326.0 253.6 327.0 254.9 327.9 255.8C328.8 256.7 330.2 258.1 330.9 258.8C332.4 260.4 333.9 261.3 337.5 262.6C338.6 263.0 339.9 263.5 340.4 263.8C340.8 264.0 341.8 264.4 342.6 264.7C346.9 266.5 349.1 267.5 351.8 269.1C352.8 269.6 354.0 270.2 354.5 270.4C355.1 270.6 355.7 271.0 356.0 271.1C356.2 271.3 357.0 271.7 357.7 272.1C358.4 272.4 359.7 273.2 360.7 273.9C361.7 274.5 362.7 275.1 362.9 275.2C363.2 275.3 363.6 275.5 363.9 275.8C364.2 276.0 364.8 276.4 365.4 276.7C366.0 276.9 366.9 277.5 367.5 277.9C368.2 278.4 369.3 279.2 370.2 279.7C371.0 280.3 371.9 281.0 372.1 281.3C372.4 281.6 373.0 282.1 373.4 282.4C374.9 283.3 376.7 284.7 377.9 285.8C378.5 286.4 379.5 287.4 380.1 287.9C380.7 288.5 382.0 289.9 383.0 291.1C386.6 295.4 387.9 297.6 389.3 301.4C389.5 302.0 389.8 302.7 389.9 303.0C390.2 303.6 390.8 306.9 390.9 309.2C391.1 311.9 390.4 317.5 389.5 319.4C389.3 320.1 388.7 321.4 388.3 322.3C387.6 324.2 387.3 324.5 385.2 327.6C383.9 329.6 380.7 332.9 378.7 334.4C378.2 334.8 377.4 335.4 377.0 335.8C376.0 336.7 374.4 337.9 373.3 338.5C372.8 338.8 372.2 339.3 371.8 339.6C371.5 339.9 370.8 340.4 370.2 340.7C369.7 341.0 368.4 341.9 367.3 342.7C366.2 343.5 364.7 344.5 364.0 344.9C357.4 349.1 350.1 355.6 347.6 359.6C347.2 360.2 346.3 361.4 345.5 362.4C344.7 363.4 343.8 364.6 343.5 365.1C343.2 365.6 342.5 366.5 342.1 367.0C341.6 367.5 340.9 368.6 340.5 369.5C340.0 370.3 339.2 371.5 338.7 372.1C338.2 372.7 337.6 373.6 337.4 374.0C337.2 374.4 336.9 374.9 336.7 375.0C336.6 375.1 336.2 375.6 335.9 376.1C335.6 376.5 334.9 377.5 334.3 378.2C333.6 379.0 332.7 380.2 332.1 381.0C331.5 381.8 330.7 382.6 330.4 382.8C330.1 383.0 329.5 383.6 329.1 384.0C327.9 385.3 326.5 386.5 325.5 387.0C325.0 387.3 324.4 387.6 324.3 387.8C323.7 388.4 322.9 388.8 320.3 389.8C315.6 391.4 311.3 392.0 306.8 391.6Z"/>
+    <path id="d-bl" d="M89.6 391.6C83.1 390.9 77.3 388.8 74.2 386.0C72.6 384.5 71.3 383.4 70.5 382.9C69.5 382.2 68.5 381.1 67.9 380.1C67.6 379.6 67.0 378.8 66.4 378.2C65.4 377.1 63.9 375.2 63.2 374.1C63.1 373.8 62.6 373.2 62.3 372.8C62.0 372.4 61.2 371.1 60.6 370.0C60.0 368.8 59.3 367.7 58.7 367.1C58.1 366.5 57.4 365.5 57.0 364.8C56.0 363.1 55.0 361.7 53.8 360.4C53.3 359.8 52.5 358.8 52.2 358.2C51.9 357.7 50.6 356.2 49.4 354.9C48.1 353.6 46.8 352.2 46.4 351.8C45.5 350.9 43.5 349.1 42.6 348.4C42.2 348.1 41.6 347.7 41.1 347.4C40.7 347.1 39.5 346.3 38.5 345.6C37.4 345.0 36.4 344.3 36.2 344.0C36.0 343.8 35.1 343.1 34.2 342.6C31.6 340.9 28.5 338.9 27.8 338.2C26.3 337.0 24.3 335.5 23.1 334.8C21.7 334.0 16.7 329.0 15.3 327.1C14.3 325.6 13.0 323.1 12.3 321.4C12.1 320.7 11.6 319.6 11.3 319.1C10.0 316.3 9.9 305.5 11.2 303.0C11.4 302.6 11.7 301.8 11.9 301.3C12.7 298.7 15.2 294.5 17.3 292.3C18.4 291.1 19.3 289.9 20.3 288.4C20.6 288.0 21.2 287.5 21.8 287.2C22.5 286.9 23.7 285.8 24.9 284.8C27.3 282.6 28.3 281.8 29.4 281.0C29.8 280.7 30.7 280.1 31.3 279.7C31.8 279.3 32.9 278.6 33.7 278.2C34.4 277.8 35.4 277.1 35.9 276.7C36.3 276.4 37.6 275.6 38.6 275.0C39.7 274.4 40.8 273.8 41.2 273.5C42.0 272.9 44.7 271.2 45.2 271.0C45.4 270.9 46.0 270.6 46.5 270.4C48.1 269.4 52.9 267.0 55.9 265.7C57.6 265.0 59.2 264.3 59.6 264.0C60.4 263.5 62.5 262.7 65.2 261.7C67.5 261.0 69.1 259.8 70.9 257.6C71.2 257.1 72.4 255.9 73.4 254.8C74.4 253.8 75.5 252.6 75.9 252.1C77.4 250.1 80.9 246.5 86.2 241.2C87.5 239.9 88.9 238.6 89.2 238.2C89.6 237.9 91.5 235.9 93.5 233.8C95.6 231.7 97.7 229.7 98.3 229.3C98.9 228.8 99.6 228.2 99.9 227.8C100.2 227.4 100.7 226.9 100.9 226.8C101.2 226.6 102.2 225.8 103.2 224.9C104.2 224.1 105.6 223.1 106.2 222.7C106.8 222.2 108.2 221.1 109.1 220.2C110.5 219.0 111.5 218.3 112.8 217.5C113.9 216.9 115.2 216.0 115.7 215.6C116.2 215.0 117.5 214.2 118.7 213.5C119.8 212.9 121.2 212.1 121.7 211.7C122.3 211.3 122.8 211.0 122.9 211.0C122.9 211.0 124.4 210.3 126.0 209.3C128.2 208.2 129.5 207.6 130.4 207.3C131.1 207.1 131.9 206.9 132.0 206.8C132.6 206.5 137.3 205.7 138.6 205.7C141.7 205.7 144.0 206.7 145.5 208.9C147.9 212.4 148.3 215.4 146.9 219.5C145.7 222.8 144.5 225.1 142.7 227.4C141.9 228.5 140.7 230.1 140.1 231.1C139.5 232.2 138.5 233.5 137.4 234.7C136.4 235.7 135.4 236.9 135.2 237.4C134.9 237.9 134.2 238.7 133.7 239.1C133.2 239.5 132.5 240.4 132.1 241.0C131.7 241.6 131.2 242.2 131.1 242.4C130.3 243.3 128.2 245.6 127.8 246.2C127.5 246.5 126.7 247.5 126.0 248.4C125.3 249.3 124.6 250.2 124.4 250.5C124.3 250.7 123.8 251.3 123.4 251.8C123.0 252.3 122.5 253.1 122.3 253.5C122.1 253.9 121.7 254.5 121.4 254.8C121.1 255.1 120.4 256.3 119.9 257.3C119.4 258.4 118.6 259.8 118.2 260.4C115.4 264.7 114.2 271.7 115.4 275.9C115.6 276.7 115.8 277.4 115.8 277.6C115.8 279.3 121.0 285.0 123.8 286.3C127.6 288.0 136.3 286.9 140.2 284.2C140.4 284.0 142.0 283.1 143.7 282.2C146.3 280.9 147.1 280.4 147.7 279.7C148.2 279.3 149.0 278.7 149.5 278.4C150.7 277.8 152.5 276.5 153.8 275.3C154.4 274.8 154.9 274.3 155.0 274.3C155.1 274.3 155.4 274.1 155.8 273.8C156.1 273.5 156.7 273.0 157.2 272.7C158.8 271.5 160.1 270.4 160.9 269.6C162.6 267.9 164.5 266.4 165.6 265.6C166.2 265.1 167.6 264.2 168.6 263.4C171.2 261.5 175.7 258.6 178.3 257.3C183.3 254.7 189.5 254.1 192.3 256.0C196.6 259.0 197.2 261.7 195.3 268.9C194.8 270.5 192.4 275.9 191.2 277.9C190.9 278.5 190.4 279.4 190.1 279.9C189.8 280.4 189.3 281.1 189.0 281.6C188.6 282.0 188.2 282.8 188.0 283.2C187.2 284.8 185.9 286.7 185.5 287.0C185.2 287.2 184.8 287.7 184.6 288.1C183.7 289.5 182.0 291.9 181.3 292.7C180.9 293.1 180.4 293.8 180.2 294.2C180.0 294.6 179.1 295.6 178.4 296.5C176.3 298.8 175.4 299.9 174.5 301.1C174.0 301.8 173.5 302.4 173.0 302.7C172.6 302.9 171.7 303.8 170.9 304.7C169.3 306.6 167.7 308.2 165.8 309.8C165.1 310.5 164.2 311.4 163.9 311.9C163.6 312.4 162.7 313.3 161.7 314.1C160.7 314.9 159.4 316.3 158.7 317.1C158.0 317.9 157.2 318.7 156.9 318.8C156.5 319.0 155.6 319.8 154.8 320.6C152.2 323.3 151.3 324.2 150.0 325.1C149.2 325.7 148.3 326.5 147.6 327.3C147.0 328.1 146.0 329.1 145.3 329.6C143.6 330.8 142.5 332.0 141.5 333.7C140.4 335.5 140.3 335.7 139.6 337.3C139.3 338.1 138.5 339.9 137.9 341.2C137.3 342.6 136.5 344.5 136.1 345.5C135.0 348.0 133.9 350.4 133.3 351.4C132.9 351.8 132.5 352.8 132.2 353.5C131.2 356.0 129.0 360.1 127.3 362.6C126.7 363.4 126.0 364.5 125.8 365.0C125.6 365.5 125.2 366.1 125.0 366.4C124.6 366.9 123.8 368.1 122.3 370.3C120.4 373.3 119.6 374.3 116.9 377.2C116.4 377.8 115.5 378.8 114.9 379.5C114.3 380.2 113.2 381.3 112.4 382.0C111.7 382.6 110.6 383.6 110.1 384.1C109.5 384.6 108.8 385.2 108.4 385.6C107.4 386.4 104.6 388.1 102.5 389.0C101.4 389.5 100.3 390.0 99.9 390.3C98.4 391.1 92.5 391.9 89.6 391.6Z"/>
+  </defs>
+</svg>
+
+<!-- ===== Aviso de demonstração (faixa fixa + selo + nota no rodapé) ===== -->
+<div class="demo-bar"><b>DEMO</b><span class="l">Biolink de demonstração criado pela DD Digital para a Dra Mariana Dias · conteúdo ilustrativo</span><span class="s">Demonstração · Dra Mariana Dias</span></div>
+
+<!-- X gigante apagado, atrás de tudo -->
+<svg class="fundo" viewBox="0 0 401 401" aria-hidden="true"><use href="#d-tl"/><use href="#d-tr"/><use href="#d-br"/><use href="#d-bl"/></svg>
+
+<main class="pagina" id="inicio">
+
+  <!-- ===== HERO: os dentes juntam-se em X e abrem-se para os cantos da foto ===== -->
+  <header class="topo">
+    <button class="foto" id="foto" type="button" aria-label="Dra Mariana Dias. Tocar para ver o logótipo da clínica a abrir-se outra vez">
+      <span class="foto__img"><span class="foto__papel"><img src="img/mariana.webp" alt="Dra Mariana Dias, a sorrir, de camisola preta e colar com um coração dourado" width="900" height="900"></span></span>
+      <svg class="foto__dentes" viewBox="0 0 401 401" aria-hidden="true">
+        <g class="tl"><use href="#d-tl"/></g>
+        <g class="tr"><use href="#d-tr"/></g>
+        <g class="br"><use href="#d-br"/></g>
+        <g class="bl"><use href="#d-bl"/></g>
+      </svg>
+    </button>
+
+    <h1 class="nome sobe" style="--i:0">Dra Mariana <b>Dias</b></h1>
+    <p class="cargo sobe" style="--i:1">Médica dentista, especialista em cirurgia oral</p>
+    <p class="clinica sobe" style="--i:2">Diretora clínica · Climest, Estarreja</p>
+
+    <ul class="redes sobe" style="--i:3" aria-label="Redes sociais">
+      <li><a href="https://www.instagram.com/climest_estarreja/" target="_blank" rel="noopener" aria-label="Instagram da clínica, @climest_estarreja">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.4" cy="6.6" r=".7" fill="currentColor"/></svg></a></li>
+      <li><a href="#" data-exemplo="Facebook" aria-label="Facebook (link de exemplo)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a></li>
+      <li><a href="https://wa.me/351932490691?text=Ol%C3%A1%2C%20Dra.%20Mariana%21%20Gostava%20de%20falar%20convosco." target="_blank" rel="noopener" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.2 20.8l1.5-4.6A8.7 8.7 0 1 1 8 19.6z"/><path d="M9.3 8.4c.3-.6.9-.7 1.2-.3l.9 1.5c.2.4.1.7-.2 1l-.4.4c.6 1.1 1.5 2 2.6 2.6l.4-.4c.3-.3.7-.4 1-.2l1.5.9c.4.3.3.9-.3 1.3-1.1.8-2.6.6-4.3-.4-1.9-1.1-3.2-2.7-3.6-4.2-.2-.8 0-1.6.2-2.2z" stroke-width="1.4"/></svg></a></li>
+    </ul>
+  </header>
+
+  <!-- ===== LINKS: editar aqui (um botão = um bloco igual aos outros) ===== -->
+  <nav aria-label="Ligações" style="width:100%">
+    <ul class="links">
+      <li class="sobe" style="--i:4">
+        <a class="lk lk--main" href="https://wa.me/351932490691?text=Ol%C3%A1%2C%20Dra.%20Mariana%21%20Gostava%20de%20agendar%20uma%20consulta%20de%20medicina%20dent%C3%A1ria.%20Podem%20indicar-me%20a%20disponibilidade%3F" target="_blank" rel="noopener">
+          <span class="lk__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8.5 15l2.4 2.3 4.6-4.6"/></svg></span>
+          <span class="lk__t"><b>Agendar consulta de Medicina dentária</b><small>Mensagem pronta no WhatsApp</small></span>
+          <span class="lk__seta" aria-hidden="true">→</span>
+        </a>
+      </li>
+      <li class="sobe" style="--i:5">
+        <a class="lk" href="https://www.google.com/maps/search/?api=1&amp;query=Rua+Desembargador+Oliveira+Pinto+26-L%2C+3860-363+Estarreja" target="_blank" rel="noopener">
+          <span class="lk__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.6-5.7-6.6-11a6.6 6.6 0 0 1 13.2 0c0 5.3-6.6 11-6.6 11z"/><circle cx="12" cy="10" r="2.4"/></svg></span>
+          <span class="lk__t"><b>Onde me encontrar</b><small>Rua Desembargador Oliveira Pinto 26-L, Estarreja</small></span>
+          <span class="lk__seta" aria-hidden="true">→</span>
+        </a>
+      </li>
+      <li class="sobe" style="--i:6">
+        <button class="lk" id="abrir" type="button" aria-expanded="false" aria-controls="duvidas">
+          <span class="lk__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4h0A2.5 2.5 0 0 1 4 13.5z"/><path d="M10 8.3a2 2 0 1 1 2.8 1.8c-.6.3-.8.7-.8 1.3M12 13.4v.1"/></svg></span>
+          <span class="lk__t"><b>Esclarece as tuas dúvidas</b><small>Escolhe o assunto e fala comigo</small></span>
+          <span class="lk__seta" aria-hidden="true">→</span>
+        </button>
+        <div class="painel" id="duvidas" inert>
+          <div>
+            <div class="painel__in">
+              <p class="painel__q">Sobre o que queres <b>falar?</b></p>
+              <p class="painel__d">Toca num dente. A mensagem fica pronta no WhatsApp.</p>
+              <div class="x" role="group" aria-label="Assunto da mensagem">
+                <button class="dn tl" type="button" aria-pressed="false" data-msg="Gostava de marcar uma consulta de revisão (check-up)."><svg viewBox="0 0 201 201" aria-hidden="true"><use href="#d-tl"/></svg><span>Check-up</span></button>
+                <button class="dn tr" type="button" aria-pressed="false" data-msg="Tenho uma dúvida sobre os dentes do siso."><svg viewBox="200 0 201 201" aria-hidden="true"><use href="#d-tr"/></svg><span>Siso</span></button>
+                <button class="dn bl" type="button" aria-pressed="false" data-msg="Gostava de esclarecer uma dúvida sobre implantes dentários."><svg viewBox="0 200 201 201" aria-hidden="true"><use href="#d-bl"/></svg><span>Implantes</span></button>
+                <button class="dn br" type="button" aria-pressed="false" data-msg="Tenho um problema que gostava de ver o mais depressa possível."><svg viewBox="200 200 201 201" aria-hidden="true"><use href="#d-br"/></svg><span>Urgência</span></button>
+              </div>
+              <p class="bolha vazia" id="bolha" aria-live="polite">Ainda sem assunto escolhido.</p>
+              <a class="enviar" id="enviar" href="https://wa.me/351932490691?text=Ol%C3%A1%2C%20Dra.%20Mariana%21%20Gostava%20de%20falar%20convosco." target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.2 20.8l1.5-4.6A8.7 8.7 0 1 1 8 19.6z"/><path d="M9.3 8.4c.3-.6.9-.7 1.2-.3l.9 1.5c.2.4.1.7-.2 1l-.4.4c.6 1.1 1.5 2 2.6 2.6l.4-.4c.3-.3.7-.4 1-.2l1.5.9c.4.3.3.9-.3 1.3-1.1.8-2.6.6-4.3-.4-1.9-1.1-3.2-2.7-3.6-4.2-.2-.8 0-1.6.2-2.2z" stroke-width="1.4"/></svg>
+                Enviar no WhatsApp</a>
+              <p class="painel__112">Em caso de emergência médica, liga 112.</p>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li class="sobe" style="--i:7">
+        <a class="lk" href="https://demo.dddigital.pt/Climest" target="_blank" rel="noopener">
+          <span class="lk__ico" aria-hidden="true"><svg viewBox="0 0 401 401" fill="currentColor" style="width:30px;height:30px"><use href="#d-tl"/><use href="#d-tr"/><use href="#d-br"/><use href="#d-bl"/></svg></span>
+          <span class="lk__t"><b>A nossa clínica</b><small>Clínica Médica e Dentária de Estarreja</small></span>
+          <span class="lk__seta" aria-hidden="true">↗</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- ===== RODAPÉ ===== -->
+  <footer class="rodape">
+    <p class="credito">
+      Spoiler: este biolink não se fez sozinho <span aria-hidden="true">😉</span>
+      <a href="https://dddigital.pt" target="_blank" rel="noopener">DD Digital</a>.
+    </p>
+    <a class="pede" href="https://dddigital.pt/?utm_source=biolink&amp;utm_medium=cta&amp;utm_campaign=dramarianadias#contacto" target="_blank" rel="noopener">
+      <img src="img/dd-logo.webp" width="200" height="200" alt="DD Digital" loading="lazy" decoding="async">
+      <span class="pede__txt">
+        <span>Design totalmente personalizado à tua marca</span>
+        <b>Pede já o teu biolink <i aria-hidden="true">→</i></b>
+      </span>
+    </a>
+    <p class="nota"><b>Demonstração.</b> Biolink criado pela DD Digital como proposta para a Dra Mariana Dias. Textos e ligações são ilustrativos e não vinculativos; a ligação do Facebook é só um exemplo. A adequação de cada tratamento depende de avaliação por um profissional de saúde.</p>
+    <p class="nota"><b>Origem dos conteúdos.</b> Nome, cargo e botões vêm do biolink atual da Dra. Morada, telefone e Instagram vêm do site e das redes da Climest, e devem ser confirmados (o número de WhatsApp usado é o telemóvel da clínica). Fotografia fornecida pela cliente. Logótipo: Climest.</p>
+    <p class="direitos">© <span id="ano">2026</span> Dra Mariana Dias</p>
+  </footer>
+
+</main>
+
+<div class="demo-chip"><i></i>Versão de demonstração · DD Digital</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =====================================================================
+   JS — organizado por funcionalidade (converter em ficheiro próprio na versão final)
+   ===================================================================== */
+(function () {
+  var doc = document.documentElement;
+  var WA = 'https://wa.me/351932490691?text=';
+  var NOME = 'Olá, Dra. Mariana! ';
+
+  /* rodapé: ano */
+  document.getElementById('ano').textContent = new Date().getFullYear();
+
+  /* hero: tocar na foto repete a abertura dos dentes */
+  var foto = document.getElementById('foto');
+  var tRe;
+  foto.addEventListener('click', function () {
+    if (doc.classList.contains('rm')) return;
+    doc.classList.add('re');
+    void foto.offsetWidth; /* reflow: reinicia as animações CSS já terminadas */
+    clearTimeout(tRe);
+    tRe = setTimeout(function () { doc.classList.remove('re'); }, 30);
+  });
+
+  /* toast para ligações de exemplo */
+  var toast = document.getElementById('toast');
+  var tToast;
+  function aviso(txt) {
+    toast.textContent = txt;
+    toast.classList.add('on');
+    clearTimeout(tToast);
+    tToast = setTimeout(function () { toast.classList.remove('on'); }, 3200);
+  }
+  document.querySelectorAll('[data-exemplo]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      aviso('Ligação de exemplo: na versão final abre o ' + a.getAttribute('data-exemplo') + ' da Dra Mariana Dias.');
+    });
+  });
+
+  /* dúvidas: painel + dentes que montam a mensagem de WhatsApp */
+  var abrir = document.getElementById('abrir');
+  var painel = document.getElementById('duvidas');
+  var bolha = document.getElementById('bolha');
+  var enviar = document.getElementById('enviar');
+  var dentes = painel.querySelectorAll('.dn');
+  var reduz = doc.classList.contains('rm');
+
+  function setPainel(on) {
+    abrir.setAttribute('aria-expanded', on ? 'true' : 'false');
+    painel.classList.toggle('on', on);
+    painel.inert = !on;
+    if (on) setTimeout(function () {
+      var r = painel.getBoundingClientRect();
+      if (r.bottom > innerHeight - 10) scrollTo({ top: scrollY + Math.min(r.bottom - innerHeight + 24, r.top - 90), behavior: reduz ? 'auto' : 'smooth' });
+    }, 380);
+  }
+  abrir.addEventListener('click', function () { setPainel(abrir.getAttribute('aria-expanded') !== 'true'); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && abrir.getAttribute('aria-expanded') === 'true') { setPainel(false); abrir.focus(); }
+  });
+
+  dentes.forEach(function (d) {
+    d.addEventListener('click', function () {
+      dentes.forEach(function (o) { o.setAttribute('aria-pressed', o === d ? 'true' : 'false'); });
+      var msg = NOME + d.getAttribute('data-msg');
+      bolha.textContent = '“' + msg + '”';
+      bolha.classList.remove('vazia');
+      bolha.classList.remove('troca'); void bolha.offsetWidth; bolha.classList.add('troca');
+      enviar.href = WA + encodeURIComponent(msg);
+    });
+  });
+})();
+</script>
+</body>
+</html>
