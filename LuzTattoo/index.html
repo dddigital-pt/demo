@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LUZ Tattoo — Demonstração</title>
+<meta name="description" content="Demonstração de website para o LUZ Tattoo Studio, Estarreja: tatuagens e piercings com arte, dedicação e personalidade. Criado pela DD Digital.">
+<meta name="theme-color" content="#070504">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');if(/[?&]nopre/.test(location.search))document.documentElement.classList.add('nopre')</script>
+<style>
+/* =====================================================================
+   NOTAS DA DEMO — LUZ Tattoo Studio (Estarreja) · site de 1 página
+   Conceito de layout e hero: o logótipo ACENDE. A estrela de oito pontas é o
+   ponto de partida; a luz expande-se em círculo (clip-path) e revela raios, aro
+   e "TATTOO STUDIO"; depois "LUZ" acende como um candeeiro a aquecer. O resto do
+   site é a mesma ideia: o artista a que dás atenção fica iluminado, o resto
+   apaga-se (artistas, parede de trabalhos), e a sessão acende os 13 raios um a um.
+   Herdado de: faixa DEMO + selo + nota de rodapé, receita do menu mobile
+   (LilianaPereira/setMenu), lightbox e filtros dos biolinks de tatuagem
+   (David Pita / A'Kay / Carlos Brito), fotos reais dos 3 artistas, reveals por
+   IntersectionObserver.
+   Novo: logótipo real separado em duas camadas (cobre + letras) e aceso por
+   clip-path radial; acordeão de "candeeiros" (luz em cone) que passa de artista
+   em artista; parede de trabalhos com filtros que APAGAM (não escondem); sol de
+   13 raios que acende com o scroll da sessão; manifesto que se acende palavra a
+   palavra em papel; alternância noite/papel.
+   Fontes: Bevan (títulos, serifa slab próxima das letras do logótipo) + Public Sans.
+   Paleta (amostrada do logótipo): noite #070504, cobre #D7825D / #9B583B / #57301F,
+   osso #F2EEE8, papel #EFE7DB.
+   ===================================================================== */
+
+/* ===== variáveis ===== */
+:root {
+  --noite: #070504;
+  --noite-2: #100C0A;
+  --noite-3: #1A1411;
+  --cobre: #D7825D;
+  --cobre-2: #9B583B;
+  --brasa: #57301F;
+  --osso: #F2EEE8;
+  --osso-2: #B7ADA2;
+  --papel: #EFE7DB;
+  --papel-2: #E3D8C8;
+  --tinta: #17110D;
+  --tinta-2: #4D4036;
+  --f-tit: "Bevan", Georgia, "Times New Roman", serif;
+  --f-corpo: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --barra: 34px;
+  --cab: 68px;
+  --g: clamp(18px, 4.2vw, 64px);
+  --max: 1280px;
+  --ease: cubic-bezier(.22, .7, .2, 1);
+}
+
+/* ===== base ===== */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { margin: 0; padding-top: calc(var(--barra) + var(--cab)); background: var(--noite); color: var(--osso); font-family: var(--f-corpo); font-size: 1rem; line-height: 1.6; overflow-x: clip; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; height: auto; }
+a { color: inherit; }
+button { font: inherit; color: inherit; cursor: pointer; }
+h1, h2, h3, p, ul, ol, figure { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+:focus-visible { outline: 2px solid var(--cobre); outline-offset: 3px; }
+.papel :focus-visible { outline-color: var(--cobre-2); }
+section[id] { scroll-margin-top: calc(var(--barra) + var(--cab)); }
+.wrap { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 var(--g); }
+.wrap > * { min-width: 0; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.rotulo { font-size: .74rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--cobre); display: flex; align-items: center; gap: 12px; }
+.rotulo::before { content: ""; width: 34px; height: 1px; background: currentColor; }
+.papel .rotulo { color: var(--cobre-2); }
+.tit { font-family: var(--f-tit); font-weight: 400; line-height: 1.04; letter-spacing: -.005em; }
+.tbc { display: inline-block; padding: 2px 10px; border: 1px dashed currentColor; border-radius: 99px; font-size: .78rem; letter-spacing: .02em; opacity: .85; }
+
+/* grão (muito leve) */
+body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: .07; mix-blend-mode: overlay; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>"); }
+
+/* ===== faixa DEMO + selo ===== */
+.demo-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 120; height: var(--barra); display: flex; align-items: center; gap: 12px; padding: 0 var(--g); background: var(--cobre); color: #1b0e07; font-size: .76rem; font-weight: 500; letter-spacing: .01em; white-space: nowrap; }
+.demo-bar b { flex: none; background: var(--noite); color: var(--cobre); padding: 2px 9px; font-size: .68rem; font-weight: 700; letter-spacing: .16em; border-radius: 2px; }
+.demo-bar span { overflow: hidden; text-overflow: ellipsis; }
+.demo-bar .s { display: none; }
+.demo-chip { position: fixed; right: 14px; bottom: 14px; z-index: 110; display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: rgba(7, 5, 4, .92); border: 1px solid var(--cobre-2); border-radius: 99px; color: var(--osso); font-size: .72rem; letter-spacing: .04em; }
+.demo-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--cobre); box-shadow: 0 0 10px var(--cobre); animation: pulso 2.4s ease-in-out infinite; }
+@keyframes pulso { 50% { opacity: .35; } }
+
+/* ===== cabeçalho ===== */
+.cab { position: fixed; top: var(--barra); left: 0; right: 0; z-index: 100; height: var(--cab); display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 0 var(--g); background: var(--noite); border-bottom: 1px solid rgba(215, 130, 93, .18); }
+.marca { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.marca img { width: 46px; height: 46px; }
+.marca b { font-family: var(--f-tit); font-weight: 400; font-size: 1.45rem; letter-spacing: .02em; line-height: 1; }
+.marca small { display: block; font-family: var(--f-corpo); font-size: .6rem; font-weight: 600; letter-spacing: .26em; text-transform: uppercase; color: var(--cobre); margin-top: 3px; }
+.nav { display: flex; align-items: center; gap: clamp(14px, 2.2vw, 34px); }
+.nav a { text-decoration: none; font-size: .8rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--osso-2); padding: 8px 0; position: relative; transition: color .3s; }
+.nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 2px; height: 1px; background: var(--cobre); transform: scaleX(0); transform-origin: left; transition: transform .45s var(--ease); }
+.nav a:hover, .nav a[aria-current="true"] { color: var(--osso); }
+.nav a:hover::after, .nav a[aria-current="true"]::after { transform: scaleX(1); }
+.nav .cta { color: var(--noite); background: var(--cobre); padding: 10px 18px; border-radius: 99px; font-weight: 700; }
+.nav .cta::after { display: none; }
+.nav .cta:hover { background: var(--osso); color: var(--noite); }
+.burger { display: none; width: 46px; height: 46px; border: 1px solid var(--cobre-2); background: transparent; border-radius: 50%; position: relative; }
+.burger i { position: absolute; left: 13px; right: 13px; height: 1.5px; background: var(--osso); transition: transform .4s var(--ease), top .4s var(--ease); }
+.burger i:nth-child(1) { top: 18px; }
+.burger i:nth-child(2) { top: 26px; }
+.menu-open .burger i:nth-child(1) { top: 22px; transform: rotate(45deg); }
+.menu-open .burger i:nth-child(2) { top: 22px; transform: rotate(-45deg); }
+
+/* ===== hero: o logótipo acende ===== */
+.hero { position: relative; min-height: calc(100svh - var(--barra) - var(--cab)); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.04fr); align-items: center; gap: clamp(8px, 2vw, 32px); padding: clamp(18px, 3vh, 40px) var(--g) clamp(28px, 5vh, 60px); overflow-x: clip; background: radial-gradient(ellipse 55% 70% at 74% 42%, rgba(155, 88, 59, .22), transparent 70%), var(--noite); }
+.hero__txt { position: relative; z-index: 2; max-width: 620px; justify-self: end; width: 100%; }
+.hero h1 { font-size: clamp(2.2rem, 4.4vw, 4.3rem); margin: 22px 0 22px; }
+.hero h1 em { font-style: normal; color: var(--cobre); }
+.hero__lead { font-size: clamp(1rem, 1.25vw, 1.16rem); color: var(--osso-2); max-width: 46ch; }
+.hero__btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 26px; border-radius: 99px; text-decoration: none; font-size: .84rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; border: 1.5px solid var(--cobre); transition: background .35s, color .35s, transform .35s var(--ease); }
+.btn--cheio { background: var(--cobre); color: var(--noite); }
+.btn--cheio:hover { background: var(--osso); border-color: var(--osso); transform: translateY(-2px); }
+.btn--linha { color: var(--cobre); }
+.btn--linha:hover { background: var(--cobre); color: var(--noite); transform: translateY(-2px); }
+.hero__ficha { display: flex; flex-wrap: wrap; gap: 8px 26px; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(215, 130, 93, .25); font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--osso-2); }
+.hero__ficha b { color: var(--osso); font-weight: 600; }
+
+/* o sol: duas camadas do logótipo real (cobre + letras) */
+.sol { --px: 0; --py: 0; position: relative; width: min(100%, calc(100svh - var(--barra) - var(--cab) - 10px)); aspect-ratio: 1; justify-self: start; margin-right: calc(var(--g) * -.5); }
+.sol img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; }
+.sol__brilho { position: absolute; left: 50%; top: 33.5%; width: 120%; aspect-ratio: 1; transform: translate(-50%, -50%); background: radial-gradient(circle, rgba(255, 196, 150, .34) 0, rgba(215, 130, 93, .18) 22%, transparent 56%); animation: respira 6s ease-in-out infinite; pointer-events: none; }
+.sol__lume { position: absolute; left: 50%; top: 33.5%; width: 46%; aspect-ratio: 1; transform: translate(-50%, -50%) scale(.02); border-radius: 50%; background: radial-gradient(circle, #fff6ea 0, rgba(255, 190, 140, .95) 18%, rgba(215, 130, 93, 0) 66%); opacity: 0; pointer-events: none; mix-blend-mode: screen; }
+.sol__cobre { transform: translate(calc(var(--px) * 7px), calc(var(--py) * 7px)); transition: transform .5s var(--ease); }
+.sol__letras { transform: translate(calc(var(--px) * -3px), calc(var(--py) * -3px)); transition: transform .5s var(--ease); }
+@keyframes respira { 0%, 100% { opacity: .62; } 50% { opacity: 1; } }
+
+/* estado inicial: apagado (só com JS); sem JS ou com ?nopre fica tudo aceso */
+.js .sol__cobre { clip-path: circle(0% at 50% 33.5%); }
+.js .sol__letras { opacity: .07; }
+.js .sol__brilho { opacity: 0; }
+.js .hero.go .sol__cobre { clip-path: circle(92% at 50% 33.5%); transition: clip-path 3s cubic-bezier(.35, .55, .2, 1) .55s, transform .5s var(--ease); }
+.js .hero.go .sol__lume { animation: lume 1.6s ease-out .2s both; }
+.js .hero.go .sol__letras { animation: acende 2.6s linear 2.1s forwards; }
+.js .hero.go .sol__brilho { animation: brilho-in 2.4s ease-out 1s forwards, respira 6s ease-in-out 3.4s infinite; }
+.js .hero.go .hero__txt > * { animation: sobe .9s var(--ease) both; }
+.js .hero.go .hero__txt > *:nth-child(1) { animation-delay: 2.2s; }
+.js .hero.go .hero__txt > *:nth-child(2) { animation-delay: 2.4s; }
+.js .hero.go .hero__txt > *:nth-child(3) { animation-delay: 2.6s; }
+.js .hero.go .hero__txt > *:nth-child(4) { animation-delay: 2.8s; }
+.js .hero.go .hero__txt > *:nth-child(5) { animation-delay: 3s; }
+.js .hero:not(.go) .hero__txt > * { opacity: 0; }
+@keyframes lume { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.02); } 22% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); } }
+@keyframes brilho-in { to { opacity: .75; } }
+@keyframes acende { 0% { opacity: .07; } 7% { opacity: .55; } 12% { opacity: .14; } 20% { opacity: .85; } 26% { opacity: .35; } 40% { opacity: .95; } 46% { opacity: .78; } 60%, 100% { opacity: 1; } }
+@keyframes sobe { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+.nopre .sol__cobre, .nopre .sol__letras, .nopre .sol__brilho, .nopre .hero__txt > * { animation: none !important; transition: none !important; }
+.nopre .sol__cobre { clip-path: circle(92% at 50% 33.5%) !important; }
+.nopre .sol__letras, .nopre .hero__txt > * { opacity: 1 !important; }
+.nopre .sol__brilho { opacity: .75 !important; }
+.nopre .sol__lume { display: none; }
+
+/* ===== separador de raios ===== */
+.raios { display: block; width: min(560px, 80%); height: auto; margin: 0 auto; color: var(--cobre); }
+.raios line { stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.js .raios line { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.1s var(--ease); transition-delay: calc(var(--i) * 70ms); }
+.js .in .raios line, .js .raios.in line { stroke-dashoffset: 0; }
+
+/* ===== reveals ===== */
+.js .rv { opacity: 0; transform: translateY(26px); transition: opacity .9s var(--ease), transform .9s var(--ease); transition-delay: var(--d, 0s); }
+.js .rv.in { opacity: 1; transform: none; }
+
+/* ===== secção em papel ===== */
+.papel { background: var(--papel); color: var(--tinta); position: relative; }
+.papel::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .22  0 0 0 0 .12  0 0 0 .22 0'/></filter><rect width='220' height='220' filter='url(%23p)'/></svg>"); }
+.papel > * { position: relative; }
+
+/* ===== estúdio ===== */
+.estudio { padding: clamp(80px, 12vw, 170px) 0 clamp(70px, 10vw, 140px); }
+.estudio .raios { color: var(--cobre-2); margin-bottom: clamp(36px, 6vw, 80px); }
+.manif { font-family: var(--f-tit); font-size: clamp(1.7rem, 4.3vw, 3.9rem); line-height: 1.12; margin: 26px 0 0; max-width: 21em; }
+.js .manif .w { color: rgba(23, 17, 13, .17); transition: color .5s; }
+.js .manif .w.on { color: var(--tinta); }
+.js .manif .w.on.luz { color: var(--cobre-2); }
+.manif .luz { color: var(--cobre-2); }
+.duo { display: grid; grid-template-columns: 1fr 1fr; margin-top: clamp(48px, 7vw, 100px); border-top: 1px solid rgba(23, 17, 13, .22); }
+.duo > div { padding: 34px clamp(0px, 3vw, 44px) 0 0; }
+.duo > div + div { padding-left: clamp(0px, 3vw, 44px); border-left: 1px solid rgba(23, 17, 13, .22); }
+.duo h3 { font-size: clamp(1.5rem, 2.4vw, 2.1rem); margin: 8px 0 14px; }
+.duo p { color: var(--tinta-2); max-width: 44ch; }
+.duo ul { margin-top: 20px; }
+.duo li { padding: 10px 0; border-top: 1px solid rgba(23, 17, 13, .16); font-size: .9rem; font-weight: 500; letter-spacing: .04em; display: flex; justify-content: space-between; gap: 12px; }
+.duo li span { color: var(--cobre-2); font-weight: 600; }
+.duo .tbc { color: var(--cobre-2); margin-top: 18px; }
+
+/* ===== artistas: candeeiros ===== */
+.artistas { padding: clamp(80px, 11vw, 150px) 0 clamp(80px, 11vw, 150px); background: var(--noite-2); overflow-x: clip; }
+.artistas__cab { display: flex; justify-content: space-between; align-items: end; gap: 30px; flex-wrap: wrap; margin-bottom: clamp(30px, 5vw, 60px); }
+.artistas h2 { font-size: clamp(2rem, 4.6vw, 4rem); margin-top: 18px; max-width: 12em; }
+.artistas h2 em { font-style: normal; color: var(--cobre); }
+.artistas__nota { max-width: 34ch; color: var(--osso-2); font-size: .94rem; }
+.arts { display: flex; gap: 10px; height: min(76vh, 640px); min-height: 520px; }
+.art { position: relative; flex: 1 1 0; min-width: 0; overflow: hidden; border: 1px solid rgba(215, 130, 93, .22); border-radius: 160px 160px 6px 6px; background: var(--noite); transition: flex-grow .9s var(--ease), border-color .6s; isolation: isolate; }
+.art.on { flex-grow: 3.6; border-color: var(--cobre); }
+.art__ph { position: absolute; inset: 0; z-index: -2; }
+.art__ph img { width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 40%); filter: grayscale(.9) brightness(.38); transform: scale(1.06); transition: filter 1s var(--ease), transform 1.4s var(--ease); }
+.art.on .art__ph img { filter: none; transform: scale(1); }
+.art__sombra { position: absolute; inset: 0; z-index: -1; background: linear-gradient(to top, rgba(7, 5, 4, .94) 0, rgba(7, 5, 4, .55) 38%, rgba(7, 5, 4, .1) 70%); }
+.art__feixe { position: absolute; left: 0; right: 0; top: 0; height: 88%; z-index: -1; opacity: 0; background: linear-gradient(to bottom, rgba(255, 205, 160, .62), rgba(215, 130, 93, .22) 45%, transparent 85%); clip-path: polygon(41% 0, 59% 0, 100% 100%, 0 100%); -webkit-mask-image: linear-gradient(to right, transparent 4%, #000 38%, #000 62%, transparent 96%); mask-image: linear-gradient(to right, transparent 4%, #000 38%, #000 62%, transparent 96%); mix-blend-mode: screen; transition: opacity 1s var(--ease); pointer-events: none; }
+.art.on .art__feixe { opacity: .72; }
+.art__astro { position: absolute; left: 50%; top: 20px; width: 26px; height: 26px; transform: translateX(-50%); color: var(--brasa); transition: color .6s, filter .6s; }
+.art.on .art__astro { color: var(--cobre); filter: drop-shadow(0 0 8px rgba(255, 190, 140, .95)); }
+.art__btn { position: absolute; inset: 0; z-index: 3; width: 100%; background: none; border: 0; padding: 0; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 28px; }
+.art__rot { writing-mode: vertical-rl; transform: rotate(180deg); font-family: var(--f-tit); font-size: clamp(1.2rem, 2vw, 1.7rem); letter-spacing: .03em; white-space: nowrap; color: var(--osso); transition: opacity .35s; }
+.art.on .art__rot { opacity: 0; }
+.art__corpo { position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; padding: 0 clamp(20px, 2.6vw, 38px) clamp(22px, 2.6vw, 34px); opacity: 0; visibility: hidden; transform: translateY(18px); transition: opacity .5s, transform .7s var(--ease), visibility 0s .5s; }
+.art.on .art__corpo { opacity: 1; visibility: visible; transform: none; transition: opacity .8s var(--ease) .35s, transform .9s var(--ease) .35s; }
+.art__ret { width: 74px; height: 74px; border-radius: 50%; object-fit: cover; border: 2px solid var(--cobre); margin-bottom: 14px; }
+.art__corpo h3 { font-size: clamp(1.8rem, 3.2vw, 2.8rem); font-weight: 400; font-family: var(--f-tit); line-height: 1.02; white-space: nowrap; }
+.art__est { margin: 10px 0 18px; display: flex; flex-wrap: wrap; gap: 6px 8px; }
+.art__est li { font-size: .74rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; padding: 5px 12px; border: 1px solid rgba(242, 238, 232, .4); border-radius: 99px; white-space: nowrap; }
+.art__ir { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 99px; background: var(--cobre); color: var(--noite); text-decoration: none; font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; transition: background .3s, transform .3s var(--ease); }
+.art__ir:hover { background: var(--osso); transform: translateY(-2px); }
+
+/* ===== trabalhos: a parede ===== */
+.trabalhos { padding: clamp(80px, 11vw, 150px) 0; background: var(--noite); }
+.trabalhos h2 { font-size: clamp(2rem, 4.6vw, 4rem); margin: 18px 0 14px; max-width: 13em; }
+.trabalhos__nota { color: var(--osso-2); max-width: 56ch; }
+.filtros { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 34px 0 34px; padding: 18px 0; border-block: 1px solid rgba(215, 130, 93, .2); }
+.filtros > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.filtros b { font-size: .68rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--cobre); margin-right: 6px; }
+.chip { padding: 8px 16px; border-radius: 99px; background: transparent; border: 1px solid rgba(242, 238, 232, .28); font-size: .8rem; font-weight: 500; letter-spacing: .04em; transition: background .3s, color .3s, border-color .3s; }
+.chip:hover { border-color: var(--cobre); }
+.chip[aria-pressed="true"] { background: var(--cobre); border-color: var(--cobre); color: var(--noite); font-weight: 700; }
+.parede { columns: 3 260px; column-gap: 14px; }
+.peca { break-inside: avoid; margin: 0 0 14px; position: relative; overflow: hidden; border-radius: 4px; background: var(--noite-3); transition: opacity .6s var(--ease), filter .6s var(--ease); }
+.peca button { display: block; width: 100%; padding: 0; border: 0; background: none; text-align: left; }
+.peca img { width: 100%; filter: brightness(.74); transition: filter .6s var(--ease), transform 1.1s var(--ease); }
+.peca:hover img, .peca button:focus-visible img { filter: brightness(1.04); transform: scale(1.035); }
+.peca figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 40px 14px 12px; font-size: .74rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; background: linear-gradient(to top, rgba(7, 5, 4, .92), transparent); transform: translateY(100%); transition: transform .5s var(--ease); pointer-events: none; }
+.peca figcaption span { color: var(--cobre); }
+.peca:hover figcaption, .peca button:focus-visible + figcaption { transform: none; }
+.peca.off { opacity: .14; filter: grayscale(1); pointer-events: none; }
+@media (hover: none) { .peca figcaption { transform: none; } }
+
+/* lightbox */
+.lb { border: 0; padding: 0; background: transparent; max-width: 100vw; max-height: 100vh; width: 100%; height: 100%; color: var(--osso); }
+.lb::backdrop { background: rgba(7, 5, 4, .94); }
+.lb__in { height: 100%; display: grid; grid-template-rows: 1fr auto; place-items: center; padding: 56px 64px 22px; gap: 14px; }
+.lb img { max-height: calc(100vh - 150px); max-width: 100%; width: auto; object-fit: contain; border-radius: 4px; }
+.lb p { font-size: .82rem; letter-spacing: .12em; text-transform: uppercase; color: var(--osso-2); }
+.lb p b { color: var(--cobre); font-weight: 600; }
+.lb button { position: absolute; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--cobre-2); background: var(--noite); font-size: 1.3rem; line-height: 1; display: grid; place-items: center; }
+.lb button:hover { background: var(--cobre); color: var(--noite); }
+.lb .x { top: 14px; right: 14px; }
+.lb .pv { left: 12px; top: 50%; transform: translateY(-50%); }
+.lb .nx { right: 12px; top: 50%; transform: translateY(-50%); }
+
+/* ===== sessão: o sol acende ===== */
+.sessao { padding: clamp(80px, 11vw, 150px) 0; }
+.sessao__grade { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1fr); gap: clamp(30px, 6vw, 90px); align-items: start; }
+.sessao__sol { position: sticky; top: calc(var(--barra) + var(--cab) + 40px); }
+.sessao h2 { font-size: clamp(2rem, 4.4vw, 3.8rem); margin: 18px 0 26px; max-width: 10em; }
+.sessao h2 em { font-style: normal; color: var(--cobre-2); }
+.sun { display: block; width: 100%; height: auto; overflow: visible; }
+.sun .ray { stroke: var(--cobre-2); stroke-width: 3; stroke-linecap: round; opacity: .2; transition: opacity .6s, stroke .6s; }
+.sun .ray.on { opacity: 1; stroke: var(--cobre); filter: drop-shadow(0 0 3px rgba(215, 130, 93, .6)); }
+.sun .star { fill: var(--cobre); }
+.sun .arc { fill: none; stroke: var(--cobre-2); stroke-width: 2; opacity: .5; }
+.passos { position: relative; counter-reset: p; padding-left: 58px; --p: 0; }
+.passos::before { content: ""; position: absolute; left: 17px; top: 6px; bottom: 6px; width: 2px; background: rgba(23, 17, 13, .16); }
+.passos::after { content: ""; position: absolute; left: 17px; top: 6px; bottom: 6px; width: 2px; background: var(--cobre-2); transform: scaleY(var(--p)); transform-origin: top; }
+.passo { position: relative; padding: 0 0 clamp(38px, 6vw, 70px); opacity: .38; transition: opacity .6s; }
+.passo.on { opacity: 1; }
+.passo::before { content: ""; position: absolute; left: -49px; top: 2px; width: 24px; height: 24px; background: var(--papel); border: 2px solid var(--cobre-2); border-radius: 50%; transition: background .5s, box-shadow .5s; }
+.passo.on::before { background: var(--cobre); border-color: var(--cobre); box-shadow: 0 0 0 5px rgba(215, 130, 93, .25); }
+.passo small { font-size: .72rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--cobre-2); }
+.passo h3 { font-family: var(--f-tit); font-weight: 400; font-size: clamp(1.5rem, 2.6vw, 2.2rem); margin: 4px 0 8px; }
+.passo p { color: var(--tinta-2); max-width: 46ch; }
+.sessao__nota { margin-top: 10px; font-size: .84rem; color: var(--tinta-2); }
+
+/* ===== contacto ===== */
+.contacto { padding: clamp(80px, 11vw, 150px) 0 clamp(60px, 8vw, 100px); background: var(--noite-2); position: relative; overflow: clip; }
+.contacto::before { content: ""; position: absolute; left: 50%; top: 0; width: min(900px, 120vw); aspect-ratio: 1; transform: translate(-50%, -66%); border-radius: 50%; border: 1px solid rgba(215, 130, 93, .22); box-shadow: 0 0 0 30px rgba(215, 130, 93, .035), 0 0 0 70px rgba(215, 130, 93, .02); pointer-events: none; }
+.contacto h2 { font-size: clamp(2rem, 4.6vw, 4rem); margin: 18px 0 14px; max-width: 12em; }
+.contacto h2 em { font-style: normal; color: var(--cobre); }
+.contacto__nota { color: var(--osso-2); max-width: 54ch; }
+.linhas { margin-top: clamp(30px, 5vw, 56px); border-top: 1px solid rgba(215, 130, 93, .28); }
+.linha { position: relative; display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: clamp(20px, 3vw, 32px) 6px; border-bottom: 1px solid rgba(215, 130, 93, .28); text-decoration: none; overflow: hidden; isolation: isolate; transition: color .4s, padding .5s var(--ease); }
+.linha::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--cobre); transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease); }
+.linha:hover, .linha:focus-visible { color: var(--noite); padding-inline: 22px; }
+.linha:hover::before, .linha:focus-visible::before { transform: scaleX(1); }
+.linha__n { font-size: .78rem; font-weight: 600; letter-spacing: .16em; color: var(--cobre); transition: color .4s; }
+.linha__nome { font-family: var(--f-tit); font-size: clamp(1.6rem, 4.4vw, 3.6rem); line-height: 1.05; }
+.linha__nome small { display: block; font-family: var(--f-corpo); font-size: .76rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--osso-2); margin-top: 6px; transition: color .4s; }
+.linha__seta { font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.linha:hover .linha__n, .linha:hover small { color: var(--noite); }
+.estudio-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 28px; margin-top: clamp(44px, 7vw, 90px); }
+.estudio-info div { border-left: 1px solid rgba(215, 130, 93, .4); padding-left: 18px; }
+.estudio-info b { display: block; font-size: .7rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--cobre); margin-bottom: 6px; }
+.estudio-info p { color: var(--osso); font-size: .98rem; }
+.estudio-info .tbc { color: var(--osso-2); }
+.estudio-info a { color: var(--cobre); font-weight: 600; text-underline-offset: 4px; }
+
+/* ===== rodapé ===== */
+.rodape { background: var(--noite); border-top: 1px solid rgba(215, 130, 93, .22); padding: 50px 0 80px; }
+.rodape__topo { display: flex; align-items: center; gap: 18px; margin-bottom: 28px; }
+.rodape__topo img { width: 74px; height: 74px; }
+.rodape__topo p { font-family: var(--f-tit); font-size: 1.5rem; line-height: 1.1; }
+.rodape__topo small { display: block; font-family: var(--f-corpo); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--cobre); margin-top: 4px; }
+.f-demo { padding: 14px 16px; border: 1px dashed var(--cobre-2); background: rgba(215, 130, 93, .05); font-size: .8rem; line-height: 1.6; color: var(--osso-2); max-width: 78ch; }
+.f-demo b { color: var(--osso); }
+.rodape__fim { margin-top: 22px; font-size: .76rem; color: var(--osso-2); letter-spacing: .04em; }
+
+/* ===== cursor de luz (só rato) ===== */
+.luz-cursor { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .luz-cursor { display: block; position: fixed; left: 0; top: 0; width: 420px; height: 420px; margin: -210px 0 0 -210px; border-radius: 50%; z-index: 80; pointer-events: none; opacity: 0; background: radial-gradient(circle, rgba(255, 190, 140, .16), transparent 62%); mix-blend-mode: screen; transition: opacity .6s; will-change: transform; }
+  .luz-cursor.on { opacity: 1; }
+}
+
+/* ===== movimento reduzido ===== */
+.rm .sol__cobre, .rm .sol__letras, .rm .sol__lume, .rm .sol__brilho, .rm .hero__txt > *, .rm .rv, .rm .raios line, .rm .art, .rm .art * { animation: none !important; transition: none !important; }
+.rm .sol__cobre { clip-path: circle(92% at 50% 33.5%) !important; }
+.rm .sol__letras, .rm .hero__txt > *, .rm .rv { opacity: 1 !important; transform: none !important; }
+.rm .sol__brilho { opacity: .75 !important; }
+.rm .raios line { stroke-dashoffset: 0 !important; }
+
+/* ===== tablet / mobile ===== */
+@media (max-width: 1020px) {
+  :root { --cab: 62px; }
+  .burger { display: block; }
+  .nav { position: fixed; z-index: 99; top: calc(var(--barra) + var(--cab)); left: 0; right: 0; bottom: 0; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 0; padding: 14px var(--g) 40px; background: var(--noite); overflow-y: auto; overscroll-behavior: contain; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: opacity .35s, transform .45s var(--ease), visibility 0s .35s; }
+  .menu-open .nav { opacity: 1; visibility: visible; transform: none; transition: opacity .35s, transform .45s var(--ease); }
+  body.menu-open { position: fixed; left: 0; right: 0; width: 100%; overflow: hidden; }
+  .nav a { font-family: var(--f-tit); font-size: clamp(1.7rem, 8vw, 2.4rem); letter-spacing: 0; text-transform: none; color: var(--osso); padding: 16px 0; border-bottom: 1px solid rgba(215, 130, 93, .22); }
+  .nav a::after { display: none; }
+  .nav a[aria-current="true"] { color: var(--cobre); }
+  .nav .cta { margin-top: 22px; text-align: center; font-family: var(--f-corpo); font-size: .86rem; letter-spacing: .1em; text-transform: uppercase; border: 0; padding: 16px; }
+  .hero { grid-template-columns: 1fr; gap: 6px; padding-top: 14px; }
+  .sol { order: -1; justify-self: center; width: min(88vw, 520px); margin: 0; }
+  .hero__txt { justify-self: center; }
+  .hero h1 { margin-top: 18px; }
+  .sessao__grade { grid-template-columns: 1fr; }
+  .sessao__sol { top: calc(var(--barra) + var(--cab)); z-index: 3; background: #EADFCF; padding: 6px 0 10px; margin: 0 calc(var(--g) * -1); padding-inline: var(--g); border-bottom: 1px solid rgba(23, 17, 13, .12); }
+  .sun { max-height: 112px; }
+}
+@media (max-width: 860px) {
+  .arts { flex-direction: column; height: auto; min-height: 0; gap: 8px; }
+  .art { flex: 0 0 76px; border-radius: 38px; transition: flex-basis .8s var(--ease), border-color .6s; }
+  .art.on { flex: 0 0 min(76svh, 560px); border-radius: 30px; }
+  .art__btn { align-items: center; justify-content: flex-start; padding: 0 0 0 64px; }
+  .art__rot { writing-mode: horizontal-tb; transform: none; font-size: 1.25rem; }
+  .art__astro { left: 24px; top: 25px; transform: none; width: 26px; height: 26px; }
+  .art.on .art__astro { top: 25px; }
+  .art__feixe { clip-path: polygon(0 0, 22% 0, 100% 100%, 0 100%); height: 100%; }
+  .duo { grid-template-columns: 1fr; }
+  .duo > div, .duo > div + div { padding: 30px 0 0; border-left: 0; }
+  .duo > div + div { margin-top: 30px; border-top: 1px solid rgba(23, 17, 13, .22); }
+  .parede { columns: 2 150px; column-gap: 10px; }
+  .peca { margin-bottom: 10px; }
+  .lb__in { padding: 64px 12px 18px; }
+  .lb .pv { top: auto; bottom: 14px; left: 14px; transform: none; }
+  .lb .nx { top: auto; bottom: 14px; right: 14px; transform: none; }
+  .linha { grid-template-columns: 36px minmax(0, 1fr) auto; gap: 10px; }
+  .linha__seta span { display: none; }
+}
+@media (max-width: 600px) {
+  .demo-bar .l { display: none; }
+  .demo-bar .s { display: inline; }
+  .demo-chip { display: none; }
+  .marca b { font-size: 1.3rem; }
+  .btn { padding: 14px 22px; }
+  .hero__btns .btn { flex: 1 1 auto; justify-content: center; }
+  .filtros { gap: 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Aviso de demonstração (faixa fixa + selo + nota no rodapé) ===== -->
+<div class="demo-bar"><b>DEMO</b><span class="l">Website de demonstração criado pela DD Digital para LUZ Tattoo · conteúdo ilustrativo</span><span class="s">Demonstração · LUZ Tattoo</span></div>
+
+<header class="cab" id="cab">
+  <a class="marca" href="#inicio" aria-label="LUZ Tattoo Studio, início">
+    <img src="img/luz-logo.webp" alt="" width="46" height="46">
+    <span><b>LUZ</b><small>Tattoo Studio</small></span>
+  </a>
+  <nav class="nav" id="nav" aria-label="Principal">
+    <a href="#estudio">Estúdio</a>
+    <a href="#artistas">Artistas</a>
+    <a href="#trabalhos">Trabalhos</a>
+    <a href="#sessao">A sessão</a>
+    <a href="#contacto" class="cta">Falar com um artista</a>
+  </nav>
+  <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav"><i></i><i></i></button>
+</header>
+
+<main>
+
+<!-- ===== HERO: o logótipo acende ===== -->
+<section class="hero" id="inicio" aria-labelledby="t-hero">
+  <div class="hero__txt">
+    <p class="rotulo">Estarreja · Tatuagem e piercing</p>
+    <h1 class="tit" id="t-hero">Ideias que viram <em>histórias</em> na pele.</h1>
+    <p class="hero__lead">Tatuagens e piercings com arte, dedicação e personalidade. Um espaço criado para transformar ideias em histórias na pele.</p>
+    <div class="hero__btns">
+      <a class="btn btn--cheio" href="#artistas">Conhece os artistas</a>
+      <a class="btn btn--linha" href="https://tr.ee/h9eySeNnez" target="_blank" rel="noopener">Como chegar <span aria-hidden="true">↗</span></a>
+    </div>
+    <p class="hero__ficha"><span><b>3</b> artistas</span><span><b>Estarreja</b></span><span>Tatuagem · <b>Piercing</b></span></p>
+  </div>
+  <div class="sol" id="sol">
+    <div class="sol__brilho" aria-hidden="true"></div>
+    <img class="sol__letras" src="img/luz-letras.webp" alt="LUZ Tattoo Studio" width="1044" height="1044" fetchpriority="high">
+    <img class="sol__cobre" src="img/luz-cobre.webp" alt="" width="1044" height="1044" fetchpriority="high">
+    <div class="sol__lume" aria-hidden="true"></div>
+  </div>
+</section>
+
+<!-- ===== ESTÚDIO (papel): o manifesto acende-se palavra a palavra ===== -->
+<section class="estudio papel" id="estudio" aria-labelledby="t-estudio">
+  <div class="wrap">
+    <svg class="raios rv" viewBox="0 0 400 60" aria-hidden="true" focusable="false"><line style="--i:0" pathLength="1" x1="136.6" y1="54.3" x2="63.2" y2="49.9"/><line style="--i:1" pathLength="1" x1="141.3" y1="50.4" x2="63.9" y2="40.4"/><line style="--i:2" pathLength="1" x1="148.9" y1="46.9" x2="73.6" y2="30.6"/><line style="--i:3" pathLength="1" x1="159.2" y1="44.0" x2="92.6" y2="21.1"/><line style="--i:4" pathLength="1" x1="171.6" y1="41.8" x2="120.7" y2="12.8"/><line style="--i:5" pathLength="1" x1="185.4" y1="40.5" x2="157.0" y2="6.2"/><line style="--i:6" pathLength="1" x1="200.0" y1="40.0" x2="200.0" y2="2.0"/><line style="--i:7" pathLength="1" x1="214.6" y1="40.5" x2="243.0" y2="6.2"/><line style="--i:8" pathLength="1" x1="228.4" y1="41.8" x2="279.3" y2="12.8"/><line style="--i:9" pathLength="1" x1="240.8" y1="44.0" x2="307.4" y2="21.1"/><line style="--i:10" pathLength="1" x1="251.1" y1="46.9" x2="326.4" y2="30.6"/><line style="--i:11" pathLength="1" x1="258.7" y1="50.4" x2="336.1" y2="40.4"/><line style="--i:12" pathLength="1" x1="263.4" y1="54.3" x2="336.8" y2="49.9"/></svg>
+    <p class="rotulo" id="t-estudio">O estúdio · 01</p>
+    <p class="manif" id="manif">Cada tatuagem começa numa ideia. Aqui damos-lhe forma, traço e <em class="luz">luz</em>, com arte, dedicação e personalidade, para que a tua história fique na pele.</p>
+    <div class="duo">
+      <div class="rv">
+        <p class="rotulo">Tatuagem</p>
+        <h3 class="tit">Do desenho à última linha</h3>
+        <p>Realismo, new school, linha fina, preto e cinza e cor. A peça é pensada contigo, com o artista que melhor fala a língua da tua ideia.</p>
+        <ul>
+          <li>Realismo <span>David · Carlos</span></li>
+          <li>New school e cor <span>David · A'Kay</span></li>
+          <li>Linha fina <span>David · A'Kay</span></li>
+          <li>Preto e cinza <span>A'Kay · Carlos</span></li>
+        </ul>
+      </div>
+      <div class="rv" style="--d:.12s">
+        <p class="rotulo">Piercing</p>
+        <h3 class="tit">Um detalhe com personalidade</h3>
+        <p>Além das tatuagens, o estúdio faz piercings. Joias, zonas e cuidados a seguir explicam-se na conversa, antes de decidires.</p>
+        <p class="tbc">Joias, preços e disponibilidade: a confirmar com o cliente</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ARTISTAS: a luz passa de artista em artista ===== -->
+<section class="artistas" id="artistas" aria-labelledby="t-art">
+  <div class="wrap">
+    <div class="artistas__cab">
+      <div>
+        <p class="rotulo rv">Os artistas · 02</p>
+        <h2 class="tit rv" id="t-art">Três artistas, uma só <em>luz</em>.</h2>
+      </div>
+      <p class="artistas__nota rv">Toca num nome para o acenderes. Cada artista tem o seu biolink, com contactos e trabalhos.</p>
+    </div>
+
+    <div class="arts" id="arts">
+      <article class="art on" style="--pos:50% 30%">
+        <div class="art__ph"><img src="img/david-fineline-braco.webp" alt="Tatuagem de linha fina num braço: coroa de espinhos, flor e a frase “wear the crown”" width="900" height="1349"></div>
+        <div class="art__sombra"></div><div class="art__feixe"></div>
+        <svg class="art__astro" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0-10 1.6-1.6 10 0 1.6 1.6 0 10-1.6 1.6-10 0-1.6-1.6Z"/></svg>
+        <button class="art__btn" type="button" aria-expanded="true" aria-label="David Pita"><span class="art__rot" aria-hidden="true">David Pita</span></button>
+        <div class="art__corpo">
+          <img class="art__ret" src="img/david-pita-retrato.webp" alt="Retrato de David Pita" width="74" height="74">
+          <h3>David Pita</h3>
+          <ul class="art__est"><li>Realismo</li><li>New school</li><li>Fine line</li></ul>
+          <a class="art__ir" href="https://demo.dddigital.pt/DavidPita" target="_blank" rel="noopener">Ver biolink <span aria-hidden="true">↗</span></a>
+        </div>
+      </article>
+
+      <article class="art" style="--pos:50% 40%">
+        <div class="art__ph"><img src="img/akay-goku.webp" alt="Tatuagem a cor de uma personagem de anime num antebraço" width="834" height="1008"></div>
+        <div class="art__sombra"></div><div class="art__feixe"></div>
+        <svg class="art__astro" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0-10 1.6-1.6 10 0 1.6 1.6 0 10-1.6 1.6-10 0-1.6-1.6Z"/></svg>
+        <button class="art__btn" type="button" aria-expanded="false" aria-label="A'Kay"><span class="art__rot" aria-hidden="true">A'Kay</span></button>
+        <div class="art__corpo">
+          <img class="art__ret" src="img/akay-retrato.webp" alt="Retrato de A'Kay" width="74" height="74">
+          <h3>A'Kay</h3>
+          <ul class="art__est"><li>Preto e cinza</li><li>Cor / pop</li><li>Linha fina</li></ul>
+          <a class="art__ir" href="https://demo.dddigital.pt/Akay" target="_blank" rel="noopener" tabindex="-1">Ver biolink <span aria-hidden="true">↗</span></a>
+        </div>
+      </article>
+
+      <article class="art" style="--pos:50% 35%">
+        <div class="art__ph"><img src="img/carlos-rosto-mascara.webp" alt="Tatuagem em preto e cinza num antebraço: rosto feminino e máscara" width="837" height="1017"></div>
+        <div class="art__sombra"></div><div class="art__feixe"></div>
+        <svg class="art__astro" viewBox="-10 -10 20 20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0-10 1.6-1.6 10 0 1.6 1.6 0 10-1.6 1.6-10 0-1.6-1.6Z"/></svg>
+        <button class="art__btn" type="button" aria-expanded="false" aria-label="Carlos Brito"><span class="art__rot" aria-hidden="true">Carlos Brito</span></button>
+        <div class="art__corpo">
+          <img class="art__ret" src="img/carlos-retrato.webp" alt="Retrato de Carlos Brito" width="74" height="74">
+          <h3>Carlos Brito</h3>
+          <ul class="art__est"><li>Realismo preto e cinza</li><li>Grandes projetos</li></ul>
+          <a class="art__ir" href="https://demo.dddigital.pt/CarlosBrito" target="_blank" rel="noopener" tabindex="-1">Ver biolink <span aria-hidden="true">↗</span></a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TRABALHOS: a parede (os filtros apagam, não escondem) ===== -->
+<section class="trabalhos" id="trabalhos" aria-labelledby="t-trab">
+  <div class="wrap">
+    <p class="rotulo rv">Trabalhos · 03</p>
+    <h2 class="tit rv" id="t-trab">A parede do estúdio</h2>
+    <p class="trabalhos__nota rv">Peças dos três artistas. Escolhe um artista ou um estilo e o resto apaga-se. Toca numa foto para a ver em grande.</p>
+
+    <div class="filtros" id="filtros" role="group" aria-label="Filtrar trabalhos">
+      <div data-g="art"><b>Artista</b>
+        <button class="chip" type="button" data-v="todos" aria-pressed="true">Todos</button>
+        <button class="chip" type="button" data-v="david" aria-pressed="false">David Pita</button>
+        <button class="chip" type="button" data-v="akay" aria-pressed="false">A'Kay</button>
+        <button class="chip" type="button" data-v="carlos" aria-pressed="false">Carlos Brito</button>
+      </div>
+      <div data-g="est"><b>Estilo</b>
+        <button class="chip" type="button" data-v="todos" aria-pressed="true">Todos</button>
+        <button class="chip" type="button" data-v="pc" aria-pressed="false">Preto e cinza</button>
+        <button class="chip" type="button" data-v="cor" aria-pressed="false">Cor</button>
+        <button class="chip" type="button" data-v="linha" aria-pressed="false">Linha fina</button>
+      </div>
+    </div>
+
+    <div class="parede" id="parede">
+      <figure class="peca" data-art="carlos" data-est="pc" data-nome="Carlos Brito" data-et="Preto e cinza"><button type="button" aria-label="Ampliar: manga com crânio e leão, Carlos Brito"><img src="img/carlos-leao-caveira.webp" alt="Manga em preto e cinza com um crânio e um leão" width="837" height="1119" loading="lazy"></button><figcaption><span>Carlos Brito</span> · Preto e cinza</figcaption></figure>
+      <figure class="peca" data-art="david" data-est="cor" data-nome="David Pita" data-et="New school"><button type="button" aria-label="Ampliar: rã colorida, David Pita"><img src="img/david-newschool-ra.webp" alt="Rã colorida em estilo new school numa perna" width="900" height="600" loading="lazy"></button><figcaption><span>David Pita</span> · New school</figcaption></figure>
+      <figure class="peca" data-art="akay" data-est="cor" data-nome="A'Kay" data-et="Cor / pop"><button type="button" aria-label="Ampliar: personagem de anime a cor, A'Kay"><img src="img/akay-goku.webp" alt="Tatuagem a cor de uma personagem de anime num antebraço" width="834" height="1008" loading="lazy"></button><figcaption><span>A'Kay</span> · Cor / pop</figcaption></figure>
+      <figure class="peca" data-art="david" data-est="pc" data-nome="David Pita" data-et="Realismo"><button type="button" aria-label="Ampliar: retrato em realismo, David Pita"><img src="img/david-realismo-retrato.webp" alt="Retrato feminino em realismo num braço" width="900" height="506" loading="lazy"></button><figcaption><span>David Pita</span> · Realismo</figcaption></figure>
+      <figure class="peca" data-art="carlos" data-est="pc" data-nome="Carlos Brito" data-et="Preto e cinza"><button type="button" aria-label="Ampliar: rosto e máscara, Carlos Brito"><img src="img/carlos-rosto-mascara.webp" alt="Tatuagem em preto e cinza num antebraço: rosto feminino e máscara" width="837" height="1017" loading="lazy"></button><figcaption><span>Carlos Brito</span> · Preto e cinza</figcaption></figure>
+      <figure class="peca" data-art="akay" data-est="pc" data-nome="A'Kay" data-et="Preto e cinza"><button type="button" aria-label="Ampliar: olho e rosas, A'Kay"><img src="img/akay-olho-rosas.webp" alt="Olho e rosas em preto e cinza num braço" width="834" height="1008" loading="lazy"></button><figcaption><span>A'Kay</span> · Preto e cinza</figcaption></figure>
+      <figure class="peca" data-art="david" data-est="linha pc" data-nome="David Pita" data-et="Linha fina"><button type="button" aria-label="Ampliar: linha fina num braço, David Pita"><img src="img/david-fineline-braco.webp" alt="Linha fina num braço: coroa de espinhos, flor e a frase “wear the crown”" width="900" height="1349" loading="lazy"></button><figcaption><span>David Pita</span> · Linha fina</figcaption></figure>
+      <figure class="peca" data-art="carlos" data-est="pc" data-nome="Carlos Brito" data-et="Preto e cinza"><button type="button" aria-label="Ampliar: palhaço no ombro, Carlos Brito"><img src="img/carlos-palhaco-ombro.webp" alt="Palhaço em preto e cinza num ombro" width="837" height="1017" loading="lazy"></button><figcaption><span>Carlos Brito</span> · Preto e cinza</figcaption></figure>
+      <figure class="peca" data-art="akay" data-est="cor" data-nome="A'Kay" data-et="Cor / pop"><button type="button" aria-label="Ampliar: Hello Kitty a cor, A'Kay"><img src="img/akay-hello-kitty.webp" alt="Hello Kitty a cor num antebraço" width="837" height="1008" loading="lazy"></button><figcaption><span>A'Kay</span> · Cor / pop</figcaption></figure>
+      <figure class="peca" data-art="david" data-est="linha" data-nome="David Pita" data-et="Linha fina"><button type="button" aria-label="Ampliar: frase em linha fina, David Pita"><img src="img/david-fineline-escrita.webp" alt="Frase em letra cursiva na parte de trás de um braço" width="900" height="899" loading="lazy"></button><figcaption><span>David Pita</span> · Linha fina</figcaption></figure>
+      <figure class="peca" data-art="carlos" data-est="pc" data-nome="Carlos Brito" data-et="Preto e cinza"><button type="button" aria-label="Ampliar: rosto com olho, Carlos Brito"><img src="img/carlos-rosto-olho.webp" alt="Rosto feminino com um olho em preto e cinza num antebraço" width="834" height="1017" loading="lazy"></button><figcaption><span>Carlos Brito</span> · Preto e cinza</figcaption></figure>
+      <figure class="peca" data-art="david" data-est="cor" data-nome="David Pita" data-et="Tradicional a cor"><button type="button" aria-label="Ampliar: tradicional a cor, David Pita"><img src="img/david-newschool-tradicional.webp" alt="Pernas com tatuagens tradicionais a cor: andorinha, serpente e flores" width="900" height="900" loading="lazy"></button><figcaption><span>David Pita</span> · Tradicional a cor</figcaption></figure>
+      <figure class="peca" data-art="akay" data-est="linha" data-nome="A'Kay" data-et="Linha fina"><button type="button" aria-label="Ampliar: estêncil manga em linha, A'Kay"><img src="img/akay-manga-linha.webp" alt="Estêncil de um desenho manga em linha num braço, pronto a tatuar" width="834" height="1008" loading="lazy"></button><figcaption><span>A'Kay</span> · Linha fina</figcaption></figure>
+      <figure class="peca" data-art="david" data-est="pc linha" data-nome="David Pita" data-et="Realismo"><button type="button" aria-label="Ampliar: escultura em realismo, David Pita"><img src="img/david-realismo-mao.webp" alt="Escultura clássica em realismo numa mão" width="900" height="600" loading="lazy"></button><figcaption><span>David Pita</span> · Realismo</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SESSÃO (papel): o sol de 13 raios acende ao longo do caminho ===== -->
+<section class="sessao papel" id="sessao" aria-labelledby="t-sessao">
+  <div class="wrap">
+    <div class="sessao__grade">
+      <div class="sessao__sol">
+        <svg class="sun" viewBox="0 0 400 300" aria-hidden="true" focusable="false"><line class="ray" x1="108.7" y1="195.6" x2="61.5" y2="185.6"/><line class="ray" x1="116.8" y1="176.2" x2="64.3" y2="151.7"/><line class="ray" x1="128.9" y1="159.4" x2="75.7" y2="117.9"/><line class="ray" x1="144.2" y1="146.1" x2="95.6" y2="86.1"/><line class="ray" x1="161.8" y1="136.7" x2="123.8" y2="58.7"/><line class="ray" x1="180.8" y1="131.6" x2="159.1" y2="37.7"/><line class="ray" x1="200.0" y1="131.0" x2="200.0" y2="25.0"/><line class="ray" x1="219.2" y1="131.6" x2="240.9" y2="37.7"/><line class="ray" x1="238.2" y1="136.7" x2="276.2" y2="58.7"/><line class="ray" x1="255.8" y1="146.1" x2="304.4" y2="86.1"/><line class="ray" x1="271.1" y1="159.4" x2="324.3" y2="117.9"/><line class="ray" x1="283.2" y1="176.2" x2="335.7" y2="151.7"/><line class="ray" x1="291.3" y1="195.6" x2="338.5" y2="185.6"/><polygon class="star" points="200.0,141.0 204.2,204.8 225.5,189.5 210.2,210.8 274.0,215.0 210.2,219.2 225.5,240.5 204.2,225.2 200.0,289.0 195.8,225.2 174.5,240.5 189.8,219.2 126.0,215.0 189.8,210.8 174.5,189.5 195.8,204.8"/></svg>
+      </div>
+      <div>
+        <p class="rotulo rv">A sessão · 04</p>
+        <h2 class="tit rv" id="t-sessao">Da ideia à pele, <em>raio a raio</em>.</h2>
+        <ol class="passos" id="passos">
+          <li class="passo"><small>01</small><h3>Conversa</h3><p>Contas a ideia, a zona do corpo e o tamanho que imaginas. Não precisas de ter tudo decidido.</p></li>
+          <li class="passo"><small>02</small><h3>Desenho</h3><p>O artista prepara a proposta contigo e ajusta até a peça estar como a imaginas.</p></li>
+          <li class="passo"><small>03</small><h3>Sessão</h3><p>No dia marcado, a ideia passa para a pele. A duração depende do tamanho e do detalhe de cada peça.</p></li>
+          <li class="passo"><small>04</small><h3>Cuidados</h3><p>Recebes indicações para a cicatrização, para a tatuagem ficar com a melhor aparência.</p></li>
+        </ol>
+        <p class="sessao__nota">Passos ilustrativos. O processo real é definido pelo estúdio e a adequação de cada trabalho depende da avaliação do artista.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACTO ===== -->
+<section class="contacto" id="contacto" aria-labelledby="t-cont">
+  <div class="wrap">
+    <p class="rotulo rv">Contacto · 05</p>
+    <h2 class="tit rv" id="t-cont">Fala com quem vai <em>tatuar-te</em>.</h2>
+    <p class="contacto__nota rv">Ainda não sabes por onde começar? Escolhe o artista cujo trabalho mais te diz e abre o biolink dele. É lá que está tudo.</p>
+
+    <div class="linhas rv">
+      <a class="linha" href="https://demo.dddigital.pt/DavidPita" target="_blank" rel="noopener"><span class="linha__n">01</span><span class="linha__nome">David Pita<small>Realismo · New school · Fine line</small></span><span class="linha__seta"><span>Biolink</span> ↗</span></a>
+      <a class="linha" href="https://demo.dddigital.pt/Akay" target="_blank" rel="noopener"><span class="linha__n">02</span><span class="linha__nome">A'Kay<small>Preto e cinza · Cor / pop · Linha fina</small></span><span class="linha__seta"><span>Biolink</span> ↗</span></a>
+      <a class="linha" href="https://demo.dddigital.pt/CarlosBrito" target="_blank" rel="noopener"><span class="linha__n">03</span><span class="linha__nome">Carlos Brito<small>Realismo preto e cinza · Grandes projetos</small></span><span class="linha__seta"><span>Biolink</span> ↗</span></a>
+    </div>
+
+    <div class="estudio-info rv">
+      <div><b>Onde</b><p>Estarreja</p><p><a href="https://tr.ee/h9eySeNnez" target="_blank" rel="noopener">Como chegar ↗</a></p></div>
+      <div><b>Morada</b><p class="tbc">a confirmar com o cliente</p></div>
+      <div><b>Telefone / WhatsApp</b><p class="tbc">a confirmar com o cliente</p></div>
+      <div><b>Horário</b><p class="tbc">a confirmar com o cliente</p></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="rodape">
+  <div class="wrap">
+    <div class="rodape__topo">
+      <img src="img/luz-logo.webp" alt="Logótipo LUZ Tattoo Studio" width="74" height="74" loading="lazy">
+      <p>LUZ<small>Tattoo Studio · Estarreja</small></p>
+    </div>
+    <p class="f-demo"><b>Website de demonstração.</b> Criado pela DD Digital como proposta de design para o LUZ Tattoo Studio. Os textos, os passos da sessão e as descrições são ilustrativos e não vinculativos; morada, contactos, horário, preços e piercings estão por confirmar com o cliente. O logótipo é o do estúdio. As fotografias são trabalhos dos artistas David Pita, A'Kay e Carlos Brito, usadas nas respetivas demonstrações de biolink. Os biolinks ligados nesta página também são demonstrações.</p>
+    <p class="rodape__fim">© LUZ Tattoo Studio · Demonstração DD Digital</p>
+  </div>
+</footer>
+
+<div class="demo-chip"><i></i>Versão de demonstração · DD Digital</div>
+<div class="luz-cursor" id="luzCursor" aria-hidden="true"></div>
+
+<dialog class="lb" id="lb" aria-label="Foto ampliada">
+  <div class="lb__in">
+    <img id="lbImg" src="" alt="">
+    <p id="lbCap"></p>
+  </div>
+  <button class="x" type="button" id="lbX" aria-label="Fechar">✕</button>
+  <button class="pv" type="button" id="lbP" aria-label="Foto anterior">‹</button>
+  <button class="nx" type="button" id="lbN" aria-label="Foto seguinte">›</button>
+</dialog>
+
+<script>
+/* ======================================================================
+   JS — organizado por funcionalidade (para a conversão futura)
+   ====================================================================== */
+(function () {
+'use strict';
+var $ = function (s, c) { return (c || document).querySelector(s); };
+var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+var FINE = window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches;
+var NOPRE = /[?&]nopre/.test(location.search);
+if (RM) document.documentElement.classList.add('rm');
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+/* ---------- menu mobile (receita Liliana: fundo fixo, repõe o scroll) ---------- */
+var burger = $('#burger'), nav = $('#nav'), menuY = 0;
+function setMenu(o) {
+  var was = document.body.classList.contains('menu-open'); if (o === was) return;
+  if (o) { menuY = window.scrollY; document.body.style.top = -menuY + 'px'; document.documentElement.style.scrollBehavior = 'auto'; }
+  document.body.classList.toggle('menu-open', o);
+  if (!o) { document.body.style.top = ''; window.scrollTo(0, menuY); document.documentElement.style.scrollBehavior = ''; }
+  burger.setAttribute('aria-expanded', o); burger.setAttribute('aria-label', o ? 'Fechar menu' : 'Abrir menu');
+}
+window.addEventListener('resize', function () { if (window.innerWidth > 1020) setMenu(false); });
+burger.addEventListener('click', function () { setMenu(!document.body.classList.contains('menu-open')); });
+$$('a', nav).forEach(function (a) {
+  a.addEventListener('click', function (e) {
+    if (!document.body.classList.contains('menu-open')) return;
+    var id = a.getAttribute('href'), t = id && id.charAt(0) === '#' && document.querySelector(id);
+    setMenu(false);
+    if (t) { e.preventDefault(); t.scrollIntoView(); }
+  });
+});
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+
+/* ---------- reveals ---------- */
+var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (es) {
+  es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { rootMargin: '0px 0px -8% 0px', threshold: .08 }) : null;
+$$('.rv').forEach(function (el) { io ? io.observe(el) : el.classList.add('in'); });
+
+/* ---------- hero: o logótipo acende ---------- */
+var hero = $('.hero'), sol = $('#sol');
+function acender() { hero.classList.add('go'); }
+(function () {
+  var go = function () { setTimeout(acender, NOPRE || RM ? 0 : 250); };
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(go); else window.addEventListener('load', go);
+  setTimeout(acender, 2200); /* rede de segurança */
+})();
+if (FINE && !RM) {
+  var tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+  hero.addEventListener('pointermove', function (e) {
+    var r = sol.getBoundingClientRect();
+    tx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2)));
+    ty = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height / 2)));
+    sol.style.setProperty('--px', tx.toFixed(3)); sol.style.setProperty('--py', ty.toFixed(3));
+  });
+  hero.addEventListener('pointerleave', function () { sol.style.setProperty('--px', 0); sol.style.setProperty('--py', 0); });
+}
+
+/* ---------- cursor de luz (só rato) ---------- */
+(function () {
+  var c = $('#luzCursor'); if (!FINE || RM) return;
+  var x = 0, y = 0, X = 0, Y = 0, on = false;
+  window.addEventListener('pointermove', function (e) { if (e.pointerType !== 'mouse') return; X = e.clientX; Y = e.clientY; if (!on) { on = true; x = X; y = Y; c.classList.add('on'); } });
+  document.addEventListener('pointerleave', function () { on = false; c.classList.remove('on'); });
+  (function loop() { x += (X - x) * .12; y += (Y - y) * .12; c.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)'; requestAnimationFrame(loop); })();
+})();
+
+/* ---------- estúdio: o manifesto acende-se palavra a palavra ---------- */
+var manif = $('#manif'), words = [];
+(function () {
+  if (!manif) return;
+  function split(node, luz) {
+    Array.prototype.slice.call(node.childNodes).forEach(function (n) {
+      if (n.nodeType === 3) {
+        var frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(function (t) {
+          if (!t) return;
+          if (/^\s+$/.test(t)) { frag.appendChild(document.createTextNode(t)); return; }
+          var s = document.createElement('span'); s.className = 'w' + (luz ? ' luz' : ''); s.textContent = t; frag.appendChild(s); words.push(s);
+        });
+        node.replaceChild(frag, n);
+      } else if (n.nodeType === 1) { split(n, n.classList.contains('luz')); }
+    });
+  }
+  split(manif, false);
+})();
+function lightWords() {
+  if (!words.length) return;
+  if (RM) { words.forEach(function (w) { w.classList.add('on'); }); return; }
+  var r = manif.getBoundingClientRect(), vh = window.innerHeight;
+  var p = Math.max(0, Math.min(1, (vh * .82 - r.top) / (r.height + vh * .3)));
+  var n = Math.round(p * words.length);
+  words.forEach(function (w, i) { w.classList.toggle('on', i < n); });
+}
+
+/* ---------- artistas: a luz passa de um para outro ---------- */
+var arts = $$('.art'), auto = true, autoT = 0, cur = 0, seen = false;
+function acenderArt(i) {
+  cur = i;
+  arts.forEach(function (a, k) {
+    var on = k === i;
+    a.classList.toggle('on', on);
+    $('.art__btn', a).setAttribute('aria-expanded', on);
+    $('.art__ir', a).tabIndex = on ? 0 : -1;
+  });
+}
+function parar() { auto = false; clearInterval(autoT); }
+arts.forEach(function (a, i) {
+  var b = $('.art__btn', a);
+  b.addEventListener('click', function () { parar(); acenderArt(i); });
+  if (FINE) a.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') { parar(); acenderArt(i); } });
+  b.addEventListener('focus', function () { parar(); acenderArt(i); });
+});
+(function () {
+  var box = $('#arts'); if (!box || RM || !('IntersectionObserver' in window)) return;
+  new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (e.isIntersecting && auto && !seen) { seen = true; autoT = setInterval(function () { if (!auto) return; acenderArt((cur + 1) % arts.length); }, 4200); }
+    });
+  }, { threshold: .45 }).observe(box);
+})();
+
+/* ---------- trabalhos: filtros que apagam + lightbox ---------- */
+var pecas = $$('.peca'), filt = { art: 'todos', est: 'todos' };
+function aplicar() {
+  pecas.forEach(function (p) {
+    var okA = filt.art === 'todos' || p.dataset.art === filt.art;
+    var okE = filt.est === 'todos' || p.dataset.est.split(' ').indexOf(filt.est) > -1;
+    p.classList.toggle('off', !(okA && okE));
+    $('button', p).tabIndex = (okA && okE) ? 0 : -1;
+  });
+}
+$$('#filtros [data-g]').forEach(function (g) {
+  $$('.chip', g).forEach(function (c) {
+    c.addEventListener('click', function () {
+      filt[g.dataset.g] = c.dataset.v;
+      $$('.chip', g).forEach(function (o) { o.setAttribute('aria-pressed', o === c); });
+      aplicar();
+    });
+  });
+});
+var lb = $('#lb'), lbImg = $('#lbImg'), lbCap = $('#lbCap'), lbI = 0;
+function vis() { return pecas.filter(function (p) { return !p.classList.contains('off'); }); }
+function lbShow(list, i) {
+  var p = list[(i + list.length) % list.length]; lbI = (i + list.length) % list.length;
+  var im = $('img', p); lbImg.src = im.currentSrc || im.src; lbImg.alt = im.alt;
+  lbCap.innerHTML = '<b></b> · ';
+  lbCap.firstChild.textContent = p.dataset.nome; lbCap.appendChild(document.createTextNode(p.dataset.et));
+}
+pecas.forEach(function (p) {
+  $('button', p).addEventListener('click', function () {
+    var l = vis(); lbShow(l, l.indexOf(p));
+    if (lb.showModal) lb.showModal(); else lb.setAttribute('open', '');
+  });
+});
+$('#lbX').addEventListener('click', function () { lb.close(); });
+$('#lbP').addEventListener('click', function () { lbShow(vis(), lbI - 1); });
+$('#lbN').addEventListener('click', function () { lbShow(vis(), lbI + 1); });
+lb.addEventListener('click', function (e) { if (e.target === lb || e.target.classList.contains('lb__in')) lb.close(); });
+lb.addEventListener('keydown', function (e) { if (e.key === 'ArrowLeft') lbShow(vis(), lbI - 1); if (e.key === 'ArrowRight') lbShow(vis(), lbI + 1); });
+
+/* ---------- sessão: o sol acende ao longo dos passos ---------- */
+var rays = $$('.sun .ray'), passos = $('#passos'), passoEls = $$('.passo');
+function sessao() {
+  if (!passos) return;
+  var vh = window.innerHeight, r = passos.getBoundingClientRect();
+  var p = RM ? 1 : Math.max(0, Math.min(1, (vh * .6 - r.top) / r.height));
+  passos.style.setProperty('--p', p.toFixed(3));
+  passoEls.forEach(function (el) { el.classList.toggle('on', RM || el.getBoundingClientRect().top < vh * .62); });
+  var n = Math.round(p * rays.length);
+  rays.forEach(function (ray, i) { ray.classList.toggle('on', i < n); });
+}
+
+/* ---------- navegação: secção atual ---------- */
+var links = $$('.nav a[href^="#"]:not(.cta)'), secs = links.map(function (a) { return $(a.getAttribute('href')); });
+function spy() {
+  var y = window.scrollY + window.innerHeight * .4, atual = -1;
+  secs.forEach(function (s, i) { if (s && s.offsetTop <= y) atual = i; });
+  links.forEach(function (a, i) { if (i === atual) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+}
+
+/* ---------- scroll (um só rAF) ---------- */
+var tick = false;
+function onScroll() { if (tick) return; tick = true; requestAnimationFrame(function () { tick = false; lightWords(); sessao(); spy(); }); }
+window.addEventListener('scroll', onScroll, { passive: true });
+window.addEventListener('resize', onScroll);
+window.addEventListener('load', function () { window.scrollTo(0, 0); onScroll(); });
+onScroll();
+})();
+</script>
+</body>
+</html>
