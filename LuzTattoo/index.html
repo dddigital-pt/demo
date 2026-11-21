@@ -300,6 +300,10 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
 .estudio-info p { color: var(--osso); font-size: .98rem; }
 .estudio-info .tbc { color: var(--osso-2); }
 .estudio-info a { color: var(--cobre); font-weight: 600; text-underline-offset: 4px; }
+.mapa { position: relative; margin-top: clamp(28px, 4vw, 48px); border: 1px solid var(--cobre-2); border-radius: 160px 160px 6px 6px; overflow: hidden; background: var(--noite-3); aspect-ratio: 16 / 7; }
+.mapa iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; filter: grayscale(1) invert(.9) contrast(.9) sepia(.35); }
+.mapa__abrir { position: absolute; right: 14px; bottom: 14px; padding: 10px 18px; border-radius: 99px; background: var(--cobre); color: var(--noite); text-decoration: none; font-size: .76rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.mapa__abrir:hover { background: var(--osso); }
 
 /* ===== rodapé ===== */
 .rodape { background: var(--noite); border-top: 1px solid rgba(215, 130, 93, .22); padding: 50px 0 80px; }
@@ -363,6 +367,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
   .lb .nx { top: auto; bottom: 14px; right: 14px; transform: none; }
   .linha { grid-template-columns: 36px minmax(0, 1fr) auto; gap: 10px; }
   .linha__seta span { display: none; }
+  .mapa { aspect-ratio: 4 / 5; border-radius: 90px 90px 6px 6px; }
 }
 @media (max-width: 600px) {
   .demo-bar .l { display: none; }
@@ -405,7 +410,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
     <p class="hero__lead">Tatuagens e piercings com arte, dedicação e personalidade. Um espaço criado para transformar ideias em histórias na pele.</p>
     <div class="hero__btns">
       <a class="btn btn--cheio" href="#artistas">Conhece os artistas</a>
-      <a class="btn btn--linha" href="https://tr.ee/h9eySeNnez" target="_blank" rel="noopener">Como chegar <span aria-hidden="true">↗</span></a>
+      <a class="btn btn--linha" href="https://www.google.com/maps/search/?api=1&amp;query=R.+Lu%C3%ADs+de+Cam%C3%B5es+29%2C+3860-381+Estarreja" target="_blank" rel="noopener">Como chegar <span aria-hidden="true">↗</span></a>
     </div>
     <p class="hero__ficha"><span><b>3</b> artistas</span><span><b>Estarreja</b></span><span>Tatuagem · <b>Piercing</b></span></p>
   </div>
@@ -576,10 +581,13 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
     </div>
 
     <div class="estudio-info rv">
-      <div><b>Onde</b><p>Estarreja</p><p><a href="https://tr.ee/h9eySeNnez" target="_blank" rel="noopener">Como chegar ↗</a></p></div>
-      <div><b>Morada</b><p class="tbc">a confirmar com o cliente</p></div>
+      <div><b>Morada</b><p><a href="https://www.google.com/maps/search/?api=1&amp;query=R.+Lu%C3%ADs+de+Cam%C3%B5es+29%2C+3860-381+Estarreja" target="_blank" rel="noopener">R. Luís de Camões 29<br>3860-381 Estarreja</a></p></div>
       <div><b>Telefone / WhatsApp</b><p class="tbc">a confirmar com o cliente</p></div>
       <div><b>Horário</b><p class="tbc">a confirmar com o cliente</p></div>
+    </div>
+    <div class="mapa rv">
+      <iframe title="Mapa: LUZ Tattoo Studio, R. Luís de Camões 29, Estarreja" src="https://www.google.com/maps?q=R.+Lu%C3%ADs+de+Cam%C3%B5es+29%2C+3860-381+Estarreja&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      <a class="mapa__abrir" href="https://www.google.com/maps/search/?api=1&amp;query=R.+Lu%C3%ADs+de+Cam%C3%B5es+29%2C+3860-381+Estarreja" target="_blank" rel="noopener">Abrir no Google Maps ↗</a>
     </div>
   </div>
 </section>
@@ -592,7 +600,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
       <img src="img/luz-logo.webp" alt="Logótipo LUZ Tattoo Studio" width="74" height="74" loading="lazy">
       <p>LUZ<small>Tattoo Studio · Estarreja</small></p>
     </div>
-    <p class="f-demo"><b>Website de demonstração.</b> Criado pela DD Digital como proposta de design para o LUZ Tattoo Studio. Os textos, os passos da sessão e as descrições são ilustrativos e não vinculativos; morada, contactos, horário, preços e piercings estão por confirmar com o cliente. O logótipo é o do estúdio. As fotografias são trabalhos dos artistas David Pita, A'Kay e Carlos Brito, usadas nas respetivas demonstrações de biolink. Os biolinks ligados nesta página também são demonstrações.</p>
+    <p class="f-demo"><b>Website de demonstração.</b> Criado pela DD Digital como proposta de design para o LUZ Tattoo Studio. Os textos, os passos da sessão e as descrições são ilustrativos e não vinculativos; contactos, horário, preços e piercings estão por confirmar com o cliente. O logótipo é o do estúdio. As fotografias são trabalhos dos artistas David Pita, A'Kay e Carlos Brito, usadas nas respetivas demonstrações de biolink. Os biolinks ligados nesta página também são demonstrações.</p>
     <p class="rodape__fim">© LUZ Tattoo Studio · Demonstração DD Digital</p>
   </div>
 </footer>
