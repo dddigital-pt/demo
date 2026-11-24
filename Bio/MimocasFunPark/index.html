@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mimocas Funpark — Biolink (demonstração)</title>
+<meta name="description" content="Demonstração de biolink para o Mimocas Funpark, parque de diversão infantil em Estarreja (4 aos 12 anos): festas de aniversário, brincadeira sem marcação e Mimocas Party. Conteúdo ilustrativo.">
+<meta name="theme-color" content="#FBC701">
+<link rel="icon" type="image/webp" href="img/logo-funpark.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Lilita+One&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<script>
+  document.documentElement.className = 'js';
+  if (/[?&]nopre/.test(location.search)) document.documentElement.className += ' nointro';
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.className += ' calm';
+</script>
+<style>
+/* =====================================================================
+   MIMOCAS FUNPARK — biolink (demo DD Digital)
+   CONCEITO: a capa de BD do site, em formato de telemóvel. O logótipo "estoura" (flash + impacto + POW/ZAP/BOOM) sobre
+   raios amarelos e chove uma piscina de bolas que se amontoa no fundo da capa; tocar na capa faz explodir mais bolas.
+   Por baixo, os links são vinhetas de contorno preto grosso com botão redondo com seta. Os dois primeiros abrem painéis
+   (conta da festa; preços + horário). A pílula diz se o parque está aberto agora (Europe/Lisbon).
+   Herdado de: Demo/MimocasFunPark (capa, física de bolas, sprite burst, títulos com contorno, estado aberto/fechado),
+   Inês Rosa (links reais primeiro, botão redondo com seta), A'Kay (faixa DEMO/selo/nota), regra A9 (bloco "Pede já", versão escura).
+   Novo: capa que é só a "capa" (bolas limitadas à capa para não taparem links), painéis com grid 0fr→1fr e `inert`,
+   fita de fotos do cliente com scroll-snap, pílula "aberto/fechado + próxima abertura".
+   Fontes: Lilita One (títulos), Bangers (SFX/etiquetas), Rubik (corpo).
+   Cores: azul #0099D8, vermelho #E21E08, amarelo #FBC701, verde #3CA830, azul-burst #1743B8, creme #FFF6DC, tinta #141414.
+   (Armadilhas técnicas: ver ARMADILHAS.md na pasta Demo/)
+   ===================================================================== */
+
+/* ---------- variáveis ---------- */
+:root{
+  --ink:#141414; --creme:#FFF6DC; --am:#FBC701; --am2:#FFE066; --az:#0099D8; --azb:#1743B8; --ve:#E21E08; --vd:#3CA830; --ceu:#8FD8F8;
+  --branco:#fff; --verde:var(--am);
+  --f-tit:'Lilita One','Rubik',system-ui,sans-serif; --f-sfx:'Bangers','Lilita One',system-ui,sans-serif; --f-txt:'Rubik',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --band:30px; --bd:3px;
+  --ease:cubic-bezier(.2,1.5,.4,1);
+  /* bloco "Pede já o teu biolink" (A9) — versão escura sobre amarelo */
+  --cta-fundo:#141414; --cta-fundo-hover:#262626; --cta-texto:#fff; --cta-destaque:#FBC701; --cta-linha:#141414;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;padding-top:var(--band);min-height:100svh;font:400 1rem/1.5 var(--f-txt);color:var(--ink);background:var(--am);overflow-x:clip}
+img,svg,canvas{display:block;max-width:100%}
+img{height:auto}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+h1,h2,p,ul,figure{margin:0}
+ul{padding:0;list-style:none}
+:focus-visible{outline:4px solid var(--azb);outline-offset:3px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- faixa DEMO + selo ---------- */
+.band{position:fixed;z-index:60;top:0;left:0;right:0;height:var(--band);display:flex;align-items:center;justify-content:center;gap:.6em;padding:0 8px;background:var(--azb);color:#fff;font:500 .76rem/1 var(--f-txt);border-bottom:3px solid var(--ink);white-space:nowrap;overflow:hidden}
+.band b{font:400 .92rem/1 var(--f-sfx);letter-spacing:.1em;background:var(--am);color:var(--ink);padding:.2em .55em .1em;border:2px solid var(--ink);transform:rotate(-2deg)}
+.band .l{display:none}
+@media (min-width:640px){.band .l{display:inline}.band .s{display:none}}
+.seal{position:fixed;z-index:55;right:14px;bottom:14px;width:104px;height:104px;display:none;place-items:center;text-align:center;color:var(--ink);font:400 .8rem/1.05 var(--f-sfx);letter-spacing:.06em;text-transform:uppercase;pointer-events:none;transform:rotate(-8deg)}
+.seal svg{position:absolute;inset:0;width:100%;height:100%;fill:var(--am2);stroke:var(--ink);stroke-width:3.5;stroke-linejoin:round;overflow:visible}
+.seal span{position:relative;max-width:70%}
+@media (min-width:900px){.seal{display:grid}}
+
+/* ---------- fundo: raios + meio-tom ---------- */
+.rays{position:fixed;z-index:0;left:50%;top:22%;width:150vmax;height:150vmax;margin:-75vmax 0 0 -75vmax;background:repeating-conic-gradient(from 0deg,#FFD52E 0 5deg,var(--am) 5deg 10deg);animation:spin 100s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dots{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle,rgba(226,30,8,.25) 1.7px,transparent 2.3px);background-size:11px 11px;-webkit-mask-image:linear-gradient(200deg,#000 0,transparent 38%);mask-image:linear-gradient(200deg,#000 0,transparent 38%)}
+.calm .rays{animation:none}
+
+/* ---------- coluna ---------- */
+.col{position:relative;z-index:2;width:min(100%,520px);margin-inline:auto}
+
+/* ---------- capa ---------- */
+.cover{position:relative;isolation:isolate;padding:22px 20px 96px;text-align:center}
+#pit{position:absolute;top:0;bottom:0;left:50%;z-index:-1;width:100vw;max-width:none;margin-left:-50vw;height:100%;pointer-events:none}
+.stage{position:relative;width:min(84%,370px);margin-inline:auto}
+.stage .logo{width:100%;filter:drop-shadow(0 8px 0 rgba(20,20,20,.18))}
+.flash{position:absolute;left:50%;top:48%;width:50%;aspect-ratio:1;margin:-25% 0 0 -25%;border-radius:50%;background:#fff;opacity:0;pointer-events:none}
+.sfx{position:absolute;font:400 clamp(1.9rem,9vw,2.9rem)/.9 var(--f-sfx);letter-spacing:.04em;color:var(--ve);-webkit-text-stroke:.14em var(--ink);paint-order:stroke fill;filter:drop-shadow(.05em .06em 0 var(--ink));pointer-events:none;white-space:nowrap;text-transform:uppercase}
+.sfx.pow{left:-8%;top:-4%;transform:rotate(-12deg)}
+.sfx.zap{right:-6%;top:-8%;color:var(--az);transform:rotate(9deg)}
+.sfx.boom{right:-4%;bottom:2%;color:#fff;transform:rotate(-7deg)}
+.tag{display:inline-block;font:400 1.1rem/1 var(--f-sfx);letter-spacing:.07em;background:var(--az);color:#fff;border:3px solid var(--ink);padding:.22em .6em .12em;transform:rotate(-2deg);box-shadow:3px 3px 0 var(--ink);text-transform:uppercase;margin-top:22px}
+.cover h1{font:400 clamp(1.7rem,8vw,2.3rem)/1 var(--f-tit);word-spacing:.12em;color:var(--ve);-webkit-text-stroke:.14em var(--ink);paint-order:stroke fill;filter:drop-shadow(.05em .06em 0 var(--ink));margin:.55em 0 .3em}
+.cover .sub{font-weight:500;max-width:21em;margin-inline:auto}
+.state{display:inline-flex;align-items:center;gap:10px;margin-top:16px;max-width:100%;font:400 1.02rem/1.15 var(--f-tit);background:#fff;border:var(--bd) solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.55em .9em .5em;transform:rotate(1deg);text-align:left}
+.state i{flex:none;width:16px;height:16px;border-radius:50%;background:#999;border:3px solid var(--ink)}
+.state.on i{background:var(--vd);animation:blink 1.4s infinite}
+.state.off i{background:var(--ve)}
+.state small{display:block;font:500 .74rem/1.2 var(--f-txt);opacity:.8}
+@keyframes blink{50%{opacity:.35}}
+.pop{position:absolute;z-index:4;font:400 clamp(2rem,10vw,3rem)/1 var(--f-sfx);letter-spacing:.04em;-webkit-text-stroke:.14em var(--ink);paint-order:stroke fill;pointer-events:none;transform:translate(-50%,-50%);animation:popUp .75s var(--ease) forwards;text-transform:uppercase}
+@keyframes popUp{0%{opacity:0;transform:translate(-50%,-30%) scale(.2) rotate(-20deg)}30%{opacity:1;transform:translate(-50%,-60%) scale(1.15) rotate(6deg)}100%{opacity:0;transform:translate(-50%,-130%) scale(1) rotate(-4deg)}}
+
+/* intro da capa (só com JS, sem ?nopre e sem movimento reduzido) */
+.js:not(.nointro):not(.calm) .stage .logo{animation:impact .95s var(--ease) both}
+.js:not(.nointro):not(.calm) .flash{animation:flash .8s ease-out both}
+.js:not(.nointro):not(.calm) .sfx{animation:sfxIn .55s var(--ease) both}
+.js:not(.nointro):not(.calm) .sfx.pow{animation-delay:.5s}
+.js:not(.nointro):not(.calm) .sfx.zap{animation-delay:.75s}
+.js:not(.nointro):not(.calm) .sfx.boom{animation-delay:1s}
+.js:not(.nointro):not(.calm) .cover .tag,.js:not(.nointro):not(.calm) .cover h1,.js:not(.nointro):not(.calm) .cover .sub,.js:not(.nointro):not(.calm) .state{animation:fadeUp .6s var(--ease) both;animation-delay:1s}
+.js:not(.nointro):not(.calm) .cover h1{animation-delay:1.1s}.js:not(.nointro):not(.calm) .cover .sub{animation-delay:1.2s}.js:not(.nointro):not(.calm) .state{animation-delay:1.3s}
+.js:not(.nointro):not(.calm) .cover{animation:shake .5s .32s linear both}
+@keyframes impact{0%{transform:scale(.05) rotate(-16deg);opacity:0}45%{opacity:1}100%{transform:none;opacity:1}}
+@keyframes flash{0%{opacity:1;transform:scale(.1)}100%{opacity:0;transform:scale(7)}}
+@keyframes sfxIn{0%{opacity:0;scale:.1}100%{opacity:1;scale:1}}
+@keyframes fadeUp{0%{opacity:0;translate:0 24px}100%{opacity:1;translate:0 0}}
+@keyframes shake{0%,100%{transform:none}15%{transform:translate(-5px,3px)}30%{transform:translate(5px,-4px)}45%{transform:translate(-4px,-2px)}60%{transform:translate(3px,3px)}80%{transform:translate(-2px,1px)}}
+
+/* ---------- links ---------- */
+.links{display:grid;gap:14px;padding:0 16px 8px}
+.lk{--bg:var(--creme);--fg:var(--ink);position:relative}
+.lk.ve{--bg:var(--ve);--fg:#fff}.lk.az{--bg:var(--az);--fg:#fff}.lk.vd{--bg:var(--vd);--fg:#fff}.lk.am{--bg:var(--am2);--fg:var(--ink)}.lk.cr{--bg:var(--creme);--fg:var(--ink)}.lk.bl{--bg:var(--azb);--fg:#fff}
+.lk:nth-child(odd){transform:rotate(-.5deg)}.lk:nth-child(even){transform:rotate(.5deg)}
+.js:not(.nointro):not(.calm) .lk{animation:linkIn .55s var(--ease) both;animation-delay:calc(1.4s + var(--i)*.07s)}
+.js.nointro .lk{animation:linkIn .45s var(--ease) both;animation-delay:calc(.1s + var(--i)*.05s)}
+@keyframes linkIn{0%{opacity:0;translate:0 26px;scale:.94}100%{opacity:1;translate:0 0;scale:1}}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;width:100%;text-align:left;text-decoration:none;background:var(--bg);color:var(--fg);border:var(--bd) solid var(--ink);box-shadow:5px 5px 0 var(--ink);padding:13px 14px 13px 16px;transition:transform .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent}
+.row:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
+@media (hover:hover){.row:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--ink)}.row:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}}
+.row .t b{display:block;font:400 clamp(1.18rem,5.4vw,1.4rem)/1.05 var(--f-tit);letter-spacing:.01em}
+.row .t small{display:block;margin-top:.25em;font:500 .8rem/1.25 var(--f-txt);opacity:.92}
+.go{flex:none;width:44px;height:44px;display:grid;place-items:center;border-radius:50%;background:var(--ink);color:var(--am);font:400 1.5rem/1 var(--f-tit);transition:transform .25s var(--ease)}
+.lk.am .go,.lk.cr .go{color:#fff}
+@media (hover:hover){.row:hover .go{transform:rotate(-12deg) scale(1.08)}}
+.go.plus::before{content:"+";transition:transform .25s}
+.row[aria-expanded="true"] .go.plus::before{transform:rotate(45deg)}
+.badge{position:absolute;right:-6px;top:-14px;z-index:2;font:400 .86rem/1 var(--f-sfx);letter-spacing:.07em;color:var(--ve);background:#fff;border:3px solid var(--ve);outline:2px solid #fff;padding:.25em .5em .15em;transform:rotate(7deg);text-transform:uppercase;pointer-events:none}
+
+/* painéis expansíveis */
+.pnl{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease;margin:0 6px}
+.pnl.open{grid-template-rows:1fr}
+.pnl>div{min-height:0;overflow:hidden}
+.pnl .in{background:#fff;color:var(--ink);border:var(--bd) solid var(--ink);border-top:0;padding:16px 16px 18px;display:grid;gap:12px}
+.pnl h2{font:400 1.2rem/1.05 var(--f-tit);color:var(--ve)}
+.pills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pill{text-align:center;background:var(--am2);border:3px solid var(--ink);padding:.5em .2em;box-shadow:3px 3px 0 var(--ink)}
+.pill b{display:block;font:400 1.6rem/1 var(--f-tit);color:var(--ve)}
+.pill span{font:500 .78rem/1.1 var(--f-txt)}
+.list{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 .76rem/1 var(--f-txt);border:2px solid var(--ink);background:var(--creme);padding:.45em .7em;border-radius:99px}
+.sched li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:2px dashed rgba(20,20,20,.25);font-size:.9rem;font-weight:500}
+.sched li:last-child{border-bottom:0}
+.sched li b{font:400 1rem/1.2 var(--f-tit)}
+.sched li.hoje{background:var(--am2);box-shadow:-8px 0 0 var(--am2),8px 0 0 var(--am2);border-radius:2px}
+.sched li.hoje b::after{content:"Hoje";margin-left:.5em;font:400 .78rem/1 var(--f-sfx);letter-spacing:.08em;background:var(--ve);color:#fff;padding:.2em .45em .1em;border:2px solid var(--ink);transform:rotate(-3deg);display:inline-block;vertical-align:middle}
+.sched li.fechado{color:#5b5445}
+.res{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px;font:400 1.35rem/1.05 var(--f-tit)}
+.res .tot{font-size:2.8rem;line-height:.9;color:var(--ve);-webkit-text-stroke:.09em var(--ink);paint-order:stroke fill;filter:drop-shadow(.04em .06em 0 var(--ink))}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent;margin:2px 0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:14px;background:var(--creme);border:3px solid var(--ink);border-radius:99px}
+input[type=range]::-moz-range-track{height:8px;background:var(--creme);border:3px solid var(--ink);border-radius:99px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;margin-top:-13px;background:var(--ve);border:4px solid var(--ink);border-radius:50%;box-shadow:2px 3px 0 var(--ink)}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;background:var(--ve);border:4px solid var(--ink);border-radius:50%}
+.scale{display:flex;justify-content:space-between;font:500 .74rem/1 var(--f-txt)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;font:400 1.1rem/1 var(--f-tit);text-decoration:none;color:#fff;background:var(--vd);border:var(--bd) solid var(--ink);padding:.75em 1.1em .65em;box-shadow:4px 4px 0 var(--ink);text-shadow:2px 2px 0 rgba(0,0,0,.3);text-align:center}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.tbc{display:inline-block;font:500 .74rem/1.3 var(--f-txt);background:repeating-linear-gradient(-45deg,rgba(255,255,255,.9) 0 6px,rgba(255,236,150,.95) 6px 12px);border:2px dashed var(--ink);color:var(--ink);padding:.15em .6em;border-radius:6px}
+
+/* fita de fotos do cliente */
+.fotos{padding:26px 0 8px}
+.fotos h2{padding:0 20px;font:400 1.5rem/1 var(--f-tit);color:#fff;-webkit-text-stroke:.14em var(--ink);paint-order:stroke fill;filter:drop-shadow(.05em .06em 0 var(--ink));word-spacing:.12em}
+.strip{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:18px 20px 16px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.strip figure{position:relative;flex:none;width:min(62%,230px);aspect-ratio:3/4;scroll-snap-align:center;border:var(--bd) solid var(--ink);box-shadow:5px 5px 0 var(--ink);background:var(--ink);overflow:hidden}
+.strip figure:nth-child(odd){transform:rotate(-1.2deg)}.strip figure:nth-child(even){transform:rotate(1.2deg)}
+.strip img{width:100%;height:100%;object-fit:cover}
+.strip figcaption{position:absolute;left:8px;bottom:10px;font:400 .95rem/1 var(--f-sfx);letter-spacing:.07em;background:var(--am);border:3px solid var(--ink);padding:.2em .5em .1em;text-transform:uppercase;transform:rotate(-2deg)}
+.fotos .cr{padding:0 20px;font-size:.74rem;opacity:.85}
+
+/* ---------- rodapé ---------- */
+.rodape{position:relative;z-index:2;text-align:center;padding:30px 20px calc(36px + env(safe-area-inset-bottom));width:min(100%,520px);margin-inline:auto}
+.credito{font-size:.82rem;font-weight:500}
+.credito a{font-weight:700}
+.demo-note{margin-top:18px;padding:14px 16px;border:3px dashed var(--ink);border-radius:10px;font-size:.78rem;line-height:1.5;text-align:left;background:rgba(255,246,220,.75)}
+.demo-note b{color:var(--ve)}
+.direitos{margin-top:14px;font-size:.78rem;opacity:.85}
+
+/* =====================================================================
+   "PEDE JÁ O TEU BIOLINK" (DD Digital) — igual em todos os biolinks
+   Fica por baixo do crédito, como parte da assinatura e não como mais um link.
+   Para o adaptar a outro biolink, mudar só estas variáveis (ou defini-las no :root):
+     --cta-fundo  --cta-texto  --cta-destaque  --cta-linha
+   ===================================================================== */
+.pede {
+  display: inline-flex; align-items: center; gap: 12px;
+  max-width: 100%;
+  margin-top: 14px; padding: 8px 18px 8px 8px;
+  border-radius: 999px;
+  text-align: left; text-decoration: none;
+  color: var(--cta-texto, var(--branco));
+  background: var(--cta-fundo, rgba(4, 11, 7, .72));
+  border: 1px solid var(--cta-linha, rgba(150, 255, 195, .24));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color .25s, background .25s;
+}
+.pede img { flex: none; width: 40px; height: 40px; border-radius: 50%; background: #fdfdfd; object-fit: cover; }
+.pede__txt { min-width: 0; line-height: 1.3; }
+.pede__txt > span { display: block; font-size: .7rem; opacity: .75; }
+.pede b { display: block; margin-top: 1px; font-size: .82rem; font-weight: 700; color: var(--cta-destaque, var(--verde)); }
+.pede b i { display: inline-block; font-style: normal; transition: transform .2s var(--ease); }
+.pede:hover, .pede:focus-visible { border-color: var(--cta-destaque, var(--verde)); background: var(--cta-fundo-hover, rgba(10, 26, 18, .9)); }
+.pede:hover b i { transform: translateX(4px); }
+.pede:focus-visible { outline: 2px solid var(--azb); outline-offset: 3px; }
+
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs><symbol id="burst" viewBox="-4 -4 108 108"><polygon points="52.5,0.1 57.3,17.8 68.3,6.7 66.3,24.8 84.0,13.4 77.9,28.9 90.9,29.0 79.6,40.9 99.6,43.8 84.0,51.7 96.8,60.7 79.5,62.4 92.0,77.1 74.2,72.4 78.4,87.5 63.7,76.7 64.7,97.8 54.3,84.7 47.7,95.9 43.1,80.2 30.6,96.1 31.5,78.6 17.3,85.2 24.5,69.3 5.5,72.8 18.5,59.7 3.4,55.8 20.0,48.5 1.3,38.9 17.8,36.4 11.4,25.0 27.3,28.9 19.8,10.1 34.5,19.7 35.9,4.1 46.0,18.2"/></symbol></defs>
+</svg>
+
+<!-- faixa DEMO (permanente) + selo -->
+<div class="band" role="note"><b>DEMO</b><span class="l">Biolink de demonstração criado pela DD Digital para Mimocas Funpark · conteúdo ilustrativo</span><span class="s">Demonstração · Mimocas Funpark</span></div>
+<div class="seal" aria-hidden="true"><svg viewBox="-4 -4 108 108"><use href="#burst"/></svg><span>Versão de demonstração</span></div>
+
+<div class="rays" aria-hidden="true"></div>
+<div class="dots" aria-hidden="true"></div>
+
+<main class="col">
+
+  <!-- ================= CAPA ================= -->
+  <header class="cover" id="cover">
+    <canvas id="pit" aria-hidden="true"></canvas>
+    <div class="stage">
+      <span class="flash" aria-hidden="true"></span>
+      <img class="logo" src="img/logo-funpark.webp" alt="Mimocas Funpark" width="1214" height="988">
+      <span class="sfx pow" aria-hidden="true">Pow!</span>
+      <span class="sfx zap" aria-hidden="true">Zap!</span>
+      <span class="sfx boom" aria-hidden="true">Boom!</span>
+    </div>
+    <span class="tag">Um parque perto de ti!</span>
+    <h1>Brincar é a tua missão.</h1>
+    <p class="sub">Parque de diversão em Estarreja para quem tem entre 4 e 12 anos. Festas de aniversário e diversão à hora.</p>
+    <p class="state" id="state" role="status"><i></i><span id="statet">A ver se estamos abertos…</span></p>
+  </header>
+
+  <!-- ================= LINKS ================= -->
+  <ul class="links" aria-label="Ligações">
+    <li class="lk ve" style="--i:0">
+      <span class="badge" aria-hidden="true">Agenda 2027 aberta</span>
+      <button class="row" aria-expanded="false" aria-controls="p-festa"><span class="t"><b>Marcar festa de aniversário</b><small>14 € por criança · 2h30 de diversão</small></span><span class="go plus" aria-hidden="true"></span></button>
+      <div class="pnl" id="p-festa" inert><div><div class="in">
+        <h2>Faz a conta da festa</h2>
+        <div class="list"><span class="chip">Lanche incluído</span><span class="chip">Convite digital</span><span class="chip">Brindes</span><span class="chip">Mín. 10 crianças</span><span class="chip">Traz o teu bolo</span></div>
+        <label for="rng" class="sr">Número de crianças</label>
+        <input type="range" id="rng" min="10" max="40" value="15" aria-describedby="fres">
+        <div class="scale" aria-hidden="true"><span>10</span><span>25</span><span>40</span></div>
+        <p class="res" id="fres" aria-live="polite"><span id="fn">15</span> crianças = <span class="tot" id="ft">210 €</span></p>
+        <a class="btn" id="fwa" data-wa="" href="https://wa.me/351965863990" target="_blank" rel="noopener">Pedir data no WhatsApp</a>
+        <p><span class="tbc">Preço da publicação do cliente · a confirmar</span></p>
+      </div></div></div>
+    </li>
+
+    <li class="lk am" style="--i:1">
+      <button class="row" aria-expanded="false" aria-controls="p-brincar"><span class="t"><b>Brincar sem marcação</b><small>Brincadeira livre · a partir de 5 €</small></span><span class="go plus" aria-hidden="true"></span></button>
+      <div class="pnl" id="p-brincar" inert><div><div class="in">
+        <h2>Não precisas de fazer anos</h2>
+        <div class="pills"><div class="pill"><b>5 €</b><span>1 hora</span></div><div class="pill"><b>9 €</b><span>2 horas</span></div><div class="pill"><b>13 €</b><span>3 horas</span></div></div>
+        <h2 style="margin-top:4px">Horário · época escolar</h2>
+        <ul class="sched" id="sched">
+          <li class="fechado" data-day="1 2 3 4"><b>2ª a 5ª</b><span>Encerrado</span></li>
+          <li data-day="5"><b>6ª feira</b><span>15h – 19h</span></li>
+          <li data-day="6"><b>Sábado</b><span>10h–13h e 14h–20h</span></li>
+          <li data-day="0"><b>Domingo</b><span>14h – 19h</span></li>
+          <li data-day="feriado"><b>Feriados</b><span>10h–13h e 14h–19h</span></li>
+        </ul>
+        <p><span class="tbc">Valores e horário da publicação do cliente · a confirmar</span></p>
+      </div></div></div>
+    </li>
+
+    <li class="lk vd" style="--i:2">
+      <a class="row" data-wa="Olá! Gostava de inscrever uma criança nas Semanas Mágicas de Natal." href="https://wa.me/351965863990" target="_blank" rel="noopener"><span class="t"><b>Semanas Mágicas de Natal</b><small>16–18, 21–23 e 28–30 dez · 09h às 19h · inscrições até 11 dez</small></span><span class="go" aria-hidden="true">→</span></a>
+    </li>
+
+    <li class="lk az" style="--i:3">
+      <a class="row" href="https://instagram.com/mimocasparty" target="_blank" rel="noopener"><span class="t"><b>Mimocas Party</b><small>Insufláveis, decoração, pinturas faciais e mascotes</small></span><span class="go" aria-hidden="true">→</span></a>
+    </li>
+
+    <li class="lk bl" style="--i:4">
+      <a class="row" href="https://instagram.com/mimocasfunpark" target="_blank" rel="noopener"><span class="t"><b>Instagram</b><small>@mimocasfunpark</small></span><span class="go" aria-hidden="true">→</span></a>
+    </li>
+
+    <li class="lk cr" style="--i:5">
+      <a class="row" href="tel:+351965863990"><span class="t"><b>Ligar</b><small>965 863 990</small></span><span class="go" aria-hidden="true">→</span></a>
+    </li>
+
+    <li class="lk cr" style="--i:6">
+      <a class="row" href="https://www.google.com/maps/search/?api=1&amp;query=Estarreja" target="_blank" rel="noopener"><span class="t"><b>Como chegar</b><small>Estarreja · <span class="tbc">morada a confirmar</span></small></span><span class="go" aria-hidden="true">→</span></a>
+    </li>
+
+    <li class="lk cr" style="--i:7">
+      <a class="row" href="mailto:mimocasfunpark@gmail.com"><span class="t"><b>Email</b><small>mimocasfunpark@gmail.com</small></span><span class="go" aria-hidden="true">→</span></a>
+    </li>
+  </ul>
+
+  <!-- fotos do cliente -->
+  <section class="fotos" aria-labelledby="h-fotos">
+    <h2 id="h-fotos">Espreita o parque</h2>
+    <div class="strip" tabindex="0" aria-label="Fotografias (deslizar)">
+      <figure><img src="img/cliente-lego-pikachu.jpg" alt="Família e Pikachu feitos de Lego à frente de um arco de balões coloridos" loading="lazy"><figcaption>Pikachu em Lego</figcaption></figure>
+      <figure><img src="img/cliente-cara-pintada.jpg" alt="Três crianças sorridentes, uma delas com a cara pintada" loading="lazy" style="object-position:50% 40%"><figcaption>Carinhas à vontade</figcaption></figure>
+      <figure><img src="img/cliente-mario.jpg" alt="Estátua do Super Mário" loading="lazy" style="object-position:50% 14%"><figcaption>Heróis à espreita</figcaption></figure>
+    </div>
+    <p class="cr">Fotografias fornecidas pelo cliente (publicações do Instagram).</p>
+  </section>
+</main>
+
+<footer class="rodape">
+  <p class="credito">
+    Spoiler: este biolink não se fez sozinho <span class="credito-emoji" aria-hidden="true">😉</span>
+    <a href="https://dddigital.pt" target="_blank" rel="noopener">DD Digital</a>.
+  </p>
+  <a class="pede" href="https://dddigital.pt/?utm_source=biolink&amp;utm_medium=cta&amp;utm_campaign=mimocasfunpark#contacto" target="_blank" rel="noopener">
+    <img src="img/dd-logo.webp" width="200" height="200" alt="DD Digital" loading="lazy" decoding="async">
+    <span class="pede__txt">
+      <span>Design totalmente personalizado à tua marca</span>
+      <b>Pede já o teu biolink <i aria-hidden="true">→</i></b>
+    </span>
+  </a>
+  <p class="demo-note"><b>Biolink de demonstração</b> criado pela DD Digital para o Mimocas Funpark. Preços, horário, datas e contactos vêm das publicações do cliente e têm de ser confirmados; a morada está por preencher. Os botões de WhatsApp só abrem uma mensagem preparada: esta página não recolhe nem envia dados. Fotografias: fornecidas pelo cliente.</p>
+  <p class="direitos">© <span id="ano">2026</span> Mimocas Funpark · Estarreja · RNAAT 1117/2025</p>
+</footer>
+
+<script>
+/* =====================================================================
+   JS — organizado por funcionalidade
+   ===================================================================== */
+(function(){
+  'use strict';
+  var $=function(s,r){return (r||document).querySelector(s)};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  var root=document.documentElement, calm=root.classList.contains('calm');
+  $('#ano').textContent=new Date().getFullYear();
+
+  /* ---------- WhatsApp: mensagem preparada (nada é enviado pela página) ---------- */
+  var PHONE='351965863990';
+  function wa(t){return 'https://wa.me/'+PHONE+'?text='+encodeURIComponent('[Biolink de demonstração] '+t)}
+  $$('a[data-wa]').forEach(function(a){ if(a.dataset.wa) a.href=wa(a.dataset.wa) });
+
+  /* ---------- painéis expansíveis (um de cada vez) ---------- */
+  var rows=$$('.row[aria-controls]');
+  function toggle(btn,open){
+    var p=document.getElementById(btn.getAttribute('aria-controls'));
+    btn.setAttribute('aria-expanded',String(open));
+    p.classList.toggle('open',open);
+    if(open) p.removeAttribute('inert'); else p.setAttribute('inert','');
+  }
+  rows.forEach(function(b){
+    b.addEventListener('click',function(){
+      var open=b.getAttribute('aria-expanded')!=='true';
+      rows.forEach(function(o){ if(o!==b) toggle(o,false) });
+      toggle(b,open);
+    });
+  });
+
+  /* ---------- conta da festa ---------- */
+  var rng=$('#rng'), PRECO=14;
+  function festa(){
+    var n=+rng.value;
+    $('#fn').textContent=n; $('#ft').textContent=(n*PRECO)+' €';
+    $('#fwa').href=wa('Olá! Gostava de marcar uma festa de aniversário para '+n+' crianças. Podem dizer-me as datas disponíveis?');
+  }
+  rng.addEventListener('input',festa); festa();
+
+  /* ---------- aberto agora + próxima abertura (Europe/Lisbon) ---------- */
+  (function(){
+    var DIAS={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+    var NOMES=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+    var SLOTS={5:[[15,19]],6:[[10,13],[14,20]],0:[[14,19]]};
+    var parts;
+    try{ parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Lisbon',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()) }catch(e){ return }
+    var o={}; parts.forEach(function(p){o[p.type]=p.value});
+    var d=DIAS[o.weekday], t=(+o.hour)+(+o.minute)/60, el=$('#state'), tx=$('#statet');
+    $$('#sched li').forEach(function(li){ if(li.dataset.day.split(' ').indexOf(String(d))>-1) li.classList.add('hoje') });
+    var cur=(SLOTS[d]||[]).filter(function(s){return t>=s[0]&&t<s[1]})[0];
+    if(cur){
+      el.classList.add('on'); tx.innerHTML='Aberto agora<small>Até às '+cur[1]+'h · horário de época escolar</small>';
+      return;
+    }
+    var nxt=null;
+    for(var k=0;k<8&&!nxt;k++){
+      var dd=(d+k)%7, sl=SLOTS[dd]||[];
+      for(var i=0;i<sl.length;i++){ if(k>0||sl[i][0]>t){ nxt={k:k,h:sl[i][0],d:dd}; break } }
+    }
+    el.classList.add('off');
+    var quando=nxt.k===0?'hoje':nxt.k===1?'amanhã':NOMES[nxt.d];
+    tx.innerHTML='Fechado agora<small>Abre '+quando+' às '+nxt.h+'h · horário de época escolar</small>';
+  })();
+
+  /* ---------- capa: piscina de bolas (canvas com física, só na capa) ---------- */
+  var cover=$('#cover'), cv=$('#pit'), ctx=cv.getContext('2d');
+  var COLORS=['#0099D8','#E21E08','#FBC701','#3CA830','#FFFFFF','#1743B8'];
+  var balls=[], W=0,H=0,dpr=1, awake=false, raf=0, visible=true, quiet=0, spawning=false, lastX=0,lastY=0;
+  function maxBalls(){return Math.min(110,Math.max(40,Math.round(W/(innerWidth<640?9:14))))}
+  function size(){
+    var oW=W,oH=H; dpr=Math.min(devicePixelRatio||1,2);
+    W=cv.clientWidth; H=cover.clientHeight;
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    if(oW&&balls.length){ balls.forEach(function(b){ b.x=b.x/oW*W; b.y=Math.min(b.y/oH*H,H-b.r) }); wake() }
+  }
+  function mk(x,y,vx,vy){ var r=(innerWidth<640?14:18)*(.82+Math.random()*.4); return {x:x,y:y,vx:vx,vy:vy,r:r,c:COLORS[(Math.random()*COLORS.length)|0]} }
+  function step(){
+    for(var k=0;k<2;k++){
+      for(var i=0;i<balls.length;i++){
+        var b=balls[i]; b.vy+=.275; b.x+=b.vx*.5; b.y+=b.vy*.5;
+        if(b.x<b.r){b.x=b.r;b.vx*=-.5} if(b.x>W-b.r){b.x=W-b.r;b.vx*=-.5}
+        if(b.y>H-b.r){b.y=H-b.r;b.vy*=-.42;b.vx*=.97}
+      }
+      for(var a=0;a<balls.length;a++) for(var c=a+1;c<balls.length;c++){
+        var p=balls[a],q=balls[c],dx=q.x-p.x,dy=q.y-p.y,m=p.r+q.r;
+        if(Math.abs(dx)>m||Math.abs(dy)>m) continue;
+        var d2=dx*dx+dy*dy;
+        if(d2<m*m&&d2>.0001){
+          var d=Math.sqrt(d2),nx=dx/d,ny=dy/d,ov=(m-d)*.5;
+          p.x-=nx*ov;p.y-=ny*ov;q.x+=nx*ov;q.y+=ny*ov;
+          var rv=(q.vx-p.vx)*nx+(q.vy-p.vy)*ny;
+          if(rv<0){var j=-rv*.62;p.vx-=nx*j;p.vy-=ny*j;q.vx+=nx*j;q.vy+=ny*j}
+        }
+      }
+    }
+  }
+  function energy(){var e=0;for(var i=0;i<balls.length;i++)e+=Math.abs(balls[i].vx)+Math.abs(balls[i].vy);return e/(balls.length||1)}
+  function draw(){
+    ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H);
+    for(var i=0;i<balls.length;i++){
+      var b=balls[i],r=b.r;
+      ctx.beginPath();ctx.arc(b.x,b.y,r-1.5,0,6.2832);ctx.fillStyle=b.c;ctx.fill();
+      ctx.save();ctx.clip();ctx.fillStyle='rgba(0,0,0,.16)';ctx.beginPath();ctx.arc(b.x+r*.42,b.y+r*.42,r,0,6.2832);ctx.fill();ctx.restore();
+      ctx.beginPath();ctx.arc(b.x,b.y,r-1.5,0,6.2832);ctx.lineWidth=3;ctx.strokeStyle='#141414';ctx.stroke();
+      ctx.beginPath();ctx.ellipse(b.x-r*.36,b.y-r*.38,r*.24,r*.14,-.7,0,6.2832);ctx.fillStyle='rgba(255,255,255,.85)';ctx.fill();
+    }
+  }
+  function loop(){ raf=0; if(!visible||!awake||document.hidden) return; step();draw(); if(energy()<.05)quiet++;else quiet=0; if(quiet>40&&!spawning){awake=false;return} raf=requestAnimationFrame(loop) }
+  function wake(){ awake=true; quiet=0; if(!raf&&visible&&!document.hidden) raf=requestAnimationFrame(loop) }
+  function rain(n){ spawning=true; var i=0; (function drop(){ if(i>=n||balls.length>=maxBalls()){spawning=false;return} balls.push(mk(Math.random()*W,-24,(Math.random()-.5)*2,Math.random()*2)); i++; wake(); setTimeout(drop,40) })() }
+  function settleInstant(){ for(var i=0;i<maxBalls();i++) balls.push(mk(Math.random()*W,H-Math.random()*H*.3,0,0)); for(var s=0;s<420;s++) step(); balls.forEach(function(b){b.vx=b.vy=0}); draw() }
+  function burst(x,y){
+    var words=['POW!','ZAP!','BOOM!','BAM!','WOW!'], cols=['#E21E08','#0099D8','#FFFFFF','#3CA830'];
+    var s=document.createElement('span'); s.className='pop'; s.textContent=words[(Math.random()*words.length)|0];
+    var off=cv.getBoundingClientRect().left-cover.getBoundingClientRect().left;
+    s.style.left=(x+off)+'px'; s.style.top=y+'px'; s.style.color=cols[(Math.random()*cols.length)|0];
+    cover.appendChild(s); setTimeout(function(){s.remove()},800);
+    for(var i=0;i<8;i++){ var a=Math.random()*6.283,v=4+Math.random()*6; balls.push(mk(x,y,Math.cos(a)*v,Math.sin(a)*v-3)) }
+    while(balls.length>maxBalls()+16) balls.shift();
+    balls.forEach(function(b){ var dx=b.x-x,dy=b.y-y,d=Math.sqrt(dx*dx+dy*dy)||1; if(d<120){var f=(120-d)/120*5;b.vx+=dx/d*f;b.vy+=dy/d*f-2} });
+    wake();
+  }
+  if(ctx){
+    size(); window.addEventListener('resize',size);
+    if('ResizeObserver' in window) new ResizeObserver(function(){ if(cv.clientWidth!==W||cover.clientHeight!==H) size() }).observe(cover);
+    if(calm) settleInstant();
+    else{
+      if('IntersectionObserver' in window) new IntersectionObserver(function(es){ visible=es[0].isIntersecting; if(visible) wake() }).observe(cover);
+      document.addEventListener('visibilitychange',function(){ if(!document.hidden) wake() });
+      setTimeout(function(){ rain(maxBalls()) }, root.classList.contains('nointro')?150:1200);
+      /* toques na capa (inclui as margens laterais em desktop) */
+      function inCover(e){ var r=cover.getBoundingClientRect(); return e.clientY>=r.top&&e.clientY<=r.bottom }
+      document.addEventListener('pointerdown',function(e){
+        if(e.target.closest('a,button,input')||!inCover(e)) return;
+        var r=cv.getBoundingClientRect(),c0=cover.getBoundingClientRect(); burst(e.clientX-r.left,e.clientY-c0.top);
+      });
+      document.addEventListener('pointermove',function(e){
+        if(e.pointerType!=='mouse'||!inCover(e)) return;
+        var r=cv.getBoundingClientRect(),c0=cover.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-c0.top,vx=x-lastX,vy=y-lastY; lastX=x;lastY=y;
+        var sp=Math.sqrt(vx*vx+vy*vy); if(sp<2||y<H*.45) return; var hit=false;
+        balls.forEach(function(b){ var dx=b.x-x,dy=b.y-y,d=Math.sqrt(dx*dx+dy*dy); if(d<b.r+40){ var f=Math.min(sp,24)*.06; b.vx+=dx/(d||1)*f+vx*.07; b.vy+=dy/(d||1)*f-1; hit=true } });
+        if(hit) wake();
+      });
+    }
+  }
+})();
+</script>
+</body>
+</html>
