@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add('js');if(/[?&]nopre/.test(location.search))document.documentElement.classList.add('nopre');if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('rm')</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Happy Colour — Demonstração</title>
+<meta name="description" content="Demonstração de website para o Happy Colour, espaço de festas infantis em Vagos (Aveiro): insufláveis, trampolins, ateliers e campos de férias. Criado pela DD Digital.">
+<meta name="theme-color" content="#D8304A">
+<link rel="icon" type="image/webp" href="img/logo-happycolour.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&family=Readex+Pro:wght@300..600&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   HAPPY COLOUR — website de demonstração (DD Digital)
+
+   CONCEITO DE LAYOUT E HERO
+   O logótipo é um "H" insuflável (balão vermelho brilhante com contorno escuro).
+   No hero, esse H insufla-se, a barra do meio vira trampolim (dobra a cada
+   aterragem) e um miúdo salta nela: cada salto pinta uma banda do arco-íris que
+   está por trás (5 saltos = arco-íris completo, confetti, e recomeça). Tocar no
+   palco = salto mais alto. Sem rato: funciona sozinho e ao toque.
+   Fora do hero: serviços em faixas de arco-íris (acordeão), "poste de setas" da
+   Programação Mágica (como o cartaz do cliente), calendário de balões do Atelier
+   de Natal, fotos numa corda de roupa com bandeirinhas, formulário de demonstração.
+
+   HERDADO DE
+   - Mimocas Funpark: só técnicas utilitárias (faixa DEMO base, painéis
+     grid-template-rows 0fr→1fr com inert, estado "aberto" por Europe/Lisbon,
+     mensagem de WhatsApp montada por toques).
+   NOVO (7 eixos de B3 vs. a demo mais parecida, a Mimocas)
+   - Hero: H-trampolim + arco-íris pintado por saltos (física própria em rAF).
+   - Tipografia: DynaPuff (letras "insufladas", como o wordmark) + Readex Pro.
+   - Paleta: céu #EAF8FA / menta / azul-tinta dominantes; primárias só em acentos
+     e no arco-íris (a Mimocas é creme + primárias + contorno preto).
+   - Estrutura: faixas-arco-íris, poste de setas, calendário, roupeiro de fotos
+     (a Mimocas é uma BD de vinhetas).
+   - Forma: tudo "insuflado" (cantos grandes, sem contorno grosso, sem burst/serrilha);
+     bandeirinhas a oscilar como divisórias.
+   - Tom: direto aos pais, caloroso e leve ("tu").
+   ===================================================================== */
+
+/* ---------- 1. variáveis ---------- */
+:root{
+  --red:#D8304A; --red-d:#A81E36; --orange:#F58A2B; --yellow:#F9C52B;
+  --green:#2EAA7E; --green-d:#1D8A63; --blue:#27A6CC; --blue-d:#167FA1;
+  --navy:#1B2B3D; --navy-2:#243B52; --navy-3:#14202E;
+  --sky:#EAF8FA; --sky-2:#D3EEF3; --mint:#CDEBDD; --pink:#F6B6C4; --paper:#FFFDF8;
+  --ink:#1B2B3D; --ink-2:#4A5C6E; --line:rgba(27,43,61,.14);
+  --f-t:'DynaPuff','Trebuchet MS',system-ui,sans-serif;
+  --f-b:'Readex Pro','Helvetica Neue',Arial,sans-serif;
+  --bar:30px; --hd:68px;
+  --ease:cubic-bezier(.2,.8,.2,1); --bounce:cubic-bezier(.34,1.56,.64,1);
+  --wrap:1180px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:calc(var(--bar) + var(--hd) + 8px);overflow-x:clip}
+body{margin:0;padding-top:calc(var(--bar) + var(--hd));background:var(--paper);color:var(--ink);font-family:var(--f-b);font-size:1.0625rem;line-height:1.65;font-weight:400;overflow-x:clip}
+img,svg{display:block;max-width:100%}
+img{height:auto}
+h1,h2,h3,h4,p,ul,ol,figure,dl,dd{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--blue-d);outline-offset:3px;border-radius:12px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{width:min(var(--wrap),100% - 48px);margin-inline:auto}
+.wrap>*{min-width:0}
+.mark{display:inline-block;padding:.05em .55em;border-radius:99px;border:1.5px dashed #B98A00;background:#FFF3C4;color:#6B5200;font-size:.86em;font-weight:500;line-height:1.5}
+
+/* ---------- 2. faixa DEMO, selo (A2) ---------- */
+.bar{position:fixed;top:0;left:0;right:0;z-index:90;height:var(--bar);display:flex;align-items:center;justify-content:center;gap:.7em;padding:0 12px;background:var(--navy);color:#fff;font-size:.78rem;line-height:1;white-space:nowrap;overflow:hidden}
+.bar b{padding:.32em .7em;border-radius:99px;background:var(--yellow);color:var(--navy);font-family:var(--f-t);font-weight:600;letter-spacing:.08em}
+.bar .s{display:none}
+.chip-demo{position:fixed;right:14px;bottom:14px;z-index:60;padding:.5em 1.1em;border-radius:99px;background:var(--red);color:#fff;border:2px solid #fff;box-shadow:0 6px 18px rgba(27,43,61,.28);font-family:var(--f-t);font-weight:600;font-size:.74rem;letter-spacing:.06em;pointer-events:none;display:none}
+@media (min-width:760px){.chip-demo{display:block}}
+@media (max-width:620px){.bar .l{display:none}.bar .s{display:inline}}
+
+/* ---------- 3. cabeçalho e menu ---------- */
+.hd{position:fixed;top:var(--bar);left:0;right:0;z-index:80;height:var(--hd);background:var(--paper);border-bottom:2px solid var(--line)}
+.hd-in{height:100%;width:min(1320px,100% - 32px);margin-inline:auto;display:flex;align-items:center;gap:22px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-family:var(--f-t);font-weight:700;font-size:1.28rem;letter-spacing:.01em;white-space:nowrap}
+.brand img{width:46px;height:46px;border-radius:50%;border:3px solid var(--navy);background:var(--sky);transition:transform .5s var(--bounce)}
+.brand:hover img{transform:rotate(-12deg) scale(1.08)}
+.nav{display:none;margin-left:auto;gap:4px}
+.nav a{padding:.5em .95em;border-radius:99px;text-decoration:none;font-weight:500;font-size:.96rem;transition:background .2s}
+.nav a:hover{background:var(--sky-2)}
+.hd .hd-cta{display:none}
+.burger{margin-left:auto;width:48px;height:48px;border:0;border-radius:50%;background:var(--sky-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.burger span{display:block;width:22px;height:3px;border-radius:3px;background:var(--navy);transition:transform .3s var(--ease),opacity .2s}
+.menu-open .burger span:nth-child(1){transform:translateY(8px) rotate(45deg)}
+.menu-open .burger span:nth-child(2){opacity:0}
+.menu-open .burger span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
+@media (min-width:1040px){
+  .nav{display:flex}.hd .hd-cta{display:inline-flex;margin-left:6px}.burger{display:none}
+}
+.menu{position:fixed;z-index:70;top:calc(var(--bar) + var(--hd));left:0;right:0;bottom:0;background:var(--sky);overflow-y:auto;overscroll-behavior:contain;padding:22px 24px 40px;visibility:hidden;opacity:0;transform:translateY(-8px);transition:opacity .25s,transform .3s var(--ease),visibility 0s .3s}
+.menu-open .menu{visibility:visible;opacity:1;transform:none;transition:opacity .25s,transform .3s var(--ease)}
+.menu ul{display:grid;gap:10px}
+.menu li a{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:26px;background:#fff;text-decoration:none;font-family:var(--f-t);font-weight:600;font-size:1.45rem;border:2px solid var(--line)}
+.menu li a i{flex:none;width:18px;height:18px;border-radius:50%;background:var(--c)}
+.menu .btn{margin-top:18px;width:100%}
+body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+@media (min-width:1040px){.menu{display:none}}
+
+/* ---------- 4. botões e peças comuns ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6em;padding:.85em 1.6em;border:0;border-radius:99px;background:var(--red);color:#fff;font-family:var(--f-t);font-weight:600;font-size:1rem;letter-spacing:.01em;text-decoration:none;box-shadow:0 5px 0 var(--red-d);transition:transform .25s var(--bounce),box-shadow .25s;min-height:48px;text-align:center}
+.btn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 7px 0 var(--red-d)}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--red-d)}
+.btn.alt{background:#fff;color:var(--navy);box-shadow:0 5px 0 var(--navy);border:2px solid var(--navy)}
+.btn.alt:hover{box-shadow:0 7px 0 var(--navy)}
+.btn.yel{background:var(--yellow);color:var(--navy);box-shadow:0 5px 0 #B98A00}
+.btn.yel:hover{box-shadow:0 7px 0 #B98A00}
+.btn svg{width:1.15em;height:1.15em;flex:none}
+.kick{display:inline-flex;align-items:center;gap:.55em;padding:.32em 1em;border-radius:99px;background:#fff;color:var(--navy);border:2px solid var(--navy);font-family:var(--f-t);font-weight:600;font-size:.82rem;letter-spacing:.04em}
+.kick i{width:.7em;height:.7em;border-radius:50%;background:var(--c,var(--red))}
+h1,h2,h3{font-family:var(--f-t);font-weight:700;line-height:1.05;letter-spacing:-.005em}
+h2{font-size:clamp(2.05rem,4.6vw,3.7rem)}
+.sec{position:relative;padding:clamp(88px,10vw,140px) 0 clamp(64px,8vw,110px);overflow-x:clip}
+.sec-h{max-width:720px;margin-bottom:clamp(30px,4vw,52px)}
+.sec-h h2{margin:14px 0 14px}
+.sec-h p{color:var(--ink-2);font-size:1.12rem}
+.dark .sec-h p{color:#B8CCDC}
+/* bandeirinhas (divisória no topo de cada secção) */
+.flags{position:absolute;top:0;left:0;right:0;height:64px;overflow:hidden;pointer-events:none;z-index:2}
+.flags svg{display:block;max-width:none}
+.fl{transform-box:fill-box;transform-origin:50% 0;animation:sway 3.4s ease-in-out infinite alternate;animation-delay:var(--d,0s)}
+@keyframes sway{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+/* revelação ao scroll */
+.js .rv{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .8s var(--ease);transition-delay:var(--rd,0s)}
+.js .rv.is-in{opacity:1;transform:none}
+
+/* ---------- 5. hero ---------- */
+.hero{position:relative;background:var(--sky);overflow-x:clip;padding:84px 0 36px}
+.hero::before,.hero::after{content:"";position:absolute;background:#fff;border-radius:99px;filter:blur(2px);opacity:.9;pointer-events:none}
+.hero::before{width:300px;height:80px;left:-60px;top:34%;box-shadow:70px -34px 0 -6px #fff,160px 6px 0 -12px #fff}
+.hero::after{width:240px;height:64px;right:-50px;top:18%;box-shadow:-60px -26px 0 -4px #fff,-130px 4px 0 -10px #fff}
+.hero .flags{height:84px}
+.hero-in{position:relative;z-index:1;width:min(var(--wrap),100% - 40px);margin-inline:auto;display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"title" "scene" "text";gap:0;align-content:center}
+.h-title{grid-area:title}
+.h-scene{grid-area:scene}
+.h-text{grid-area:text}
+.hero h1{font-size:clamp(2.55rem,10.4vw,6rem);line-height:.98;margin:16px 0 4px}
+.hero h1 .cor{display:inline-block;white-space:nowrap}
+.hero h1 .cor span{display:inline-block;animation:hop 2.8s var(--ease) infinite;animation-delay:calc(var(--i)*.12s)}
+.hero h1 .cor span:nth-child(1){color:var(--red)}
+.hero h1 .cor span:nth-child(2){color:var(--yellow);-webkit-text-stroke:0}
+.hero h1 .cor span:nth-child(3){color:var(--green)}
+.hero h1 .cor span:nth-child(4){color:var(--blue)}
+@keyframes hop{0%,62%,100%{transform:none}72%{transform:translateY(-.14em) scale(1.06)}84%{transform:translateY(0) scale(1.04,.94)}}
+.h-text p{max-width:30em;font-size:1.14rem;color:var(--ink-2);margin:10px 0 22px}
+.h-cta{display:flex;flex-wrap:wrap;gap:14px 16px}
+.h-new{display:inline-flex;align-items:center;gap:10px;margin-top:22px;padding:8px 18px 8px 8px;border-radius:99px;background:#fff;border:2px solid var(--navy);text-decoration:none;font-weight:500;font-size:.92rem;line-height:1.3;transition:transform .3s var(--bounce)}
+.h-new:hover{transform:translateY(-3px) rotate(-1deg)}
+.h-new b{flex:none;padding:.3em .85em;border-radius:99px;background:var(--green);color:#fff;font-family:var(--f-t);font-size:.8rem;letter-spacing:.04em}
+.stage{position:relative;width:min(100%,520px);margin:6px auto 0;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;border-radius:36px}
+.stage svg{width:100%;height:auto;overflow:visible}
+.stage-hint{display:flex;justify-content:center;margin-top:6px}
+.stage-hint span{padding:.3em 1em;border-radius:99px;background:rgba(255,255,255,.85);font-size:.86rem;font-weight:500;color:var(--ink-2)}
+.arc{stroke-dasharray:1 1.1;stroke-dashoffset:0;transition:stroke-dashoffset .9s cubic-bezier(.3,.7,.2,1)}
+.js .arc{stroke-dashoffset:1.1}
+.js .arc.on,.js.rm .arc{stroke-dashoffset:0}
+.arc.fast{transition-duration:.45s}
+.arc.pulse{animation:arcpulse .7s var(--ease)}
+@keyframes arcpulse{40%{stroke-width:34}}
+.hG{transform-box:view-box;transform-origin:280px 480px}
+.js:not(.nopre):not(.rm) .hG{animation:inflate 1.3s var(--bounce) both}
+@keyframes inflate{0%{transform:scale(1,.18)}45%{transform:scale(1.04,1.14)}70%{transform:scale(.98,.96)}100%{transform:none}}
+.bal .bob{transform-box:fill-box;transform-origin:50% 100%;animation:bob 3.8s ease-in-out infinite alternate;animation-delay:var(--d,0s)}
+.stage.party .bal .bob{animation-duration:1.1s}
+@keyframes bob{from{transform:translateY(-5px) rotate(-3deg)}to{transform:translateY(6px) rotate(3deg)}}
+.js:not(.rm) #kid{opacity:0}
+.js #kid.show{opacity:1}
+.rm .bal .bob,.rm .fl,.rm .hero h1 .cor span{animation:none}
+@media (min-width:900px){
+  .hero{padding:96px 0 40px;min-height:calc(100svh - var(--bar) - var(--hd));display:flex;flex-direction:column;justify-content:center}
+  .hero-in{grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);grid-template-areas:"title scene" "text scene";grid-template-rows:auto auto;align-content:center;column-gap:36px}
+  .h-scene{grid-row:1/3;align-self:center}
+  .h-title{align-self:end}
+  .h-text{align-self:start}
+  .hero h1{font-size:clamp(3.4rem,6.6vw,6.3rem)}
+  .stage{width:min(100%,560px)}
+}
+@media (max-width:899px){
+  .hero{padding-top:70px}
+  .h-text{padding-top:8px}
+}
+
+/* ---------- 6. faixa de serviços (ticker) ---------- */
+.tick{position:relative;background:var(--navy);color:#fff;overflow:hidden;padding:15px 0}
+.tick-t{display:flex;width:max-content;animation:tick 38s linear infinite}
+.tick-t ul{display:flex;align-items:center;gap:0;flex:none}
+.tick-t li{display:flex;align-items:center;gap:26px;padding-right:26px;font-family:var(--f-t);font-weight:600;font-size:1.25rem;white-space:nowrap}
+.tick-t li::after{content:"";width:16px;height:16px;border-radius:50%;background:var(--c);flex:none}
+@keyframes tick{to{transform:translateX(-50%)}}
+.rm .tick-t{animation:none}
+
+/* ---------- 7. serviços: faixas de arco-íris ---------- */
+.serv{background:var(--paper)}
+.bands{display:grid;gap:12px;justify-items:center}
+.band{width:calc(100% - var(--i)*2%);background:var(--bg);color:var(--fg);border-radius:44px;border:2.5px solid var(--navy);box-shadow:0 6px 0 var(--navy);transition:transform .3s var(--bounce)}
+@media (min-width:760px){.band{width:calc(100% - var(--i)*6%)}}
+.band h3{font-size:inherit}
+.band-b{display:flex;align-items:center;gap:16px;width:100%;padding:14px 16px 14px 20px;border:0;background:none;text-align:left;min-height:76px}
+.band-b .num{flex:none;font-family:var(--f-t);font-weight:600;font-size:.95rem;opacity:.8}
+.band-b .ttl{flex:1;min-width:0;font-family:var(--f-t);font-weight:700;font-size:clamp(1.3rem,3.4vw,2.2rem);line-height:1.1}
+.band-b .ar{flex:none;width:44px;height:44px;border-radius:50%;background:var(--fg);color:var(--bg);display:grid;place-items:center;transition:transform .45s var(--bounce)}
+.band-b .ar svg{width:20px;height:20px}
+.band.open .ar{transform:rotate(180deg)}
+.band:hover{transform:translateY(-2px)}
+.pnl{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--ease)}
+.band.open .pnl{grid-template-rows:1fr}
+.pnl-w{overflow:hidden;min-height:0}
+.pnl-in{display:grid;gap:22px;margin:0 10px 10px;padding:16px;border-radius:32px;background:#fff;color:var(--ink)}
+.pnl-in figure{border-radius:24px;overflow:hidden;aspect-ratio:16/10}
+.pnl-in img{width:100%;height:100%;object-fit:cover}
+.pnl-in h4{font-family:var(--f-t);font-size:1.25rem;font-weight:600;margin-bottom:6px}
+.pnl-in p{color:var(--ink-2)}
+.pnl-in ul{margin:12px 0 18px;display:flex;flex-wrap:wrap;gap:8px}
+.pnl-in li{padding:.25em .9em;border-radius:99px;background:var(--sky);font-size:.9rem;font-weight:500}
+.pnl-in .btn{box-shadow:0 4px 0 var(--red-d);font-size:.95rem;padding:.7em 1.3em}
+@media (min-width:760px){.pnl-in{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;padding:18px 24px 18px 18px}}
+
+/* ---------- 8. Atelier de Natal (escuro) ---------- */
+.natal{background:var(--navy);color:#fff}
+.natal::after{content:"";position:absolute;left:0;right:0;top:-50%;height:200%;pointer-events:none;opacity:.55;
+  background:radial-gradient(3px 3px at 12% 20%,#fff 60%,transparent),radial-gradient(2px 2px at 30% 60%,#fff 60%,transparent),radial-gradient(3px 3px at 52% 30%,#fff 60%,transparent),radial-gradient(2px 2px at 70% 75%,#fff 60%,transparent),radial-gradient(3px 3px at 88% 45%,#fff 60%,transparent),radial-gradient(2px 2px at 20% 88%,#fff 60%,transparent),radial-gradient(2px 2px at 94% 12%,#fff 60%,transparent);
+  animation:snow 40s linear infinite}
+@keyframes snow{to{transform:translateY(25%)}}
+.rm .natal::after{animation:none}
+.natal .wrap{position:relative;z-index:1}
+.natal h2{color:#fff}
+.n-block{display:grid;gap:34px;margin-bottom:clamp(60px,8vw,100px)}
+.n-block:last-child{margin-bottom:0}
+.n-h{font-size:clamp(1.5rem,3.2vw,2.3rem);margin-bottom:12px}
+.facts{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 6px}
+.facts li{padding:.45em 1.05em;border-radius:99px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);font-weight:500;font-size:.96rem}
+.facts li b{font-family:var(--f-t);color:var(--yellow);font-weight:600}
+/* evento de 13 dez */
+.ev{display:grid;gap:30px}
+.ev-card{padding:22px;border-radius:34px;background:var(--sky);color:var(--ink);display:grid;gap:14px;align-content:start}
+.ev-card .date{display:flex;align-items:center;gap:16px}
+.ev-card .day{flex:none;width:86px;height:86px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;text-align:center;font-family:var(--f-t);font-weight:700;line-height:1;box-shadow:0 5px 0 var(--red-d)}
+.ev-card .day b{display:block;font-size:2.1rem}
+.ev-card .day small{display:block;font-size:.72rem;letter-spacing:.06em;margin-top:2px}
+.ev-card h4{font-family:var(--f-t);font-weight:700;font-size:1.5rem;line-height:1.1}
+.ev-card .meta{font-size:.95rem;color:var(--ink-2)}
+.ev-card .cd{padding:.6em 1em;border-radius:20px;background:#fff;font-weight:500;font-size:.95rem}
+.ev-card .cd b{font-family:var(--f-t);color:var(--red)}
+.ev-card figure{border-radius:24px;overflow:hidden;aspect-ratio:4/3}
+.ev-card figure img{width:100%;height:100%;object-fit:cover}
+.ev-card figcaption{font-size:.78rem;color:var(--ink-2);margin-top:6px}
+.insc{display:inline-flex;align-items:center;gap:.5em;padding:.3em .9em;border-radius:99px;background:var(--navy);color:#fff;font-size:.82rem;font-weight:500;width:fit-content}
+/* poste de setas */
+.post{position:relative;width:100%;max-width:640px;margin-inline:auto;padding:26px 0 40px}
+.post::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:18px;margin-left:-9px;border-radius:9px;background:linear-gradient(90deg,#9E6B3A,#C48F57 45%,#8A5A2C)}
+.signs{position:relative;display:grid;gap:12px}
+.sign{width:min(86%,520px);padding:15px 38px 15px 22px;background:var(--c);color:var(--navy);font-family:var(--f-t);font-weight:600;font-size:clamp(.98rem,2.6vw,1.2rem);line-height:1.15;
+  clip-path:polygon(0 0,calc(100% - 26px) 0,100% 50%,calc(100% - 26px) 100%,0 100%);transform-origin:50% 50%;transform:rotate(var(--r,0deg))}
+.sign.l{margin-left:auto;padding:15px 22px 15px 38px;clip-path:polygon(26px 0,100% 0,100% 100%,26px 100%,0 50%);text-align:right}
+.js .sign{opacity:0}
+.js .post.is-in .sign{animation:swingin .9s var(--bounce) both;animation-delay:calc(var(--k)*.09s)}
+.js .sign.l{--from:-16deg}
+.js .sign:not(.l){--from:16deg}
+@keyframes swingin{0%{opacity:0;transform:rotate(var(--from)) translateX(0)}100%{opacity:1;transform:rotate(var(--r,0deg))}}
+.rm .sign,.js.rm .post .sign{opacity:1;animation:none!important}
+/* calendário de balões */
+.cal{display:grid;gap:26px}
+.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px 8px;max-width:640px}
+.day-b{position:relative;display:grid;place-items:center;aspect-ratio:1;border-radius:50% 50% 50% 50%/58% 58% 42% 42%;border:0;background:rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-family:var(--f-t);font-weight:600;font-size:clamp(1rem,3.4vw,1.35rem);line-height:1;transition:transform .35s var(--bounce),background .25s}
+.day-b small{display:block;font-family:var(--f-b);font-weight:400;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;margin-top:2px;opacity:.85}
+.day-b::after{content:"";position:absolute;left:50%;bottom:-6px;width:10px;height:7px;margin-left:-5px;background:inherit;clip-path:polygon(50% 0,0 100%,100% 100%)}
+span.day-b{cursor:default}
+button.day-b{color:var(--navy);background:var(--c)}
+button.day-b:hover{transform:translateY(-4px) rotate(-3deg)}
+button.day-b[aria-pressed="true"]{transform:translateY(-8px) scale(1.12);box-shadow:0 0 0 4px #fff}
+.wk{padding:24px;border-radius:34px;background:#fff;color:var(--ink);border:3px solid var(--c);transition:border-color .3s;display:grid;gap:8px;align-content:start;min-height:210px}
+.wk .tag{display:inline-block;width:fit-content;padding:.25em .9em;border-radius:99px;background:var(--c);color:var(--navy);font-family:var(--f-t);font-weight:600;font-size:.82rem}
+.wk h4{font-family:var(--f-t);font-weight:700;font-size:clamp(1.5rem,3.4vw,2.2rem);line-height:1.08}
+.wk p{color:var(--ink-2)}
+.wk .btn{width:fit-content;margin-top:6px;font-size:.95rem}
+.wk-in{display:grid;gap:8px}
+.wk-in.swap{animation:wkin .5s var(--ease)}
+@keyframes wkin{from{opacity:0;transform:translateY(10px)}}
+.leg{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.84rem;color:#B8CCDC}
+.leg i{display:inline-block;width:.9em;height:.9em;border-radius:50%;background:var(--c);margin-right:.5em;vertical-align:-.1em}
+@media (min-width:900px){
+  .ev{grid-template-columns:minmax(0,1fr) minmax(0,.9fr);align-items:start;gap:56px}
+  .cal{grid-template-columns:minmax(0,1fr) minmax(0,.9fr);align-items:center;gap:56px}
+  .days{gap:16px 12px}
+}
+
+/* ---------- 9. fotos: corda de roupa ---------- */
+.fotos{background:var(--mint)}
+.fotos-top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.arrows{display:flex;gap:10px;margin-bottom:clamp(30px,4vw,52px)}
+.arrows button{width:52px;height:52px;border-radius:50%;border:2.5px solid var(--navy);background:#fff;display:grid;place-items:center;box-shadow:0 4px 0 var(--navy);transition:transform .25s var(--bounce)}
+.arrows button:hover{transform:translateY(-2px)}
+.arrows svg{width:22px;height:22px}
+.line{overflow-x:auto;padding:6px max(24px,calc((100vw - var(--wrap))/2)) 70px;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:var(--navy) transparent}
+.clothes{display:flex;width:max-content}
+.peg{position:relative;flex:none;width:clamp(210px,62vw,290px);padding:0 12px;scroll-snap-align:center}
+.peg::before{content:"";position:absolute;left:-1px;right:-1px;top:0;height:30px;border-bottom:2.5px solid #7B5A3A;border-radius:0 0 50% 50%/0 0 100% 100%}
+.peg figure{position:relative;margin-top:26px;padding:10px 10px 12px;background:#fff;border-radius:14px;box-shadow:0 10px 24px rgba(27,43,61,.18);transform-origin:50% 0;transform:rotate(var(--r,0deg));animation:swing 5.2s ease-in-out infinite alternate;animation-delay:var(--d,0s)}
+.peg figure::before{content:"";position:absolute;left:50%;top:-16px;width:16px;height:32px;margin-left:-8px;border-radius:5px;background:linear-gradient(90deg,#C9965F,#E4B67E 50%,#B98150);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.peg img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:8px}
+.peg figcaption{padding-top:10px;font-family:var(--f-t);font-weight:500;font-size:.92rem;text-align:center;line-height:1.2}
+.peg:hover figure{animation-duration:1.6s}
+@keyframes swing{from{transform:rotate(calc(var(--r,0deg) - 2.5deg))}to{transform:rotate(calc(var(--r,0deg) + 2.5deg))}}
+.rm .peg figure{animation:none}
+.fotos-note{font-size:.84rem;color:var(--ink-2);margin-top:-30px}
+
+/* ---------- 10. reservar ---------- */
+.res{background:var(--sky)}
+.res-g{display:grid;gap:44px}
+.steps{display:grid;gap:18px;margin:26px 0 30px}
+.steps li{display:flex;align-items:center;gap:18px}
+.steps .bn{position:relative;flex:none;width:58px;height:68px;display:grid;place-items:center;border-radius:50% 50% 50% 50%/58% 58% 42% 42%;background:var(--c);color:var(--navy);font-family:var(--f-t);font-weight:700;font-size:1.5rem;line-height:1;padding-bottom:6px;animation:float 3.6s ease-in-out infinite alternate;animation-delay:var(--d,0s)}
+.steps .bn::after{content:"";position:absolute;left:50%;bottom:-7px;width:12px;height:9px;margin-left:-6px;background:var(--c);clip-path:polygon(50% 0,0 100%,100% 100%)}
+@keyframes float{from{transform:translateY(-4px) rotate(-3deg)}to{transform:translateY(5px) rotate(3deg)}}
+.rm .steps .bn{animation:none}
+.steps b{font-family:var(--f-t);font-weight:600;font-size:1.2rem;display:block;line-height:1.2}
+.steps span{color:var(--ink-2);font-size:.98rem}
+.form{position:relative;padding:30px 22px 26px;border-radius:38px;background:#fff;border:2.5px solid var(--navy);box-shadow:0 8px 0 var(--navy);overflow:hidden}
+.form::before{content:"";position:absolute;left:0;right:0;top:0;height:14px;background:linear-gradient(90deg,var(--red) 0 20%,var(--orange) 0 40%,var(--yellow) 0 60%,var(--green) 0 80%,var(--blue) 0)}
+.form h3{font-size:1.6rem;margin:8px 0 18px}
+.fgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.fld{display:grid;gap:6px;min-width:0}
+.fld>span,.fld>label,.fset>b{font-weight:500;font-size:.9rem}
+.fld input,.fld textarea{width:100%;min-width:0;padding:.8em 1em;border:2px solid var(--line);border-radius:18px;background:var(--paper);font:inherit;color:var(--ink);transition:border-color .2s,box-shadow .2s}
+.fld input:focus,.fld textarea:focus{outline:0;border-color:var(--blue-d);box-shadow:0 0 0 4px rgba(39,166,204,.25)}
+.fld textarea{min-height:92px;resize:vertical}
+.fset{display:grid;gap:8px;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.cp{position:relative}
+.cp input{position:absolute;width:1px;height:1px;opacity:0}
+.cp span{display:inline-block;padding:.5em 1.1em;border-radius:99px;border:2px solid var(--line);background:var(--paper);font-weight:500;font-size:.92rem;cursor:pointer;transition:transform .25s var(--bounce),background .2s,border-color .2s}
+.cp input:checked+span{background:var(--c,var(--yellow));border-color:var(--navy);transform:scale(1.06)}
+.cp input:focus-visible+span{outline:3px solid var(--blue-d);outline-offset:3px}
+.stp{display:flex;align-items:center;gap:10px}
+.stp button{width:46px;height:46px;border-radius:50%;border:2px solid var(--navy);background:var(--yellow);font-family:var(--f-t);font-size:1.4rem;line-height:1;display:grid;place-items:center;transition:transform .25s var(--bounce)}
+.stp button:active{transform:scale(.88)}
+.stp input{width:84px;text-align:center;font-family:var(--f-t);font-weight:600;font-size:1.2rem}
+.form .btn{width:100%;margin-top:6px}
+.form-note{font-size:.8rem;color:var(--ink-2);margin-top:12px}
+.sent{display:none;padding:18px;border-radius:24px;background:var(--mint);border:2px dashed var(--green-d);margin-top:16px;font-weight:500}
+.sent.show{display:block;animation:wkin .5s var(--ease)}
+.sent .btn{margin-top:12px}
+@media (min-width:640px){.fgrid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.fgrid .full{grid-column:1/-1}}
+@media (min-width:640px){.form{padding:34px 34px 30px}}
+@media (min-width:960px){.res-g{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:64px;align-items:start}}
+
+/* ---------- 11. contactos ---------- */
+.cont{background:var(--paper)}
+.cont-g{display:grid;gap:34px}
+.cl{display:grid;gap:14px}
+.cl li{display:flex;gap:16px;align-items:flex-start;padding:16px 18px;border-radius:26px;background:#fff;border:2px solid var(--line)}
+.cl .ic{flex:none;width:46px;height:46px;border-radius:50%;background:var(--c);display:grid;place-items:center;color:var(--navy)}
+.cl .ic svg{width:22px;height:22px}
+.cl small{display:block;font-family:var(--f-t);font-weight:600;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.cl a{font-weight:500;text-decoration:none;word-break:break-word;background:linear-gradient(var(--blue),var(--blue)) 0 100%/0 2px no-repeat;transition:background-size .3s}
+.cl a:hover{background-size:100% 2px}
+.mapw{border-radius:34px;overflow:hidden;border:2.5px solid var(--navy);box-shadow:0 8px 0 var(--navy);min-height:320px;background:var(--sky-2)}
+.mapw iframe{display:block;width:100%;height:100%;min-height:360px;border:0}
+@media (min-width:900px){.cont-g{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:50px;align-items:stretch}}
+
+/* ---------- 12. rodapé ---------- */
+.ft{position:relative;background:var(--navy);color:#fff;padding:96px 0 48px;overflow-x:clip}
+.wm{display:flex;flex-direction:column;align-items:center;gap:0;font-family:var(--f-t);font-weight:700;line-height:.95;text-align:center;margin-bottom:34px}
+.wm div{display:flex;justify-content:center;gap:.02em;font-size:clamp(3rem,15.5vw,8.5rem)}
+.wm span{display:inline-block;color:var(--c);-webkit-text-stroke:.09em var(--navy-3);paint-order:stroke fill;cursor:default;-webkit-user-select:none;user-select:none}
+.wm span.hop{animation:letterhop .7s var(--bounce)}
+@keyframes letterhop{0%{transform:none}35%{transform:translateY(-.2em) scale(1.12,.92) rotate(-6deg)}70%{transform:translateY(0) scale(1.06,.94)}100%{transform:none}}
+.ft-g{display:grid;gap:26px;border-top:1.5px solid rgba(255,255,255,.18);padding-top:30px}
+.ft p{color:#B8CCDC;font-size:.9rem;max-width:60em}
+.ft p b{color:#fff;font-weight:500}
+.ft a{color:#fff}
+.ft-links{display:flex;flex-wrap:wrap;gap:8px 22px;font-weight:500;font-size:.95rem}
+.ft-links a{text-decoration:none}
+.ft-links a:hover{text-decoration:underline}
+.ft-bot{font-size:.82rem;color:#8FA6BA}
+.ft{padding-bottom:calc(48px + env(safe-area-inset-bottom,0px))}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:22px;z-index:100;max-width:min(92vw,420px);padding:.8em 1.3em;border-radius:20px;background:var(--navy);color:#fff;border:2px solid var(--yellow);font-weight:500;font-size:.92rem;text-align:center;transform:translate(-50%,24px);opacity:0;visibility:hidden;transition:opacity .25s,transform .35s var(--bounce),visibility 0s .35s}
+.toast.show{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .25s,transform .35s var(--bounce)}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .js .rv{opacity:1;transform:none}
+  .js .sign{opacity:1}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== AVISO DE DEMONSTRAÇÃO (obrigatório, A2) ===== -->
+<div class="bar" role="note"><b>DEMO</b><span class="l">Website de demonstração criado pela DD Digital para o Happy Colour · conteúdo ilustrativo</span><span class="s">Demonstração · Happy Colour</span></div>
+<div class="chip-demo" aria-hidden="true">Versão de demonstração</div>
+
+<!-- ===== CABEÇALHO ===== -->
+<header class="hd">
+  <div class="hd-in">
+    <a class="brand" href="#top" aria-label="Happy Colour, ir para o início">
+      <img src="img/logo-happycolour.webp" width="46" height="46" alt="">
+      <span>Happy Colour</span>
+    </a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#servicos">O que fazemos</a>
+      <a href="#natal">Atelier de Natal</a>
+      <a href="#fotos">Fotos</a>
+      <a href="#reservar">Reservar</a>
+      <a href="#contactos">Contactos</a>
+    </nav>
+    <a class="btn hd-cta" href="#reservar">Reservar festa</a>
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="menu" id="menu" inert>
+  <ul>
+    <li><a href="#servicos" style="--c:var(--red)"><i></i>O que fazemos</a></li>
+    <li><a href="#natal" style="--c:var(--green)"><i></i>Atelier de Natal</a></li>
+    <li><a href="#fotos" style="--c:var(--yellow)"><i></i>Fotos</a></li>
+    <li><a href="#reservar" style="--c:var(--blue)"><i></i>Reservar</a></li>
+    <li><a href="#contactos" style="--c:var(--orange)"><i></i>Contactos</a></li>
+  </ul>
+  <a class="btn" href="#reservar">Reservar a minha festa</a>
+</div>
+
+<main id="top">
+
+<!-- ===== HERO: o H insufla-se, vira trampolim e cada salto pinta o arco-íris ===== -->
+<section class="hero" id="inicio" aria-labelledby="h1">
+  <div class="flags" data-size="44" aria-hidden="true"></div>
+  <div class="hero-in">
+    <div class="h-title">
+      <span class="kick"><i></i>Vagos · Aveiro</span>
+      <h1 id="h1">Aqui, cada salto tem <span class="cor" aria-label="cor"><span style="--i:0" aria-hidden="true">c</span><span style="--i:1" aria-hidden="true">o</span><span style="--i:2" aria-hidden="true">r</span><span style="--i:3" aria-hidden="true">.</span></span></h1>
+    </div>
+
+    <div class="h-scene">
+      <div class="stage" id="stage" role="button" tabindex="0" aria-label="Fazer o miúdo saltar mais alto no trampolim do H">
+        <svg viewBox="0 -30 560 540" role="img" aria-label="O H do Happy Colour como trampolim: um miúdo salta e cada salto pinta uma banda do arco-íris.">
+          <!-- confetti e estrelas parados -->
+          <g aria-hidden="true">
+            <circle cx="98" cy="40" r="5" fill="#F9C52B"/><circle cx="230" cy="-6" r="4" fill="#27A6CC"/><circle cx="360" cy="22" r="5" fill="#D8304A"/>
+            <circle cx="452" cy="-4" r="4" fill="#2EAA7E"/><circle cx="20" cy="150" r="4" fill="#F58A2B"/><circle cx="540" cy="150" r="5" fill="#F9C52B"/>
+            <rect x="170" y="14" width="9" height="9" rx="2" fill="#2EAA7E" transform="rotate(20 174 18)"/><rect x="410" y="52" width="9" height="9" rx="2" fill="#F58A2B" transform="rotate(-25 414 56)"/>
+          </g>
+          <!-- arco-íris: faixas fantasma + faixas pintadas -->
+          <g fill="none" stroke-linecap="round" stroke-width="26" aria-hidden="true">
+            <path d="M30 440A250 250 0 0 1 530 440" stroke="#fff" opacity=".85"/>
+            <path d="M62 440A218 218 0 0 1 498 440" stroke="#fff" opacity=".85"/>
+            <path d="M94 440A186 186 0 0 1 466 440" stroke="#fff" opacity=".85"/>
+            <path d="M126 440A154 154 0 0 1 434 440" stroke="#fff" opacity=".85"/>
+            <path d="M158 440A122 122 0 0 1 402 440" stroke="#fff" opacity=".85"/>
+            <path class="arc" id="a0" pathLength="1" d="M30 440A250 250 0 0 1 530 440" stroke="#D8304A"/>
+            <path class="arc" id="a1" pathLength="1" d="M62 440A218 218 0 0 1 498 440" stroke="#F58A2B"/>
+            <path class="arc" id="a2" pathLength="1" d="M94 440A186 186 0 0 1 466 440" stroke="#F9C52B"/>
+            <path class="arc" id="a3" pathLength="1" d="M126 440A154 154 0 0 1 434 440" stroke="#2EAA7E"/>
+            <path class="arc" id="a4" pathLength="1" d="M158 440A122 122 0 0 1 402 440" stroke="#27A6CC"/>
+          </g>
+          <!-- nuvens que escondem os pés do arco-íris -->
+          <g fill="#fff" aria-hidden="true">
+            <circle cx="42" cy="470" r="30"/><circle cx="84" cy="450" r="38"/><circle cx="130" cy="462" r="34"/><circle cx="170" cy="476" r="26"/><rect x="20" y="470" width="170" height="34" rx="14"/>
+            <circle cx="518" cy="470" r="30"/><circle cx="476" cy="450" r="38"/><circle cx="430" cy="462" r="34"/><circle cx="390" cy="476" r="26"/><rect x="370" y="470" width="170" height="34" rx="14"/>
+          </g>
+          <!-- balões -->
+          <g class="bal" aria-hidden="true">
+            <g transform="translate(58 70)"><g class="bob" style="--d:0s"><path d="M0 34Q-10 60 4 84" fill="none" stroke="#1B2B3D" stroke-width="2"/><ellipse rx="25" ry="31" fill="#D8304A"/><path d="M-4 33h8l-4 8z" fill="#D8304A"/><ellipse cx="-9" cy="-10" rx="6" ry="10" fill="#fff" opacity=".45" transform="rotate(20 -9 -10)"/></g></g>
+            <g transform="translate(32 236)"><g class="bob" style="--d:-1.2s"><path d="M0 28Q10 52 -2 74" fill="none" stroke="#1B2B3D" stroke-width="2"/><ellipse rx="21" ry="27" fill="#F9C52B"/><path d="M-4 28h8l-4 8z" fill="#F9C52B"/><ellipse cx="-7" cy="-8" rx="5" ry="9" fill="#fff" opacity=".5" transform="rotate(20 -7 -8)"/></g></g>
+            <g transform="translate(504 52)"><g class="bob" style="--d:-.6s"><path d="M0 34Q10 58 -2 82" fill="none" stroke="#1B2B3D" stroke-width="2"/><ellipse rx="25" ry="31" fill="#2EAA7E"/><path d="M-4 33h8l-4 8z" fill="#2EAA7E"/><ellipse cx="-9" cy="-10" rx="6" ry="10" fill="#fff" opacity=".45" transform="rotate(20 -9 -10)"/></g></g>
+            <g transform="translate(522 230)"><g class="bob" style="--d:-2s"><path d="M0 28Q-10 52 2 74" fill="none" stroke="#1B2B3D" stroke-width="2"/><ellipse rx="21" ry="27" fill="#27A6CC"/><path d="M-4 28h8l-4 8z" fill="#27A6CC"/><ellipse cx="-7" cy="-8" rx="5" ry="9" fill="#fff" opacity=".5" transform="rotate(20 -7 -8)"/></g></g>
+          </g>
+          <!-- o H insuflável -->
+          <g class="hG" id="hG">
+            <g stroke="#1B2B3D" stroke-linecap="round" fill="none">
+              <path d="M150 120V440" stroke-width="92"/><path d="M410 120V440" stroke-width="92"/>
+              <path id="barOut" d="M150 330Q280 330 410 330" stroke-width="64"/>
+            </g>
+            <g stroke="#D8304A" stroke-linecap="round" fill="none">
+              <path d="M150 120V440" stroke-width="78"/><path d="M410 120V440" stroke-width="78"/>
+              <path id="barFill" d="M150 330Q280 330 410 330" stroke-width="50"/>
+            </g>
+            <g stroke="#fff" stroke-linecap="round" fill="none" opacity=".5">
+              <path d="M133 150V310" stroke-width="10"/><path d="M393 150V310" stroke-width="10"/>
+              <path id="barHi" d="M176 320Q280 320 384 320" stroke-width="7"/>
+            </g>
+          </g>
+          <!-- o miúdo (pés na origem) -->
+          <g id="kid" transform="translate(280 298)">
+            <g id="kidIn">
+              <g stroke="#F2B58A" stroke-width="9" stroke-linecap="round" fill="none"><path d="M-8 -40L-12 -6"/><path d="M8 -40L12 -6"/></g>
+              <g fill="#1B2B3D"><ellipse cx="-13" cy="-3" rx="9" ry="5"/><ellipse cx="13" cy="-3" rx="9" ry="5"/></g>
+              <rect x="-17" y="-54" width="34" height="22" rx="9" fill="#2EAA7E"/>
+              <g id="armL" transform="translate(-14 -78) rotate(20)"><path d="M0 0L0 26" stroke="#F2B58A" stroke-width="8" stroke-linecap="round"/><circle cy="28" r="5.5" fill="#F2B58A"/></g>
+              <g id="armR" transform="translate(14 -78) rotate(-20)"><path d="M0 0L0 26" stroke="#F2B58A" stroke-width="8" stroke-linecap="round"/><circle cy="28" r="5.5" fill="#F2B58A"/></g>
+              <rect x="-16" y="-88" width="32" height="44" rx="13" fill="#F9C52B"/>
+              <circle cx="0" cy="-106" r="19" fill="#F5C09A"/>
+              <g fill="#E8692B"><circle cx="-14" cy="-118" r="11"/><circle cx="0" cy="-124" r="11"/><circle cx="14" cy="-118" r="11"/><circle cx="-19" cy="-107" r="8"/><circle cx="19" cy="-107" r="8"/></g>
+              <circle cx="-7" cy="-105" r="2.3" fill="#1B2B3D"/><circle cx="7" cy="-105" r="2.3" fill="#1B2B3D"/>
+              <path d="M-6 -98Q0 -91 6 -98" stroke="#1B2B3D" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+              <circle cx="-12" cy="-99" r="3.4" fill="#F6B6C4" opacity=".7"/><circle cx="12" cy="-99" r="3.4" fill="#F6B6C4" opacity=".7"/>
+            </g>
+          </g>
+          <g id="confetti" aria-hidden="true"></g>
+        </svg>
+      </div>
+      <div class="stage-hint"><span id="hint" aria-live="polite">Toca no H para saltar mais alto</span></div>
+    </div>
+
+    <div class="h-text">
+      <p>O espaço para festas infantis de Vagos: insufláveis, trampolins, ateliers e campos de férias. Tu escolhes a data, nós tratamos de pôr a casa a saltar.</p>
+      <div class="h-cta">
+        <a class="btn" href="https://wa.me/351913189570" data-wa="Olá! Gostava de reservar uma festa no Happy Colour." target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.200Zm4.500-6.100c-.2-.1-1.500-.7-1.700-.8-.2-.1-.4-.1-.6.100l-.8 1c-.1.200-.3.200-.5.100a6.700 6.700 0 0 1-3.300-2.900c-.2-.4.200-.4.700-1.300.1-.2 0-.3 0-.5l-.8-1.800c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.100-.7.300-.2.300-.9.900-.9 2.200s.9 2.500 1 2.700c.1.200 1.800 2.700 4.400 3.800 1.600.7 2.300.7 3.100.6.500-.1 1.500-.6 1.700-1.200.2-.6.200-1.100.1-1.200-.1-.1-.3-.2-.5-.3Z"/></svg>
+          Reservar a minha festa
+        </a>
+        <a class="btn alt" href="#natal">Atelier de Natal</a>
+      </div>
+      <a class="h-new" href="#natal"><b>Novo</b>Atelier de Natal · 16 a 30 de dezembro · 4 aos 10 anos</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAIXA ===== -->
+<div class="tick" aria-hidden="true">
+  <div class="tick-t">
+    <ul>
+      <li style="--c:var(--red)">Festas de aniversário</li><li style="--c:var(--yellow)">Insufláveis</li><li style="--c:var(--green)">Trampolins</li><li style="--c:var(--blue)">Ateliers</li><li style="--c:var(--orange)">Campos de férias</li><li style="--c:var(--pink)">Eventos</li>
+    </ul>
+    <ul>
+      <li style="--c:var(--red)">Festas de aniversário</li><li style="--c:var(--yellow)">Insufláveis</li><li style="--c:var(--green)">Trampolins</li><li style="--c:var(--blue)">Ateliers</li><li style="--c:var(--orange)">Campos de férias</li><li style="--c:var(--pink)">Eventos</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== SERVIÇOS: faixas de arco-íris ===== -->
+<section class="sec serv" id="servicos" aria-labelledby="h-serv">
+  <div class="flags" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="sec-h rv">
+      <span class="kick" style="--c:var(--orange)"><i></i>O que fazemos</span>
+      <h2 id="h-serv">Cinco faixas de diversão</h2>
+      <p>Toca numa cor para ver o que lá está. Os formatos, as durações e os valores ficam para falar contigo, ao teu ritmo.</p>
+    </div>
+    <ul class="bands" id="bands">
+      <li class="band open rv" style="--bg:var(--red);--fg:#fff;--i:0">
+        <h3><button class="band-b" aria-expanded="true" aria-controls="p0" id="b0"><span class="num">01</span><span class="ttl">Festas e eventos</span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button></h3>
+        <div class="pnl" id="p0" role="region" aria-labelledby="b0"><div class="pnl-w"><div class="pnl-in">
+          <figure><img src="img/festa-mascote-velas.jpg" alt="Crianças à volta de uma mesa de festa, com balões e um bolo com velas" width="1200" height="799" loading="lazy"></figure>
+          <div><h4>O aniversário, sem correr atrás de ninguém</h4><p>Um espaço pensado para os mais pequenos brincarem à vontade enquanto os adultos conversam. Aniversários, festas de grupo e outros eventos privados.</p>
+          <ul><li>Aniversários</li><li>Festas privadas</li><li>Eventos</li></ul>
+          <a class="btn" href="#reservar">Pedir informação</a></div>
+        </div></div></div>
+      </li>
+      <li class="band rv" style="--bg:var(--orange);--fg:var(--navy);--i:1;--rd:.06s">
+        <h3><button class="band-b" aria-expanded="false" aria-controls="p1" id="b1"><span class="num">02</span><span class="ttl">Insufláveis</span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button></h3>
+        <div class="pnl" id="p1" role="region" aria-labelledby="b1"><div class="pnl-w"><div class="pnl-in">
+          <figure><img src="img/insuflavel-parque.jpg" alt="Castelo insuflável colorido num dia de sol" width="1200" height="1800" loading="lazy" style="object-position:50% 60%"></figure>
+          <div><h4>Saltar, escorregar, repetir</h4><p>Castelos e percursos insufláveis para gastar energia sem parar. A escolha de modelos e a disponibilidade são combinadas contigo.</p>
+          <ul><li>Castelos</li><li>Escorregas</li><li>Percursos</li></ul>
+          <a class="btn" href="#reservar">Pedir informação</a></div>
+        </div></div></div>
+      </li>
+      <li class="band rv" style="--bg:var(--yellow);--fg:var(--navy);--i:2;--rd:.12s">
+        <h3><button class="band-b" aria-expanded="false" aria-controls="p2" id="b2"><span class="num">03</span><span class="ttl">Trampolins</span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button></h3>
+        <div class="pnl" id="p2" role="region" aria-labelledby="b2"><div class="pnl-w"><div class="pnl-in">
+          <figure><img src="img/trampolim-laranja.jpg" alt="Zona de trampolins com proteções azuis e laranja" width="1500" height="1000" loading="lazy"></figure>
+          <div><h4>Para quem não consegue ficar parado</h4><p>Trampolins para saltos grandes e pequenos. Regras de utilização, idades e acompanhamento por confirmar com a equipa.</p>
+          <ul><li>Saltos livres</li><li>Brincadeira em grupo</li></ul>
+          <a class="btn" href="#reservar">Pedir informação</a></div>
+        </div></div></div>
+      </li>
+      <li class="band rv" style="--bg:var(--green-d);--fg:#fff;--i:3;--rd:.18s">
+        <h3><button class="band-b" aria-expanded="false" aria-controls="p3" id="b3"><span class="num">04</span><span class="ttl">Ateliers</span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button></h3>
+        <div class="pnl" id="p3" role="region" aria-labelledby="b3"><div class="pnl-w"><div class="pnl-in">
+          <figure><img src="img/atelier-mesa-materiais.jpg" alt="Mesa de trabalho com papéis coloridos, tesouras e cola para um atelier" width="1500" height="1000" loading="lazy"></figure>
+          <div><h4>Pintar, colar, inventar</h4><p>Oficinas criativas onde as mãos sujas são bem-vindas. As propostas mudam ao longo do ano, como o Atelier de Natal.</p>
+          <ul><li>Oficinas criativas</li><li>Histórias</li><li>Tatuagens glitter</li></ul>
+          <a class="btn" href="#natal">Ver Atelier de Natal</a></div>
+        </div></div></div>
+      </li>
+      <li class="band rv" style="--bg:var(--blue);--fg:var(--navy);--i:4;--rd:.24s">
+        <h3><button class="band-b" aria-expanded="false" aria-controls="p4" id="b4"><span class="num">05</span><span class="ttl">Campos de férias</span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></button></h3>
+        <div class="pnl" id="p4" role="region" aria-labelledby="b4"><div class="pnl-w"><div class="pnl-in">
+          <figure><img src="img/atelier-arvore-feltro.jpg" alt="Criança a montar uma árvore de Natal em feltro" width="1500" height="1000" loading="lazy"></figure>
+          <div><h4>Férias cheias de magia, criatividade e diversão</h4><p>Dias inteiros de atividades, jogos e festa, das 9h00 às 17h00. Está já aberta a proposta de Natal, de 16 a 30 de dezembro.</p>
+          <ul><li>4 aos 10 anos</li><li>9 dias de atividades</li></ul>
+          <a class="btn" href="#natal">Ver o calendário</a></div>
+        </div></div></div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== DEZEMBRO: manhã mágica (13 dez) + Atelier de Natal (16–30 dez) ===== -->
+<section class="sec natal dark" id="natal" aria-labelledby="h-natal">
+  <div class="flags" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="sec-h rv">
+      <span class="kick" style="--c:var(--green)"><i></i>Dezembro no Happy Colour</span>
+      <h2 id="h-natal">O Natal chega com cor</h2>
+      <p>Uma manhã mágica a 13 de dezembro e, logo a seguir, nove dias de Atelier de Natal. Datas e programa vistos nas publicações do Instagram do espaço; confirma tudo com a equipa.</p>
+    </div>
+
+    <!-- 13 de dezembro -->
+    <div class="n-block ev">
+      <div class="rv">
+        <h3 class="n-h">Programação Mágica</h3>
+        <ul class="facts"><li><b>13 de dezembro</b></li><li>10h às 13h</li><li>Happy Colour, Vagos</li></ul>
+        <div class="post" id="post" aria-label="Programa da manhã, por ordem">
+          <ol class="signs">
+            <li class="sign" style="--c:#B9A2E8;--k:0;--r:-1.5deg">Atelier de flocos de neve</li>
+            <li class="sign l" style="--c:#F6A6C0;--k:1;--r:1.5deg">Atelier de varinhas mágicas do gelo</li>
+            <li class="sign" style="--c:#7CCFC8;--k:2;--r:-1deg">Cantinho da neve mágica sensorial</li>
+            <li class="sign l" style="--c:#F7CF6B;--k:3;--r:2deg">Mini lanche da manhã</li>
+            <li class="sign" style="--c:#B9A2E8;--k:4;--r:-2deg">Encontro com a Princesa Elsa</li>
+            <li class="sign l" style="--c:#F6A6C0;--k:5;--r:1deg">Encontro com o Pai Natal</li>
+            <li class="sign" style="--c:#8FC6F0;--k:6;--r:-1.5deg">Algodão doce</li>
+            <li class="sign l" style="--c:#F6B07A;--k:7;--r:1.5deg">Tatuagens glitter</li>
+            <li class="sign" style="--c:#F7CF6B;--k:8;--r:-1deg">Brincadeira livre</li>
+          </ol>
+        </div>
+      </div>
+      <aside class="ev-card rv" style="--rd:.1s" aria-label="Manhã mágica com a Princesa Elsa">
+        <div class="date">
+          <div class="day" aria-hidden="true"><div><b>13</b><small>DEZ</small></div></div>
+          <div><h4>Uma manhã mágica com a Princesa Elsa</h4></div>
+        </div>
+        <p class="meta">E com a presença do Pai Natal. Uma manhã cheia de criatividade, magia e diversão para os pequenos aventureiros.</p>
+        <span class="insc">Inscrição obrigatória</span>
+        <p class="cd" id="cd" aria-live="polite">A contar os dias…</p>
+        <figure><img src="img/cliente-arvore-natal.jpg" alt="Árvore de Natal prateada com laços vermelhos junto à parede com o logótipo do Happy Colour" width="870" height="1158" loading="lazy" style="object-position:50% 40%"><figcaption>Foto do Happy Colour (Instagram do cliente).</figcaption></figure>
+        <a class="btn" href="https://wa.me/351913189570" data-wa="Olá! Gostava de inscrever o meu filho ou a minha filha na manhã mágica de 13 de dezembro no Happy Colour." target="_blank" rel="noopener">Pedir inscrição</a>
+      </aside>
+    </div>
+
+    <!-- 16 a 30 de dezembro -->
+    <div class="n-block cal">
+      <div class="rv">
+        <h3 class="n-h">Atelier de Natal · 16 a 30 de dezembro</h3>
+        <ul class="facts"><li><b>9</b> dias de atividades</li><li>4 aos 10 anos</li><li>Das 9h00 às 17h00</li></ul>
+        <p style="color:#B8CCDC;margin:12px 0 22px">Férias cheias de magia, criatividade e diversão! Toca num balão para veres a semana.</p>
+        <div class="days" id="days" role="group" aria-label="Dias do Atelier de Natal">
+          <button class="day-b" data-w="0" style="--c:var(--green)" aria-pressed="true" aria-label="16 de dezembro, quarta-feira">16<small>qua</small></button>
+          <button class="day-b" data-w="0" style="--c:var(--green)" aria-pressed="false" aria-label="17 de dezembro, quinta-feira">17<small>qui</small></button>
+          <button class="day-b" data-w="0" style="--c:var(--green)" aria-pressed="false" aria-label="18 de dezembro, sexta-feira">18<small>sex</small></button>
+          <span class="day-b" aria-label="19 de dezembro, sem atelier">19<small>sáb</small></span>
+          <span class="day-b" aria-label="20 de dezembro, sem atelier">20<small>dom</small></span>
+          <button class="day-b" data-w="1" style="--c:#FF8A9C" aria-pressed="false" aria-label="21 de dezembro, segunda-feira">21<small>seg</small></button>
+          <button class="day-b" data-w="1" style="--c:#FF8A9C" aria-pressed="false" aria-label="22 de dezembro, terça-feira">22<small>ter</small></button>
+          <button class="day-b" data-w="1" style="--c:#FF8A9C" aria-pressed="false" aria-label="23 de dezembro, quarta-feira">23<small>qua</small></button>
+          <span class="day-b" aria-label="24 de dezembro, sem atelier">24<small>qui</small></span>
+          <span class="day-b" aria-label="25 de dezembro, sem atelier">25<small>sex</small></span>
+          <span class="day-b" aria-label="26 de dezembro, sem atelier">26<small>sáb</small></span>
+          <span class="day-b" aria-label="27 de dezembro, sem atelier">27<small>dom</small></span>
+          <button class="day-b" data-w="2" style="--c:var(--yellow)" aria-pressed="false" aria-label="28 de dezembro, segunda-feira">28<small>seg</small></button>
+          <button class="day-b" data-w="2" style="--c:var(--yellow)" aria-pressed="false" aria-label="29 de dezembro, terça-feira">29<small>ter</small></button>
+          <button class="day-b" data-w="2" style="--c:var(--yellow)" aria-pressed="false" aria-label="30 de dezembro, quarta-feira">30<small>qua</small></button>
+        </div>
+      </div>
+      <div class="rv" style="--rd:.1s">
+        <div class="wk" id="wk" style="--c:var(--green)" aria-live="polite">
+          <div class="wk-in" id="wkIn">
+            <span class="tag">Semana 1 · 16, 17 e 18 dez</span>
+            <h4>A Fábrica dos Duendes</h4>
+            <p>Enfeites, postais, jogos cooperativos e caça ao tesouro.</p>
+          </div>
+          <a class="btn yel" href="https://wa.me/351913189570" data-wa="Olá! Gostava de saber mais sobre o Atelier de Natal (16 a 30 de dezembro) no Happy Colour." target="_blank" rel="noopener">Quero saber mais</a>
+        </div>
+        <p class="leg" style="margin-top:14px"><span><i style="--c:var(--green)"></i>Semana 1</span><span><i style="--c:#FF8A9C"></i>Semana 2</span><span><i style="--c:var(--yellow)"></i>Semana 3</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOTOS: corda de roupa ===== -->
+<section class="sec fotos" id="fotos" aria-labelledby="h-fotos">
+  <div class="flags" aria-hidden="true"></div>
+  <div class="wrap fotos-top">
+    <div class="sec-h rv" style="margin-bottom:0">
+      <span class="kick" style="--c:var(--yellow)"><i></i>Fotos</span>
+      <h2 id="h-fotos">Roupa a secar? Não, fotos a saltar</h2>
+      <p>Desliza pela corda. Fotografias ilustrativas de espaços e ateliers do género; as do próprio Happy Colour entram na versão final.</p>
+    </div>
+    <div class="arrows rv" style="margin-top:28px">
+      <button type="button" id="prev" aria-label="Fotos anteriores"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
+      <button type="button" id="next" aria-label="Mais fotos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+    </div>
+  </div>
+  <div class="line" id="line" tabindex="0" role="group" aria-label="Fotografias, desliza para o lado">
+    <ul class="clothes">
+      <li class="peg" style="--r:-2.5deg;--d:0s"><figure><img src="img/escorrega-bolas.jpg" alt="Escorregas coloridos sobre uma piscina de bolas" width="1000" height="1334" loading="lazy"><figcaption>Escorregas e bolas</figcaption></figure></li>
+      <li class="peg" style="--r:2deg;--d:-1.3s"><figure><img src="img/arco-de-baloes.jpg" alt="Duas crianças junto a um arco de balões pastel" width="1200" height="799" loading="lazy" style="object-position:30% 50%"><figcaption>Arco de balões</figcaption></figure></li>
+      <li class="peg" style="--r:-1.5deg;--d:-2.2s"><figure><img src="img/pintura-facial-borboleta.jpg" alt="Pintura facial com uma borboleta cor-de-rosa" width="1200" height="1800" loading="lazy"><figcaption>Pintura facial</figcaption></figure></li>
+      <li class="peg" style="--r:2.5deg;--d:-.7s"><figure><img src="img/parede-de-escalada.jpg" alt="Criança numa parede de escalada colorida" width="1200" height="1800" loading="lazy"><figcaption>Parede de escalada</figcaption></figure></li>
+      <li class="peg" style="--r:-2deg;--d:-3s"><figure><img src="img/cliente-jogo-criancas.jpg" alt="Crianças a jogar num tapete de espuma colorido" width="870" height="1020" loading="lazy"><figcaption>Hora de jogos (Happy Colour)</figcaption></figure></li>
+      <li class="peg" style="--r:1.5deg;--d:-1.8s"><figure><img src="img/bolas-coloridas.jpg" alt="Bolas coloridas de plástico amontoadas" width="1200" height="900" loading="lazy"><figcaption>Bolas de todas as cores</figcaption></figure></li>
+      <li class="peg" style="--r:-2.5deg;--d:-2.6s"><figure><img src="img/atelier-coracoes.jpg" alt="Enfeites de Natal em feltro com corações e pinhas" width="1500" height="1000" loading="lazy"><figcaption>Enfeites de Natal</figcaption></figure></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== RESERVAR (formulário de demonstração) ===== -->
+<section class="sec res" id="reservar" aria-labelledby="h-res">
+  <div class="flags" aria-hidden="true"></div>
+  <div class="wrap res-g">
+    <div class="rv">
+      <span class="kick" style="--c:var(--blue)"><i></i>Reservar</span>
+      <h2 id="h-res" style="margin-top:14px">Reserva em três saltos</h2>
+      <ol class="steps">
+        <li><span class="bn" style="--c:var(--red);--d:0s">1</span><div><b>Escolhe o dia</b><span>Diz-nos a data que tens em mente.</span></div></li>
+        <li><span class="bn" style="--c:var(--yellow);--d:-1.1s">2</span><div><b>Conta-nos quantos vêm</b><span>Número de crianças e o tipo de festa.</span></div></li>
+        <li><span class="bn" style="--c:var(--green);--d:-2.2s">3</span><div><b>Nós tratamos do resto</b><span>Respondemos para combinar os pormenores.</span></div></li>
+      </ol>
+      <p style="color:var(--ink-2)">Preferes falar? <a href="tel:+351913189570" style="font-weight:500">+351 913 189 570</a></p>
+    </div>
+
+    <form class="form rv" id="form" style="--rd:.1s" novalidate aria-labelledby="h-form">
+      <h3 id="h-form">Pedido de reserva</h3>
+      <div class="fgrid two">
+        <div class="fld"><label for="f-nome">O teu nome</label><input id="f-nome" name="nome" type="text" autocomplete="name" placeholder="Nome e apelido"></div>
+        <div class="fld"><label for="f-tel">Telemóvel</label><input id="f-tel" name="tel" type="tel" autocomplete="tel" placeholder="9XX XXX XXX"></div>
+        <div class="fld"><label for="f-data">Data pretendida</label><input id="f-data" name="data" type="date"></div>
+        <div class="fld"><span id="l-n">Quantas crianças?</span>
+          <div class="stp" role="group" aria-labelledby="l-n">
+            <button type="button" id="mn" aria-label="Menos uma criança">−</button>
+            <input id="f-n" name="n" type="number" min="1" max="60" value="10" inputmode="numeric" aria-labelledby="l-n">
+            <button type="button" id="pl" aria-label="Mais uma criança">+</button>
+          </div>
+        </div>
+        <div class="fset full" role="group" aria-labelledby="l-t"><b id="l-t">É para quê?</b>
+          <div class="chips">
+            <label class="cp" style="--c:var(--pink)"><input type="radio" name="tipo" value="Festa de aniversário" checked><span>Festa de aniversário</span></label>
+            <label class="cp" style="--c:var(--yellow)"><input type="radio" name="tipo" value="Evento privado"><span>Evento privado</span></label>
+            <label class="cp" style="--c:var(--mint)"><input type="radio" name="tipo" value="Atelier"><span>Atelier</span></label>
+            <label class="cp" style="--c:var(--sky-2)"><input type="radio" name="tipo" value="Campo de férias"><span>Campo de férias</span></label>
+          </div>
+        </div>
+        <div class="fld full"><label for="f-msg">Mais alguma coisa?</label><textarea id="f-msg" name="msg" placeholder="Tema da festa, idades, alergias…"></textarea></div>
+      </div>
+      <button class="btn" type="submit" style="margin-top:20px">Enviar pedido</button>
+      <p class="form-note">Demonstração: este formulário não envia nada nem guarda dados.</p>
+      <div class="sent" id="sent" role="status"><b>Isto é uma demonstração.</b> O pedido não foi enviado. Na versão final, chegava diretamente à equipa do Happy Colour.<br><a class="btn alt" href="https://wa.me/351913189570" id="sentWa" target="_blank" rel="noopener">Falar já por WhatsApp</a></div>
+    </form>
+  </div>
+</section>
+
+<!-- ===== CONTACTOS ===== -->
+<section class="sec cont" id="contactos" aria-labelledby="h-cont">
+  <div class="flags" aria-hidden="true"></div>
+  <div class="wrap cont-g">
+    <div class="rv">
+      <span class="kick" style="--c:var(--orange)"><i></i>Contactos</span>
+      <h2 id="h-cont" style="margin:14px 0 28px">Vem ter connosco</h2>
+      <ul class="cl">
+        <li><span class="ic" style="--c:var(--yellow)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.500 1.500a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span><div><small>Telefone</small><a href="tel:+351913189570">+351 913 189 570</a></div></li>
+        <li><span class="ic" style="--c:var(--pink)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 8 8 6 8-6"/></svg></span><div><small>Email</small><a href="mailto:pulapula.2017.colour@gmail.com">pulapula.2017.colour<wbr>@gmail.com</a></div></li>
+        <li><span class="ic" style="--c:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.500" y="3.500" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".6" fill="currentColor"/></svg></span><div><small>Instagram</small><a href="https://www.instagram.com/happycolourinsuflaveis" target="_blank" rel="noopener">@happycolourinsuflaveis</a></div></li>
+        <li><span class="ic" style="--c:var(--green)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.200 7-11.500a7 7 0 0 0-14 0C5 14.800 12 21 12 21Z"/><circle cx="12" cy="9.500" r="2.500"/></svg></span><div><small>Onde</small>Vagos, Aveiro<br><span class="mark">rua e número a confirmar com o cliente</span></div></li>
+        <li><span class="ic" style="--c:var(--orange)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><small>Horário</small><span class="mark">a confirmar com o cliente</span></div></li>
+      </ul>
+    </div>
+    <div class="mapw rv" style="--rd:.1s"><iframe title="Mapa: Vagos, Aveiro" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Vagos,+Aveiro,+Portugal&amp;output=embed"></iframe></div>
+  </div>
+</section>
+</main>
+
+<!-- ===== RODAPÉ ===== -->
+<footer class="ft">
+  <div class="flags" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="wm" id="wm" aria-label="Happy Colour">
+      <div aria-hidden="true"><span style="--c:#D8304A">H</span><span style="--c:#F9C52B">A</span><span style="--c:#2EAA7E">P</span><span style="--c:#27A6CC">P</span><span style="--c:#D8304A">Y</span></div>
+      <div aria-hidden="true"><span style="--c:#F9C52B">C</span><span style="--c:#2EAA7E">O</span><span style="--c:#27A6CC">L</span><span style="--c:#D8304A">O</span><span style="--c:#F9C52B">U</span><span style="--c:#2EAA7E">R</span></div>
+    </div>
+    <div class="ft-g">
+      <nav class="ft-links" aria-label="Rodapé"><a href="#servicos">O que fazemos</a><a href="#natal">Atelier de Natal</a><a href="#fotos">Fotos</a><a href="#reservar">Reservar</a><a href="#contactos">Contactos</a><a href="https://www.instagram.com/happycolourinsuflaveis" target="_blank" rel="noopener">Instagram</a></nav>
+      <p><b>Website de demonstração criado pela DD Digital para o Happy Colour.</b> Textos, serviços e descrições ilustrativos e não vinculativos. Datas e programa do Atelier de Natal vistos nas publicações do Instagram do cliente, a confirmar. Morada, horário e valores: <span class="mark">a confirmar com o cliente</span>. Fotografias: Unsplash e Instagram do Happy Colour (cedidas pelo cliente para a demonstração).</p>
+      <p class="ft-bot">© <span id="ano">2026</span> Happy Colour · Demonstração DD Digital</p>
+    </div>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* =====================================================================
+   JS — organizado por funcionalidade (para a conversão futura)
+   ===================================================================== */
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var RM=document.documentElement.classList.contains('rm');
+var NOPRE=document.documentElement.classList.contains('nopre');
+var WA='https://wa.me/351913189570';
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+
+/* ---------- WhatsApp: mensagem pré-preenchida ---------- */
+function wa(t){return WA+'?text='+encodeURIComponent(t)}
+$$('[data-wa]').forEach(function(a){a.href=wa(a.getAttribute('data-wa'))});
+
+/* ---------- toast ---------- */
+var toastT;
+function toast(msg){var t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show')},3200)}
+
+/* ---------- menu mobile (A7/A8): fundo fixo, repõe o scroll ---------- */
+var burger=$('#burger'),menu=$('#menu'),menuY=0;
+function setMenu(open){
+  var b=document.body;
+  if(open===b.classList.contains('menu-open'))return;
+  if(open){
+    menuY=window.scrollY||document.documentElement.scrollTop;
+    b.style.top=(-menuY)+'px';b.classList.add('menu-open');
+    menu.inert=false;
+  }else{
+    b.classList.remove('menu-open');b.style.top='';
+    var h=document.documentElement;h.style.scrollBehavior='auto';window.scrollTo(0,menuY);h.style.scrollBehavior='';
+    menu.inert=true;
+  }
+  burger.setAttribute('aria-expanded',String(open));
+  burger.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');
+}
+burger.addEventListener('click',function(){setMenu(!document.body.classList.contains('menu-open'))});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')setMenu(false)});
+$$('#menu a').forEach(function(a){a.addEventListener('click',function(e){
+  var id=a.getAttribute('href');setMenu(false);
+  if(id&&id.charAt(0)==='#'){e.preventDefault();var el=$(id);if(el)el.scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});}
+})});
+window.matchMedia('(min-width:1040px)').addEventListener('change',function(m){if(m.matches)setMenu(false)});
+
+/* ---------- bandeirinhas (divisória no topo de cada secção) ---------- */
+var FC=['#D8304A','#F9C52B','#2EAA7E','#27A6CC','#F58A2B','#F6B6C4'];
+function buildFlags(el){
+  var w=el.clientWidth||window.innerWidth;
+  var size=+el.getAttribute('data-size')||(w<600?26:36);
+  var gap=size*1.28,n=Math.ceil(w/gap)+1,sag=w<600?9:15,h=Math.ceil(size*1.25+sag*1+10);
+  var s='<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" aria-hidden="true">';
+  s+='<path d="M-4 3Q'+(w/2)+' '+(3+sag*2)+' '+(w+4)+' 3" fill="none" stroke="#7B5A3A" stroke-width="2.4"/>';
+  for(var i=0;i<n;i++){
+    var x=i*gap+gap*.6,t=x/w,y=3+4*sag*t*(1-t);
+    s+='<g class="fl" style="--d:'+(-((i*.37)%3.4)).toFixed(2)+'s"><polygon points="'+(x-size/2)+' '+y+','+(x+size/2)+' '+y+','+x+' '+(y+size*1.15)+'" fill="'+FC[i%FC.length]+'"/></g>';
+  }
+  el.innerHTML=s+'</svg>';el._w=w;
+}
+var flagEls=$$('.flags');
+flagEls.forEach(buildFlags);
+var rzT;window.addEventListener('resize',function(){clearTimeout(rzT);rzT=setTimeout(function(){flagEls.forEach(function(el){if(Math.abs((el.clientWidth||0)-(el._w||0))>40)buildFlags(el)})},180)});
+
+/* ---------- revelação ao scroll ---------- */
+var revEls=$$('.rv,#post');
+if('IntersectionObserver' in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('is-in');io.unobserve(e.target)}})},{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+  revEls.forEach(function(el){io.observe(el)});
+}else{revEls.forEach(function(el){el.classList.add('is-in')})}
+
+/* ---------- hero: H-trampolim + miúdo que pinta o arco-íris ---------- */
+(function(){
+  var stage=$('#stage');if(!stage)return;
+  var kid=$('#kid'),kidIn=$('#kidIn'),armL=$('#armL'),armR=$('#armR');
+  var arcs=$$('.arc'),barOut=$('#barOut'),barFill=$('#barFill'),barHi=$('#barHi'),hint=$('#hint'),conf=$('#confetti');
+  var X0=150,X1=410,Y0=330,REST=298,CX=280,G=1500,SC=1.4;
+  var dep=0,depV=0,y=0,vy=0,squash=1,boost=false,n=0,running=false,visible=true,last=0,celebrated=false,afterDone=0,armA=20,tilt=0,started=false;
+  function barD(d,off){var cy=Y0+off+d*2;return 'M'+X0+' '+(Y0+off)+'Q'+CX+' '+cy+' '+X1+' '+(Y0+off)}
+  function drawBar(){var d=dep;var a=barD(d,0);barOut.setAttribute('d',a);barFill.setAttribute('d',a);barHi.setAttribute('d','M176 '+(Y0-10)+'Q'+CX+' '+(Y0-10+d*2)+' 384 '+(Y0-10))}
+  function jumpV(h){return Math.sqrt(2*G*h)}
+  function setHint(t){if(hint)hint.textContent=t}
+  function paint(i){if(arcs[i]){arcs[i].classList.add('on')}}
+  function pulseAll(){arcs.forEach(function(a,i){setTimeout(function(){a.classList.remove('pulse');void a.getBoundingClientRect();a.classList.add('pulse')},i*90)})}
+  function burst(){
+    var NS='http://www.w3.org/2000/svg',cols=['#D8304A','#F9C52B','#2EAA7E','#27A6CC','#F58A2B','#F6B6C4'];
+    for(var i=0;i<30;i++){
+      var r=document.createElementNS(NS,i%3?'circle':'rect');
+      var s=4+Math.random()*5;
+      if(r.tagName==='circle'){r.setAttribute('r',s)}else{r.setAttribute('width',s*1.8);r.setAttribute('height',s*1.8);r.setAttribute('rx',2)}
+      r.setAttribute('fill',cols[i%cols.length]);r.setAttribute('cx',CX);r.setAttribute('cy',150);if(r.tagName==='rect'){r.setAttribute('x',CX);r.setAttribute('y',150)}
+      conf.appendChild(r);
+      var a=Math.random()*Math.PI*2,d=110+Math.random()*190,dx=Math.cos(a)*d,dy=Math.sin(a)*d*.8-30;
+      var an=r.animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) rotate('+(Math.random()*540)+'deg)',opacity:1,offset:.6},{transform:'translate('+dx+'px,'+(dy+120)+'px) rotate('+(Math.random()*720)+'deg)',opacity:0}],{duration:1500+Math.random()*700,easing:'cubic-bezier(.2,.7,.3,1)'});
+      an.onfinish=(function(el){return function(){el.remove()}})(r);
+    }
+  }
+  function reset(){
+    arcs.forEach(function(a){a.classList.add('fast');a.classList.remove('on')});
+    setTimeout(function(){arcs.forEach(function(a){a.classList.remove('fast')})},600);
+    n=0;celebrated=false;afterDone=0;stage.classList.remove('party');setHint('Toca no H para saltar mais alto');
+  }
+  function land(vimp){
+    depV=Math.min(420,150+Math.abs(vimp)*.26);squash=.78;
+    if(!celebrated){
+      paint(n);n++;setHint('Salto '+n+' de 5'+(n<5?'':' · arco-íris completo!'));
+      if(n>=5){celebrated=true;setTimeout(function(){burst();pulseAll();stage.classList.add('party')},500)}
+    }else{
+      afterDone++;if(afterDone===1)setHint('Arco-íris completo! Agora é só escolher a festa.');
+      if(afterDone>=4)reset();
+    }
+    vy=jumpV(boost?150:118);boost=false;
+  }
+  function frame(t){
+    if(!running)return;
+    var dt=Math.min(.034,(t-last)/1000);last=t;
+    vy-=G*dt;y+=vy*dt;
+    if(y<=0&&vy<0){var v=vy;y=0;land(v)}
+    // mola do trampolim
+    var acc=-380*dep-15*depV;depV+=acc*dt;dep+=depV*dt;
+    if(Math.abs(dep)<.05&&Math.abs(depV)<.5){dep=0;depV=0}
+    squash+=(1-squash)*Math.min(1,dt*9);
+    var air=Math.min(1,y/18);
+    var foot=REST+dep*(1-air)-y;
+    var stretch=1+Math.min(.12,Math.max(0,vy)/6000*air);
+    var sq=squash<1?squash:stretch;
+    var tgt=vy>60?150:(vy<-120?35:60);armA+=(tgt-armA)*Math.min(1,dt*10);
+    tilt=Math.sin(t/260)*5*air;
+    kid.setAttribute('transform','translate('+CX+' '+foot.toFixed(2)+') rotate('+tilt.toFixed(2)+') scale('+SC+')');
+    kidIn.setAttribute('transform','scale('+(1+(1-sq)*.45).toFixed(3)+' '+sq.toFixed(3)+')');
+    armL.setAttribute('transform','translate(-14 -78) rotate('+armA.toFixed(1)+')');
+    armR.setAttribute('transform','translate(14 -78) rotate('+(-armA).toFixed(1)+')');
+    drawBar();
+    requestAnimationFrame(frame);
+  }
+  function start(){if(running||!visible||RM)return;running=true;last=performance.now();requestAnimationFrame(frame)}
+  function stop(){running=false}
+  function begin(){
+    if(started)return;started=true;kid.classList.add('show');
+    kid.setAttribute('transform','translate('+CX+' '+REST+') scale('+SC+')');
+    vy=jumpV(118);start();
+  }
+  if(RM){
+    arcs.forEach(function(a){a.classList.add('on')});kid.setAttribute('transform','translate('+CX+' '+REST+') scale('+SC+')');setHint('Arco-íris completo!');
+  }else{
+    var delay=NOPRE?60:1250;
+    setTimeout(begin,delay);
+  }
+  var so=new IntersectionObserver(function(es){visible=es[0].isIntersecting;if(visible&&started)start();else stop()},{threshold:.05});so.observe(stage);
+  document.addEventListener('visibilitychange',function(){if(document.hidden)stop();else if(visible&&started)start()});
+  function tap(){if(!started)return;boost=true;stage.classList.add('party');setTimeout(function(){if(!celebrated)stage.classList.remove('party')},900)}
+  stage.addEventListener('pointerdown',tap);
+  stage.addEventListener('keydown',function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();tap()}});
+})();
+
+/* ---------- serviços: faixas (um aberto de cada vez) ---------- */
+(function(){
+  var bands=$$('#bands>.band');
+  function set(b,open){
+    b.classList.toggle('open',open);
+    var btn=$('.band-b',b);btn.setAttribute('aria-expanded',String(open));
+    var p=$('.pnl',b);if(open)p.removeAttribute('inert');else p.setAttribute('inert','');
+  }
+  bands.forEach(function(b){
+    var btn=$('.band-b',b);
+    set(b,b.classList.contains('open'));
+    btn.addEventListener('click',function(){
+      var willOpen=!b.classList.contains('open');
+      bands.forEach(function(o){set(o,false)});
+      set(b,willOpen);
+    });
+  });
+})();
+
+/* ---------- dezembro: contagem para 13 dez ---------- */
+(function(){
+  var el=$('#cd');if(!el)return;
+  var ev=new Date(2026,11,13,10,0,0),now=new Date();
+  var d=Math.ceil((ev-now)/86400000);
+  var t;
+  if(ev-now>0){
+    if(d>1)t='Faltam <b>'+d+' dias</b> para a manhã mágica.';
+    else t='É <b>amanhã</b>! Última chamada para inscrições.';
+  }else if(now.toDateString()===ev.toDateString()){t='É <b>hoje</b>, às 10h00!'}
+  else t='Esta manhã mágica já passou. Fica atento às próximas!';
+  el.innerHTML=t;
+})();
+
+/* ---------- Atelier de Natal: calendário de balões ---------- */
+(function(){
+  var days=$$('#days button'),wk=$('#wk'),wkIn=$('#wkIn');
+  var W=[
+    {c:'var(--green)',tag:'Semana 1 · 16, 17 e 18 dez',h:'A Fábrica dos Duendes',p:'Enfeites, postais, jogos cooperativos e caça ao tesouro.'},
+    {c:'#FF8A9C',tag:'Semana 2 · 21, 22 e 23 dez',h:'A Magia do Natal',p:'Oficinas criativas, histórias, presentes e festa natalícia.'},
+    {c:'var(--yellow)',tag:'Semana 3 · 28, 29 e 30 dez',h:'Adeus 2026, Olá 2027!',p:'Desafios, artes, jogos e celebração de fim de ano.'}
+  ];
+  var cur=0,auto=!RM,timer;
+  function show(i,user){
+    cur=i;var w=W[i];wk.style.setProperty('--c',w.c);
+    wkIn.classList.remove('swap');void wkIn.offsetWidth;
+    wkIn.innerHTML='<span class="tag">'+w.tag+'</span><h4>'+w.h+'</h4><p>'+w.p+'</p>';wkIn.classList.add('swap');
+    var first=true;
+    days.forEach(function(b){var on=+b.getAttribute('data-w')===i;b.setAttribute('aria-pressed',String(on&&(user===b||(!user&&first))));if(on&&first)first=false});
+  }
+  function mark(i,btn){days.forEach(function(b){b.setAttribute('aria-pressed',String(b===btn))})}
+  days.forEach(function(b){b.addEventListener('click',function(){auto=false;clearInterval(timer);show(+b.getAttribute('data-w'),b);mark(0,b)})});
+  function loop(){timer=setInterval(function(){if(!auto)return;var n=(cur+1)%3;show(n,null)},4200)}
+  if(!RM)loop();
+})();
+
+/* ---------- fotos: setas da corda ---------- */
+(function(){
+  var line=$('#line');if(!line)return;
+  function by(d){var w=$('.peg',line).getBoundingClientRect().width;line.scrollBy({left:d*w*1.5,behavior:RM?'auto':'smooth'})}
+  $('#prev').addEventListener('click',function(){by(-1)});
+  $('#next').addEventListener('click',function(){by(1)});
+})();
+
+/* ---------- formulário de demonstração (A3) ---------- */
+(function(){
+  var f=$('#form'),n=$('#f-n');
+  $('#mn').addEventListener('click',function(){n.value=Math.max(1,(+n.value||1)-1)});
+  $('#pl').addEventListener('click',function(){n.value=Math.min(60,(+n.value||0)+1)});
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var tipo=(f.querySelector('input[name=tipo]:checked')||{}).value||'Festa';
+    var d=$('#f-data').value;
+    var msg='Olá! Gostava de reservar: '+tipo+' para '+(+n.value||'?')+' crianças'+(d?', no dia '+d:'')+'.';
+    $('#sentWa').href=wa(msg);
+    var s=$('#sent');s.classList.add('show');s.scrollIntoView({block:'nearest',behavior:RM?'auto':'smooth'});
+    toast('Demonstração: nada foi enviado.');
+  });
+})();
+
+/* ---------- rodapé: letras que saltam ---------- */
+(function(){
+  var wm=$('#wm');if(!wm)return;
+  function hop(el){el.classList.remove('hop');void el.offsetWidth;el.classList.add('hop')}
+  $$('span',wm).forEach(function(s){
+    s.addEventListener('pointerenter',function(){hop(s)});
+    s.addEventListener('pointerdown',function(){hop(s)});
+  });
+  if(!RM&&'IntersectionObserver' in window){
+    var io2=new IntersectionObserver(function(es){if(es[0].isIntersecting){io2.disconnect();$$('span',wm).forEach(function(s,i){setTimeout(function(){hop(s)},i*90)})}},{threshold:.6});io2.observe(wm);
+  }
+  var a=$('#ano');if(a)a.textContent=new Date().getFullYear();
+})();
+})();
+</script>
+</body>
+</html>
