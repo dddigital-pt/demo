@@ -1,0 +1,1027 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add('js')</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OH MY DOG! Grooming by Débora Pereira — Demonstração</title>
+<meta name="description" content="Demonstração de website para OH MY DOG! Grooming by Débora Pereira, banhos, tosquias e muitos miminhos na Murtosa. Criado pela DD Digital.">
+<meta name="theme-color" content="#17402A">
+<link rel="icon" type="image/jpeg" href="img/logo-ohmydog.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   OH MY DOG! Grooming by Débora Pereira — demonstração DD Digital
+
+   CONCEITO DE LAYOUT E HERO
+   Gesto da marca: a COLEIRA e a ETIQUETA do cão. O site inteiro "pendura-se" numa
+   coleira verde-floresta (a cor do logótipo): a foto do hero é uma etiqueta que cai e
+   balança, e os serviços são três etiquetas penduradas de comprimentos diferentes.
+   Hero: o cão chega "desgrenhado" (a própria foto desfeita em milhares de fios de
+   pelo, em canvas) e uma MÁQUINA DE TOSQUIAR atravessa a etiqueta às passadas,
+   a limpar o pelo e a revelar a foto. Também se tosquia com o rato ou o dedo.
+   Em mobile é a mesma coisa, sem rato (corre sozinha). ?nopre salta a intro.
+
+   HERDADO DE
+   - Mimocas Funpark: ideia de partículas em canvas com rAF que dormem fora de uso;
+     cabeçalho/faixa DEMO fixos + padding-top no body (LUZ Tattoo) para o menu mobile.
+   - Mascotes Sortudas: só a ideia de "cartão que cai" como teatro de animais (outra forma).
+   NOVO
+   - Coleira + etiquetas com argola, pêndulo e engrave do nome (a ficha do bicho
+     grava o nome em tempo real no formulário).
+   - Pelo em canvas feito com a própria foto (createPattern + traços curvos) e
+     máquina de tosquiar com tufos que caem.
+   - Rasto de patas que se acende com o scroll (adaptado das pegadas do Batizado).
+   - Fontes Bagel Fat One + Quicksand (novas no registo); paleta do logótipo (verde-floresta, sálvia, creme, tom de caniche)
+     e das fotos; logótipo real em medalhão; humor nas legendas (as da própria Débora).
+   ===================================================================== */
+
+/* ---------- 0. variáveis ---------- */
+:root{
+  --cream:#F6EEDA; --paper:#FFFDF8;
+  --ink:#0B2612; --ink-2:#1E4630;
+  --mint:#9CC4B0; --mint-l:#DCE9DF; --teal:#4F8A72;
+  --blue:#17402A; --blue-d:#0B2612;
+  --pink:#F7B8CE; --pink-l:#FDE3EC;
+  --orange:#D8893F; --butter:#F2CB77;
+  --f-d:'Bagel Fat One','Arial Rounded MT Bold',system-ui,sans-serif;
+  --f-b:'Quicksand','Nunito',system-ui,sans-serif;
+  --strip:34px; --head:70px; --top:calc(var(--strip) + var(--head));
+  --gut:clamp(18px,4.4vw,56px);
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+@media (max-width:760px){:root{--strip:30px;--head:62px}}
+
+/* ---------- 1. base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;padding-top:var(--top);background:var(--cream);color:var(--ink);font-family:var(--f-b);font-weight:600;font-size:1.0625rem;line-height:1.55;overflow-x:clip}
+body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+h1,h2,h3,p,ul,ol,figure{margin:0}
+ul,ol{padding:0;list-style:none}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:6px}
+.dark :focus-visible,.foot :focus-visible,.cont :focus-visible{outline-color:var(--pink)}
+section[id]{scroll-margin-top:calc(var(--top) + 6px)}
+.wrap{width:min(1240px,100% - 2*var(--gut));margin-inline:auto}
+.i{width:1.2em;height:1.2em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.paw{fill:currentColor;stroke:none;flex:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;padding:7px 16px 7px 12px;border-radius:99px;background:var(--mint-l);font-weight:700;font-size:.92rem;letter-spacing:.01em}
+.eyebrow .paw{width:20px;height:20px;color:var(--teal)}
+.h2{font-family:var(--f-d);font-weight:400;font-size:clamp(2.1rem,5.6vw,4.4rem);line-height:1;letter-spacing:-.005em;text-wrap:balance}
+.h2 em{font-style:normal;color:var(--orange)}
+.lede{font-size:clamp(1.05rem,1.6vw,1.22rem);max-width:34em}
+.tbc{display:inline-block;padding:3px 12px;border-radius:99px;border:2px dashed currentColor;font-size:.82rem;font-weight:700;line-height:1.35;opacity:.9}
+
+/* ---------- 2. faixa DEMO + selo + cabeçalho ---------- */
+.strip{position:fixed;top:0;left:0;right:0;z-index:130;height:var(--strip);display:flex;align-items:center;justify-content:center;gap:10px;padding:0 12px;background:var(--ink);color:var(--cream);font-size:.78rem;font-weight:700;white-space:nowrap;overflow:hidden}
+.strip .dm{font-family:var(--f-d);font-weight:400;letter-spacing:.08em;background:var(--pink);color:var(--ink);padding:1px 10px;border-radius:99px;font-size:.78rem}
+.strip .s-m{display:none}
+@media (max-width:760px){.strip .s-d{display:none}.strip .s-m{display:inline}}
+.seal{position:fixed;right:16px;bottom:16px;z-index:90;display:flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border-radius:99px;background:var(--pink);color:var(--ink);font-weight:700;font-size:.82rem;box-shadow:0 8px 20px -8px rgba(11,38,18,.55);pointer-events:none;transform:rotate(-2deg)}
+.seal .paw{width:18px;height:18px;color:var(--blue)}
+@media (max-width:760px){.seal{display:none}}
+
+.head{position:fixed;top:var(--strip);left:0;right:0;z-index:120;height:var(--head);background:var(--cream);border-bottom:2px solid rgba(11,38,18,.08)}
+.head__in{height:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;width:min(1320px,100% - 2*var(--gut));margin-inline:auto}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;line-height:1}
+.brand__logo{width:48px;height:48px;border-radius:50%;box-shadow:0 0 0 2px var(--ink);flex:none}
+@media (max-width:760px){.brand__logo{width:42px;height:42px}}
+.brand__n{font-family:var(--f-d);font-size:1.55rem;letter-spacing:.01em;color:var(--blue);display:block}
+.brand small{display:block;margin-top:4px;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+@media (max-width:420px){.brand small{display:none}.brand__n{font-size:1.4rem}}
+.nav{display:none;align-items:center;gap:2px}
+.nav a{padding:8px 13px;border-radius:99px;font-weight:700;font-size:.97rem;text-decoration:none;white-space:nowrap;transition:background .2s}
+.nav a:hover{background:var(--mint-l)}
+.head .btn{min-height:44px;padding:0 20px;font-size:.95rem;white-space:nowrap}
+.head .btn--cta{display:none}
+.burger{width:46px;height:46px;border-radius:50%;border:0;background:var(--mint-l);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.burger span{display:block;width:20px;height:2.5px;border-radius:2px;background:var(--ink);transition:transform .25s var(--ease),opacity .2s}
+.burger span+span{margin-top:5px}
+body.menu-open .burger span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+body.menu-open .burger span:nth-child(2){opacity:0}
+body.menu-open .burger span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+@media (min-width:1000px){
+  .nav{display:flex}.head .btn--cta{display:inline-flex}.burger{display:none}
+}
+/* menu mobile: painel fora do <header>, opaco, ocupa o ecrã abaixo da faixa + cabeçalho */
+.menu{display:none;position:fixed;left:0;right:0;top:var(--top);bottom:0;z-index:100;background:var(--cream);padding:26px var(--gut) 40px;overflow-y:auto;overscroll-behavior:contain;flex-direction:column;gap:6px}
+body.menu-open .menu{display:flex}
+.menu a.m{font-family:var(--f-d);font-size:clamp(1.9rem,8vw,2.6rem);line-height:1.15;text-decoration:none;color:var(--blue);padding:8px 0;border-bottom:2px dashed rgba(11,38,18,.16);display:flex;justify-content:space-between;align-items:center}
+.menu a.m .i{color:var(--orange)}
+.menu .btn{margin-top:22px;align-self:flex-start}
+.menu p{margin-top:auto;padding-top:28px;font-size:.9rem}
+@media (min-width:1000px){.menu{display:none!important}}
+
+/* botões */
+.btn{display:inline-flex;align-items:center;gap:12px;min-height:54px;padding:0 10px 0 26px;border-radius:99px;border:0;background:var(--blue);color:#fff;font-weight:700;font-size:1.02rem;text-decoration:none;cursor:pointer;transition:background .2s,transform .25s var(--ease)}
+.btn .ar{width:34px;height:34px;border-radius:50%;background:var(--pink);color:var(--ink);display:grid;place-items:center;transition:transform .25s var(--ease)}
+.btn:hover{background:var(--blue-d);transform:translateY(-2px) rotate(-1deg)}
+.btn:hover .ar{transform:translateX(3px) rotate(-8deg)}
+.btn--o{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2.5px var(--ink);padding:0 26px}
+.btn--o:hover{background:var(--ink);color:var(--cream)}
+.btn--p{background:var(--pink);color:var(--ink)}
+.btn--p:hover{background:#f3a3bf}
+.btn--p .ar{background:var(--ink);color:var(--pink)}
+.head .btn{padding:0 8px 0 20px}
+
+/* ---------- 3. coleira + etiqueta (peça central do site) ---------- */
+.collar{position:relative;z-index:3;height:30px;background:var(--blue);box-shadow:inset 0 6px 0 rgba(255,255,255,.16),inset 0 -5px 0 rgba(0,0,0,.14)}
+.collar::before{content:"";position:absolute;left:0;right:0;top:50%;height:3px;margin-top:-1px;background:repeating-linear-gradient(90deg,#fff 0 13px,transparent 13px 23px);opacity:.85}
+.collar .buckle{position:absolute;left:clamp(14px,6vw,90px);top:-6px;width:50px;height:42px;background:var(--blue);border:7px solid #c3ccd0;border-radius:9px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5),0 3px 4px rgba(0,0,0,.2)}
+.collar .buckle::after{content:"";position:absolute;left:50%;top:-7px;bottom:-7px;width:7px;margin-left:-3px;background:#c3ccd0;border-radius:3px}
+.collar--r{border-radius:99px;height:28px}
+.hang{position:relative;transform-origin:50% 0}
+.chain{display:block;width:8px;height:var(--len,0px);margin:0 auto;background:repeating-linear-gradient(#c3ccd0 0 8px,#8d9a9f 8px 10px)}
+.tagbody{position:relative;background:var(--tg,var(--pink));border-radius:46px;padding:78px 16px 16px;box-shadow:0 26px 36px -24px rgba(11,38,18,.55)}
+.tagbody::before{content:"";position:absolute;z-index:1;left:50%;top:20px;width:30px;height:30px;margin-left:-15px;border-radius:50%;background:var(--hole,var(--cream));box-shadow:inset 0 3px 6px rgba(11,38,18,.32)}
+.ring{position:absolute;z-index:4;left:50%;top:-24px;width:58px;height:58px;margin-left:-29px;border-radius:50%;border:7px solid #c3ccd0;box-shadow:inset 0 0 0 2px rgba(255,255,255,.55),0 3px 4px rgba(0,0,0,.25);pointer-events:none}
+@keyframes hIn{0%{transform:translateY(-70%) rotate(-10deg);opacity:0}22%{opacity:1}55%{transform:translateY(0) rotate(5.5deg)}78%{transform:rotate(-2.4deg)}100%{transform:rotate(0)}}
+@keyframes sway{from{transform:rotate(-1deg)}to{transform:rotate(1deg)}}
+@keyframes swing{0%{transform:rotate(0)}18%{transform:rotate(8deg)}38%{transform:rotate(-5.5deg)}58%{transform:rotate(3.2deg)}78%{transform:rotate(-1.4deg)}100%{transform:rotate(0)}}
+.hang.sw{animation:swing 1.5s ease-out both}
+
+/* ---------- 4. hero ---------- */
+.hero{position:relative;background:var(--cream);overflow-x:clip}
+.hero__in{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,5vw,90px);align-items:start;width:min(1320px,100% - 2*var(--gut));margin-inline:auto;padding-bottom:84px}
+.hero__copy{padding-top:clamp(36px,7vh,84px)}
+.hero h1{margin:22px 0 44px;font-family:var(--f-d);font-weight:400;font-size:clamp(4.1rem,11.4vw,10.6rem);line-height:.84;letter-spacing:-.01em;color:var(--blue)}
+.hero h1 .w{display:block;overflow:clip;padding-bottom:.24em;margin-bottom:-.18em}
+.hero h1 .w>span{display:block;animation:rise .9s var(--ease) both}
+.hero h1 .w2>span{animation-delay:.12s;color:var(--orange)}
+.hero h1 b{display:inline-block;font-weight:400;color:var(--pink);transform:rotate(-10deg) translateY(.02em);margin-left:.04em;-webkit-text-stroke:0}
+@keyframes rise{from{transform:translateY(105%)}to{transform:none}}
+.hero .lede{margin-bottom:30px}
+.hero__cta{display:flex;flex-wrap:wrap;gap:14px}
+.hero__meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:34px;font-weight:700;font-size:.95rem}
+.hero__meta span{display:inline-flex;align-items:center;gap:8px}
+.hero__meta .i{color:var(--teal)}
+.hero .hang{width:min(100%,440px);margin:-18px auto 0;z-index:5}
+html:not(.js) .tagcap{display:none}
+.hero .hang--in{animation:hIn 1.7s var(--ease) .1s both,sway 7s ease-in-out 1.9s infinite alternate}
+.hero .tagbody{--tg:var(--pink);--hole:var(--cream)}
+.medal{position:absolute;z-index:6;top:4px;left:-28px;width:106px;height:106px;border-radius:50%;border:5px solid var(--cream);box-shadow:0 10px 20px -8px rgba(11,38,18,.55);transform:rotate(-8deg)}
+@media (max-width:899px){.medal{width:84px;height:84px;left:-12px;top:6px;border-width:4px}}
+.art{position:relative;aspect-ratio:4/5;border-radius:32px;overflow:hidden;background:var(--mint);isolation:isolate}
+.art>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.art canvas{position:absolute;inset:0;width:100%;height:100%;max-width:none;display:none;touch-action:pan-y;cursor:crosshair}
+.js .art canvas{display:block}
+.art.done canvas{opacity:0;visibility:hidden;transition:opacity .5s,visibility 0s .5s}
+.clip{position:absolute;left:0;top:0;z-index:3;width:70px;height:120px;margin:0;transform-origin:35px 6px;opacity:0;pointer-events:none;transition:opacity .25s}
+.clip.on{opacity:1}
+.clip svg{display:block;width:100%;height:100%;overflow:visible}
+.clip.on svg{animation:buzz .07s linear infinite}
+@keyframes buzz{0%{transform:translate(-.8px,.4px)}50%{transform:translate(.8px,-.4px)}100%{transform:translate(-.8px,.4px)}}
+.tagcap{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 8px 2px;font-family:var(--f-d);font-size:1.05rem;line-height:1.2}
+.again{display:inline-flex;align-items:center;gap:8px;flex:none;min-height:42px;padding:0 16px;border-radius:99px;border:0;background:var(--ink);color:var(--cream);font-weight:700;font-size:.88rem;cursor:pointer;transition:transform .2s}
+.again:hover{transform:rotate(-2deg) scale(1.04)}
+.again .i{width:1.1em;height:1.1em}
+.js .again{display:inline-flex}
+.again{display:none}
+.art.done+.tagcap .hint-a{display:none}
+.hint-b{display:none}
+.art.done+.tagcap .hint-b{display:inline}
+#flakes{position:fixed;inset:0;width:100vw;height:100vh;max-width:none;pointer-events:none;z-index:60}
+@media (max-width:899px){
+  .hero__in{grid-template-columns:minmax(0,1fr);gap:8px}
+  .hero .hang{order:-1;width:min(80vw,350px);margin-top:-18px}
+  .hero__copy{padding-top:36px}
+}
+
+/* faixa que corre */
+.belt{background:var(--pink);color:var(--ink);overflow:hidden;border-block:3px solid var(--ink);transform:rotate(-1.2deg);margin:-14px -2vw 0;position:relative;z-index:4}
+.belt__t{display:flex;width:max-content;animation:belt 34s linear infinite}
+.belt__t ul{display:flex;align-items:center;flex:none}
+.belt li{display:flex;align-items:center;gap:26px;padding:13px 0 13px 26px;font-family:var(--f-d);font-size:clamp(1.3rem,2.6vw,2rem);white-space:nowrap}
+.belt .paw{width:.9em;height:.9em;color:var(--blue)}
+@keyframes belt{to{transform:translateX(-50%)}}
+.belt-w{overflow-x:clip;padding-top:10px}
+
+/* ---------- 5. serviços: etiquetas penduradas ---------- */
+.serv{padding:clamp(80px,11vw,150px) 0 clamp(70px,9vw,120px)}
+.serv__top{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px 60px;align-items:end;margin-bottom:clamp(54px,8vw,96px)}
+.serv__top .h2{margin-top:18px}
+.rack{position:relative}
+.rack .collar{margin-bottom:-14px}
+.stags{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:34px clamp(16px,3vw,44px);align-items:start;padding:0 clamp(0px,2vw,26px)}
+.stag{min-width:0}
+.stag .hang{margin-top:0}
+.stag .tagbody{padding:84px 26px 30px;min-height:360px}
+.stag--a{--tg:var(--mint)}.stag--b{--tg:var(--pink)}.stag--c{--tg:var(--butter)}
+.stag .tagbody{--hole:var(--cream)}
+.stag .ico{display:grid;place-items:center;width:62px;height:62px;border-radius:50%;background:var(--cream);color:var(--blue);margin-bottom:16px}
+.stag .ico .i{width:30px;height:30px}
+.stag h3{font-family:var(--f-d);font-weight:400;font-size:clamp(1.9rem,3vw,2.5rem);line-height:1;margin-bottom:12px}
+.stag p{font-size:1.02rem}
+.stag ul{margin:16px 0 22px;display:grid;gap:7px}
+.stag li{display:flex;gap:10px;align-items:flex-start;font-size:.98rem}
+.stag li .paw{width:15px;height:15px;margin-top:.42em;color:var(--blue)}
+.serv__note{margin-top:46px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:.95rem}
+@media (min-width:900px){
+  .stag--a{--len:0px}.stag--b{--len:54px}.stag--c{--len:22px}
+}
+@media (max-width:899px){
+  .serv__top{grid-template-columns:minmax(0,1fr)}
+  .stags{grid-template-columns:minmax(0,1fr);gap:46px;max-width:430px;margin-inline:auto}
+  .stag--a{--len:0px}.stag--b{--len:24px}.stag--c{--len:10px}
+  .rack .collar{width:100%}
+}
+
+/* ---------- 6. galeria: clientes de quatro patas ---------- */
+.dark{background:var(--ink);color:var(--cream);position:relative;overflow-x:clip}
+.looks{padding:clamp(80px,11vw,140px) 0}
+.looks__top{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:18px 50px;margin-bottom:clamp(40px,6vw,70px)}
+.looks .eyebrow{background:var(--ink-2);color:var(--cream)}
+.looks .eyebrow .paw{color:var(--pink)}
+.looks .h2{margin-top:18px;max-width:11em}
+.looks .h2 em{color:var(--pink)}
+.looks .lede{max-width:26em;opacity:.9}
+.wall{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px}
+.pol{display:flex;flex-direction:column;background:var(--paper);color:var(--ink);border-radius:30px;padding:12px 12px 0;cursor:pointer;transition:transform .35s var(--ease);-webkit-tap-highlight-color:transparent}
+.pol:hover{transform:rotate(0deg) translateY(-6px)!important}
+.pol .pic{position:relative;flex:1 1 auto;min-height:220px;border-radius:22px;overflow:hidden;background:var(--mint)}
+.pol .pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+.pol:hover .pic img{transform:scale(1.05)}
+.pol figcaption{padding:14px 10px 18px;font-size:.98rem;line-height:1.35}
+.pol figcaption q{quotes:"«" "»"}
+.pol figcaption b{display:block;font-family:var(--f-d);font-weight:400;font-size:1.25rem;line-height:1.1;margin-bottom:4px;color:var(--blue)}
+.pol--a{grid-column:1/6;grid-row:1/3;transform:rotate(-1.6deg)}
+.pol--b{grid-column:6/9;transform:rotate(1.4deg)}
+.pol--c{grid-column:9/13;transform:rotate(-1deg)}
+.pol--d{grid-column:6/9;transform:rotate(-1.2deg)}
+.pol--e{grid-column:9/13;transform:rotate(1.6deg)}
+.pol--b .pic,.pol--d .pic{aspect-ratio:4/4.6}
+.pol--c .pic,.pol--e .pic{aspect-ratio:4/3.5}
+.pawpop{position:fixed;z-index:140;width:30px;height:30px;margin:-15px 0 0 -15px;color:var(--pink);pointer-events:none;animation:pawpop 1s ease-out forwards}
+@keyframes pawpop{0%{transform:translate(0,0) scale(.3) rotate(var(--r));opacity:0}18%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--r));opacity:0}}
+@media (max-width:899px){
+  .wall{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;gap:16px;margin-inline:calc(-1*var(--gut));padding:6px var(--gut) 26px;scrollbar-width:none}
+  .wall::-webkit-scrollbar{display:none}
+  .pol{flex:0 0 78%;max-width:340px;scroll-snap-align:center;transform:none!important}
+  .pol .pic,.pol--b .pic,.pol--c .pic,.pol--d .pic,.pol--e .pic{aspect-ratio:4/5;flex:none}
+}
+.wall-hint{display:none;margin-top:4px;font-size:.88rem;opacity:.8}
+@media (max-width:899px){.wall-hint{display:block}}
+
+/* ---------- 7. a visita (rasto de patas) ---------- */
+.visit{padding:clamp(80px,11vw,140px) 0}
+.visit__grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(30px,6vw,100px);align-items:start;margin-top:clamp(40px,6vw,70px)}
+.visit .h2{margin-top:18px;max-width:11em}
+.steps{position:relative;counter-reset:st}
+.steps ol{position:relative;display:grid;gap:clamp(34px,5vw,56px);padding:8px 0 8px 96px}
+.steps li h3{font-family:var(--f-d);font-weight:400;font-size:clamp(1.55rem,2.6vw,2.1rem);line-height:1.05;margin-bottom:8px;color:var(--blue)}
+.steps li h3::before{counter-increment:st;content:counter(st);display:inline-grid;place-items:center;width:1.55em;height:1.55em;margin-right:.5em;border-radius:50%;background:var(--pink);color:var(--ink);font-size:.74em;vertical-align:.12em}
+.trail{position:absolute;left:0;top:0;bottom:0;width:70px;pointer-events:none}
+.trail .tp{position:absolute;width:30px;height:30px;color:var(--mint-l);transition:color .45s,transform .45s var(--ease)}
+.trail .tp.on{color:var(--orange)}
+.room{position:sticky;top:calc(var(--top) + 26px)}
+.room .frame{background:var(--blue);border-radius:34px;padding:12px;transform:rotate(1.4deg);box-shadow:0 26px 36px -26px rgba(11,38,18,.6)}
+.room .frame img{width:100%;aspect-ratio:4/3.3;object-fit:cover;border-radius:24px}
+.room figcaption{padding:14px 8px 4px;color:#fff;font-size:.95rem;line-height:1.4}
+.room .ig-note{margin-top:22px;padding:18px 20px;border-radius:26px;background:var(--mint-l);display:flex;gap:14px;align-items:center;text-decoration:none;font-size:.97rem;line-height:1.35;transition:transform .25s var(--ease)}
+.room .ig-note:hover{transform:translateY(-3px) rotate(-1deg)}
+.room .ig-note .i{width:30px;height:30px;color:var(--blue)}
+@media (max-width:899px){
+  .visit__grid{grid-template-columns:minmax(0,1fr)}
+  .room{position:static;order:-1}
+  .steps ol{padding-left:70px}
+  .trail{width:52px}
+}
+
+/* ---------- 8. pedido: a ficha do bicho ---------- */
+.ask{background:var(--mint-l);padding:clamp(80px,11vw,140px) 0;position:relative}
+.ask__grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(34px,6vw,100px);align-items:start;margin-top:clamp(40px,6vw,70px)}
+.ask .h2{margin-top:18px;max-width:12em}
+.ask .eyebrow{background:var(--paper)}
+.fich{position:sticky;top:calc(var(--top) + 26px)}
+.fich .collar{max-width:360px;margin:0 auto;border-radius:99px}
+.fich .hang{width:min(100%,330px);margin:-14px auto 0}
+.fich .tagbody{--tg:var(--butter);--hole:var(--mint-l);padding:84px 22px 26px;text-align:center}
+.fich .lbl{font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.7}
+.engr{display:block;margin:6px 0 10px;font-family:var(--f-d);font-size:3rem;line-height:1.05;letter-spacing:.03em;text-transform:uppercase;color:rgba(11,38,18,.8);text-shadow:0 1.5px 0 rgba(255,255,255,.75),0 -1px 0 rgba(0,0,0,.18);overflow-wrap:anywhere}
+.fich .meta{font-weight:700;font-size:1.02rem}
+.fich .servs{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:14px;min-height:34px}
+.fich .servs span{padding:3px 12px;border-radius:99px;background:var(--paper);font-size:.84rem;font-weight:700}
+.fich .when{margin-top:14px;font-size:.9rem;opacity:.85}
+.fich-note{margin:20px auto 0;max-width:330px;text-align:center;font-size:.9rem}
+.form{display:grid;gap:22px}
+.form .row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.lab{display:block;margin-bottom:8px;font-weight:700;font-size:.95rem}
+.fld{width:100%;min-width:0;min-height:54px;padding:12px 18px;border-radius:20px;border:2.5px solid var(--ink);background:var(--paper);font-weight:600}
+textarea.fld{min-height:116px;resize:vertical;border-radius:24px}
+.fld:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+select.fld{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-position:calc(100% - 24px) 55%,calc(100% - 18px) 55%;background-size:6px 6px;background-repeat:no-repeat}
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.chip span{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 20px;border-radius:99px;background:var(--paper);box-shadow:inset 0 0 0 2.5px var(--ink);font-weight:700;transition:background .2s,color .2s,transform .2s var(--ease)}
+.chip input:checked+span{background:var(--blue);color:#fff;box-shadow:inset 0 0 0 2.5px var(--blue)}
+.chip input:focus-visible+span{outline:3px solid var(--blue);outline-offset:3px}
+.chip:hover span{transform:translateY(-2px)}
+.form .go{display:flex;flex-wrap:wrap;align-items:center;gap:14px 18px}
+.okmsg{display:none;padding:16px 20px;border-radius:22px;background:var(--ink);color:var(--cream);font-size:.98rem;line-height:1.45}
+.okmsg.show{display:block;animation:rise2 .5s var(--ease)}
+@keyframes rise2{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+@media (max-width:899px){
+  .ask__grid{grid-template-columns:minmax(0,1fr)}
+  .fich{position:static}
+  .form .row{grid-template-columns:minmax(0,1fr)}
+}
+
+/* ---------- 9. contactos ---------- */
+.cont{background:var(--blue);color:#fff;padding:clamp(80px,11vw,140px) 0;position:relative;overflow-x:clip}
+.cont .eyebrow{background:var(--blue-d);color:#fff}
+.cont .eyebrow .paw{color:var(--pink)}
+.cont__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(34px,6vw,100px);align-items:start}
+.cont .h2{margin:18px 0 22px;max-width:9em}
+.cont .h2 em{color:var(--pink)}
+.cont address{font-style:normal;font-size:1.12rem;line-height:1.5;margin-bottom:22px}
+.cont address b{display:block;font-family:var(--f-d);font-weight:400;font-size:1.6rem;margin-bottom:4px}
+.cont .tbc{color:#fff}
+.hor{margin-top:26px;padding:16px 20px;border-radius:24px;background:var(--blue-d);display:inline-flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:.98rem}
+.clist{display:grid;gap:14px}
+.crow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;padding:14px 16px 14px 14px;border-radius:30px;background:var(--cream);color:var(--ink);text-decoration:none;transition:transform .3s var(--ease),background .2s}
+.crow:hover{transform:translateX(6px) rotate(-.6deg);background:#fff}
+.crow .ic{display:grid;place-items:center;width:54px;height:54px;border-radius:50%;background:var(--mint)}
+.crow .ic .i{width:26px;height:26px}
+.crow:nth-child(2) .ic{background:var(--pink)}.crow:nth-child(3) .ic{background:var(--butter)}.crow:nth-child(4) .ic{background:var(--pink)}.crow:nth-child(5) .ic{background:var(--mint)}
+.crow small{display:block;font-size:.76rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.7}
+.crow strong{display:block;font-size:1.08rem;font-weight:700;overflow-wrap:anywhere;line-height:1.3}
+.crow .go2{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff}
+@media (max-width:480px){.crow{gap:12px;padding:12px}.crow .ic{width:46px;height:46px}.crow .go2{width:34px;height:34px}.crow strong{font-size:.95rem}}
+@media (max-width:899px){.cont__grid{grid-template-columns:minmax(0,1fr)}}
+
+/* ---------- 10. rodapé ---------- */
+.foot{background:var(--ink);color:var(--cream);padding:clamp(54px,8vw,90px) 0 44px;position:relative;overflow-x:clip}
+.foot__logo{width:132px;height:132px;border-radius:50%;border:4px solid var(--cream);margin-bottom:22px}
+.foot__big{font-family:var(--f-d);font-size:clamp(3.2rem,13vw,11rem);line-height:.88;color:var(--pink);letter-spacing:-.01em;margin-bottom:34px}
+.foot__big span{color:var(--mint)}
+.foot__grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:30px 60px;align-items:start}
+.foot__nav{display:flex;flex-wrap:wrap;gap:6px 22px;font-weight:700}
+.foot__nav a{text-decoration:none;padding:6px 0}
+.foot__nav a:hover{color:var(--pink)}
+.demo-note{padding:20px 22px;border-radius:26px;background:var(--ink-2);font-size:.9rem;line-height:1.55}
+.demo-note b{color:var(--pink)}
+.foot small{display:block;margin-top:30px;opacity:.7;font-size:.82rem}
+@media (max-width:899px){.foot__grid{grid-template-columns:minmax(0,1fr)}}
+
+/* ---------- 11. revelar ao scroll + movimento reduzido ---------- */
+.js .rv{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease);transition-delay:var(--d,0s)}
+.js .rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .js .rv{opacity:1;transform:none}
+  .belt__t{animation:none}
+}
+</style>
+</head>
+
+<body>
+
+<!-- sprite de ícones -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="paw" viewBox="0 0 64 64"><ellipse cx="32" cy="42" rx="15" ry="12"/><ellipse cx="13" cy="28" rx="6" ry="8" transform="rotate(-20 13 28)"/><ellipse cx="25" cy="17" rx="6" ry="8.5" transform="rotate(-6 25 17)"/><ellipse cx="39" cy="17" rx="6" ry="8.5" transform="rotate(6 39 17)"/><ellipse cx="51" cy="28" rx="6" ry="8" transform="rotate(20 51 28)"/></symbol>
+    <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3c3.5 4.6 6 7.7 6 11a6 6 0 0 1-12 0c0-3.3 2.5-6.4 6-11z"/></symbol>
+    <symbol id="i-cut" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6 20 17M8.6 16.4 20 7"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-wa" viewBox="0 0 24 24"><path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8L4 20z"/><path d="M9.2 8.6c.3 2.6 2.6 4.9 5.2 5.2l1-1.3-1.9-1-.8.7a3.6 3.6 0 0 1-1.7-1.7l.7-.8-1-1.9-1.5 0z"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3.5 7.5 12 13l8.5-5.5"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.3-6-10a6 6 0 0 1 12 0c0 4.7-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></symbol>
+    <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r=".8"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 6.1M20 4v7h-7"/></symbol>
+  </defs>
+</svg>
+
+<!-- ===== FAIXA DEMO (fixa, sem botão de fechar) ===== -->
+<div class="strip" role="note">
+  <span class="dm">DEMO</span>
+  <span class="s-d">Website de demonstração criado pela DD Digital para OH MY DOG! Grooming · conteúdo ilustrativo</span>
+  <span class="s-m">Demonstração · OH MY DOG!</span>
+</div>
+<div class="seal" aria-hidden="true"><svg class="paw"><use href="#paw"/></svg>Versão de demonstração</div>
+
+<!-- ===== CABEÇALHO ===== -->
+<header class="head">
+  <div class="head__in">
+    <a class="brand" href="#inicio" aria-label="OH MY DOG! Grooming by Débora Pereira, início">
+      <img class="brand__logo" src="img/logo-ohmydog.jpg" width="48" height="48" alt="">
+      <span><span class="brand__n">OH MY DOG!</span><small>Grooming by Débora Pereira</small></span>
+    </a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#servicos">Serviços</a>
+      <a href="#looks">Looks</a>
+      <a href="#visita">A visita</a>
+      <a href="#pedido">Marcar</a>
+      <a href="#contactos">Contactos</a>
+    </nav>
+    <a class="btn btn--cta" href="https://wa.me/351928020484" target="_blank" rel="noopener">WhatsApp <span class="ar"><svg class="i" aria-hidden="true"><use href="#i-wa"/></svg></span></a>
+    <button class="burger" id="burger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<!-- menu mobile fora do <header> (o header não pode prender o painel fixo) -->
+<div class="menu" id="menu">
+  <a class="m" href="#servicos">Serviços <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+  <a class="m" href="#looks">Looks <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+  <a class="m" href="#visita">A visita <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+  <a class="m" href="#pedido">Marcar <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+  <a class="m" href="#contactos">Contactos <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+  <a class="btn btn--p" href="https://wa.me/351928020484" target="_blank" rel="noopener">Falar no WhatsApp <span class="ar"><svg class="i" aria-hidden="true"><use href="#i-wa"/></svg></span></a>
+  <p>Rua Dr. Carlos Barbosa, Edf. S. Lourenço, n.º 29 · 3870-213 Murtosa</p>
+</div>
+
+<main>
+<!-- =====================================================================
+     HERO — a coleira, a etiqueta que cai e a máquina de tosquiar
+     ===================================================================== -->
+<section class="hero" id="inicio" aria-labelledby="h1">
+  <div class="collar" aria-hidden="true"><span class="buckle"></span></div>
+  <div class="hero__in">
+    <div class="hero__copy">
+      <span class="eyebrow"><svg class="paw" viewBox="0 0 64 64" aria-hidden="true"><use href="#paw"/></svg>Grooming by Débora Pereira</span>
+      <h1 id="h1" aria-label="Oh my dog!"><span class="w w1" aria-hidden="true"><span>Oh my</span></span><span class="w w2" aria-hidden="true"><span>dog<b>!</b></span></span></h1>
+      <p class="lede">Banhos, tosquias e muitos miminhos. Para o teu bichinho sair daqui a cheirar bem, com o pelo em ordem e ar de quem manda lá em casa.</p>
+      <div class="hero__cta">
+        <a class="btn" href="https://wa.me/351928020484" target="_blank" rel="noopener">Marcar pelo WhatsApp <span class="ar"><svg class="i" aria-hidden="true"><use href="#i-wa"/></svg></span></a>
+        <a class="btn btn--o" href="#looks">Ver os looks</a>
+      </div>
+      <p class="hero__meta">
+        <span><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>Murtosa</span>
+        <span><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg>Cães e gatos</span>
+        <span><svg class="i" aria-hidden="true"><use href="#i-ig"/></svg>@_ohmydog_grooming</span>
+      </p>
+    </div>
+
+    <div class="hang hang--in" id="heroHang">
+      <div class="tagbody">
+        <i class="ring" aria-hidden="true"></i>
+        <img class="medal" src="img/logo-ohmydog.jpg" width="600" height="600" alt="Logótipo OH MY DOG! Grooming: um caniche numa cadeira de tosquia">
+        <figure class="art" id="tosquia">
+          <img id="furImg" src="img/cao-chow-chow.jpg" width="816" height="1125" alt="Cão da raça chow chow de pelo cor de canela, a sorrir, recém-tratado" decoding="async">
+          <canvas id="fur" aria-hidden="true"></canvas>
+          <div class="clip" id="clipper" aria-hidden="true">
+            <svg viewBox="0 0 70 120">
+              <rect x="6" y="0" width="58" height="20" rx="3" fill="#cfd6d9"/>
+              <g stroke="#7d8a90" stroke-width="2"><path d="M12 0v13M19 0v13M26 0v13M33 0v13M40 0v13M47 0v13M54 0v13M61 0v13"/></g>
+              <path d="M2 18h66l-4 98a8 8 0 0 1-8 8H14a8 8 0 0 1-8-8z" fill="#17402A"/>
+              <rect x="2" y="18" width="66" height="9" fill="#0B2612"/>
+              <rect x="26" y="46" width="18" height="30" rx="9" fill="#F7B8CE"/>
+              <circle cx="35" cy="96" r="5" fill="#F6EEDA"/>
+            </svg>
+          </div>
+        </figure>
+        <div class="tagcap">
+          <span class="hint-a">Pelo a mais? Passa a máquina.</span>
+          <span class="hint-b">Aí está: outro cão!</span>
+          <button class="again" id="again" type="button"><svg class="i" aria-hidden="true"><use href="#i-redo"/></svg>Outra vez</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- faixa -->
+<div class="belt-w" aria-hidden="true">
+  <div class="belt">
+    <div class="belt__t">
+      <ul>
+        <li>Banhos<svg class="paw" viewBox="0 0 64 64"><use href="#paw"/></svg></li>
+        <li>Tosquias<svg class="paw" viewBox="0 0 64 64"><use href="#paw"/></svg></li>
+        <li>Muitos miminhos<svg class="paw" viewBox="0 0 64 64"><use href="#paw"/></svg></li>
+        <li>Laços<svg class="paw" viewBox="0 0 64 64"><use href="#paw"/></svg></li>
+        <li>Brilhantes na orelha<svg class="paw" viewBox="0 0 64 64"><use href="#paw"/></svg></li>
+        <li>Cães e gatos<svg class="paw" viewBox="0 0 64 64"><use href="#paw"/></svg></li>
+      </ul>
+      <ul>
+        <li>Banhos<svg class="paw" viewBox="0 0 64 64"><use href="#paw"/></svg></li>
+        <li>Tosquias<svg class="paw" viewBox="0 0 64 64"><use href="#paw"/></svg></li>
+        <li>Muitos miminhos<svg class="paw" viewBox="0 0 64 64"><use href="#paw"/></svg></li>
+        <li>Laços<svg class="paw" viewBox="0 0 64 64"><use href="#paw"/></svg></li>
+        <li>Brilhantes na orelha<svg class="paw" viewBox="0 0 64 64"><use href="#paw"/></svg></li>
+        <li>Cães e gatos<svg class="paw" viewBox="0 0 64 64"><use href="#paw"/></svg></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- =====================================================================
+     SERVIÇOS — três etiquetas na mesma coleira
+     ===================================================================== -->
+<section class="serv" id="servicos" aria-labelledby="h-serv">
+  <div class="wrap">
+    <div class="serv__top">
+      <div class="rv">
+        <span class="eyebrow"><svg class="paw" viewBox="0 0 64 64" aria-hidden="true"><use href="#paw"/></svg>O que fazemos</span>
+        <h2 class="h2" id="h-serv">Banho, tosquia e miminhos. <em>Por esta ordem</em> (ou à vontade do freguês).</h2>
+      </div>
+      <p class="lede rv" style="--d:.1s">Cada bicho tem o seu pelo, o seu feitio e as suas manias. Por isso o tratamento combina-se contigo antes de a máquina ligar. Toca numa etiqueta para a ver balançar.</p>
+    </div>
+
+    <div class="rack">
+      <div class="collar collar--r" aria-hidden="true"></div>
+      <div class="stags">
+        <article class="stag stag--a rv">
+          <div class="hang" data-swing>
+            <i class="chain" aria-hidden="true"></i>
+            <div class="tagbody">
+              <i class="ring" aria-hidden="true"></i>
+              <span class="ico"><svg class="i" aria-hidden="true"><use href="#i-drop"/></svg></span>
+              <h3>Banho</h3>
+              <p>Água morna, champô adequado ao pelo, secagem e escovagem. Do primeiro banho de cachorro ao banho do veterano da casa.</p>
+              <ul>
+                <li><svg class="paw" viewBox="0 0 64 64" aria-hidden="true"><use href="#paw"/></svg>Champô à medida do pelo</li>
+                <li><svg class="paw" viewBox="0 0 64 64" aria-hidden="true"><use href="#paw"/></svg>Secagem e escovagem</li>
+              </ul>
+              <span class="tbc">preço e duração: a confirmar</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="stag stag--b rv" style="--d:.12s">
+          <div class="hang" data-swing>
+            <i class="chain" aria-hidden="true"></i>
+            <div class="tagbody">
+              <i class="ring" aria-hidden="true"></i>
+              <span class="ico"><svg class="i" aria-hidden="true"><use href="#i-cut"/></svg></span>
+              <h3>Tosquia</h3>
+              <p>Um corte à medida do cão: prático, giro ou ousado. Já houve um bulldogue francês que saiu daqui com manchas de leopardo.</p>
+              <ul>
+                <li><svg class="paw" viewBox="0 0 64 64" aria-hidden="true"><use href="#paw"/></svg>Corte combinado contigo</li>
+                <li><svg class="paw" viewBox="0 0 64 64" aria-hidden="true"><use href="#paw"/></svg>Acabamentos e arranjos</li>
+              </ul>
+              <span class="tbc">preço e duração: a confirmar</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="stag stag--c rv" style="--d:.24s">
+          <div class="hang" data-swing>
+            <i class="chain" aria-hidden="true"></i>
+            <div class="tagbody">
+              <i class="ring" aria-hidden="true"></i>
+              <span class="ico"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg></span>
+              <h3>Miminhos</h3>
+              <p>Festinhas, laços e até um brilhante na orelha. O toque final que faz o dono sorrir e o bicho posar para a foto.</p>
+              <ul>
+                <li><svg class="paw" viewBox="0 0 64 64" aria-hidden="true"><use href="#paw"/></svg>Laços e acessórios</li>
+                <li><svg class="paw" viewBox="0 0 64 64" aria-hidden="true"><use href="#paw"/></svg>Muitas festinhas</li>
+              </ul>
+              <span class="tbc">preço: a confirmar</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+    <p class="serv__note rv"><span class="tbc">a confirmar com a cliente</span> Lista final de serviços, tempos e preços, e se também recebe gatos em todos os tratamentos.</p>
+  </div>
+</section>
+
+<!-- =====================================================================
+     LOOKS — clientes de quatro patas (fotos da própria cliente)
+     ===================================================================== -->
+<section class="dark looks" id="looks" aria-labelledby="h-looks">
+  <div class="wrap">
+    <div class="looks__top">
+      <div class="rv">
+        <span class="eyebrow"><svg class="paw" viewBox="0 0 64 64" aria-hidden="true"><use href="#paw"/></svg>Os looks</span>
+        <h2 class="h2" id="h-looks">Clientes de <em>quatro patas</em>, todos com razão para se gabar.</h2>
+      </div>
+      <p class="lede rv" style="--d:.1s">Fotografias do Instagram da Débora. Toca numa para espalhar patinhas.</p>
+    </div>
+
+    <div class="wall" id="wall">
+      <figure class="pol pol--a rv">
+        <div class="pic"><img src="img/bulldogue-leopardo.jpg" width="843" height="1101" alt="Bulldogue francês em cima da mesa de tosquia, com manchas de leopardo desenhadas no pelo" loading="lazy" style="object-position:82% 50%"></div>
+        <figcaption><b>Edição limitada</b><q>Observem o raro exemplar de bulldogue francês cruzado com leopardo.</q></figcaption>
+      </figure>
+      <figure class="pol pol--b rv" style="--d:.08s">
+        <div class="pic"><img src="img/cao-shihtzu-tosquia.jpg" width="705" height="1000" alt="Cão de pelo creme acabado de tosquiar, de pé na mesa azul, a olhar para cima" loading="lazy"></div>
+        <figcaption><b>Depois</b>Cara de quem sabe que está lindo.</figcaption>
+      </figure>
+      <figure class="pol pol--c rv" style="--d:.16s">
+        <div class="pic"><img src="img/cao-bichon-lacos.jpg" width="843" height="1125" alt="Cãozinho branco e fofo deitado num sofá cinzento, com laços cor-de-rosa nas orelhas" loading="lazy" style="object-position:50% 56%"></div>
+        <figcaption><b>Laços rosa</b>E um olhar de quem manda no sofá.</figcaption>
+      </figure>
+      <figure class="pol pol--d rv" style="--d:.1s">
+        <div class="pic"><img src="img/cachorro-brilhante-orelha.jpg" width="816" height="1101" alt="Cachorro de pelo castanho e branco ao colo, com um brilhante cor-de-rosa colado na orelha" loading="lazy"></div>
+        <figcaption><b>Brilhante na orelha</b>Obrigatório, claro.</figcaption>
+      </figure>
+      <figure class="pol pol--e rv" style="--d:.2s">
+        <div class="pic"><img src="img/banho-cao-preto.jpg" width="700" height="930" alt="Cão grande de pelo preto, todo molhado, dentro da banheira de inox do salão" loading="lazy" style="object-position:50% 22%"></div>
+        <figcaption><b>Hora do banho</b><q>Queres ver uma coisa gira que eu sei fazer?</q></figcaption>
+      </figure>
+    </div>
+    <p class="wall-hint" aria-hidden="true">Desliza para ver mais →</p>
+  </div>
+</section>
+
+<!-- =====================================================================
+     A VISITA — rasto de patas que se acende com o scroll
+     ===================================================================== -->
+<section class="visit" id="visita" aria-labelledby="h-visit">
+  <div class="wrap">
+    <div class="rv">
+      <span class="eyebrow"><svg class="paw" viewBox="0 0 64 64" aria-hidden="true"><use href="#paw"/></svg>Como corre a visita</span>
+      <h2 class="h2" id="h-visit">Cinco passos e <em>zero stress</em>, para ti e para ele.</h2>
+    </div>
+    <div class="visit__grid">
+      <div class="steps" id="steps">
+        <div class="trail" id="trail" aria-hidden="true"></div>
+        <ol>
+          <li class="rv">
+            <h3>Chegada e festinhas</h3>
+            <p>Primeiro os miminhos: ninguém é tosquiado com medo. Conversamos sobre o pelo, o feitio e o que tens em mente.</p>
+          </li>
+          <li class="rv">
+            <h3>Banho</h3>
+            <p>Água morna, champô adequado e muito cuidado. É a parte em que há cães que aprendem a gostar de água.</p>
+          </li>
+          <li class="rv">
+            <h3>Secagem e escovagem</h3>
+            <p>Pelo seco, desembaraçado e a cheirar bem, pronto para o corte (ou para ficar fofo, se for essa a ideia).</p>
+          </li>
+          <li class="rv">
+            <h3>Tosquia e acabamentos</h3>
+            <p>O corte combinado contigo: do mais prático ao mais criativo. O leopardo está sempre em cima da mesa.</p>
+          </li>
+          <li class="rv">
+            <h3>Laço, brilhante e foto</h3>
+            <p>O toque final e a fotografia para mostrar ao mundo (ou, pelo menos, ao Instagram).</p>
+          </li>
+        </ol>
+      </div>
+      <aside class="room rv" style="--d:.1s">
+        <figure>
+          <div class="frame"><img src="img/espaco-grooming.jpg" width="740" height="520" alt="O espaço de grooming: mesa de tosquia, bancada e um cãozinho a espreitar ao fundo, por trás do vidro" loading="lazy"></div>
+          <figcaption>O espaço, com um cliente curioso a espreitar lá ao fundo.</figcaption>
+        </figure>
+        <a class="ig-note" href="https://www.instagram.com/_ohmydog_grooming/" target="_blank" rel="noopener">
+          <svg class="i" aria-hidden="true"><use href="#i-ig"/></svg>
+          <span>Queres ver um primeiro banho a sério? A Débora mostrou o da Cookie no Instagram.</span>
+        </a>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================================
+     PEDIDO — a ficha do bicho (formulário só de demonstração)
+     ===================================================================== -->
+<section class="ask" id="pedido" aria-labelledby="h-ask">
+  <div class="wrap">
+    <div class="rv">
+      <span class="eyebrow"><svg class="paw" viewBox="0 0 64 64" aria-hidden="true"><use href="#paw"/></svg>Marcar visita</span>
+      <h2 class="h2" id="h-ask">Faz a ficha do teu bicho. <em>Nós tratamos do resto.</em></h2>
+    </div>
+    <div class="ask__grid">
+      <div class="fich rv">
+        <div class="collar" aria-hidden="true"></div>
+        <div class="hang" data-swing id="fichHang">
+          <div class="tagbody">
+            <i class="ring" aria-hidden="true"></i>
+            <span class="lbl">Ficha do cliente</span>
+            <span class="engr" id="pvNome">O teu bicho</span>
+            <p class="meta" id="pvMeta">Cão · Pequeno</p>
+            <div class="servs" id="pvServ" aria-live="polite"><span>Banho</span></div>
+            <p class="when" id="pvDia">Esta semana, se possível</p>
+          </div>
+        </div>
+        <p class="fich-note">A etiqueta grava o nome enquanto escreves.</p>
+      </div>
+
+      <form class="form rv" id="form" novalidate style="--d:.1s">
+        <div class="row">
+          <div><label class="lab" for="fNome">O teu nome</label><input class="fld" id="fNome" name="nome" type="text" autocomplete="name" placeholder="Como te chamas?"></div>
+          <div><label class="lab" for="fBicho">Nome do bicho</label><input class="fld" id="fBicho" name="bicho" type="text" maxlength="12" autocomplete="off" placeholder="Ex.: Cookie"></div>
+        </div>
+        <div class="row">
+          <div role="group" aria-labelledby="lEsp">
+            <span class="lab" id="lEsp">É um…</span>
+            <div class="chips">
+              <label class="chip"><input type="radio" name="esp" value="Cão" checked><span>Cão</span></label>
+              <label class="chip"><input type="radio" name="esp" value="Gato"><span>Gato</span></label>
+            </div>
+          </div>
+          <div role="group" aria-labelledby="lTam">
+            <span class="lab" id="lTam">Tamanho</span>
+            <div class="chips">
+              <label class="chip"><input type="radio" name="tam" value="Pequeno" checked><span>Pequeno</span></label>
+              <label class="chip"><input type="radio" name="tam" value="Médio"><span>Médio</span></label>
+              <label class="chip"><input type="radio" name="tam" value="Grande"><span>Grande</span></label>
+            </div>
+          </div>
+        </div>
+        <div role="group" aria-labelledby="lSrv">
+          <span class="lab" id="lSrv">O que precisa?</span>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="srv" value="Banho" checked><span>Banho</span></label>
+            <label class="chip"><input type="checkbox" name="srv" value="Tosquia"><span>Tosquia</span></label>
+            <label class="chip"><input type="checkbox" name="srv" value="Miminhos"><span>Miminhos</span></label>
+            <label class="chip"><input type="checkbox" name="srv" value="Laço e brilhante"><span>Laço e brilhante</span></label>
+          </div>
+        </div>
+        <div>
+          <label class="lab" for="fDia">Para quando?</label>
+          <select class="fld" id="fDia" name="dia">
+            <option>Esta semana, se possível</option>
+            <option>Na próxima semana</option>
+            <option>Sem pressa</option>
+          </select>
+        </div>
+        <div>
+          <label class="lab" for="fMsg">Queres contar-nos alguma coisa?</label>
+          <textarea class="fld" id="fMsg" name="msg" placeholder="Feitio, manias, o corte que imaginas (leopardo incluído)…"></textarea>
+        </div>
+        <div class="go">
+          <button class="btn" type="submit">Enviar pedido <span class="ar"><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+          <a class="btn btn--o" href="https://wa.me/351928020484" target="_blank" rel="noopener">Ou fala já no WhatsApp</a>
+        </div>
+        <p class="okmsg" id="ok" role="status"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================================
+     CONTACTOS (dados reais fornecidos pela cliente)
+     ===================================================================== -->
+<section class="cont" id="contactos" aria-labelledby="h-cont">
+  <div class="wrap cont__grid">
+    <div class="rv">
+      <span class="eyebrow"><svg class="paw" viewBox="0 0 64 64" aria-hidden="true"><use href="#paw"/></svg>Contactos</span>
+      <h2 class="h2" id="h-cont">Vem cá, liga ou <em>manda mensagem.</em></h2>
+      <address>
+        <b>OH MY DOG!</b>
+        Rua Dr. Carlos Barbosa, Edf. S. Lourenço, n.º 29<br>3870-213 Murtosa
+      </address>
+      <div class="hor"><span>Horário:</span><span class="tbc">a confirmar com a cliente</span></div>
+    </div>
+    <div class="clist rv" style="--d:.1s">
+      <a class="crow" href="https://wa.me/351928020484" target="_blank" rel="noopener">
+        <span class="ic"><svg class="i" aria-hidden="true"><use href="#i-wa"/></svg></span>
+        <span><small>WhatsApp</small><strong>+351 928 020 484</strong></span>
+        <span class="go2"><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+      </a>
+      <a class="crow" href="tel:+351928020484">
+        <span class="ic"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg></span>
+        <span><small>Telemóvel</small><strong>+351 928 020 484</strong></span>
+        <span class="go2"><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+      </a>
+      <a class="crow" href="mailto:ohmydoggroomingpetboutique@gmail.com">
+        <span class="ic"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg></span>
+        <span><small>Email</small><strong>ohmydoggrooming<wbr>petboutique@gmail.com</strong></span>
+        <span class="go2"><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+      </a>
+      <a class="crow" href="https://www.instagram.com/_ohmydog_grooming/" target="_blank" rel="noopener">
+        <span class="ic"><svg class="i" aria-hidden="true"><use href="#i-ig"/></svg></span>
+        <span><small>Instagram</small><strong>@_ohmydog_grooming</strong></span>
+        <span class="go2"><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+      </a>
+      <a class="crow" href="https://www.google.com/maps/search/?api=1&amp;query=Rua%20Dr.%20Carlos%20Barbosa%2C%20Murtosa%203870-213" target="_blank" rel="noopener">
+        <span class="ic"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg></span>
+        <span><small>Como chegar</small><strong>Abrir no Google Maps</strong></span>
+        <span class="go2"><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ===== RODAPÉ ===== -->
+<footer class="foot">
+  <div class="wrap">
+    <img class="foot__logo" src="img/logo-ohmydog.jpg" width="600" height="600" alt="Logótipo OH MY DOG! Grooming" loading="lazy">
+    <p class="foot__big" aria-hidden="true">Oh my <span>dog!</span></p>
+    <div class="foot__grid">
+      <div>
+        <nav class="foot__nav" aria-label="Rodapé">
+          <a href="#servicos">Serviços</a><a href="#looks">Looks</a><a href="#visita">A visita</a><a href="#pedido">Marcar</a><a href="#contactos">Contactos</a>
+          <a href="https://www.instagram.com/_ohmydog_grooming/" target="_blank" rel="noopener">Instagram</a>
+        </nav>
+        <small>© OH MY DOG! Grooming by Débora Pereira · Murtosa</small>
+      </div>
+      <p class="demo-note"><b>Website de demonstração.</b> Criado pela DD Digital para apresentação à cliente. Os textos, descrições de serviços e o formulário são ilustrativos e não vinculativos; preços e horário estão por confirmar. As fotografias são do Instagram da cliente (@_ohmydog_grooming) e o logótipo foi fornecido pela cliente (imagem pequena; na versão final usa-se o ficheiro original).</p>
+    </div>
+  </div>
+</footer>
+
+<canvas id="flakes" aria-hidden="true"></canvas>
+
+<script>
+/* =====================================================================
+   JS organizado por funcionalidade
+   ===================================================================== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- menu mobile (corpo fixo + repor scroll) ---------- */
+(function(){
+  const body=document.body, burger=$('#burger'), menu=$('#menu'); let menuY=0;
+  function setMenu(open){
+    if(open===body.classList.contains('menu-open')) return;
+    const root=document.documentElement;
+    if(open){ menuY=window.scrollY; body.style.top=-menuY+'px'; body.classList.add('menu-open'); }
+    else{ body.classList.remove('menu-open'); body.style.top=''; root.style.scrollBehavior='auto'; window.scrollTo(0,menuY); root.style.scrollBehavior=''; }
+    burger.setAttribute('aria-expanded',String(open));
+    burger.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');
+  }
+  burger.addEventListener('click',()=>setMenu(!body.classList.contains('menu-open')));
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') setMenu(false); });
+  matchMedia('(min-width:1000px)').addEventListener('change',e=>{ if(e.matches) setMenu(false); });
+  $$('#menu a.m').forEach(a=>a.addEventListener('click',e=>{
+    const id=a.getAttribute('href'); const t=$(id); if(!t) return;
+    e.preventDefault(); setMenu(false);
+    requestAnimationFrame(()=>{ t.scrollIntoView({behavior:'auto'}); });
+  }));
+  $$('#menu a.btn').forEach(a=>a.addEventListener('click',()=>setMenu(false)));
+})();
+
+/* ---------- revelar ao scroll ---------- */
+(function(){
+  const els=$$('.rv');
+  if(!('IntersectionObserver' in window)||calm){ els.forEach(e=>e.classList.add('in')); return; }
+  const io=new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } }),{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+  els.forEach(e=>io.observe(e));
+})();
+
+/* ---------- hero: tosquia (pelo em canvas + máquina) ---------- */
+(function(){
+  const art=$('#tosquia'), cv=$('#fur'), img=$('#furImg'), clip=$('#clipper'), fl=$('#flakes'), again=$('#again');
+  if(!art||!cv||!fl) return;
+  const nopre=/[?&]nopre/.test(location.search);
+  if(calm||nopre){ art.classList.add('done'); return; }          // sem pelo: foto limpa logo
+  const ctx=cv.getContext('2d'), fx=fl.getContext('2d');
+  const GX=12, GY=15, COL=['#E58A3C','#F2B16B','#FFE2BC','#C9651F','#F7B8CE'];
+  let W=0,H=0,dpr=1,grid,gridN=0,done=false,auto=null,last=null,parts=[],flRaf=0,hide=0,cw=0,builtW=0;
+
+  function size(){
+    const r=art.getBoundingClientRect(); dpr=Math.min(2,window.devicePixelRatio||1);
+    W=Math.round(r.width*dpr); H=Math.round(r.height*dpr); cv.width=W; cv.height=H; cw=r.width; builtW=r.width;
+  }
+  /* o pelo é a própria foto desfeita em milhares de fios curtos */
+  function build(){
+    size(); done=false; art.classList.remove('done'); grid=new Uint8Array(GX*GY); gridN=0;
+    const iw=img.naturalWidth, ih=img.naturalHeight; if(!iw) return false;
+    const s=document.createElement('canvas'); s.width=W; s.height=H; const c=s.getContext('2d');
+    const k=Math.max(W/iw,H/ih), dw=iw*k, dh=ih*k; c.drawImage(img,(W-dw)*.5,(H-dh)*.3,dw,dh);
+    /* camada de cor "macia": a foto reduzida e esticada (os fios herdam a cor, não o detalhe) */
+    const t=document.createElement('canvas'); t.width=Math.max(8,Math.round(W/22)); t.height=Math.max(8,Math.round(H/22));
+    t.getContext('2d').drawImage(s,0,0,t.width,t.height);
+    const soft=document.createElement('canvas'); soft.width=W; soft.height=H; const sc=soft.getContext('2d');
+    sc.imageSmoothingEnabled=true; sc.imageSmoothingQuality='high'; sc.drawImage(t,0,0,W,H);
+    ctx.globalCompositeOperation='source-over'; ctx.clearRect(0,0,W,H);
+    ctx.drawImage(soft,0,0);                                   // base
+    const patSoft=ctx.createPattern(soft,'no-repeat'), patSharp=ctx.createPattern(s,'no-repeat'); ctx.lineCap='round';
+    const cx=W*.5, cy=H*.46, n=Math.round((W*H)/(dpr*dpr)/9);
+    for(let i=0;i<n;i++){
+      const x=Math.random()*W, y=Math.random()*H, L=(14+Math.random()*38)*dpr;
+      /* metade dos fios sai do centro (pelo fofo e desgrenhado), metade cai para baixo */
+      const a=(i%2)?Math.atan2(y-cy,x-cx)+(Math.random()-.5)*1.1 : Math.PI/2+(Math.random()-.5)*2.4;
+      const b=(Math.random()-.5)*L*.9;
+      ctx.lineWidth=(2+Math.random()*3.2)*dpr;
+      ctx.strokeStyle=i%7===0?'rgba(255,244,228,.55)':(i%23===0?'rgba(120,66,24,.35)':(i%11===0?patSharp:patSoft));
+      ctx.beginPath(); ctx.moveTo(x,y);
+      ctx.quadraticCurveTo(x+Math.cos(a)*L*.5+b*Math.sin(a), y+Math.sin(a)*L*.5-b*Math.cos(a), x+Math.cos(a)*L, y+Math.sin(a)*L);
+      ctx.stroke();
+    }
+    return true;
+  }
+  /* tufos que caem (canvas fixo no ecrã, só corre enquanto há partículas) */
+  function sizeFl(){ const d=Math.min(2,window.devicePixelRatio||1); fl.width=innerWidth*d; fl.height=innerHeight*d; fx.setTransform(d,0,0,d,0,0); }
+  function spawn(px,py,n){
+    for(let i=0;i<n;i++) parts.push({x:px+(Math.random()-.5)*26,y:py+(Math.random()-.5)*12,vx:(Math.random()-.5)*190,vy:-70-Math.random()*110,r:Math.random()*6.28,vr:(Math.random()-.5)*10,l:0,m:1+Math.random()*.9,c:COL[Math.floor(Math.random()*COL.length)],s:9+Math.random()*11});
+    if(parts.length>240) parts.splice(0,parts.length-240);
+    if(!flRaf){ sizeFl(); let p=performance.now(); const loop=now=>{
+      const dt=Math.min(.04,(now-p)/1000); p=now; fx.clearRect(0,0,innerWidth,innerHeight);
+      parts=parts.filter(q=>(q.l+=dt)<q.m);
+      for(const q of parts){ q.vy+=950*dt; q.x+=q.vx*dt; q.y+=q.vy*dt; q.r+=q.vr*dt;
+        fx.save(); fx.translate(q.x,q.y); fx.rotate(q.r); fx.globalAlpha=Math.max(0,1-(q.l/q.m)**2);
+        fx.strokeStyle=q.c; fx.lineWidth=2.6; fx.lineCap='round'; fx.beginPath(); fx.moveTo(-q.s/2,0); fx.quadraticCurveTo(0,-q.s*.4,q.s/2,0); fx.stroke(); fx.restore(); }
+      if(parts.length){ flRaf=requestAnimationFrame(loop); } else { flRaf=0; fx.clearRect(0,0,innerWidth,innerHeight); }
+    }; flRaf=requestAnimationFrame(loop); }
+  }
+  function moveClip(x,y,dx){
+    const rot=Math.max(-26,Math.min(26,dx*.6))-14;
+    clip.style.transform='translate('+(x-35)+'px,'+(y-6)+'px) rotate('+rot+'deg)';
+    clip.classList.add('on'); clearTimeout(hide); hide=setTimeout(()=>clip.classList.remove('on'),600);
+  }
+  function cut(x0,y0,x1,y1){
+    if(done) return;
+    ctx.globalCompositeOperation='destination-out'; ctx.lineCap='round'; ctx.lineWidth=58*dpr;
+    ctx.beginPath(); ctx.moveTo(x0*dpr,y0*dpr); ctx.lineTo(x1*dpr,y1*dpr); ctx.stroke();
+    const r=art.getBoundingClientRect(), w=r.width, h=r.height;
+    for(let gy=0;gy<GY;gy++) for(let gx=0;gx<GX;gx++){ const i=gy*GX+gx; if(grid[i]) continue;
+      const cx=(gx+.5)*w/GX, cy=(gy+.5)*h/GY; if(Math.hypot(cx-x1,cy-y1)<36){ grid[i]=1; gridN++; } }
+    if(Math.random()<.85) spawn(r.left+x1,r.top+y1+8,2);
+    if(gridN>=GX*GY*.93) finish();
+  }
+  function finish(){ if(done) return; done=true; if(auto) auto.stop=true; art.classList.add('done'); setTimeout(()=>clip.classList.remove('on'),500); }
+  function runAuto(){
+    const w=art.clientWidth,h=art.clientHeight, step=50, pts=[];
+    for(let y=14,r=0;y<h+step;y+=step,r++){ const yy=Math.min(y,h-6), l=r%2===0; pts.push(l?[-34,yy]:[w+34,yy],l?[w+34,yy]:[-34,yy]); }
+    const cum=[0]; for(let i=1;i<pts.length;i++) cum.push(cum[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
+    const total=cum[cum.length-1], SP=1500, t0=performance.now(); let prev=[w+34,-30]; auto={stop:false};
+    const me=auto;
+    (function f(now){
+      if(me.stop||done) return;
+      const d=Math.min(total,(now-t0)/1000*SP); let i=1; while(i<cum.length-1&&cum[i]<d) i++;
+      const u=(d-cum[i-1])/((cum[i]-cum[i-1])||1), x=pts[i-1][0]+(pts[i][0]-pts[i-1][0])*u, y=pts[i-1][1]+(pts[i][1]-pts[i-1][1])*u;
+      moveClip(x,y,x-prev[0]); cut(prev[0],prev[1],x,y); prev=[x,y];
+      if(d<total) requestAnimationFrame(f); else finish();
+    })(performance.now());
+  }
+  /* rato (hover) e dedo (arrastar na horizontal) */
+  art.addEventListener('pointermove',e=>{
+    if(done) return;
+    if(auto) auto.stop=true;
+    const r=art.getBoundingClientRect(), x=e.clientX-r.left, y=e.clientY-r.top;
+    moveClip(x,y,last?x-last[0]:0);
+    if(last) cut(last[0],last[1],x,y); last=[x,y];
+  });
+  art.addEventListener('pointerleave',()=>{ last=null; });
+  art.addEventListener('pointerup',()=>{ last=null; });
+  again.addEventListener('click',()=>{ if(auto) auto.stop=true; if(build()) setTimeout(runAuto,350); });
+  let rz; addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ const w=art.getBoundingClientRect().width; if(!done&&Math.abs(w-builtW)>8){ if(auto) auto.stop=true; build(); } },200); });
+
+  function start(){ if(!build()) return; setTimeout(runAuto,1100); }
+  const ready=()=>{ (img.decode?img.decode().catch(()=>{}):Promise.resolve()).then(()=>document.fonts?document.fonts.ready:0).then(start); };
+  if(img.complete&&img.naturalWidth) ready(); else img.addEventListener('load',ready,{once:true});
+})();
+
+/* ---------- etiquetas que balançam (toque/rato/foco) ---------- */
+(function(){
+  $$('[data-swing]').forEach(h=>{
+    const go=()=>{ h.classList.remove('sw'); void h.offsetWidth; h.classList.add('sw'); };
+    h.addEventListener('pointerenter',e=>{ if(e.pointerType==='mouse') go(); });
+    h.addEventListener('click',go);
+    h.addEventListener('animationend',e=>{ if(e.animationName==='swing') h.classList.remove('sw'); });
+  });
+})();
+
+/* ---------- galeria: patinhas ao toque ---------- */
+(function(){
+  const wall=$('#wall'); if(!wall||calm) return;
+  wall.addEventListener('click',e=>{
+    for(let i=0;i<4;i++){
+      const p=document.createElementNS('http://www.w3.org/2000/svg','svg'); p.setAttribute('class','pawpop paw'); p.setAttribute('viewBox','0 0 64 64');
+      p.innerHTML='<use href="#paw"/>';
+      p.style.left=e.clientX+'px'; p.style.top=e.clientY+'px';
+      p.style.setProperty('--dx',((Math.random()-.5)*140)+'px'); p.style.setProperty('--dy',(-50-Math.random()*90)+'px'); p.style.setProperty('--r',((Math.random()-.5)*70)+'deg');
+      document.body.appendChild(p); setTimeout(()=>p.remove(),1050);
+    }
+  });
+})();
+
+/* ---------- visita: rasto de patas aceso pelo scroll ---------- */
+(function(){
+  const box=$('#steps'), tr=$('#trail'); if(!box||!tr) return;
+  const NS='http://www.w3.org/2000/svg', GAP=74; let paws=[], ticking=false;
+  function build(){
+    tr.innerHTML=''; paws=[]; const n=Math.floor(box.offsetHeight/GAP);
+    for(let i=0;i<n;i++){
+      const s=document.createElementNS(NS,'svg'); s.setAttribute('class','paw tp'); s.setAttribute('viewBox','0 0 64 64'); s.innerHTML='<use href="#paw"/>';
+      const side=i%2; s.style.top=(i*GAP+16)+'px'; s.style.left=(side?30:6)+Math.sin(i*.8)*4+'px'; s.style.transform='rotate('+(180+(side?16:-16))+'deg)';
+      tr.appendChild(s); paws.push(s);
+    }
+    upd();
+  }
+  function upd(){ ticking=false; const p=innerHeight*.66-box.getBoundingClientRect().top; paws.forEach((s,i)=>s.classList.toggle('on',calm||i*GAP+16<p)); }
+  addEventListener('scroll',()=>{ if(!ticking){ ticking=true; requestAnimationFrame(upd); } },{passive:true});
+  addEventListener('resize',build); window.addEventListener('load',build); build();
+})();
+
+/* ---------- pedido: a etiqueta grava o nome ---------- */
+(function(){
+  const f=$('#form'); if(!f) return;
+  const nome=$('#fBicho'), pvN=$('#pvNome'), pvM=$('#pvMeta'), pvS=$('#pvServ'), pvD=$('#pvDia'), ok=$('#ok'), hang=$('#fichHang');
+  const val=n=>{ const r=f.querySelector('input[name="'+n+'"]:checked'); return r?r.value:''; };
+  function upd(){
+    const t=nome.value.trim(); pvN.textContent=t||'O teu bicho';
+    pvN.style.fontSize=Math.max(1.55,3.05-Math.max(0,(t||'O teu bicho').length-6)*.16)+'rem';
+    pvM.textContent=val('esp')+' · '+val('tam');
+    const s=[...f.querySelectorAll('input[name="srv"]:checked')].map(i=>i.value);
+    pvS.innerHTML=''; (s.length?s:['A escolher']).forEach(x=>{ const e=document.createElement('span'); e.textContent=x; pvS.appendChild(e); });
+    pvD.textContent=$('#fDia').value;
+  }
+  f.addEventListener('input',upd); f.addEventListener('change',upd); upd();
+  nome.addEventListener('input',()=>{ if(!calm){ hang.classList.remove('sw'); void hang.offsetWidth; hang.classList.add('sw'); } });
+  f.addEventListener('submit',e=>{
+    e.preventDefault();
+    const t=nome.value.trim();
+    ok.textContent='Isto é uma demonstração: nada foi enviado nem guardado. No site final, o pedido'+(t?' do '+t:'')+' chegaria à Débora por WhatsApp ou email.';
+    ok.classList.add('show');
+  });
+})();
+</script>
+</body>
+</html>
