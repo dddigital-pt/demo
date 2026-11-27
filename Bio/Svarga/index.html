@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add('js');if(/[?&]nopre/.test(location.search))document.documentElement.classList.add('nopre')</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Svarga — Biolink (demonstração)</title>
+<meta name="description" content="Demonstração de biolink para o Svarga, espaço de cura em Loureiro: um paraíso terapêutico para corpo, mente e alma. Criado pela DD Digital.">
+<meta name="theme-color" content="#1F3B2D">
+<link rel="icon" type="image/png" href="img/logo-svarga.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rufina:wght@400;700&family=Karla:wght@400;500;700&family=Allura&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   SVARGA — BIOLINK (demonstração DD Digital)
+
+   CONCEITO DE LAYOUT E HERO
+   Telemóvel primeiro. A página é a "porta" do logótipo: um arco duplo dourado que se
+   desenha, com a estrelícia lá dentro e a estrela de quatro pontas no canto, como no
+   logótipo. Tocar na estrela "acende a luz": solta faíscas douradas. Por trás, a parede
+   de creme com sombras de palmeira a balançar. Os links vêm primeiro, como botões com
+   um mini-arco à esquerda; por baixo, "Escolhe o teu ritual": três arcos-miniatura
+   (Corpo, Mente, Alma) que, ao toque, montam a mensagem de WhatsApp.
+
+   HERDADO DE
+   - O site Svarga (mesma marca): paleta, Rufina + Karla + Allura, arcos e estrela,
+     sombras de palmeira, mensagem montada por toques.
+   - Mimocas / A'Kay / OhMyDog (biolinks): escolha por toques com aria-pressed que
+     atualiza o botão principal; bloco "Pede já" (A9, versão clara).
+   NOVO
+   - Faíscas ao toque na estrela; arcos que se desenham com o arco do hero;
+     botões com mini-arco; painel de agenda que se abre por grid-template-rows;
+     sem bibliotecas nem canvas (abre depressa a partir do Instagram).
+   ===================================================================== */
+
+:root{
+  --cream:#F3EEE2; --paper:#FAF7F0; --sage:#DDE6D6; --sage-d:#B9C9B4;
+  --forest:#1F3B2D; --forest-d:#142A20; --olive:#6B6C55; --olive-d:#4B4C3A;
+  --gold:#B79B55; --gold-l:#DCC58A; --gold-d:#8A7238;
+  --orange:#E07A2B; --orange-d:#A9500F; --cacau:#3A2519;
+  --ink:#1B2A22; --ink-2:#4A5A50;
+  --f-t:'Rufina','Georgia',serif; --f-b:'Karla','Helvetica Neue',Arial,sans-serif; --f-s:'Allura','Brush Script MT',cursive;
+  --bar:30px; --ease:cubic-bezier(.2,.8,.2,1);
+  /* bloco "Pede já o teu biolink" (A9), versão clara */
+  --cta-fundo:rgba(250,247,240,.92); --cta-fundo-hover:#fff;
+  --cta-texto:var(--ink); --cta-destaque:var(--forest); --cta-linha:rgba(31,59,45,.28);
+  --branco:var(--ink); --verde:var(--forest);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;padding:calc(var(--bar) + env(safe-area-inset-top,0px)) 0 0;min-height:100svh;background:var(--cream);color:var(--ink);font-family:var(--f-b);font-size:1.0625rem;line-height:1.55;overflow-x:clip}
+img{display:block;max-width:100%;height:auto}
+h1,h2,h3,p,ul,ol,figure{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--forest);outline-offset:3px;border-radius:10px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- faixa DEMO e selo (A2) ---------- */
+.bar{position:fixed;inset:0 0 auto 0;z-index:60;height:calc(var(--bar) + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) 12px 0;display:flex;align-items:center;justify-content:center;gap:.7em;background:var(--forest-d);color:var(--cream);font-size:.74rem;letter-spacing:.03em;white-space:nowrap;overflow:hidden}
+.bar b{flex:none;padding:.15em .7em;border-radius:99px;background:var(--gold);color:var(--forest-d);font-size:.68rem;letter-spacing:.18em}
+.bar .l{display:none}
+@media (min-width:640px){.bar{--bar:34px}.bar .l{display:inline}.bar .s{display:none}}
+.chip-demo{position:fixed;right:14px;bottom:14px;z-index:55;padding:.45em 1em;border-radius:99px;background:var(--forest-d);color:var(--cream);border:1px solid var(--gold);font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;pointer-events:none;display:none}
+@media (min-width:640px){.chip-demo{display:block}}
+
+/* ---------- parede com sombras de palmeira ---------- */
+.wall{position:fixed;inset:0;z-index:-1;overflow:clip;background:linear-gradient(180deg,var(--cream),#E9EEDF)}
+.wall i{position:absolute;inset:0;background:url(img/sombra-palmeira.jpg) 50% 20%/cover;mix-blend-mode:multiply;opacity:.5;animation:sway 14s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-1.4deg) translate(-1.2%,0) scale(1.08)}to{transform:rotate(1.2deg) translate(1.4%,-.8%) scale(1.12)}}
+
+.col{width:min(100% - 40px,500px);margin-inline:auto;padding:38px 0 0}
+
+/* ---------- hero: a porta ---------- */
+.door{position:relative;width:min(62vw,236px);aspect-ratio:2/3;margin:0 auto}
+.door svg.fr{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.door svg.fr path{fill:none;stroke:var(--gold);stroke-width:.5;stroke-linejoin:round}
+.door svg.fr path:nth-child(1){stroke:var(--gold-d)}
+.js .door svg.fr path{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.8s var(--ease) forwards;animation-delay:calc(.15s + var(--k)*.22s)}
+@keyframes draw{to{stroke-dashoffset:0}}
+.door .win{position:absolute;inset:0;border-radius:999px 999px 0 0;overflow:hidden;background:var(--forest)}
+.door .win img{width:100%;height:100%;object-fit:cover;object-position:50% 45%}
+.js .door .win{animation:open 1.4s .5s var(--ease) both}
+@keyframes open{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0% 0 0 0)}}
+.glow{position:absolute;inset:0;border-radius:999px 999px 0 0;pointer-events:none;opacity:0;background:radial-gradient(circle at 70% 18%,rgba(255,236,190,.85),transparent 62%)}
+.glow.on{animation:flash 1.4s ease-out}
+@keyframes flash{0%{opacity:0}18%{opacity:1}100%{opacity:0}}
+.starbtn{position:absolute;right:-30px;top:-14px;width:52px;height:52px;display:grid;place-items:center;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.starbtn svg{width:30px;height:30px;overflow:visible}
+.starbtn path{fill:var(--gold)}
+.starbtn g{transform-origin:0 0;animation:twinkle 4.5s ease-in-out infinite}
+.js .starbtn{opacity:0;animation:starIn .8s 1.5s var(--ease) forwards}
+@keyframes starIn{from{opacity:0;scale:.2}to{opacity:1;scale:1}}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.25) rotate(18deg)}}
+.sp{position:absolute;left:50%;top:50%;width:11px;height:11px;margin:-5px 0 0 -5px;background:var(--gold);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);pointer-events:none;animation:spark 1.1s var(--ease) forwards}
+@keyframes spark{from{transform:translate(0,0) scale(.4) rotate(0);opacity:1}to{transform:translate(var(--dx),var(--dy)) scale(var(--s)) rotate(160deg);opacity:0}}
+.hint{margin-top:18px;text-align:center;font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d)}
+.name{margin-top:6px;text-align:center}
+.name h1{font-family:var(--f-t);font-weight:400;font-size:clamp(3.4rem,17vw,4.6rem);line-height:1;letter-spacing:-.025em;color:var(--forest)}
+.name .sub{font-family:var(--f-t);font-size:1.12rem;line-height:1.35;color:var(--ink);margin-top:6px}
+.name .sub .script{font-size:1.5em;line-height:.7;color:var(--orange-d)}
+.name .loc{display:inline-flex;align-items:center;gap:.4em;margin-top:10px;font-size:.88rem;color:var(--olive-d)}
+.name .loc svg{width:15px;height:15px;flex:none}
+
+/* ---------- links (editar aqui) ---------- */
+.links{display:grid;gap:12px;margin-top:28px}
+.lnk{position:relative;display:flex;align-items:center;gap:14px;min-height:66px;width:100%;padding:8px 18px 8px 10px;border:1px solid rgba(183,155,85,.65);border-radius:36px;background:rgba(250,247,240,.88);text-align:left;text-decoration:none;cursor:pointer;transition:background-color .3s,border-color .3s,transform .4s var(--ease),box-shadow .3s;-webkit-tap-highlight-color:transparent}
+.lnk:hover{border-color:var(--forest);background:#fff}
+.lnk:active{transform:scale(.985)}
+.lnk .ic{flex:none;display:grid;place-items:center;width:46px;height:52px;border-radius:23px 23px 6px 6px;background:var(--forest);color:var(--gold-l)}
+.lnk .ic svg{width:22px;height:22px}
+.lnk .tx{flex:1;min-width:0;line-height:1.25}
+.lnk .tx b{display:block;font-family:var(--f-t);font-weight:400;font-size:1.18rem}
+.lnk .tx small{display:block;font-size:.84rem;color:var(--ink-2);overflow-wrap:anywhere}
+.lnk .go{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;border:1px solid var(--gold);color:var(--forest);transition:transform .35s var(--ease),background-color .3s,color .3s}
+.lnk .go svg{width:14px;height:14px}
+.lnk:hover .go{transform:translateX(3px);background:var(--forest);color:var(--cream)}
+.lnk.main{background:var(--forest);border-color:var(--forest);color:var(--cream);min-height:76px}
+.lnk.main .ic{background:var(--cream);color:var(--forest)}
+.lnk.main .tx small{color:var(--sage)}
+.lnk.main .go{border-color:var(--gold-l);color:var(--gold-l)}
+.lnk.main:hover{background:var(--forest-d)}
+.lnk.main:focus-visible{outline-color:var(--orange)}
+.lnk[aria-expanded=true] .go{transform:rotate(90deg)}
+.js .links>li{animation:rise .9s var(--ease) both;animation-delay:calc(1.1s + var(--i)*.09s)}
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+/* painel de agenda */
+.pnl{display:grid;grid-template-rows:0fr;transition:grid-template-rows .6s var(--ease)}
+.pnl.open{grid-template-rows:1fr}
+.pnl>div{overflow:hidden;min-height:0}
+.ag{margin:8px 6px 4px;padding:6px 18px 8px;border-radius:20px 20px 20px 20px;background:rgba(250,247,240,.9);border:1px solid rgba(183,155,85,.4)}
+.ag li{display:grid;grid-template-columns:4.4em minmax(0,1fr);gap:12px;align-items:baseline;padding:12px 0;border-bottom:1px solid rgba(183,155,85,.3)}
+.ag li:last-child{border-bottom:0}
+.ag .d{font-family:var(--f-t);font-size:1.5rem;line-height:1;color:var(--forest)}
+.ag .d small{display:block;margin-top:3px;font-family:var(--f-b);font-size:.64rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-d)}
+.ag b{display:block;font-family:var(--f-t);font-weight:400;font-size:1.08rem;line-height:1.25}
+.ag span{display:block;font-size:.85rem;color:var(--ink-2);line-height:1.4;margin-top:2px}
+.mark{display:inline-block;padding:.05em .55em;border:1px dashed var(--orange-d);border-radius:4px;color:var(--orange-d);font-size:.76rem;background:rgba(224,122,43,.08)}
+.ag .fine{padding:10px 0 6px;font-size:.78rem;color:var(--ink-2)}
+
+/* ---------- escolhe o teu ritual ---------- */
+.ritual{margin-top:40px;text-align:center}
+.ritual h2{font-family:var(--f-t);font-weight:400;font-size:1.7rem;line-height:1.15}
+.ritual h2 .script{font-size:1.35em;line-height:.8;color:var(--gold-d)}
+.ritual>p{margin-top:6px;font-size:.92rem;color:var(--ink-2)}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px}
+.tile{position:relative;display:block;padding:0;border:0;background:none;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent}
+.tile .ph{position:relative;display:block;aspect-ratio:3/4.3;border-radius:999px 999px 8px 8px;overflow:hidden;background:var(--forest);outline:1px solid var(--gold);outline-offset:3px;transition:outline-color .3s,outline-width .3s,transform .5s var(--ease)}
+.tile .ph img{width:100%;height:100%;object-fit:cover;filter:saturate(.7) brightness(.92);transition:filter .5s,transform 1s var(--ease)}
+.tile b{display:block;margin-top:10px;font-family:var(--f-t);font-weight:400;font-size:1.12rem}
+.tile .st{position:absolute;right:-2px;top:-4px;width:22px;height:22px;background:var(--orange);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);transform:scale(0) rotate(-90deg);transition:transform .5s var(--ease);z-index:2}
+.tile[aria-pressed=true] .ph{outline:2px solid var(--forest);outline-offset:4px;transform:translateY(-4px)}
+.tile[aria-pressed=true] .ph img{filter:none;transform:scale(1.06)}
+.tile[aria-pressed=true] .st{transform:scale(1) rotate(0)}
+.tile:focus-visible{outline:none}
+.tile:focus-visible .ph{outline:3px solid var(--orange);outline-offset:4px}
+.msg{margin-top:18px;padding:14px 16px;border-radius:18px;background:rgba(250,247,240,.9);border:1px dashed var(--gold);font-size:.92rem;line-height:1.45;color:var(--ink);text-align:left}
+.msg small{display:block;margin-bottom:4px;font-size:.66rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-d)}
+.ritual .lnk{margin-top:12px}
+
+/* ---------- rodapé ---------- */
+.rodape{margin-top:44px;padding:30px 0 calc(34px + env(safe-area-inset-bottom,0px));text-align:center}
+.rodape .lg{width:110px;margin:0 auto 14px;background:var(--cream);border-radius:999px 999px 8px 8px;padding:12px 10px 8px}
+.rodape .nota{font-size:.78rem;line-height:1.5;color:var(--ink-2);max-width:34em;margin:0 auto 14px}
+.credito{font-size:.75rem;color:var(--ink-2)}
+.credito a{color:var(--forest);text-decoration:none;font-weight:700;background:linear-gradient(var(--gold),var(--gold)) 0 100%/0 1px no-repeat;transition:background-size .3s var(--ease)}
+.credito a:hover,.credito a:focus-visible{background-size:100% 1px}
+.credito-emoji{display:inline-block;transform-origin:70% 70%;animation:piscar 6s ease-in-out infinite}
+@keyframes piscar{0%,86%,100%{transform:rotate(0) scale(1)}90%{transform:rotate(-14deg) scale(1.2)}94%{transform:rotate(10deg) scale(1.2)}97%{transform:rotate(0) scale(1)}}
+.direitos{margin-top:12px;font-size:.72rem;color:var(--olive-d)}
+
+/* =====================================================================
+   "PEDE JÁ O TEU BIOLINK" (DD Digital) — igual em todos os biolinks (A9)
+   ===================================================================== */
+.pede{display:inline-flex;align-items:center;gap:12px;max-width:100%;margin-top:14px;padding:8px 18px 8px 8px;border-radius:999px;text-align:left;text-decoration:none;color:var(--cta-texto,var(--branco));background:var(--cta-fundo,rgba(4,11,7,.72));border:1px solid var(--cta-linha,rgba(150,255,195,.24));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:border-color .25s,background .25s}
+.pede img{flex:none;width:40px;height:40px;border-radius:50%;background:#fdfdfd;object-fit:cover}
+.pede__txt{min-width:0;line-height:1.3}
+.pede__txt>span{display:block;font-size:.7rem;opacity:.75}
+.pede b{display:block;margin-top:1px;font-size:.82rem;font-weight:700;color:var(--cta-destaque,var(--verde))}
+.pede b i{display:inline-block;font-style:normal;transition:transform .2s var(--ease)}
+.pede:hover,.pede:focus-visible{border-color:var(--cta-destaque,var(--verde));background:var(--cta-fundo-hover,rgba(10,26,18,.9))}
+.pede:hover b i{transform:translateX(4px)}
+.pede:focus-visible{outline:2px solid var(--branco);outline-offset:3px}
+
+/* ---------- movimento reduzido ---------- */
+@media (prefers-reduced-motion:reduce){
+  .wall i,.starbtn g,.credito-emoji{animation:none}
+  .js .door svg.fr path{animation:none;stroke-dashoffset:0}
+  .js .door .win,.js .links>li{animation:none}
+  .js .starbtn{animation:none;opacity:1}
+  .pnl{transition:none}
+}
+.nopre .door svg.fr path{animation:none!important;stroke-dashoffset:0}
+.nopre .door .win,.nopre .links>li{animation:none!important}
+.nopre .starbtn{animation:none!important;opacity:1}
+</style>
+</head>
+<body>
+
+<!-- ===== AVISO DE DEMONSTRAÇÃO (obrigatório) ===== -->
+<div class="bar" role="note"><b>DEMO</b><span class="l">Biolink de demonstração criado pela DD Digital para o Svarga · conteúdo ilustrativo</span><span class="s">Demonstração · Svarga</span></div>
+<div class="chip-demo" aria-hidden="true">Versão de demonstração</div>
+<div class="wall" aria-hidden="true"><i></i></div>
+
+<main class="col">
+
+  <!-- ===== HERO: a porta ===== -->
+  <header>
+    <figure class="door">
+      <svg class="fr" viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path pathLength="1" style="--k:0" d="M-11 157V50A61 61 0 0 1 111 50V157Z"/>
+        <path pathLength="1" style="--k:1" d="M-5 153V50A55 55 0 0 1 105 50V153Z" opacity=".6"/>
+      </svg>
+      <div class="win"><img src="img/hero-estrelitzia.jpg" width="640" height="818" alt="Estrelitzia laranja entre folhas verdes" fetchpriority="high"></div>
+      <div class="glow" id="glow"></div>
+      <button class="starbtn" id="starbtn" type="button" aria-label="Acender a luz"><svg viewBox="-14 -14 28 28" aria-hidden="true" focusable="false"><g><path d="M0-13C1-5 5-1 13 0 5 1 1 5 0 13-1 5-5 1-13 0-5-1-1-5 0-13Z"/></g></svg></button>
+    </figure>
+    <p class="hint">Toca na estrela</p>
+    <div class="name">
+      <h1>Svarga</h1>
+      <p class="sub">Um <span class="script">paraíso</span> terapêutico para corpo, mente e alma.</p>
+      <p class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.800 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.4"/></svg>Praça N. Sra. da Alumieira, Loureiro</p>
+    </div>
+  </header>
+
+  <!-- ===== LINKS: editar aqui ===== -->
+  <ul class="links" aria-label="Ligações">
+    <li style="--i:0"><a class="lnk main" id="waMain" href="https://wa.me/351935328400" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5A8 8 0 0 1 8.200 18.600L4 20l1.300-3.900A8 8 0 1 1 20 11.500Z"/><path d="M9.200 9c.2 2.800 2.800 5.300 5.700 5.800l1-1.300-2-1-.9.700c-.8-.4-1.600-1.200-2-2l.7-.9-1-2Z"/></svg></span>
+      <span class="tx"><b>Falar no WhatsApp</b><small id="waSub">Marcar ou pedir informações</small></span>
+      <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+    <li style="--i:1"><button class="lnk" id="agBtn" type="button" aria-expanded="false" aria-controls="agPnl">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span>
+      <span class="tx"><b>Rituais e agenda</b><small>Atravessa, oficinas, pilates, cursos</small></span>
+      <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></span></button>
+      <div class="pnl" id="agPnl" inert><div>
+        <ol class="ag">
+          <li><div class="d">17 e 18<small>Dez · 17h30</small></div><div><b>Oficina Duendes Criativos</b><span>Natal no Svarga. Inscrições abertas.</span></div></li>
+          <li><div class="d">27<small>Dez · sáb · 10h</small></div><div><b>Atravessa</b><span>Yoga, visualização e escrita terapêutica.</span></div></li>
+          <li><div class="d">13<small>Jan · 16h</small></div><div><b>Pilates pós-parto</b><span>Aula experimental.</span></div></li>
+          <li><div class="d">24<small>Jan · 10h</small></div><div><b>Simples e Natural</b><span>Cuidados de pele e maquilhagem, com Eliana Amorim.</span></div></li>
+          <li><div class="d">Março<small>Aveiro</small></div><div><b>Meditação para Crianças</b><span>Curso de professores · 98 h · presencial.</span></div></li>
+          <li class="fine"><span class="mark">datas vistas no Instagram · a confirmar com o cliente</span></li>
+        </ol>
+      </div></div></li>
+    <li style="--i:2"><a class="lnk" href="https://www.instagram.com/svarga.pt/" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.700"/><circle cx="16.800" cy="7.200" r=".8" fill="currentColor" stroke="none"/></svg></span>
+      <span class="tx"><b>Instagram</b><small>@svarga.pt</small></span>
+      <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+    <li style="--i:3"><a class="lnk" href="https://www.google.com/maps/search/?api=1&amp;query=Pra%C3%A7a+Nossa+Senhora+da+Alumieira+Loureiro" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s7-6.2 7-11.500A7 7 0 0 0 5 9.500C5 14.800 12 21 12 21Z"/><circle cx="12" cy="9.500" r="2.400"/></svg></span>
+      <span class="tx"><b>Como chegar</b><small>Praça N. Sra. da Alumieira, n.º 234, Loureiro</small></span>
+      <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+    <li style="--i:4"><a class="lnk" href="tel:+351935328400">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M6.600 4h3l1.400 4-2 1.300a11 11 0 0 0 5.700 5.700L16 13l4 1.400v3a2.600 2.600 0 0 1-2.800 2.600A15 15 0 0 1 4 6.800 2.600 2.600 0 0 1 6.600 4Z"/></svg></span>
+      <span class="tx"><b>Ligar</b><small>+351 935 328 400</small></span>
+      <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+    <li style="--i:5"><a class="lnk" href="mailto:geral.svarga@gmail.com">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3.500" y="5.500" width="17" height="13" rx="2"/><path d="m4 7 8 6 8-6"/></svg></span>
+      <span class="tx"><b>Email</b><small>geral.svarga@gmail.com</small></span>
+      <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+  </ul>
+
+  <!-- ===== ESCOLHE O TEU RITUAL ===== -->
+  <section class="ritual" aria-labelledby="h-ritual">
+    <h2 id="h-ritual">Escolhe o teu <span class="script">ritual</span></h2>
+    <p>Toca num ou mais portais e a mensagem fica pronta.</p>
+    <div class="tiles" role="group" aria-label="Portais de interesse">
+      <button class="tile" type="button" aria-pressed="false" data-v="Corpo (massagens, rituais, pele)"><span class="ph"><img src="img/ritual-corpo.jpg" width="420" height="630" alt="" loading="lazy"></span><span class="st"></span><b>Corpo</b></button>
+      <button class="tile" type="button" aria-pressed="false" data-v="Mente (yoga, meditação, escrita)"><span class="ph"><img src="img/ritual-mente.jpg" width="560" height="653" alt="" loading="lazy"></span><span class="st"></span><b>Mente</b></button>
+      <button class="tile" type="button" aria-pressed="false" data-v="Alma (mesa radiónica)"><span class="ph"><img src="img/ritual-alma.jpg" width="560" height="653" alt="" loading="lazy"></span><span class="st"></span><b>Alma</b></button>
+    </div>
+    <p class="msg" aria-live="polite"><small>A tua mensagem</small><span id="msgTxt"></span></p>
+    <a class="lnk main" id="waSend" href="https://wa.me/351935328400" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5A8 8 0 0 1 8.200 18.600L4 20l1.300-3.900A8 8 0 1 1 20 11.500Z"/></svg></span>
+      <span class="tx"><b>Enviar por WhatsApp</b><small>Abre a conversa com o texto pronto</small></span>
+      <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+  </section>
+
+  <footer class="rodape">
+    <img class="lg" src="img/logo-svarga.png" width="509" height="351" alt="Svarga" loading="lazy">
+    <p class="nota"><strong>Biolink de demonstração criado pela DD Digital para o Svarga.</strong> Textos e descrições ilustrativos e não vinculativos; datas vistas nas publicações do Instagram, a confirmar com o cliente. Horário: <span class="mark">a confirmar</span>. Fotografias: Unsplash. Terapias complementares não substituem o acompanhamento médico.</p>
+    <p class="credito">
+      Spoiler: este biolink não se fez sozinho <span class="credito-emoji" aria-hidden="true">😉</span>
+      <a href="https://dddigital.pt" target="_blank" rel="noopener">DD Digital</a>.
+    </p>
+    <a class="pede" href="https://dddigital.pt/?utm_source=biolink&amp;utm_medium=cta&amp;utm_campaign=svarga#contacto" target="_blank" rel="noopener">
+      <img src="img/dd-logo.webp" width="200" height="200" alt="DD Digital" loading="lazy" decoding="async">
+      <span class="pede__txt">
+        <span>Design totalmente personalizado à tua marca</span>
+        <b>Pede já o teu biolink <i aria-hidden="true">→</i></b>
+      </span>
+    </a>
+    <p class="direitos">© <span id="ano">2026</span> Svarga · Espaço de Cura</p>
+  </footer>
+</main>
+
+<script>
+/* =====================================================================
+   SVARGA BIOLINK — JS (por funcionalidade)
+   ===================================================================== */
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+$('#ano').textContent=new Date().getFullYear();
+
+/* ---------- estrela: acende a luz ---------- */
+var starbtn=$('#starbtn'), glow=$('#glow');
+starbtn.addEventListener('click',function(){
+  glow.classList.remove('on'); void glow.offsetWidth; glow.classList.add('on');
+  if(reduce) return;
+  for(var i=0;i<16;i++){
+    var s=document.createElement('span'); s.className='sp';
+    var a=Math.random()*Math.PI*2, d=50+Math.random()*90;
+    s.style.setProperty('--dx',(Math.cos(a)*d).toFixed(0)+'px'); s.style.setProperty('--dy',(Math.sin(a)*d).toFixed(0)+'px');
+    s.style.setProperty('--s',(.6+Math.random()*1.1).toFixed(2));
+    s.style.background=i%4===0?'var(--orange)':'var(--gold)';
+    starbtn.appendChild(s); s.addEventListener('animationend',function(){this.remove()});
+  }
+});
+
+/* ---------- agenda (painel) ---------- */
+var agBtn=$('#agBtn'), agPnl=$('#agPnl');
+agBtn.addEventListener('click',function(){
+  var open=agBtn.getAttribute('aria-expanded')!=='true';
+  agBtn.setAttribute('aria-expanded',open); agPnl.classList.toggle('open',open); agPnl.inert=!open;
+});
+
+/* ---------- escolhe o teu ritual: monta a mensagem ---------- */
+var tiles=$$('.tile'), msgTxt=$('#msgTxt'), waSend=$('#waSend'), waMain=$('#waMain'), waSub=$('#waSub'), picked=[];
+function build(){
+  return 'Olá! '+(picked.length?'Gostava de saber mais sobre: '+picked.join(', ')+'.':'Gostava de saber mais sobre os rituais do Svarga.')+' Podem dizer-me os próximos passos? Obrigado(a)!';
+}
+function sync(){
+  var t=build(), href='https://wa.me/351935328400?text='+encodeURIComponent(t);
+  msgTxt.textContent=t; waSend.href=href; waMain.href=picked.length?href:'https://wa.me/351935328400';
+  waSub.textContent=picked.length?'Com a tua mensagem já escrita':'Marcar ou pedir informações';
+}
+tiles.forEach(function(b){
+  b.addEventListener('click',function(){
+    var v=b.dataset.v, i=picked.indexOf(v); if(i<0)picked.push(v); else picked.splice(i,1);
+    b.setAttribute('aria-pressed',i<0); sync();
+  });
+});
+sync();
+})();
+</script>
+</body>
+</html>
