@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add('js')</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>OH MY DOG! Grooming — Biolink (demonstração)</title>
+<meta name="description" content="Demonstração de biolink para OH MY DOG! Grooming by Débora Pereira, banhos, tosquias e muitos miminhos na Murtosa. Criado pela DD Digital.">
+<meta name="theme-color" content="#17402A">
+<link rel="icon" type="image/jpeg" href="img/logo-ohmydog.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   OH MY DOG! — BIOLINK (demonstração DD Digital)
+
+   CONCEITO DE LAYOUT E HERO
+   Telemóvel primeiro. A página "pendura-se" na coleira verde-floresta do logótipo: a foto de
+   perfil é uma etiqueta de cão que cai, balança e se pode empurrar com o dedo
+   (cada toque balança e espalha patinhas). Os links vêm primeiro, como cartões com
+   botão redondo de seta; por baixo, "Prepara a mensagem": três toques (Banho,
+   Tosquia, Miminhos) montam o texto do WhatsApp principal.
+
+   HERDADO DE
+   - O site OhMyDog (mesma marca): coleira, etiqueta com argola, pêndulo, paleta,
+     Bagel Fat One + Quicksand, patinhas ao toque.
+   - Mimocas Party / A'Kay (biolinks): escolha por toques que monta a mensagem de
+     WhatsApp (aqui com ícones e `aria-pressed`) e bloco "Pede já" (A9, versão clara).
+   NOVO
+   - Etiqueta única em coluna estreita com nome gravado; fita de fotos que desliza
+     por baixo; sem canvas nem bibliotecas (carrega depressa, é para o Instagram).
+   ===================================================================== */
+
+:root{
+  --cream:#F6EEDA; --paper:#FFFDF8;
+  --ink:#0B2612; --ink-2:#1E4630;
+  --mint:#9CC4B0; --mint-l:#DCE9DF; --teal:#4F8A72;
+  --blue:#17402A; --blue-d:#0B2612;
+  --pink:#F7B8CE; --pink-l:#FDE3EC;
+  --orange:#D8893F; --butter:#F2CB77;
+  --f-d:'Bagel Fat One','Arial Rounded MT Bold',system-ui,sans-serif;
+  --f-b:'Quicksand','Nunito',system-ui,sans-serif;
+  --strip:30px;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  /* bloco "Pede já o teu biolink" (A9), versão clara */
+  --cta-fundo:rgba(255,253,248,.92); --cta-fundo-hover:#fff;
+  --cta-texto:var(--ink); --cta-destaque:var(--blue); --cta-linha:rgba(11,38,18,.24);
+  --branco:var(--ink); --verde:var(--blue);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;padding:var(--strip) 0 0;background:var(--cream);color:var(--ink);font-family:var(--f-b);font-weight:600;font-size:1.0625rem;line-height:1.5;overflow-x:clip}
+img{display:block;max-width:100%;height:auto}
+h1,h2,p,ul,figure{margin:0}
+ul{padding:0;list-style:none}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:8px}
+.i{width:1.2em;height:1.2em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.paw{fill:currentColor;stroke:none;flex:none}
+.col{width:min(480px,100% - 2*max(18px,env(safe-area-inset-left)));margin-inline:auto}
+
+/* ---------- faixa DEMO + selo ---------- */
+.strip{position:fixed;top:0;left:0;right:0;z-index:50;height:var(--strip);display:flex;align-items:center;justify-content:center;gap:9px;padding:0 10px;background:var(--ink);color:var(--cream);font-size:.74rem;font-weight:700;white-space:nowrap;overflow:hidden}
+.strip .dm{font-family:var(--f-d);font-weight:400;letter-spacing:.08em;background:var(--pink);color:var(--ink);padding:1px 9px;border-radius:99px}
+.strip .s-d{display:none}
+@media (min-width:640px){.strip .s-d{display:inline}.strip .s-m{display:none}}
+.seal{display:none;position:fixed;right:16px;bottom:16px;z-index:40;align-items:center;gap:8px;padding:9px 16px 9px 12px;border-radius:99px;background:var(--pink);color:var(--ink);font-weight:700;font-size:.82rem;box-shadow:0 8px 20px -8px rgba(11,38,18,.55);pointer-events:none;transform:rotate(-2deg)}
+.seal .paw{width:18px;height:18px;color:var(--blue)}
+@media (min-width:760px){.seal{display:flex}}
+
+/* ---------- coleira + etiqueta ---------- */
+.collar{position:relative;z-index:3;height:28px;background:var(--blue);box-shadow:inset 0 6px 0 rgba(255,255,255,.16),inset 0 -5px 0 rgba(0,0,0,.14)}
+.collar::before{content:"";position:absolute;left:0;right:0;top:50%;height:3px;margin-top:-1px;background:repeating-linear-gradient(90deg,#fff 0 13px,transparent 13px 23px);opacity:.85}
+.collar .buckle{position:absolute;right:clamp(14px,8vw,60px);top:-6px;width:46px;height:40px;background:var(--blue);border:7px solid #c3ccd0;border-radius:9px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5),0 3px 4px rgba(0,0,0,.2)}
+.collar .buckle::after{content:"";position:absolute;left:50%;top:-7px;bottom:-7px;width:7px;margin-left:-3px;background:#c3ccd0;border-radius:3px}
+.top{position:relative;overflow-x:clip;background:var(--cream)}
+.hang{position:relative;z-index:5;width:min(68vw,280px);margin:-16px auto 0;transform-origin:50% 0;cursor:pointer;-webkit-tap-highlight-color:transparent;animation:hIn 1.7s var(--ease) .1s both,sway 7s ease-in-out 1.9s infinite alternate}
+.hang.sw{animation:swing 1.5s ease-out both}
+.tagbody{position:relative;background:var(--pink);border-radius:44px;padding:76px 12px 20px;text-align:center;box-shadow:0 26px 34px -24px rgba(11,38,18,.55)}
+.tagbody::before{content:"";position:absolute;z-index:1;left:50%;top:20px;width:28px;height:28px;margin-left:-14px;border-radius:50%;background:var(--cream);box-shadow:inset 0 3px 6px rgba(11,38,18,.32)}
+.ring{position:absolute;z-index:4;left:50%;top:-24px;width:56px;height:56px;margin-left:-28px;border-radius:50%;border:7px solid #c3ccd0;box-shadow:inset 0 0 0 2px rgba(255,255,255,.55),0 3px 4px rgba(0,0,0,.25);pointer-events:none}
+.medal{position:absolute;z-index:6;top:6px;left:-22px;width:84px;height:84px;border-radius:50%;border:4px solid var(--cream);box-shadow:0 10px 20px -8px rgba(11,38,18,.55);transform:rotate(-8deg)}
+.pic{border-radius:30px;overflow:hidden;aspect-ratio:1/1.08;background:var(--mint)}
+.pic img{width:100%;height:100%;object-fit:cover;object-position:50% 28%}
+.tagbody h1{margin-top:16px;font-family:var(--f-d);font-weight:400;font-size:2.15rem;line-height:1;color:var(--blue);letter-spacing:.005em}
+.tagbody h1 em{font-style:normal;color:var(--orange)}
+.tagbody p{margin-top:6px;font-size:.88rem;font-weight:700;letter-spacing:.02em}
+@keyframes hIn{0%{transform:translateY(-70%) rotate(-10deg);opacity:0}22%{opacity:1}55%{transform:translateY(0) rotate(5.5deg)}78%{transform:rotate(-2.4deg)}100%{transform:rotate(0)}}
+@keyframes sway{from{transform:rotate(-1deg)}to{transform:rotate(1deg)}}
+@keyframes swing{0%{transform:rotate(0)}18%{transform:rotate(8deg)}38%{transform:rotate(-5.5deg)}58%{transform:rotate(3.2deg)}78%{transform:rotate(-1.4deg)}100%{transform:rotate(0)}}
+.pawpop{position:fixed;z-index:60;width:28px;height:28px;margin:-14px 0 0 -14px;color:var(--orange);pointer-events:none;animation:pawpop 1s ease-out forwards}
+@keyframes pawpop{0%{transform:translate(0,0) scale(.3) rotate(var(--r));opacity:0}18%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--r));opacity:0}}
+.pitch{padding:26px 0 8px;text-align:center;font-size:1.08rem}
+.pitch b{font-family:var(--f-d);font-weight:400;color:var(--ink)}
+
+/* ---------- botões ---------- */
+.main{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:68px;padding:8px 10px 8px 26px;border-radius:99px;background:var(--blue);color:#fff;text-decoration:none;font-weight:700;font-size:1.12rem;transition:transform .25s var(--ease),background .2s}
+.main small{display:block;font-size:.76rem;font-weight:600;opacity:.85;line-height:1.2}
+.main .ar{display:grid;place-items:center;width:50px;height:50px;border-radius:50%;background:var(--pink);color:var(--ink);flex:none}
+.main:hover{background:var(--blue-d);transform:translateY(-2px) rotate(-.6deg)}
+.prep{margin-top:16px;padding:18px 16px 18px;border-radius:30px;background:var(--mint-l)}
+.prep h2{font-family:var(--f-d);font-weight:400;font-size:1.3rem;line-height:1.1;margin-bottom:12px}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:7px;min-height:84px;padding:12px 6px;border-radius:22px;border:0;background:var(--paper);box-shadow:inset 0 0 0 2.5px var(--ink);font-weight:700;font-size:.92rem;cursor:pointer;transition:background .2s,color .2s,transform .25s var(--ease);-webkit-tap-highlight-color:transparent}
+.tile .i{width:26px;height:26px;color:var(--blue)}
+.tile[aria-pressed="true"]{background:var(--blue);color:#fff;box-shadow:inset 0 0 0 2.5px var(--blue);transform:rotate(-1.5deg)}
+.tile[aria-pressed="true"] .i{color:var(--pink)}
+.nm{display:block;margin-top:12px}
+.nm span{display:block;margin-bottom:6px;font-size:.88rem;font-weight:700}
+.nm input{width:100%;min-height:50px;padding:10px 18px;border-radius:99px;border:2.5px solid var(--ink);background:var(--paper);font:inherit;font-weight:600}
+.prep .msg{margin-top:12px;font-size:.88rem;line-height:1.4;opacity:.85}
+
+.links{display:grid;gap:12px;margin-top:22px}
+.lnk{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;min-height:72px;padding:10px 12px 10px 10px;border-radius:99px;background:var(--paper);box-shadow:inset 0 0 0 2.5px var(--ink);text-decoration:none;transition:transform .25s var(--ease),background .2s}
+.lnk:hover{transform:translateX(5px) rotate(-.4deg);background:#fff}
+.lnk .ic{display:grid;place-items:center;width:50px;height:50px;border-radius:50%;background:var(--mint)}
+.lnk .ic .i{width:24px;height:24px}
+.lnk:nth-child(2) .ic{background:var(--pink)}.lnk:nth-child(3) .ic{background:var(--butter)}.lnk:nth-child(4) .ic{background:var(--mint)}
+.lnk small{display:block;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.7;line-height:1.2}
+.lnk strong{display:block;font-size:1.02rem;font-weight:700;line-height:1.25;overflow-wrap:anywhere}
+.lnk .go{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--blue);color:#fff}
+.tbc{display:inline-block;padding:3px 12px;border-radius:99px;border:2px dashed currentColor;font-size:.8rem;font-weight:700;line-height:1.35}
+.hor{margin-top:14px;text-align:center;font-size:.92rem}
+
+/* ---------- fita de fotos ---------- */
+.fita{margin-top:34px}
+.fita h2{font-family:var(--f-d);font-weight:400;font-size:1.5rem;line-height:1.1;text-align:center;margin-bottom:14px}
+.fita h2 em{font-style:normal;color:var(--orange)}
+.roll{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;padding:6px max(18px,calc(50% - 240px)) 14px;scrollbar-width:none}
+.roll::-webkit-scrollbar{display:none}
+.roll figure{flex:0 0 66%;max-width:260px;scroll-snap-align:center;padding:9px 9px 0;border-radius:26px;background:var(--paper);box-shadow:0 14px 22px -16px rgba(11,38,18,.5)}
+.roll figure:nth-child(odd){transform:rotate(-1.2deg)}.roll figure:nth-child(even){transform:rotate(1.2deg)}
+.roll img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:18px}
+.roll figcaption{padding:10px 8px 14px;font-size:.88rem;line-height:1.3}
+.roll figcaption b{display:block;font-family:var(--f-d);font-weight:400;font-size:1.08rem;color:var(--blue)}
+
+/* ---------- rodapé ---------- */
+.rodape{margin-top:30px;padding:34px 0 calc(34px + env(safe-area-inset-bottom));background:var(--ink);color:var(--cream);text-align:center}
+.rlogo{width:104px;height:104px;margin:0 auto 16px;border-radius:50%;border:4px solid var(--cream)}
+.rodape .big{font-family:var(--f-d);font-size:clamp(2.6rem,15vw,4.2rem);line-height:.9;color:var(--pink);margin-bottom:18px}
+.rodape .big span{color:var(--mint)}
+.credito{font-size:.92rem}
+.credito a{color:var(--pink)}
+.demo-note{margin:18px auto 0;max-width:420px;padding:16px 18px;border-radius:22px;background:var(--ink-2);font-size:.82rem;line-height:1.5;text-align:left}
+.demo-note b{color:var(--pink)}
+.direitos{margin-top:16px;font-size:.8rem;opacity:.75}
+
+/* =====================================================================
+   "PEDE JÁ O TEU BIOLINK" (DD Digital) — igual em todos os biolinks (A9)
+   ===================================================================== */
+.pede{display:inline-flex;align-items:center;gap:12px;max-width:100%;margin-top:14px;padding:8px 18px 8px 8px;border-radius:999px;text-align:left;text-decoration:none;color:var(--cta-texto,var(--branco));background:var(--cta-fundo,rgba(4,11,7,.72));border:1px solid var(--cta-linha,rgba(150,255,195,.24));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:border-color .25s,background .25s}
+.pede img{flex:none;width:40px;height:40px;border-radius:50%;background:#fdfdfd;object-fit:cover}
+.pede__txt{min-width:0;line-height:1.3}
+.pede__txt>span{display:block;font-size:.7rem;opacity:.75}
+.pede b{display:block;margin-top:1px;font-size:.82rem;font-weight:700;color:var(--cta-destaque,var(--verde))}
+.pede b i{display:inline-block;font-style:normal;transition:transform .2s var(--ease)}
+.pede:hover,.pede:focus-visible{border-color:var(--cta-destaque,var(--verde));background:var(--cta-fundo-hover,rgba(10,26,18,.9))}
+.pede:hover b i{transform:translateX(4px)}
+.pede:focus-visible{outline:2px solid var(--branco);outline-offset:3px}
+/* sobre o rodapé escuro, o bloco precisa de contraste próprio */
+.rodape .pede{--cta-fundo:rgba(255,253,248,.95);--cta-fundo-hover:#fff;--cta-texto:var(--ink);--cta-destaque:var(--blue);--cta-linha:rgba(255,253,248,.5);--branco:var(--pink)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="paw" viewBox="0 0 64 64"><ellipse cx="32" cy="42" rx="15" ry="12"/><ellipse cx="13" cy="28" rx="6" ry="8" transform="rotate(-20 13 28)"/><ellipse cx="25" cy="17" rx="6" ry="8.5" transform="rotate(-6 25 17)"/><ellipse cx="39" cy="17" rx="6" ry="8.5" transform="rotate(6 39 17)"/><ellipse cx="51" cy="28" rx="6" ry="8" transform="rotate(20 51 28)"/></symbol>
+    <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3c3.5 4.6 6 7.7 6 11a6 6 0 0 1-12 0c0-3.3 2.5-6.4 6-11z"/></symbol>
+    <symbol id="i-cut" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6 20 17M8.6 16.4 20 7"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-wa" viewBox="0 0 24 24"><path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8L4 20z"/><path d="M9.2 8.6c.3 2.6 2.6 4.9 5.2 5.2l1-1.3-1.9-1-.8.7a3.6 3.6 0 0 1-1.7-1.7l.7-.8-1-1.9-1.5 0z"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3.5 7.5 12 13l8.5-5.5"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.3-6-10a6 6 0 0 1 12 0c0 4.7-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></symbol>
+    <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r=".8"/></symbol>
+  </defs>
+</svg>
+
+<!-- FAIXA DEMO (fixa) -->
+<div class="strip" role="note">
+  <span class="dm">DEMO</span>
+  <span class="s-d">Biolink de demonstração criado pela DD Digital para OH MY DOG! Grooming · conteúdo ilustrativo</span>
+  <span class="s-m">Demonstração · OH MY DOG!</span>
+</div>
+<div class="seal" aria-hidden="true"><svg class="paw" viewBox="0 0 64 64"><use href="#paw"/></svg>Versão de demonstração</div>
+
+<main>
+  <!-- ===== TOPO: coleira e etiqueta ===== -->
+  <header class="top">
+    <div class="collar" aria-hidden="true"><span class="buckle"></span></div>
+    <div class="hang" id="hang">
+      <div class="tagbody">
+        <i class="ring" aria-hidden="true"></i>
+        <img class="medal" src="img/logo-ohmydog.jpg" width="600" height="600" alt="Logótipo OH MY DOG! Grooming: um caniche numa cadeira de tosquia">
+        <div class="pic"><img src="img/cao-chow-chow.jpg" width="816" height="1125" alt="Cão chow chow de pelo cor de canela, a sorrir, recém-tratado"></div>
+        <h1>OH MY <em>DOG!</em></h1>
+        <p>Grooming by Débora Pereira<br>Murtosa</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="col">
+    <p class="pitch"><b>Banhos, tosquias e muitos miminhos.</b><br>Cães e gatos.</p>
+
+    <!-- ===== LINKS: editar aqui ===== -->
+    <a class="main" id="waMain" href="https://wa.me/351928020484" target="_blank" rel="noopener">
+      <span>Marcar pelo WhatsApp<small id="waSub">+351 928 020 484</small></span>
+      <span class="ar"><svg class="i" aria-hidden="true"><use href="#i-wa"/></svg></span>
+    </a>
+
+    <section class="prep" aria-labelledby="hp">
+      <h2 id="hp">O que precisa o teu bicho?</h2>
+      <div class="tiles" role="group" aria-labelledby="hp">
+        <button class="tile" type="button" aria-pressed="false" data-v="Banho"><svg class="i" aria-hidden="true"><use href="#i-drop"/></svg>Banho</button>
+        <button class="tile" type="button" aria-pressed="false" data-v="Tosquia"><svg class="i" aria-hidden="true"><use href="#i-cut"/></svg>Tosquia</button>
+        <button class="tile" type="button" aria-pressed="false" data-v="Miminhos"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg>Miminhos</button>
+      </div>
+      <label class="nm"><span>Como se chama? (opcional)</span><input id="nome" type="text" maxlength="20" autocomplete="off" placeholder="Ex.: Cookie"></label>
+      <p class="msg" id="msg" aria-live="polite">Toca nas opções e o botão de cima leva a mensagem já escrita.</p>
+    </section>
+
+    <ul class="links">
+      <li><a class="lnk" href="tel:+351928020484"><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg></span><span><small>Ligar</small><strong>+351 928 020 484</strong></span><span class="go"><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></span></a></li>
+      <li><a class="lnk" href="https://www.instagram.com/_ohmydog_grooming/" target="_blank" rel="noopener"><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-ig"/></svg></span><span><small>Instagram</small><strong>@_ohmydog_grooming</strong></span><span class="go"><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></span></a></li>
+      <li><a class="lnk" href="mailto:ohmydoggroomingpetboutique@gmail.com"><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg></span><span><small>Email</small><strong>ohmydoggrooming<wbr>petboutique@gmail.com</strong></span><span class="go"><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></span></a></li>
+      <li><a class="lnk" href="https://www.google.com/maps/search/?api=1&amp;query=Rua%20Dr.%20Carlos%20Barbosa%2C%20Murtosa%203870-213" target="_blank" rel="noopener"><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg></span><span><small>Como chegar</small><strong>Rua Dr. Carlos Barbosa, Edf. S. Lourenço, n.º 29 · 3870-213 Murtosa</strong></span><span class="go"><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></span></a></li>
+    </ul>
+    <p class="hor">Horário: <span class="tbc">a confirmar com a cliente</span></p>
+  </div>
+
+  <!-- ===== FITA DE FOTOS (da cliente) ===== -->
+  <section class="fita" aria-labelledby="hf">
+    <h2 id="hf">Clientes de <em>quatro patas</em></h2>
+    <div class="roll">
+      <figure><img src="img/bulldogue-leopardo.jpg" width="843" height="1101" alt="Bulldogue francês na mesa de tosquia com manchas de leopardo desenhadas no pelo" loading="lazy" style="object-position:82% 50%"><figcaption><b>Edição limitada</b>Bulldogue francês cruzado com leopardo.</figcaption></figure>
+      <figure><img src="img/cao-shihtzu-tosquia.jpg" width="705" height="1000" alt="Cão de pelo creme acabado de tosquiar, de pé na mesa azul" loading="lazy"><figcaption><b>Depois</b>Cara de quem sabe que está lindo.</figcaption></figure>
+      <figure><img src="img/cao-bichon-lacos.jpg" width="843" height="1125" alt="Cãozinho branco deitado num sofá, com laços cor-de-rosa nas orelhas" loading="lazy" style="object-position:62% 56%"><figcaption><b>Laços rosa</b>Olhar de quem manda no sofá.</figcaption></figure>
+      <figure><img src="img/cachorro-brilhante-orelha.jpg" width="816" height="1101" alt="Cachorro ao colo com um brilhante cor-de-rosa na orelha" loading="lazy"><figcaption><b>Brilhante na orelha</b>Obrigatório, claro.</figcaption></figure>
+      <figure><img src="img/banho-cao-preto.jpg" width="700" height="930" alt="Cão grande de pelo preto, molhado, na banheira do salão" loading="lazy" style="object-position:50% 22%"><figcaption><b>Hora do banho</b>Fotografias do Instagram da Débora.</figcaption></figure>
+    </div>
+  </section>
+</main>
+
+<!-- ===== RODAPÉ ===== -->
+<footer class="rodape">
+  <div class="col">
+    <img class="rlogo" src="img/logo-ohmydog.jpg" width="600" height="600" alt="Logótipo OH MY DOG! Grooming" loading="lazy">
+    <p class="big" aria-hidden="true">Oh my <span>dog!</span></p>
+    <p class="credito">
+      Spoiler: este biolink não se fez sozinho <span aria-hidden="true">😉</span>
+      <a href="https://dddigital.pt" target="_blank" rel="noopener">DD Digital</a>.
+    </p>
+    <a class="pede" href="https://dddigital.pt/?utm_source=biolink&amp;utm_medium=cta&amp;utm_campaign=ohmydog#contacto" target="_blank" rel="noopener">
+      <img src="img/dd-logo.webp" width="200" height="200" alt="DD Digital" loading="lazy" decoding="async">
+      <span class="pede__txt">
+        <span>Design totalmente personalizado à tua marca</span>
+        <b>Pede já o teu biolink <i aria-hidden="true">→</i></b>
+      </span>
+    </a>
+    <p class="demo-note"><b>Biolink de demonstração.</b> Criado pela DD Digital para apresentação à cliente. Textos e mensagens são ilustrativos e não vinculativos; o horário está por confirmar. As fotografias são do Instagram da cliente (@_ohmydog_grooming) e o logótipo foi fornecido pela cliente (imagem pequena; na versão final usa-se o ficheiro original).</p>
+    <p class="direitos">© <span id="ano">2026</span> OH MY DOG! Grooming by Débora Pereira</p>
+  </div>
+</footer>
+
+<script>
+/* =====================================================================
+   JS por funcionalidade
+   ===================================================================== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+$('#ano').textContent=new Date().getFullYear();
+
+/* ---------- etiqueta: balança e espalha patinhas ao toque ---------- */
+(function(){
+  const h=$('#hang');
+  h.addEventListener('animationend',e=>{ if(e.animationName==='swing') h.classList.remove('sw'); });
+  h.addEventListener('click',e=>{
+    if(calm) return;
+    h.classList.remove('sw'); void h.offsetWidth; h.classList.add('sw');
+    for(let i=0;i<4;i++){
+      const p=document.createElementNS('http://www.w3.org/2000/svg','svg'); p.setAttribute('class','pawpop paw'); p.setAttribute('viewBox','0 0 64 64');
+      p.innerHTML='<use href="#paw"/>'; p.style.left=e.clientX+'px'; p.style.top=e.clientY+'px';
+      p.style.setProperty('--dx',((Math.random()-.5)*130)+'px'); p.style.setProperty('--dy',(-45-Math.random()*90)+'px'); p.style.setProperty('--r',((Math.random()-.5)*70)+'deg');
+      document.body.appendChild(p); setTimeout(()=>p.remove(),1050);
+    }
+  });
+})();
+
+/* ---------- prepara a mensagem (monta o texto do WhatsApp principal) ---------- */
+(function(){
+  const tiles=$$('.tile'), nome=$('#nome'), a=$('#waMain'), msg=$('#msg'), sub=$('#waSub');
+  const BASE='https://wa.me/351928020484';
+  function upd(){
+    const s=tiles.filter(t=>t.getAttribute('aria-pressed')==='true').map(t=>t.dataset.v);
+    const n=nome.value.trim();
+    if(!s.length&&!n){ a.href=BASE; msg.textContent='Toca nas opções e o botão de cima leva a mensagem já escrita.'; sub.textContent='+351 928 020 484'; return; }
+    let t='Olá! Gostava de marcar uma visita ao OH MY DOG! Grooming';
+    if(s.length) t+=' para: '+s.join(', ').toLowerCase().replace(/, ([^,]*)$/,' e $1');
+    t+='.'; if(n) t+=' O nome do meu bicho é '+n+'.';
+    a.href=BASE+'?text='+encodeURIComponent(t); msg.textContent='Mensagem: «'+t+'»'; sub.textContent='Com a tua mensagem preparada';
+  }
+  tiles.forEach(t=>t.addEventListener('click',()=>{ t.setAttribute('aria-pressed',String(t.getAttribute('aria-pressed')!=='true')); upd(); }));
+  nome.addEventListener('input',upd);
+})();
+</script>
+</body>
+</html>
