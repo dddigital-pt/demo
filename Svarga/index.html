@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add('js');if(/[?&]nopre/.test(location.search))document.documentElement.classList.add('nopre')</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Svarga — Espaço de Cura · Demonstração</title>
+<meta name="description" content="Demonstração de website para o Svarga, espaço de cura em Loureiro: um paraíso terapêutico para corpo, mente e alma. Criado pela DD Digital.">
+<meta name="theme-color" content="#1F3B2D">
+<link rel="icon" type="image/png" href="img/logo-svarga.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rufina:wght@400;700&family=Karla:wght@300;400;500;700&family=Allura&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   SVARGA — Espaço de Cura (demonstração DD Digital)
+
+   CONCEITO DE LAYOUT E HERO
+   O logótipo é um arco duplo dourado com uma estrela de quatro pontas: uma porta.
+   O hero é essa porta: uma janela em arco com uma estrelícia (a flor do "S") rodeada
+   por arcos dourados concêntricos, sobre uma parede de creme com sombras de palmeira
+   a balançar. Ao fazer scroll "atravessa-se o portal": os arcos afastam-se em
+   profundidade (os exteriores mais depressa), a janela cresce até ser o ecrã
+   e a palavra "Svarga" fica para trás. Depois, três portais (Corpo, Mente, Alma),
+   cada um com a sua fotografia, o seu tom de fundo e os seus rituais.
+
+   HERDADO DE
+   - Simple / Aura / Eduarda (arcos): só a ideia de usar a forma do logótipo como janela.
+     Aqui o mecanismo é outro: clip-path em arco + arcos SVG recalculados por frame
+     com profundidade, e a composição é assimétrica (texto à esquerda, lista à direita).
+   - Mimocas / A'Kay (biolinks): mensagem de WhatsApp montada por toques (aria-pressed).
+   - Preloader/stagger e menu mobile (A7/A8): receitas das regras.
+   NOVO
+   - Túnel de arcos com profundidade; sombras de palmeira que seguem o rato;
+     fundo da secção "portais" que muda de tom por portal (floresta, oliva, cacau);
+     imagem que se revela de baixo para cima por clip-path ao trocar de portal;
+     agenda em linhas com data grande e estrela que acende.
+   FONTES: Rufina (títulos), Karla (corpo), Allura (acentos manuscritos, como a
+   caligrafia dos posts). PALETA: creme, salva, floresta (folhas do "S"), oliva (VARGA),
+   ouro (linhas), laranja-estrelícia, cacau.
+   ===================================================================== */
+
+:root{
+  --cream:#F3EEE2; --paper:#FAF7F0; --sage:#DDE6D6; --sage-d:#B9C9B4;
+  --forest:#1F3B2D; --forest-d:#142A20; --olive:#6B6C55; --olive-d:#4B4C3A;
+  --gold:#B79B55; --gold-l:#DCC58A; --gold-d:#8A7238;
+  --orange:#E07A2B; --orange-d:#A9500F; --cacau:#3A2519; --blush:#E9D3C8;
+  --ink:#1B2A22; --ink-2:#4A5A50;
+  --f-t:'Rufina','Georgia',serif;
+  --f-b:'Karla','Helvetica Neue',Arial,sans-serif;
+  --f-s:'Allura','Brush Script MT',cursive;
+  --bar:34px; --hd:68px; --top:calc(var(--bar) + var(--hd));
+  --gut:clamp(20px,5vw,72px);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --tone:var(--forest);
+}
+@media (max-width:760px){:root{--bar:30px;--hd:58px}}
+
+/* ---------- base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;padding-top:var(--top);background:var(--cream);color:var(--ink);font-family:var(--f-b);font-weight:400;font-size:1.0625rem;line-height:1.65;overflow-x:clip}
+img{display:block;max-width:100%;height:auto}
+h1,h2,h3,p,ul,ol,figure,dl,dd{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:inherit}
+button,input,textarea{font:inherit;color:inherit}
+[id]{scroll-margin-top:calc(var(--top) + 8px)}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{width:min(1240px,100% - var(--gut)*2);margin-inline:auto}
+.eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d)}
+.script{font-family:var(--f-s);font-weight:400;color:var(--gold);letter-spacing:0}
+h2{font-family:var(--f-t);font-weight:400;font-size:clamp(2.2rem,5vw,4.2rem);line-height:1.08;letter-spacing:-.01em}
+.btn{display:inline-flex;align-items:center;gap:.6em;min-height:48px;padding:.7em 1.5em;border-radius:999px 999px 999px 999px;border:1px solid var(--forest);background:var(--forest);color:var(--cream);font-weight:700;font-size:.95rem;letter-spacing:.04em;text-decoration:none;cursor:pointer;transition:background .3s,color .3s,transform .3s var(--ease)}
+.btn:hover{background:var(--orange-d);border-color:var(--orange-d)}
+.btn.ghost{background:transparent;color:var(--forest)}
+.btn.ghost:hover{background:var(--forest);color:var(--cream);border-color:var(--forest)}
+.btn i{font-style:normal;transition:transform .3s var(--ease)}
+.btn:hover i{transform:translateX(4px)}
+/* revelações ao scroll (só com JS; sem JS tudo visível) */
+.js .rv{opacity:0;transform:translateY(22px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--d,0s)}
+.js .rv.is-in{opacity:1;transform:none}
+
+/* ---------- faixa DEMO, selo e cabeçalho (A2) ---------- */
+.bar{position:fixed;inset:0 0 auto 0;z-index:60;height:var(--bar);display:flex;align-items:center;justify-content:center;gap:.8em;padding:0 12px;background:var(--forest-d);color:var(--cream);font-size:.78rem;letter-spacing:.03em;white-space:nowrap;overflow:hidden}
+.bar b{flex:none;padding:.15em .7em;border-radius:99px;background:var(--gold);color:var(--forest-d);font-size:.7rem;letter-spacing:.18em}
+.bar .s{display:none}
+@media (max-width:760px){.bar .l{display:none}.bar .s{display:inline}}
+.chip-demo{position:fixed;right:16px;bottom:16px;z-index:55;padding:.5em 1.1em;border-radius:99px;background:var(--forest-d);color:var(--cream);border:1px solid var(--gold);font-size:.74rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;pointer-events:none}
+@media (max-width:760px){.chip-demo{display:none}}
+.top{position:fixed;inset:var(--bar) 0 auto 0;z-index:50;height:var(--hd);background:var(--cream);border-bottom:1px solid rgba(183,155,85,.35)}
+.top .in{height:100%;width:min(1360px,100% - var(--gut)*1.2);margin-inline:auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;height:100%;padding:6px 0}
+.brand img{height:100%;width:auto;max-height:54px}
+.nav{display:flex;align-items:center;gap:clamp(18px,2.6vw,38px)}
+.nav a{font-size:.88rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;white-space:nowrap;background:linear-gradient(var(--gold),var(--gold)) 0 100%/0 1px no-repeat;padding-bottom:3px;transition:background-size .35s var(--ease)}
+.nav a:hover{background-size:100% 1px}
+.nav a.btn{padding:.6em 1.3em;color:var(--cream);background-color:var(--forest);background-image:none}
+.nav a.btn:hover{background-color:var(--orange-d)}
+.burger{display:none;width:48px;height:48px;border:0;background:none;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.burger span{display:block;width:26px;height:2px;background:var(--forest);transition:transform .35s var(--ease),opacity .2s}
+.burger[aria-expanded=true] span:nth-child(1){transform:translateY(8px) rotate(45deg)}
+.burger[aria-expanded=true] span:nth-child(2){opacity:0}
+.burger[aria-expanded=true] span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
+.mnav{position:fixed;left:0;right:0;top:var(--top);bottom:0;z-index:45;background:var(--forest);color:var(--cream);display:none;flex-direction:column;justify-content:center;gap:6px;padding:24px var(--gut) 40px;overflow-y:auto;overscroll-behavior:contain}
+.mnav a{font-family:var(--f-t);font-size:clamp(2rem,9vw,2.8rem);line-height:1.25;text-decoration:none;padding:.15em 0;border-bottom:1px solid rgba(220,197,138,.25)}
+.mnav small{margin-top:20px;color:var(--gold-l);font-size:.85rem}
+body.menu-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+body.menu-open .mnav{display:flex}
+@media (max-width:980px){.nav{display:none}.burger{display:flex}}
+
+/* ---------- 1. HERO: o portal ---------- */
+.hero{position:relative;background:var(--cream)}
+.js .hero{height:300svh}
+.stage{position:relative;height:calc(100svh - var(--top));min-height:560px;overflow:clip;background:var(--cream)}
+.js .stage{position:sticky;top:var(--top)}
+.wall{position:absolute;inset:0;overflow:clip}
+.wall-par{position:absolute;inset:-6%;will-change:transform}
+.wall-sh{position:absolute;inset:0;background:url(img/sombra-palmeira.jpg) 50% 30%/cover;mix-blend-mode:multiply;opacity:.62;animation:sway 14s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-1.4deg) translate(-1.2%,0) scale(1.06)}to{transform:rotate(1.2deg) translate(1.4%,-.8%) scale(1.1)}}
+.sun{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .6s;background:radial-gradient(420px circle at var(--sx,60%) var(--sy,40%),rgba(255,236,190,.55),transparent 70%)}
+.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:54% 50%;clip-path:inset(10% 28% 10% 44% round 14vw 14vw 0 0)}
+@media (max-width:900px){.photo{clip-path:inset(3.5% 13% 36% 13% round 37vw 37vw 0 0)}}
+.veil{position:absolute;inset:0;pointer-events:none;opacity:0;background:linear-gradient(180deg,rgba(20,42,32,.15),rgba(20,42,32,.7))}
+.arches{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:hidden}
+.arches path{fill:none;stroke:var(--gold);stroke-width:1.3;stroke-linejoin:round}
+.arches path:nth-child(1){stroke:var(--gold-d)}
+.js .arches path{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.8s var(--ease) forwards;animation-delay:calc(.25s + var(--k)*.2s)}
+@keyframes draw{to{stroke-dashoffset:0}}
+.star{position:absolute;left:0;top:0;width:34px;height:34px;pointer-events:none;overflow:visible}
+.star path{fill:var(--gold)}
+.js .star{opacity:0;animation:starIn .9s 1.6s var(--ease) forwards}
+.star g{transform-origin:0 0;animation:twinkle 4.5s ease-in-out 2.5s infinite}
+@keyframes starIn{from{opacity:0;scale:.2}to{opacity:1;scale:1}}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.22) rotate(18deg)}}
+.hcopy{position:absolute;z-index:2;left:var(--gut);bottom:9%;width:min(30vw,440px)}
+.hcopy>*{animation:rise 1s var(--ease) both}
+.hcopy .eyebrow{animation-delay:.7s}
+.hcopy h1{animation-delay:.85s}
+.hcopy .lead{animation-delay:1.05s}
+.hcopy .act{animation-delay:1.25s}
+@keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.hcopy h1{font-family:var(--f-t);font-weight:400;font-size:clamp(4rem,8.6vw,8.4rem);line-height:.95;letter-spacing:-.025em;color:var(--forest);margin:.12em 0 .18em}
+.hcopy h1 .st{display:inline-block;width:.2em;height:.2em;margin-left:.04em;vertical-align:.7em;background:var(--gold);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%)}
+.hcopy .lead{font-family:var(--f-t);font-size:clamp(1.15rem,1.9vw,1.6rem);line-height:1.35;color:var(--ink);max-width:22em}
+.hcopy .lead .script{font-size:1.5em;line-height:.8;color:var(--orange-d)}
+.hcopy .act{display:flex;flex-wrap:wrap;gap:12px;margin-top:1.4rem}
+.hlist{position:absolute;z-index:2;right:var(--gut);top:50%;transform:translateY(-50%);display:grid;gap:18px;text-align:right}
+.hlist a{display:block;text-decoration:none;font-family:var(--f-t);font-size:clamp(1.5rem,2.4vw,2.2rem);line-height:1;color:var(--forest);transition:color .3s,transform .4s var(--ease)}
+.hlist a small{display:block;font-family:var(--f-b);font-size:.72rem;font-weight:700;letter-spacing:.2em;color:var(--gold-d);margin-bottom:.35em}
+.hlist a:hover{color:var(--orange-d);transform:translateX(-8px)}
+.hend{position:absolute;z-index:3;left:0;right:0;bottom:10%;text-align:center;color:var(--cream);opacity:0;pointer-events:none}
+.hend p{font-family:var(--f-t);font-size:clamp(1.8rem,4.6vw,3.8rem);line-height:1.1}
+.hend .script{font-size:1.25em;color:var(--gold-l)}
+.hend small{display:block;margin-top:.8em;font-size:.8rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--sage)}
+.cue{position:absolute;z-index:3;left:50%;bottom:14px;translate:-50% 0;font-size:.7rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--olive-d);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:6px}
+.cue::after{content:"";width:1px;height:26px;background:currentColor;transform-origin:top;animation:cue 2.2s ease-in-out infinite}
+@keyframes cue{0%{transform:scaleY(0)}60%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+@media (max-width:900px){
+  .hcopy{left:var(--gut);right:var(--gut);width:auto;bottom:4%;text-align:center}
+  .hcopy .lead{margin-inline:auto;font-size:1.12rem}
+  .hcopy h1{font-size:clamp(3.4rem,17vw,4.6rem);margin:.05em 0 .1em}
+  .hcopy .act{justify-content:center;margin-top:.9rem}
+  .hcopy .act .ghost{display:none}
+  .hlist{display:none}
+  .cue{display:none}
+}
+@media (max-height:700px) and (min-width:901px){.hcopy .lead{display:none}}
+
+/* ---------- 2. OS TRÊS PORTAIS ---------- */
+.portais{position:relative;padding:clamp(72px,10vw,140px) 0 clamp(72px,9vw,120px);background:var(--tone);color:var(--cream);transition:background-color .9s var(--ease)}
+.portais[data-p="mente"]{--tone:#27382B}
+.portais[data-p="alma"]{--tone:var(--cacau)}
+.portais .eyebrow{color:var(--gold-l)}
+.portais h2{margin-top:.5rem;max-width:12em}
+.pgrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);margin-top:clamp(36px,5vw,64px);align-items:start}
+.parch{position:relative;width:min(100%,460px);margin-inline:auto;aspect-ratio:2/3;padding:18px}
+.parch .frm{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.parch .frm path{fill:none;stroke:var(--gold);stroke-width:1.1;vector-effect:non-scaling-stroke}
+.parch .win{position:absolute;inset:26px 26px 26px 26px;border-radius:999px 999px 0 0;overflow:hidden;background:#000}
+.parch .win img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(100% 0 0 0);transition:clip-path 1.1s var(--ease)}
+.parch .win img.on{clip-path:inset(0% 0% 0% 0%);z-index:1}
+.parch .win img.was{clip-path:inset(0% 0% 0% 0%);z-index:0}
+.parch .pst{position:absolute;right:-6px;top:6%;width:30px;height:30px;overflow:visible}
+.parch .pst path{fill:var(--gold-l)}
+.parch .pst g{transform-origin:0 0;animation:twinkle 4.5s ease-in-out infinite}
+.ptabs{min-width:0}
+.tl{display:flex;flex-wrap:wrap;gap:6px clamp(20px,3vw,44px);border-bottom:1px solid rgba(220,197,138,.3);margin-bottom:28px}
+.tl button{position:relative;display:flex;align-items:baseline;gap:.5em;min-height:48px;padding:.2em 0 .5em;border:0;background:none;cursor:pointer;font-family:var(--f-t);font-size:clamp(1.9rem,4vw,3.3rem);line-height:1.1;color:rgba(243,238,226,.46);transition:color .4s}
+.tl button small{font-family:var(--f-b);font-size:.72rem;font-weight:700;letter-spacing:.2em;color:var(--gold-l)}
+.tl button::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--gold-l);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
+.tl button:hover{color:rgba(243,238,226,.8)}
+.tl button[aria-selected=true]{color:var(--cream)}
+.tl button[aria-selected=true]::after{transform:scaleX(1)}
+.tl button:focus-visible{outline-color:var(--gold-l)}
+.tp[hidden]{display:none}
+.tp .lead{font-family:var(--f-t);font-size:clamp(1.15rem,1.8vw,1.5rem);line-height:1.4;color:var(--sage);max-width:30em;margin-bottom:8px}
+.svc>li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 24px;padding:20px 0;border-bottom:1px solid rgba(220,197,138,.22)}
+.svc h3{font-family:var(--f-t);font-weight:400;font-size:clamp(1.3rem,2vw,1.7rem);line-height:1.2}
+.svc p{grid-column:1;color:rgba(243,238,226,.78);font-size:1rem;max-width:36em}
+.svc .tag{display:inline-block;justify-self:start;margin-top:8px;padding:.15em .8em;border:1px solid rgba(220,197,138,.5);border-radius:99px;font-size:.76rem;font-weight:700;letter-spacing:.06em;color:var(--gold-l)}
+.svc .ask{grid-column:2;grid-row:1/span 2;align-self:center;display:inline-flex;align-items:center;gap:.5em;min-height:48px;padding:0 4px;color:var(--gold-l);font-weight:700;font-size:.9rem;letter-spacing:.06em;text-decoration:none;white-space:nowrap}
+.svc .ask i{font-style:normal;transition:transform .3s var(--ease)}
+.svc .ask:hover i{transform:translateX(5px)}
+.svc .ask:focus-visible{outline-color:var(--gold-l)}
+.note{margin-top:22px;font-size:.84rem;color:rgba(243,238,226,.6);max-width:42em}
+@media (max-width:900px){
+  .pgrid{grid-template-columns:minmax(0,1fr)}
+  .parch{width:min(78vw,340px)}
+  .svc>li{grid-template-columns:minmax(0,1fr)}
+  .svc .ask{grid-column:1;grid-row:auto;min-height:44px}
+}
+
+/* ---------- 3. AGENDA ---------- */
+.agenda{padding:clamp(72px,10vw,140px) 0;background:var(--paper)}
+.agrid{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:clamp(32px,6vw,96px);align-items:start}
+.aside{position:sticky;top:calc(var(--top) + 24px)}
+.aside .eyebrow{display:block;margin-bottom:.6rem}
+.aside h2{margin-bottom:1.2rem}
+.aside .sm{position:relative;margin-top:28px;aspect-ratio:3/4;border-radius:999px 999px 0 0;overflow:hidden;max-width:340px}
+.aside .sm img{width:100%;height:100%;object-fit:cover}
+.mark{display:inline-block;padding:.1em .6em;border:1px dashed var(--orange-d);border-radius:4px;color:var(--orange-d);font-size:.84rem;font-weight:500;background:rgba(224,122,43,.08)}
+.ev{border-top:1px solid var(--gold)}
+.ev li{position:relative;display:grid;grid-template-columns:clamp(120px,17vw,230px) minmax(0,1fr);gap:8px clamp(16px,3vw,40px);align-items:start;padding:clamp(20px,2.6vw,32px) 0;border-bottom:1px solid rgba(183,155,85,.4);transition:background-color .4s,padding .5s var(--ease)}
+.ev li:hover{background:rgba(221,230,214,.5);padding-left:12px}
+.ev .dt{font-family:var(--f-t);font-size:clamp(2.2rem,4.4vw,3.6rem);white-space:nowrap;line-height:.95;color:var(--forest)}
+.ev .dt small{display:block;margin-top:.35em;font-family:var(--f-b);font-size:.74rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-d);white-space:normal}
+.ev h3{font-family:var(--f-t);font-weight:400;font-size:clamp(1.3rem,2.2vw,1.9rem);line-height:1.2;display:flex;align-items:center;gap:.5em}
+.ev h3 i{flex:none;width:.7em;height:.7em;background:var(--sage-d);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);transition:background-color .4s,transform .6s var(--ease)}
+.ev li:hover h3 i{background:var(--orange);transform:rotate(90deg) scale(1.3)}
+.ev p{color:var(--ink-2);max-width:36em;margin-top:4px}
+.ev .more{display:inline-block;margin-top:8px;min-height:44px;padding-top:10px;font-weight:700;font-size:.88rem;letter-spacing:.06em;color:var(--forest);text-decoration:none;border-bottom:1px solid var(--gold)}
+.ev .more:hover{color:var(--orange-d)}
+.agenda .fine{margin-top:20px;font-size:.84rem;color:var(--ink-2)}
+@media (max-width:900px){
+  .agrid{grid-template-columns:minmax(0,1fr)}
+  .aside{position:static}
+  .aside .sm{display:none}
+  .ev li{grid-template-columns:minmax(0,1fr)}
+}
+
+/* ---------- 4. INSTAGRAM ---------- */
+.insta{padding:clamp(72px,9vw,120px) 0;background:var(--sage)}
+.insta .head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:20px;margin-bottom:clamp(28px,4vw,48px)}
+.insta h2{max-width:11em}
+.rail{display:flex;gap:clamp(14px,2vw,28px);align-items:flex-end;overflow-x:auto;padding:6px var(--gut) 24px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.rail::-webkit-scrollbar{height:6px}
+.rail::-webkit-scrollbar-thumb{background:var(--sage-d);border-radius:9px}
+.rail figure{flex:none;scroll-snap-align:center;width:clamp(200px,24vw,300px)}
+.rail .ph{position:relative;border-radius:999px 999px 0 0;overflow:hidden;background:var(--forest)}
+.rail figure:nth-child(2n) .ph{border-radius:14px 14px 999px 999px}
+.rail .ph img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.rail figure:hover .ph img{transform:scale(1.06)}
+.rail figcaption{margin-top:10px;font-size:.88rem;color:var(--olive-d);text-align:center}
+.rail .r1 .ph{aspect-ratio:1/1.7}.rail .r2 .ph{aspect-ratio:1/1}.rail .r3 .ph{aspect-ratio:2/3}.rail .r4 .ph{aspect-ratio:3/4.2}.rail .r5 .ph{aspect-ratio:1.4/1}
+.insta .fine{margin-top:6px;font-size:.84rem;color:var(--olive-d)}
+
+/* ---------- 5. CONTACTO ---------- */
+.contacto{padding:clamp(72px,10vw,140px) 0 clamp(96px,10vw,140px);background:var(--cream)}
+.cgrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);align-items:start}
+.contacto .eyebrow{display:block;margin-bottom:.6rem}
+.contacto h2{margin-bottom:1.4rem}
+.dl{display:grid;gap:18px;margin-top:8px}
+.dl div{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:10px;align-items:baseline;padding-top:14px;border-top:1px solid rgba(183,155,85,.45)}
+.dl dt{font-size:.76rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-d)}
+.dl dd{font-family:var(--f-t);font-size:1.2rem;line-height:1.35;overflow-wrap:anywhere}
+.dl a{text-decoration:none;border-bottom:1px solid var(--gold)}
+.dl a:hover{color:var(--orange-d)}
+.form{background:var(--paper);border:1px solid rgba(183,155,85,.5);border-radius:999px 999px 18px 18px;padding:clamp(48px,7vw,84px) clamp(22px,4vw,48px) clamp(26px,4vw,44px)}
+.form h3{font-family:var(--f-t);font-weight:400;font-size:clamp(1.6rem,3vw,2.3rem);line-height:1.15;text-align:center}
+.form .sub{text-align:center;color:var(--ink-2);margin:6px auto 20px;max-width:30em}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:22px}
+.chip{min-height:44px;padding:.4em 1.1em;border:1px solid var(--olive);border-radius:99px;background:transparent;cursor:pointer;font-size:.92rem;font-weight:500;transition:background-color .3s,color .3s,border-color .3s}
+.chip:hover{border-color:var(--forest)}
+.chip[aria-pressed=true]{background:var(--forest);color:var(--cream);border-color:var(--forest)}
+.fld{display:grid;gap:6px;margin-bottom:14px}
+.fld>label{font-size:.76rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-d)}
+.fld input,.fld textarea{width:100%;min-height:48px;padding:.7em .9em;border:1px solid var(--sage-d);border-radius:10px;background:#fff}
+.fld textarea{min-height:120px;resize:vertical}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.fact{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:8px}
+.toast{margin-top:16px;padding:.8em 1em;border-radius:10px;background:var(--forest);color:var(--cream);font-size:.92rem;text-align:center;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
+.toast.on{opacity:1;visibility:visible}
+@media (max-width:900px){.cgrid{grid-template-columns:minmax(0,1fr)}.row2{grid-template-columns:minmax(0,1fr)}.dl div{grid-template-columns:minmax(0,1fr);gap:2px}}
+
+/* ---------- rodapé ---------- */
+.foot{background:var(--forest-d);color:var(--sage);padding:48px 0 calc(48px + 40px)}
+.foot .in{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px 48px;align-items:center}
+.foot .lg{width:120px;background:var(--cream);border-radius:999px 999px 10px 10px;padding:14px 12px 10px}
+.foot p{font-size:.86rem;line-height:1.6;max-width:58em}
+.foot p+p{margin-top:8px}
+.foot .dd{color:var(--gold-l)}
+.foot a{color:var(--gold-l)}
+@media (max-width:760px){.foot .in{grid-template-columns:minmax(0,1fr)}}
+
+/* ---------- movimento reduzido ---------- */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .wall-sh,.star g,.parch .pst g,.cue::after{animation:none}
+  .js .arches path{animation:none;stroke-dashoffset:0}
+  .js .star{animation:none;opacity:1}
+  .hcopy>*{animation:none}
+  .js .rv{opacity:1;transform:none;transition:none}
+  .parch .win img{transition:none}
+}
+.nopre .arches path{animation:none!important;stroke-dashoffset:0}
+.nopre .star{animation:none!important;opacity:1}
+.nopre .hcopy>*{animation:none!important}
+</style>
+</head>
+<body>
+
+<!-- ===== AVISO DE DEMONSTRAÇÃO (obrigatório) ===== -->
+<div class="bar" role="note"><b>DEMO</b><span class="l">Website de demonstração criado pela DD Digital para o Svarga · conteúdo ilustrativo</span><span class="s">Demonstração · Svarga</span></div>
+<div class="chip-demo" aria-hidden="true">Versão de demonstração</div>
+
+<header class="top">
+  <div class="in">
+    <a class="brand" href="#hero" aria-label="Svarga — início"><img src="img/logo-svarga.png" width="509" height="351" alt="Svarga"></a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#portais">Portais</a>
+      <a href="#agenda">Agenda</a>
+      <a href="#instagram">Instagram</a>
+      <a href="#contacto" class="btn">Marcar</a>
+    </nav>
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="mnav" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<nav class="mnav" id="mnav" aria-label="Menu móvel">
+  <a href="#portais">Portais</a>
+  <a href="#agenda">Agenda</a>
+  <a href="#instagram">Instagram</a>
+  <a href="#contacto">Marcar</a>
+  <small>Praça N. Sra. da Alumieira, Loureiro</small>
+</nav>
+
+<main>
+
+<!-- ===== 1. HERO: o portal ===== -->
+<section class="hero" id="hero" aria-label="Svarga, espaço de cura">
+  <div class="stage" id="stage">
+    <div class="wall" aria-hidden="true">
+      <div class="wall-par" id="wallPar"><div class="wall-sh"></div></div>
+      <div class="sun" id="sun"></div>
+    </div>
+    <img class="photo" id="photo" src="img/estrelitzia-paisagem.jpg" width="1400" height="1050" alt="Estrelitzia laranja entre folhas verdes" fetchpriority="high">
+    <div class="veil" id="veil"></div>
+    <svg class="arches" id="arches" aria-hidden="true" focusable="false">
+      <path pathLength="1" style="--k:0"/><path pathLength="1" style="--k:1"/><path pathLength="1" style="--k:2"/><path pathLength="1" style="--k:3"/><path pathLength="1" style="--k:4"/>
+    </svg>
+    <svg class="star" id="star" viewBox="-14 -14 28 28" aria-hidden="true" focusable="false"><g><path d="M0-13C1-5 5-1 13 0 5 1 1 5 0 13-1 5-5 1-13 0-5-1-1-5 0-13Z"/></g></svg>
+
+    <div class="hcopy" id="hcopy">
+      <p class="eyebrow">Espaço de Cura · Loureiro</p>
+      <h1>Svarga<span class="st" aria-hidden="true"></span></h1>
+      <p class="lead">Um <span class="script">paraíso</span> terapêutico para corpo, mente e alma.</p>
+      <div class="act"><a class="btn" href="#portais">Atravessar <i aria-hidden="true">↓</i></a><a class="btn ghost" href="#contacto">Marcar conversa</a></div>
+    </div>
+    <ul class="hlist" id="hlist" aria-label="Os três portais">
+      <li><a href="#portais" data-go="corpo"><small>01</small>Corpo</a></li>
+      <li><a href="#portais" data-go="mente"><small>02</small>Mente</a></li>
+      <li><a href="#portais" data-go="alma"><small>03</small>Alma</a></li>
+    </ul>
+    <div class="hend" id="hend" aria-hidden="true"><p>Já estás <span class="script">dentro</span>.</p><small>Corpo · Mente · Alma</small></div>
+    <a class="cue" href="#portais">Desliza</a>
+  </div>
+</section>
+
+<!-- ===== 2. OS TRÊS PORTAIS ===== -->
+<section class="portais" id="portais" data-p="corpo" aria-labelledby="h-portais">
+  <div class="wrap">
+    <p class="eyebrow rv">Três portais</p>
+    <h2 id="h-portais" class="rv" style="--d:.1s">Por onde queres <span class="script" style="font-size:1.25em">entrar</span>?</h2>
+
+    <div class="pgrid">
+      <figure class="parch rv" aria-hidden="true">
+        <svg class="frm" viewBox="0 0 100 150" preserveAspectRatio="none" focusable="false">
+          <path d="M1 149V50A49 49 0 0 1 99 50V149Z"/>
+          <path d="M5 145V51A45 45 0 0 1 95 51V145Z" opacity=".55"/>
+        </svg>
+        <div class="win" id="win">
+          <img class="on" data-p="corpo" src="img/corpo-massagem-antebraco.jpg" width="1100" height="1650" alt="">
+          <img data-p="mente" src="img/mente-sala-yoga.jpg" width="1400" height="933" alt="" loading="lazy">
+          <img data-p="alma" src="img/alma-lotus.jpg" width="1400" height="1050" alt="" loading="lazy">
+        </div>
+        <svg class="pst" viewBox="-14 -14 28 28" focusable="false"><g><path d="M0-13C1-5 5-1 13 0 5 1 1 5 0 13-1 5-5 1-13 0-5-1-1-5 0-13Z"/></g></svg>
+      </figure>
+
+      <div class="ptabs rv" style="--d:.15s">
+        <div class="tl" role="tablist" aria-label="Portais">
+          <button role="tab" id="t-corpo" aria-selected="true" aria-controls="p-corpo" data-p="corpo"><small>01</small>Corpo</button>
+          <button role="tab" id="t-mente" aria-selected="false" aria-controls="p-mente" data-p="mente" tabindex="-1"><small>02</small>Mente</button>
+          <button role="tab" id="t-alma" aria-selected="false" aria-controls="p-alma" data-p="alma" tabindex="-1"><small>03</small>Alma</button>
+        </div>
+
+        <!-- ===== SERVIÇOS: editar aqui (textos e valores vistos nas publicações do Instagram; a confirmar) ===== -->
+        <div class="tp" role="tabpanel" id="p-corpo" aria-labelledby="t-corpo">
+          <p class="lead">Toques atentos, pele cuidada e um corpo que volta a ouvir-se.</p>
+          <ul class="svc">
+            <li><h3>Massagem de relaxamento</h3><p>Toques precisos e terapêuticos, pensados para relaxar o corpo.</p><span class="tag">35 € · valor promocional visto no Instagram</span><a class="ask" href="#contacto" data-svc="Massagem de relaxamento">Perguntar <i aria-hidden="true">→</i></a></li>
+            <li><h3>Ritual Amor Próprio</h3><p>Escalda-pés terapêutico e massagem aos pés, costas, pescoço e cabeça.</p><span class="tag">40 € · visto no Instagram</span><a class="ask" href="#contacto" data-svc="Ritual Amor Próprio">Perguntar <i aria-hidden="true">→</i></a></li>
+            <li><h3>Cuidados de pele</h3><p>Massagem facial com hidratação, limpeza de pele profunda e sessão de avaliação, com Eliana Amorim. Também workshops de auto-maquilhagem.</p><span class="tag">Com Eliana Amorim</span><a class="ask" href="#contacto" data-svc="Cuidados de pele">Perguntar <i aria-hidden="true">→</i></a></li>
+            <li><h3>Pilates pós-parto</h3><p>O corpo muda, a vida transforma-se. Um aliado na recuperação física e emocional depois da gravidez.</p><span class="tag">Aula experimental</span><a class="ask" href="#contacto" data-svc="Pilates pós-parto">Perguntar <i aria-hidden="true">→</i></a></li>
+          </ul>
+        </div>
+        <div class="tp" role="tabpanel" id="p-mente" aria-labelledby="t-mente" hidden>
+          <p class="lead">Respirar, visualizar, escrever. Pausas para chegar com calma ao que importa.</p>
+          <ul class="svc">
+            <li><h3>Yoga, visualização e escrita terapêutica</h3><p>Rituais para acolher o novo ano com calma e intenção.</p><span class="tag">Ritual «Atravessa»</span><a class="ask" href="#contacto" data-svc="Yoga e escrita terapêutica">Perguntar <i aria-hidden="true">→</i></a></li>
+            <li><h3>Escola de Meditação para Crianças</h3><p>Curso de professores de meditação para crianças, presencial, em Aveiro.</p><span class="tag">98 h · certificado DGERT (visto no Instagram)</span><a class="ask" href="#contacto" data-svc="Curso de meditação para crianças">Perguntar <i aria-hidden="true">→</i></a></li>
+            <li><h3>Oficinas criativas</h3><p>Oficina Duendes Criativos: decorações de Natal feitas à mão, com muitas experiências sensoriais.</p><span class="tag">Natal no Svarga</span><a class="ask" href="#contacto" data-svc="Oficinas criativas">Perguntar <i aria-hidden="true">→</i></a></li>
+          </ul>
+        </div>
+        <div class="tp" role="tabpanel" id="p-alma" aria-labelledby="t-alma" hidden>
+          <p class="lead">Silêncio, símbolos e intenção. Ferramentas para harmonizar.</p>
+          <ul class="svc">
+            <li><h3>Mesa Radiónica Crística</h3><p>Uma ferramenta de harmonização, numa sessão calma e individual.</p><span class="tag">Sessão individual</span><a class="ask" href="#contacto" data-svc="Mesa Radiónica Crística">Perguntar <i aria-hidden="true">→</i></a></li>
+            <li><h3>Um novo olhar sobre a tua saúde</h3><p>Partilhas e conversas para olhar para o bem-estar com mais atenção.</p><span class="tag">No nosso Instagram</span><a class="ask" href="#contacto" data-svc="Conversa sobre bem-estar">Perguntar <i aria-hidden="true">→</i></a></li>
+          </ul>
+        </div>
+        <p class="note">Terapias e práticas complementares. Não substituem o acompanhamento médico; a adequação de cada sessão depende da avaliação de um profissional.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 3. AGENDA ===== -->
+<section class="agenda" id="agenda" aria-labelledby="h-agenda">
+  <div class="wrap agrid">
+    <div class="aside">
+      <p class="eyebrow rv">Agenda</p>
+      <h2 id="h-agenda" class="rv" style="--d:.1s">Rituais e <span class="script" style="font-size:1.25em">encontros</span></h2>
+      <p class="rv" style="--d:.2s">Datas e horários tal como apareceram nas publicações do Svarga. <span class="mark">a confirmar com o cliente</span></p>
+      <div class="sm rv" style="--d:.3s"><img src="img/luz-monstera-arco-iris.jpg" width="1000" height="1500" alt="Luz da tarde a entrar numa sala, com um arco-íris na parede e folhas de monstera" loading="lazy"></div>
+    </div>
+    <div>
+      <ol class="ev">
+        <li class="rv"><div class="dt">17 e 18<small>Dezembro · 17h30–19h</small></div><div><h3><i aria-hidden="true"></i>Oficina Duendes Criativos</h3><p>Natal no Svarga: vem fazer a tua decoração de Natal, com muitas experiências sensoriais e divertidas. Inscrições abertas.</p><a class="more" href="#contacto" data-svc="Oficinas criativas">Inscrever-me</a></div></li>
+        <li class="rv"><div class="dt">27<small>Dezembro · sábado · 10h</small></div><div><h3><i aria-hidden="true"></i>Atravessa</h3><p>O teu ritual para acolheres o novo ano com calma e intenção: yoga, visualização e escrita terapêutica.</p><a class="more" href="#contacto" data-svc="Yoga e escrita terapêutica">Quero participar</a></div></li>
+        <li class="rv"><div class="dt">13<small>Janeiro · 16h</small></div><div><h3><i aria-hidden="true"></i>Pilates pós-parto</h3><p>Aula experimental, um aliado essencial na recuperação física e emocional depois da gravidez.</p><a class="more" href="#contacto" data-svc="Pilates pós-parto">Reservar aula</a></div></li>
+        <li class="rv"><div class="dt">24<small>Janeiro · 10h</small></div><div><h3><i aria-hidden="true"></i>Simples e Natural</h3><p>Workshop de cuidados de pele e dicas de maquilhagem, com Eliana Amorim.</p><a class="more" href="#contacto" data-svc="Cuidados de pele">Saber mais</a></div></li>
+        <li class="rv"><div class="dt">Março<small>Aveiro · presencial</small></div><div><h3><i aria-hidden="true"></i>Curso Professores de Meditação para Crianças</h3><p>Formação de 98 horas com certificado DGERT, pela Escola de Meditação para Crianças.</p><a class="more" href="#contacto" data-svc="Curso de meditação para crianças">Pedir informações</a></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 4. INSTAGRAM ===== -->
+<section class="insta" id="instagram" aria-labelledby="h-insta">
+  <div class="wrap head">
+    <div><p class="eyebrow rv">@svarga.pt</p><h2 id="h-insta" class="rv" style="--d:.1s">O Svarga, <span class="script" style="font-size:1.25em">por dentro</span></h2></div>
+    <a class="btn ghost rv" style="--d:.2s" href="https://www.instagram.com/svarga.pt/" target="_blank" rel="noopener">Seguir no Instagram <i aria-hidden="true">→</i></a>
+  </div>
+  <div class="rail" tabindex="0" role="group" aria-label="Imagens das publicações do Svarga">
+    <figure class="r1"><div class="ph"><img src="img/ig-pendulo.jpg" width="258" height="660" alt="Pêndulo sobre uma mesa radiónica dourada" loading="lazy"></div><figcaption>Mesa Radiónica Crística</figcaption></figure>
+    <figure class="r2"><div class="ph"><img src="img/ig-massagem-maos.jpg" width="384" height="408" alt="Mãos numa massagem de relaxamento" loading="lazy"></div><figcaption>Massagem de relaxamento</figcaption></figure>
+    <figure class="r3"><div class="ph"><img src="img/ig-luz-olhar.jpg" width="582" height="455" alt="Mulher de mãos em prece com um feixe de luz" loading="lazy" style="object-position:50% 40%"></div><figcaption>Um novo olhar sobre a tua saúde</figcaption></figure>
+    <figure class="r4"><div class="ph"><img src="img/ig-eliana-retrato.jpg" width="258" height="470" alt="Eliana Amorim, responsável pelos cuidados de pele" loading="lazy"></div><figcaption>Eliana Amorim · cuidados de pele</figcaption></figure>
+    <figure class="r5"><div class="ph"><img src="img/ig-pinceis.jpg" width="686" height="408" alt="Pincéis de maquilhagem" loading="lazy"></div><figcaption>Workshop de maquilhagem</figcaption></figure>
+  </div>
+  <p class="wrap fine">Imagens retiradas das publicações do Svarga, usadas nesta demonstração com a identidade que o cliente já mostra.</p>
+</section>
+
+<!-- ===== 5. CONTACTO ===== -->
+<section class="contacto" id="contacto" aria-labelledby="h-contacto">
+  <div class="wrap cgrid">
+    <div>
+      <p class="eyebrow rv">Contactos</p>
+      <h2 id="h-contacto" class="rv" style="--d:.1s">Vem <span class="script" style="font-size:1.25em">visitar-nos</span></h2>
+      <dl class="dl rv" style="--d:.2s">
+        <div><dt>Morada</dt><dd>Praça N. Sra. da Alumieira, n.º 234<br>Loureiro · <a href="https://www.google.com/maps/search/?api=1&amp;query=Pra%C3%A7a+Nossa+Senhora+da+Alumieira+Loureiro" target="_blank" rel="noopener">ver no mapa</a></dd></div>
+        <div><dt>Telefone</dt><dd><a href="tel:+351935328400">+351 935 328 400</a></dd></div>
+        <div><dt>Email</dt><dd><a href="mailto:geral.svarga@gmail.com">geral.svarga@gmail.com</a></dd></div>
+        <div><dt>Instagram</dt><dd><a href="https://www.instagram.com/svarga.pt/" target="_blank" rel="noopener">@svarga.pt</a></dd></div>
+        <div><dt>Horário</dt><dd><span class="mark">a confirmar com o cliente</span></dd></div>
+      </dl>
+    </div>
+
+    <form class="form rv" id="form" style="--d:.15s" novalidate>
+      <h3>Diz-nos o que procuras</h3>
+      <p class="sub">Escolhe um ou mais rituais e prepara a mensagem. Podes enviá-la por WhatsApp.</p>
+      <div class="chips" id="chips" role="group" aria-label="Rituais de interesse"></div>
+      <div class="row2">
+        <div class="fld"><label for="f-nome">Nome</label><input id="f-nome" name="nome" autocomplete="name" placeholder="O teu nome"></div>
+        <div class="fld"><label for="f-tel">Telemóvel ou email</label><input id="f-tel" name="contacto" autocomplete="tel" placeholder="Para te respondermos"></div>
+      </div>
+      <div class="fld"><label for="f-msg">Mensagem</label><textarea id="f-msg" name="mensagem" rows="4"></textarea></div>
+      <div class="fact">
+        <a class="btn" id="wa" href="https://wa.me/351935328400" target="_blank" rel="noopener">Abrir no WhatsApp <i aria-hidden="true">→</i></a>
+        <button class="btn ghost" type="submit">Enviar pedido</button>
+      </div>
+      <p class="toast" id="toast" role="status" aria-live="polite">Demonstração: este formulário não envia nada.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap in">
+    <img class="lg" src="img/logo-svarga.png" width="509" height="351" alt="Svarga" loading="lazy">
+    <div>
+      <p><strong>Website de demonstração criado pela <a class="dd" href="https://dddigital.pt" target="_blank" rel="noopener">DD Digital</a> para o Svarga.</strong> Os textos, os serviços e as descrições são ilustrativos e não vinculativos; valores, datas e horários vistos nas publicações do Instagram estão por confirmar com o cliente. Terapias e práticas complementares não substituem o acompanhamento médico.</p>
+      <p>Fotografias: Unsplash e imagens das publicações do Svarga (@svarga.pt). Logótipo do cliente.</p>
+      <p>© 2026 Svarga · Espaço de Cura</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* =====================================================================
+   SVARGA — JS (um bloco, por funcionalidade)
+   ===================================================================== */
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+var lerp=function(a,b,t){return a+(b-a)*t}, clamp=function(v,a,b){return Math.max(a,Math.min(b,v))};
+var ease=function(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2};
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+
+/* ---------- menu móvel (A7/A8) ---------- */
+var burger=$('#burger'), menuY=0, scrollEl=document.documentElement;
+function setMenu(open,goto){
+  if(open===document.body.classList.contains('menu-open')) return;
+  if(open){
+    menuY=window.scrollY||window.pageYOffset;
+    document.body.style.top=-menuY+'px';
+    document.body.classList.add('menu-open');
+  }else{
+    document.body.classList.remove('menu-open');
+    document.body.style.top='';
+    scrollEl.style.scrollBehavior='auto';
+    window.scrollTo(0,menuY);
+    scrollEl.style.scrollBehavior='';
+  }
+  burger.setAttribute('aria-expanded',open);
+  burger.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');
+  if(!open&&goto){var t=$(goto); if(t) requestAnimationFrame(function(){t.scrollIntoView()})}
+}
+burger.addEventListener('click',function(){setMenu(!document.body.classList.contains('menu-open'))});
+$$('#mnav a').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();setMenu(false,a.getAttribute('href'))})});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')setMenu(false)});
+matchMedia('(min-width:981px)').addEventListener('change',function(m){if(m.matches)setMenu(false)});
+
+/* ---------- hero: atravessar o portal ---------- */
+var stage=$('#stage'), hero=$('#hero'), photo=$('#photo'), veil=$('#veil'), svg=$('#arches'), paths=$$('path',svg), star=$('#star'),
+    hcopy=$('#hcopy'), hlist=$('#hlist'), hend=$('#hend'), cue=$('.cue'), wallPar=$('#wallPar'), sun=$('#sun');
+var G={}, pinned=document.documentElement.classList.contains('js');
+function geo(){
+  var W=stage.clientWidth,H=stage.clientHeight,wide=W>900,h0,w0;
+  if(wide){h0=H*.8;w0=Math.min(h0*.62,W*.4)}else{w0=W*.74;h0=Math.min(H*.6,w0*1.55)}
+  G={W:W,H:H,wide:wide,w0:w0,h0:h0,cx:wide?W*.56:W*.5,top0:wide?H*.1:H*.035};
+}
+function archD(l,t,r,b){var R=(r-l)/2;return 'M'+l+' '+b+'V'+(t+R)+'A'+R+' '+R+' 0 0 1 '+r+' '+(t+R)+'V'+b+'Z'}
+function render(p){
+  var e=ease(clamp((p-.04)/.74,0,1)), W=G.W,H=G.H;
+  var l=lerp(G.cx-G.w0/2,0,e), r=lerp(G.cx+G.w0/2,W,e), t=lerp(G.top0,0,e), b=lerp(G.top0+G.h0,H,e), R=lerp(G.w0/2,0,e);
+  photo.style.clipPath='inset('+t.toFixed(1)+'px '+(W-r).toFixed(1)+'px '+(H-b).toFixed(1)+'px '+l.toFixed(1)+'px round '+R.toFixed(1)+'px '+R.toFixed(1)+'px 0 0)';
+  /* arcos: o k-ésimo está mais afastado e afasta-se mais depressa (profundidade) */
+  for(var k=0;k<paths.length;k++){
+    var o=(k+1)*(G.wide?15:12)*(1+e*(2.4+k*2.2));
+    var al=l-o, ar=r+o, at=t-o*1.05, ab=b+o*.55;
+    paths[k].setAttribute('d',archD(al,at,ar,ab));
+    paths[k].style.opacity=clamp(1-(e-.28-k*.07)*2.4,0,1);
+  }
+  /* estrela no canto superior direito do arco mais exterior, como no logótipo */
+  var ko=paths.length-1, oo=(ko+1)*(G.wide?15:12)*(1+e*(2.4+ko*2.2)), Rr=(r+oo-(l-oo))/2, cxo=(l+r)/2, cyo=(t-oo*1.05)+Rr;
+  var ang=-40*Math.PI/180, sr=Rr+(G.wide?30:20);
+  star.style.transform='translate('+(cxo+Math.cos(ang)*sr-17).toFixed(1)+'px,'+(cyo+Math.sin(ang)*sr-17).toFixed(1)+'px)';
+  star.style.display=e>.35?'none':'';
+  var fo=clamp(1-e*2.6,0,1);
+  hcopy.style.opacity=fo; hcopy.style.transform=G.wide?'translateX('+(-e*70).toFixed(1)+'px)':'translateY('+(e*40).toFixed(1)+'px)';
+  hcopy.style.visibility=fo<=0?'hidden':'';
+  hlist.style.opacity=fo; hlist.style.visibility=fo<=0?'hidden':'';
+  if(cue) cue.style.opacity=fo;
+  veil.style.opacity=clamp((e-.5)*2,0,1);
+  var he=clamp((p-.8)/.16,0,1); hend.style.opacity=he; hend.style.transform='translateY('+((1-he)*24).toFixed(1)+'px)';
+}
+var heroOn=false,ticking=false;
+function heroProgress(){
+  if(!pinned||reduce) return 0;
+  var rect=hero.getBoundingClientRect(), total=hero.offsetHeight-stage.offsetHeight;
+  return clamp(-rect.top/total,0,1)*(total>0?1:0);
+}
+function onScroll(){ if(ticking) return; ticking=true; requestAnimationFrame(function(){ticking=false;render(heroProgress())}) }
+function heroInit(){
+  geo(); render(heroProgress());
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',function(){geo();render(heroProgress())});
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){geo();render(heroProgress())});
+}
+heroInit();
+if(reduce){hero.style.height='auto';stage.style.position='relative'}
+
+/* sombras de palmeira e "sol" seguem o rato (só dispositivos com cursor) */
+if(matchMedia('(hover:hover) and (pointer:fine)').matches&&!reduce){
+  var tx=0,ty=0,cx=0,cy=0;
+  stage.addEventListener('pointermove',function(ev){
+    var r=stage.getBoundingClientRect(), nx=(ev.clientX-r.left)/r.width-.5, ny=(ev.clientY-r.top)/r.height-.5;
+    tx=-nx*46; ty=-ny*30;
+    sun.style.setProperty('--sx',(ev.clientX-r.left)+'px'); sun.style.setProperty('--sy',(ev.clientY-r.top)+'px'); sun.style.opacity=1;
+  });
+  stage.addEventListener('pointerleave',function(){tx=0;ty=0;sun.style.opacity=0});
+  (function loop(){cx+=(tx-cx)*.06;cy+=(ty-cy)*.06;wallPar.style.transform='translate('+cx.toFixed(2)+'px,'+cy.toFixed(2)+'px)';requestAnimationFrame(loop)})();
+}
+
+/* ---------- portais (separadores) ---------- */
+var tabs=$$('.tl [role=tab]'), panels=$$('.tp'), imgs=$$('#win img'), sec=$('#portais'), cur='corpo';
+function setPortal(id,focus){
+  if(id===cur&&!focus) return;
+  var prev=cur; cur=id;
+  tabs.forEach(function(b){var on=b.dataset.p===id;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;if(on&&focus)b.focus()});
+  panels.forEach(function(p){p.hidden=p.id!=='p-'+id});
+  imgs.forEach(function(im){
+    im.classList.remove('was');
+    if(im.dataset.p===prev&&prev!==id) im.classList.add('was');
+    im.classList.toggle('on',im.dataset.p===id);
+  });
+  sec.dataset.p=id;
+}
+tabs.forEach(function(b,i){
+  b.addEventListener('click',function(){setPortal(b.dataset.p)});
+  b.addEventListener('keydown',function(e){
+    var n=null; if(e.key==='ArrowRight')n=(i+1)%tabs.length; if(e.key==='ArrowLeft')n=(i+tabs.length-1)%tabs.length;
+    if(n!==null){e.preventDefault();setPortal(tabs[n].dataset.p,true)}
+  });
+});
+$$('[data-go]').forEach(function(a){a.addEventListener('click',function(){setPortal(a.dataset.go)})});
+
+/* ---------- revelações ao scroll ---------- */
+var rv=$$('.rv');
+if('IntersectionObserver' in window&&!reduce){
+  var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('is-in');io.unobserve(x.target)}})},{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+  rv.forEach(function(n){io.observe(n)});
+}else rv.forEach(function(n){n.classList.add('is-in')});
+
+/* ---------- contacto: mensagem montada por toques ---------- */
+var SVCS=['Massagem de relaxamento','Ritual Amor Próprio','Cuidados de pele','Pilates pós-parto','Yoga e escrita terapêutica','Curso de meditação para crianças','Oficinas criativas','Mesa Radiónica Crística','Conversa sobre bem-estar'];
+var chips=$('#chips'), msg=$('#f-msg'), wa=$('#wa'), nome=$('#f-nome'), picked=[], edited=false;
+SVCS.forEach(function(s){
+  var b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=s; b.setAttribute('aria-pressed','false'); b.dataset.s=s;
+  b.addEventListener('click',function(){toggle(s)}); chips.appendChild(b);
+});
+function build(){
+  var n=nome.value.trim(), parts='Olá! '+(n?'Sou '+n+'. ':'');
+  parts+=picked.length?'Gostava de saber mais sobre: '+picked.join(', ')+'.':'Gostava de saber mais sobre os rituais do Svarga.';
+  return parts+' Podem dizer-me os próximos passos? Obrigado(a)!';
+}
+function sync(){
+  if(!edited) msg.value=build();
+  wa.href='https://wa.me/351935328400?text='+encodeURIComponent(msg.value||build());
+  $$('.chip',chips).forEach(function(c){c.setAttribute('aria-pressed',picked.indexOf(c.dataset.s)>-1)});
+}
+function toggle(s,force){
+  var i=picked.indexOf(s);
+  if(force===true&&i<0)picked.push(s); else if(force!==true){if(i<0)picked.push(s);else picked.splice(i,1)}
+  edited=false; sync();
+}
+msg.addEventListener('input',function(){edited=true;sync()});
+nome.addEventListener('input',sync);
+$$('[data-svc]').forEach(function(a){a.addEventListener('click',function(){toggle(a.dataset.svc,true)})});
+sync();
+$('#form').addEventListener('submit',function(e){
+  e.preventDefault(); var t=$('#toast'); t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(function(){t.classList.remove('on')},5000);
+});
+})();
+</script>
+</body>
+</html>
